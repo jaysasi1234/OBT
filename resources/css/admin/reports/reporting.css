@@ -1,0 +1,922 @@
+/* =========================================================
+   REPORTS DASHBOARD
+   NAVY BLUE ADMIN THEME
+   MATCHES VERIFICATION MONITORING UI
+========================================================= */
+
+:root{
+
+    /* MAIN NAVY PALETTE */
+    --rp-bg:#07152f;
+    --rp-sidebar:#0b1d3a;
+
+    --rp-panel:#0d2042;
+    --rp-panel-2:#102750;
+    --rp-panel-3:#15305f;
+
+    --rp-border:rgba(96,165,250,.15);
+
+    /* TEXT */
+    --rp-text:#f8fbff;
+    --rp-muted:#9db0ca;
+
+    /* PRIMARY */
+    --rp-blue:#3b82f6;
+    --rp-blue-light:#60a5fa;
+    --rp-blue-dark:#1d4ed8;
+
+    --rp-radius:16px;
+}
+
+
+/* =========================================================
+   GLOBAL PAGE
+========================================================= */
+
+html,
+body{
+
+    margin:0;
+    padding:0;
+
+    background:#07152f !important;
+
+    color:var(--rp-text);
+
+    font-family:
+        'Segoe UI',
+        Tahoma,
+        Geneva,
+        Verdana,
+        sans-serif;
+}
+
+
+/* =========================================================
+   REPORT PAGE
+========================================================= */
+
+.report-page{
+
+    width:100%;
+
+    min-width:0;
+
+    min-height:100vh;
+
+    padding:4px 0 30px;
+
+    color:var(--rp-text);
+
+    background:
+        radial-gradient(
+            circle at 90% 0%,
+            rgba(37,99,235,.10),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(30,64,175,.08),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #07152f 0%,
+            #081a36 50%,
+            #07152f 100%
+        );
+
+    isolation:isolate;
+}
+
+.report-page *{
+
+    box-sizing:border-box;
+}
+
+.report-page::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:#07152f;
+
+    z-index:-2;
+
+    pointer-events:none;
+}
+
+.report-page::after{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(59,130,246,.06),
+            transparent 25%
+        );
+
+    z-index:-1;
+
+    pointer-events:none;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.main{
+
+    width:100%;
+
+    padding:0;
+
+    margin:0;
+
+    color:var(--rp-text);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding:22px 24px;
+
+    margin-bottom:22px;
+
+    border:1px solid rgba(96,165,250,.18);
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #12346b 0%,
+            #0d2855 45%,
+            #0b1d3a 100%
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.32),
+        inset 0 1px 0 rgba(255,255,255,.04);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+/* Decorative header glow */
+
+.header::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    right:-90px;
+    top:-120px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59,130,246,.20),
+            rgba(59,130,246,.03) 65%,
+            transparent 70%
+        );
+
+    pointer-events:none;
+}
+
+
+/* Header title */
+
+.header h1{
+
+    margin:0;
+
+    color:#ffffff;
+
+    font-size:22px;
+
+    font-weight:750;
+
+    letter-spacing:-.3px;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+/* =========================================================
+   REPORT CONTAINER
+========================================================= */
+
+.report-box{
+
+    padding:22px;
+
+    border-radius:17px;
+
+    border:1px solid rgba(96,165,250,.15);
+
+    background:
+        linear-gradient(
+            145deg,
+            #0f2852,
+            #0b1d3a
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.32),
+        inset 0 1px 0 rgba(255,255,255,.025);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+/* Decorative panel glow */
+
+.report-box::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    right:-130px;
+    top:-150px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59,130,246,.08),
+            transparent 70%
+        );
+
+    pointer-events:none;
+}
+
+
+/* =========================================================
+   REPORT TITLE
+========================================================= */
+
+.report-box h2{
+
+    margin:0 0 18px;
+
+    color:#eaf3ff;
+
+    font-size:15px;
+
+    font-weight:800;
+
+    letter-spacing:.7px;
+
+    text-transform:uppercase;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+/* =========================================================
+   REPORT ITEMS
+========================================================= */
+
+.report-item{
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    width:100%;
+
+    min-height:92px;
+
+    padding:17px 18px;
+
+    margin-bottom:12px;
+
+    border-radius:15px;
+
+    border:1px solid rgba(96,165,250,.12);
+
+    background:
+        linear-gradient(
+            145deg,
+            #102750,
+            #0d2042
+        );
+
+    cursor:pointer;
+
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+}
+
+
+/* Remove margin from last item */
+
+.report-item:last-child{
+
+    margin-bottom:0;
+}
+
+
+/* Left blue accent */
+
+.report-item::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:0;
+
+    width:4px;
+
+    height:100%;
+
+    background:
+        linear-gradient(
+            180deg,
+            #60a5fa,
+            #1d4ed8
+        );
+
+    transform:scaleY(0);
+
+    transform-origin:center;
+
+    transition:
+        transform .25s ease;
+}
+
+
+/* Top highlight */
+
+.report-item::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    right:0;
+
+    top:0;
+
+    height:1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(147,197,253,.16),
+            transparent
+        );
+
+    opacity:.8;
+
+    pointer-events:none;
+}
+
+
+/* =========================================================
+   REPORT ITEM HOVER
+========================================================= */
+
+.report-item:hover{
+
+    transform:translateY(-3px);
+
+    border-color:rgba(96,165,250,.42);
+
+    background:
+        linear-gradient(
+            145deg,
+            #15305f,
+            #102750
+        );
+
+    box-shadow:
+        0 14px 32px rgba(0,0,0,.32),
+        0 0 20px rgba(59,130,246,.07);
+}
+
+.report-item:hover::before{
+
+    transform:scaleY(1);
+}
+
+
+/* =========================================================
+   REPORT ICON
+========================================================= */
+
+.icon{
+
+    width:52px;
+
+    height:52px;
+
+    min-width:52px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    border:1px solid rgba(147,197,253,.18);
+
+    color:#ffffff;
+
+    font-size:22px;
+
+    box-shadow:
+        0 8px 18px rgba(37,99,235,.25),
+        inset 0 1px 0 rgba(255,255,255,.12);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+
+/* Icon hover */
+
+.report-item:hover .icon{
+
+    transform:translateY(-2px) scale(1.03);
+
+    box-shadow:
+        0 10px 22px rgba(37,99,235,.38),
+        inset 0 1px 0 rgba(255,255,255,.15);
+}
+
+
+/* =========================================================
+   REPORT TEXT
+========================================================= */
+
+.report-item > div:not(.icon){
+
+    min-width:0;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.report-title{
+
+    color:#f8fbff;
+
+    font-size:15px;
+
+    font-weight:750;
+
+    line-height:1.35;
+
+    letter-spacing:.05px;
+
+    transition:
+        color .2s ease;
+}
+
+
+.report-item:hover .report-title{
+
+    color:#bfdbfe;
+}
+
+
+.report-item small{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:#8fa7c6;
+
+    font-size:12px;
+
+    line-height:1.5;
+
+    transition:
+        color .2s ease;
+}
+
+
+.report-item:hover small{
+
+    color:#a9bdd8;
+}
+
+
+/* =========================================================
+   REPORT ITEM ARROW
+========================================================= */
+
+.report-item > div:last-child::after{
+
+    content:"→";
+
+    position:absolute;
+
+    right:0;
+
+    top:50%;
+
+    transform:
+        translateY(-50%)
+        translateX(-4px);
+
+    color:#55759e;
+
+    font-size:18px;
+
+    opacity:0;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease,
+        color .2s ease;
+}
+
+
+.report-item:hover > div:last-child::after{
+
+    opacity:1;
+
+    transform:
+        translateY(-50%)
+        translateX(0);
+
+    color:#60a5fa;
+}
+
+
+/* =========================================================
+   OPTIONAL REPORT TYPE ACCENTS
+   Keeps all cards in the same navy style while giving
+   subtle visual identity to each report.
+========================================================= */
+
+.report-item:nth-of-type(1) .icon{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+}
+
+.report-item:nth-of-type(2) .icon{
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #1e40af
+        );
+}
+
+.report-item:nth-of-type(3) .icon{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #166534
+        );
+}
+
+.report-item:nth-of-type(4) .icon{
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4c1d95
+        );
+}
+
+
+/* =========================================================
+   FOCUS ACCESSIBILITY
+========================================================= */
+
+.report-item:focus{
+
+    outline:none;
+
+    border-color:rgba(96,165,250,.65);
+
+    box-shadow:
+        0 0 0 3px rgba(59,130,246,.12),
+        0 14px 32px rgba(0,0,0,.32);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:768px){
+
+    .report-page{
+
+        padding-top:0;
+
+        padding-bottom:20px;
+    }
+
+    .header{
+
+        align-items:flex-start;
+
+        flex-direction:column;
+
+        padding:18px;
+
+        margin-bottom:16px;
+    }
+
+    .header h1{
+
+        font-size:19px;
+
+        line-height:1.35;
+    }
+
+    .report-box{
+
+        padding:15px;
+
+        border-radius:15px;
+    }
+
+    .report-box h2{
+
+        font-size:13px;
+
+        margin-bottom:14px;
+    }
+
+    .report-item{
+
+        min-height:84px;
+
+        padding:14px;
+
+        gap:13px;
+
+        border-radius:13px;
+    }
+
+    .icon{
+
+        width:46px;
+
+        height:46px;
+
+        min-width:46px;
+
+        border-radius:12px;
+
+        font-size:19px;
+    }
+
+    .report-title{
+
+        font-size:14px;
+
+        padding-right:20px;
+    }
+
+    .report-item small{
+
+        font-size:11.5px;
+
+        line-height:1.45;
+
+        padding-right:15px;
+    }
+
+    .report-item > div:last-child::after{
+
+        display:none;
+    }
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media(max-width:480px){
+
+    .header{
+
+        padding:16px;
+
+        border-radius:15px;
+    }
+
+    .header h1{
+
+        font-size:17px;
+    }
+
+    .report-box{
+
+        padding:12px;
+
+        border-radius:14px;
+    }
+
+    .report-box h2{
+
+        font-size:12px;
+
+        margin-bottom:12px;
+    }
+
+    .report-item{
+
+        min-height:78px;
+
+        padding:12px;
+
+        gap:11px;
+
+        margin-bottom:10px;
+    }
+
+    .icon{
+
+        width:42px;
+
+        height:42px;
+
+        min-width:42px;
+
+        border-radius:11px;
+
+        font-size:17px;
+    }
+
+    .report-title{
+
+        font-size:13px;
+    }
+
+    .report-item small{
+
+        margin-top:4px;
+
+        font-size:10.5px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media(max-width:360px){
+
+    .header{
+
+        padding:14px;
+    }
+
+    .header h1{
+
+        font-size:16px;
+    }
+
+    .report-box{
+
+        padding:10px;
+    }
+
+    .report-item{
+
+        padding:10px;
+
+        gap:10px;
+    }
+
+    .icon{
+
+        width:40px;
+
+        height:40px;
+
+        min-width:40px;
+
+        font-size:16px;
+    }
+
+    .report-title{
+
+        font-size:12.5px;
+    }
+
+    .report-item small{
+
+        font-size:10px;
+    }
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.report-page::-webkit-scrollbar{
+
+    width:7px;
+}
+
+.report-page::-webkit-scrollbar-track{
+
+    background:#07152f;
+}
+
+.report-page::-webkit-scrollbar-thumb{
+
+    background:
+        linear-gradient(
+            180deg,
+            #1e4078,
+            #315b9c
+        );
+
+    border-radius:20px;
+}
+
+.report-page::-webkit-scrollbar-thumb:hover{
+
+    background:#3b6eb5;
+}

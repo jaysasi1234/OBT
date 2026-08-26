@@ -1,0 +1,493 @@
+/* ==========================================================
+   PROFESSIONAL SYSTEM SETTINGS
+========================================================== */
+
+:root{
+    --bg:#09142b;
+    --bg2:#101d45;
+    --card:#162457;
+    --card-light:#1c2f72;
+    --primary:#4f46e5;
+    --primary-hover:#6366f1;
+    --success:#16a34a;
+    --danger:#ef4444;
+    --border:rgba(255,255,255,.08);
+    --text:#ffffff;
+    --muted:#b8c4e0;
+    --shadow:0 15px 40px rgba(0,0,0,.35);
+    --radius:18px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+    background:
+        radial-gradient(circle at top left,#233c8d 0%,transparent 35%),
+        radial-gradient(circle at bottom right,#1e3a8a 0%,transparent 40%),
+        linear-gradient(135deg,#081126,#111f4d);
+    color:var(--text);
+    min-height:100vh;
+}
+
+/* ==========================================================
+   MAIN
+========================================================== */
+
+.main{
+    padding:30px;
+    min-height:100vh;
+}
+
+/* ==========================================================
+   SETTINGS CONTAINER
+========================================================== */
+
+.settings-wrapper{
+
+    position:relative;
+
+    max-width:1400px;
+    margin:auto;
+
+    background:rgba(18,31,75,.88);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:24px;
+
+    padding:35px;
+
+    box-shadow:var(--shadow);
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.settings-header{
+
+    padding-bottom:25px;
+
+    margin-bottom:30px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.settings-header h2{
+
+    font-size:32px;
+
+    font-weight:700;
+
+    letter-spacing:.5px;
+
+    color:#fff;
+}
+
+.settings-header p{
+
+    margin-top:8px;
+
+    color:var(--muted);
+
+    font-size:15px;
+
+    line-height:1.6;
+}
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.box{
+
+    background:linear-gradient(180deg,#1a2d68,#16275d);
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    padding:28px;
+
+    margin-bottom:24px;
+
+    transition:.30s ease;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.18);
+}
+
+.box:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 20px 35px rgba(0,0,0,.30);
+}
+
+.box-title{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:#fff;
+
+    margin-bottom:22px;
+
+    padding-bottom:14px;
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+/* ==========================================================
+   FORM
+========================================================== */
+
+.form-group{
+
+    margin-bottom:22px;
+}
+
+label{
+
+    display:block;
+
+    margin-bottom:9px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#d6def6;
+}
+
+/* ==========================================================
+   INPUTS
+========================================================== */
+
+input,
+select,
+textarea{
+
+    width:100%;
+
+    padding:14px 16px;
+
+    background:#0f1d4a;
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:12px;
+
+    font-size:15px;
+
+    transition:.25s ease;
+}
+
+input::placeholder,
+textarea::placeholder{
+
+    color:#8fa3d7;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+
+    outline:none;
+
+    border-color:#6366f1;
+
+    box-shadow:
+        0 0 0 4px rgba(99,102,241,.18);
+
+    background:#13245b;
+}
+
+textarea{
+
+    min-height:120px;
+
+    resize:vertical;
+}
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.grid-2{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:24px;
+}
+
+/* ==========================================================
+   TOGGLE
+========================================================== */
+
+.toggle-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 0;
+
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.toggle-row:last-child{
+
+    border:none;
+}
+
+.toggle-row span{
+
+    font-size:15px;
+
+    color:#d8def5;
+
+    font-weight:500;
+}
+
+/* ==========================================================
+   SWITCH
+========================================================== */
+
+.switch{
+
+    position:relative;
+
+    width:58px;
+
+    height:30px;
+}
+
+.switch input{
+
+    display:none;
+}
+
+.slider{
+
+    position:absolute;
+
+    inset:0;
+
+    background:#566178;
+
+    border-radius:50px;
+
+    cursor:pointer;
+
+    transition:.30s;
+}
+
+.slider:before{
+
+    content:"";
+
+    position:absolute;
+
+    width:24px;
+
+    height:24px;
+
+    left:3px;
+
+    top:3px;
+
+    background:white;
+
+    border-radius:50%;
+
+    transition:.30s;
+}
+
+.switch input:checked + .slider{
+
+    background:linear-gradient(135deg,#4f46e5,#6366f1);
+}
+
+.switch input:checked + .slider:before{
+
+    transform:translateX(28px);
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+.save-btn{
+
+    float:right;
+
+    padding:14px 34px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#4338ca,#6366f1);
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s ease;
+
+    box-shadow:0 10px 25px rgba(79,70,229,.35);
+}
+
+.save-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 15px 35px rgba(79,70,229,.50);
+
+    background:linear-gradient(135deg,#4f46e5,#7c83ff);
+}
+
+.save-btn:active{
+
+    transform:scale(.98);
+}
+
+/* ==========================================================
+   ALERT
+========================================================== */
+
+.alert-success{
+
+    margin-bottom:25px;
+
+    padding:16px 20px;
+
+    border-radius:12px;
+
+    background:rgba(22,163,74,.15);
+
+    border:1px solid rgba(22,163,74,.35);
+
+    color:#9ef7b5;
+
+    font-weight:600;
+}
+
+/* ==========================================================
+   CLOSE BUTTON
+========================================================== */
+
+.close-btn{
+
+    position:absolute;
+
+    top:25px;
+
+    right:25px;
+
+    width:44px;
+
+    height:44px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-decoration:none;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:white;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+
+    transition:.25s ease;
+
+    box-shadow:0 10px 20px rgba(239,68,68,.25);
+}
+
+.close-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 15px 25px rgba(239,68,68,.45);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:992px){
+
+    .grid-2{
+
+        grid-template-columns:1fr;
+    }
+
+    .settings-wrapper{
+
+        padding:24px;
+    }
+
+    .settings-header h2{
+
+        font-size:26px;
+    }
+}
+
+@media (max-width:576px){
+
+    .main{
+
+        padding:15px;
+    }
+
+    .settings-wrapper{
+
+        padding:18px;
+    }
+
+    .box{
+
+        padding:20px;
+    }
+
+    .save-btn{
+
+        width:100%;
+
+        float:none;
+    }
+
+    .close-btn{
+
+        top:18px;
+
+        right:18px;
+    }
+}

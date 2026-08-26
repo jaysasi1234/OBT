@@ -1,0 +1,56 @@
+# Logs
+*.log
+
+# Environment Files
+.env
+.env.backup
+.env.production
+.env.testing
+
+# Dependencies
+/node_modules
+/vendor
+
+# Compiled Assets
+/public/build
+/public/hot
+/public/storage
+
+# Laravel Storage
+/storage/*.key
+/storage/pail
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/logs/*
+
+# Reverb / Broadcasting Logs
+/storage/logs/*.log
+
+# IDE Settings
+/.cursor/
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+
+# PHP Tools
+.phpactor.json
+.phpunit.result.cache
+.phpstorm.meta.php
+_ide_helper.php
+
+# Authentication Files
+/auth.json
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Laravel Homestead
+Homestead.json
+Homestead.yaml
+
+# Laravel Sail
+docker-compose.override.yml

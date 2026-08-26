@@ -1,0 +1,59 @@
+body {
+    background: #0b0b2d;
+    color: white;
+}
+
+.location-card {
+    background: #1a1a4a;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+.map-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.info-box {
+    margin-bottom: 15px;
+    line-height: 1.8;
+}
+
+#map {
+    width: 100%;
+    height: 550px;
+    border-radius: 15px;
+}
+
+.status.active {
+    background: #22c55e;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status.inactive {
+    background: #f59e0b;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status.away {
+    background: #3b82f6;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status.offline {
+    background: #ef4444;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}

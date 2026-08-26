@@ -1,0 +1,1706 @@
+/* =========================================================
+   VERIFICATION MONITORING
+   NAVY BLUE ADMIN THEME
+========================================================= */
+
+:root{
+
+    /* MAIN NAVY PALETTE */
+    --vm-bg:#07152f;
+    --vm-sidebar:#0b1d3a;
+
+    --vm-panel:#0d2042;
+    --vm-panel-2:#102750;
+    --vm-panel-3:#15305f;
+
+    --vm-border:rgba(96,165,250,.15);
+
+    /* TEXT */
+    --vm-text:#f8fbff;
+    --vm-muted:#9db0ca;
+
+    /* PRIMARY */
+    --vm-blue:#3b82f6;
+    --vm-blue-light:#60a5fa;
+    --vm-blue-dark:#1d4ed8;
+
+    /* STATUS */
+    --vm-green:#22c55e;
+    --vm-orange:#f59e0b;
+    --vm-red:#ef4444;
+
+    --vm-radius:16px;
+}
+
+
+/* =========================================================
+   GLOBAL PAGE
+========================================================= */
+
+html,
+body{
+
+    background:#07152f !important;
+}
+
+.verification-page{
+
+    width:100%;
+    min-width:0;
+
+    min-height:100vh;
+
+    padding:4px 0 30px;
+
+    color:var(--vm-text);
+
+    background:
+        radial-gradient(
+            circle at 90% 0%,
+            rgba(37,99,235,.10),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 0% 100%,
+            rgba(30,64,175,.08),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #07152f 0%,
+            #081a36 50%,
+            #07152f 100%
+        );
+}
+
+.verification-page *{
+
+    box-sizing:border-box;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.vm-header{
+
+    display:flex;
+
+    justify-content:space-between;
+    align-items:center;
+
+    gap:20px;
+
+    padding:22px 24px;
+
+    margin-bottom:22px;
+
+    border:1px solid rgba(96,165,250,.18);
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #12346b 0%,
+            #0d2855 45%,
+            #0b1d3a 100%
+        );
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.32),
+        inset 0 1px 0 rgba(255,255,255,.04);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.vm-header::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:260px;
+    height:260px;
+
+    border-radius:50%;
+
+    right:-90px;
+    top:-120px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59,130,246,.20),
+            rgba(59,130,246,.03) 65%,
+            transparent 70%
+        );
+
+    pointer-events:none;
+}
+
+.vm-header-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    min-width:0;
+
+    position:relative;
+
+    z-index:2;
+}
+
+.vm-header-icon{
+
+    width:54px;
+    height:54px;
+
+    min-width:54px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:rgba(255,255,255,.10);
+
+    border:1px solid rgba(147,197,253,.16);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05);
+
+    font-size:25px;
+}
+
+.vm-header-text h2{
+
+    margin:0;
+
+    color:#ffffff;
+
+    font-size:22px;
+
+    font-weight:750;
+
+    letter-spacing:-.3px;
+}
+
+.vm-header-text p{
+
+    margin:6px 0 0;
+
+    color:#cbdcf3;
+
+    font-size:13px;
+}
+
+.vm-header-badge{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:8px 12px;
+
+    border-radius:30px;
+
+    background:rgba(34,197,94,.10);
+
+    border:1px solid rgba(34,197,94,.22);
+
+    color:#86efac;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    white-space:nowrap;
+
+    position:relative;
+
+    z-index:2;
+}
+
+.vm-header-dot{
+
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+
+    box-shadow:
+        0 0 10px rgba(34,197,94,.7);
+}
+
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.vm-stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,minmax(0,1fr));
+
+    gap:16px;
+
+    margin-bottom:22px;
+}
+
+.vm-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    min-height:142px;
+
+    padding:20px;
+
+    border-radius:17px;
+
+    border:1px solid rgba(255,255,255,.10);
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.30),
+        inset 0 1px 0 rgba(255,255,255,.05);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+}
+
+.vm-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.40);
+}
+
+.vm-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:120px;
+    height:120px;
+
+    border-radius:50%;
+
+    right:-45px;
+    top:-50px;
+
+    background:rgba(255,255,255,.08);
+}
+
+.vm-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:80px;
+    height:80px;
+
+    border-radius:50%;
+
+    left:-35px;
+    bottom:-45px;
+
+    background:rgba(255,255,255,.04);
+}
+
+.vm-card-content{
+
+    position:relative;
+
+    z-index:2;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    height:100%;
+}
+
+.vm-card-label{
+
+    font-size:12px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.7px;
+
+    font-weight:700;
+
+    color:rgba(255,255,255,.82);
+
+    margin-bottom:12px;
+}
+
+.vm-card-number{
+
+    font-size:34px;
+
+    line-height:1;
+
+    font-weight:800;
+
+    letter-spacing:-1px;
+
+    color:#ffffff;
+}
+
+.vm-card-description{
+
+    margin-top:9px;
+
+    font-size:12px;
+
+    color:rgba(255,255,255,.72);
+}
+
+.vm-card-icon{
+
+    width:45px;
+    height:45px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:rgba(255,255,255,.13);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    font-size:21px;
+}
+
+
+/* =========================================================
+   STAT CARD COLORS
+========================================================= */
+
+.vm-total{
+
+    background:
+        linear-gradient(
+            135deg,
+            #dc2626,
+            #991b1b
+        );
+}
+
+.vm-completed{
+
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #166534
+        );
+}
+
+.vm-incomplete{
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #c2410c
+        );
+}
+
+.vm-qualified{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1e40af
+        );
+}
+
+.vm-not-qualified{
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #4c1d95
+        );
+}
+
+
+/* =========================================================
+   FILTER PANEL
+========================================================= */
+
+.vm-filter-panel{
+
+    padding:18px;
+
+    margin-bottom:18px;
+
+    border-radius:17px;
+
+    border:1px solid rgba(96,165,250,.15);
+
+    background:
+        linear-gradient(
+            145deg,
+            #0f2852,
+            #0b1d3a
+        );
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.vm-filter-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-bottom:14px;
+}
+
+.vm-filter-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#e2e8f0;
+
+    text-transform:uppercase;
+
+    letter-spacing:.6px;
+}
+
+.vm-filter-title-icon{
+
+    width:30px;
+    height:30px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:9px;
+
+    background:rgba(59,130,246,.14);
+
+    color:#60a5fa;
+
+    border:1px solid rgba(96,165,250,.10);
+}
+
+.vm-clear{
+
+    border:none;
+
+    background:transparent;
+
+    color:#9db0ca;
+
+    font-size:12px;
+
+    cursor:pointer;
+
+    padding:5px 8px;
+
+    border-radius:7px;
+
+    transition:.2s;
+}
+
+.vm-clear:hover{
+
+    background:rgba(255,255,255,.06);
+
+    color:#fff;
+}
+
+.vm-filters{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(160px,1fr))
+        minmax(220px,1.3fr);
+
+    gap:10px;
+}
+
+
+/* =========================================================
+   FILTER DROPDOWNS
+========================================================= */
+
+.vm-dropdown{
+
+    position:relative;
+
+    min-width:0;
+}
+
+.vm-dropdown-button{
+
+    width:100%;
+
+    min-height:44px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    padding:0 13px;
+
+    border:1px solid rgba(96,165,250,.12);
+
+    border-radius:10px;
+
+    background:#102750;
+
+    color:#dbeafe;
+
+    cursor:pointer;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    transition:.2s;
+}
+
+.vm-dropdown-button:hover{
+
+    background:#163563;
+
+    border-color:rgba(96,165,250,.38);
+}
+
+.vm-dropdown-button.active{
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,.24),
+            rgba(30,64,175,.18)
+        );
+
+    border-color:rgba(96,165,250,.50);
+
+    color:#bfdbfe;
+}
+
+.vm-dropdown-label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    min-width:0;
+}
+
+.vm-dropdown-count{
+
+    min-width:19px;
+
+    height:19px;
+
+    padding:0 5px;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:20px;
+
+    background:#3b82f6;
+
+    color:white;
+
+    font-size:10px;
+
+    font-weight:800;
+}
+
+.vm-dropdown-count.show{
+
+    display:flex;
+}
+
+.vm-chevron{
+
+    transition:.2s;
+
+    font-size:12px;
+
+    color:#8fa7c6;
+}
+
+.vm-dropdown-button.open .vm-chevron{
+
+    transform:rotate(180deg);
+}
+
+
+/* =========================================================
+   DROPDOWN MENU
+========================================================= */
+
+.vm-dropdown-menu{
+
+    display:none;
+
+    position:absolute;
+
+    top:calc(100% + 7px);
+
+    left:0;
+
+    width:100%;
+
+    min-width:210px;
+
+    max-height:270px;
+
+    overflow-y:auto;
+
+    padding:7px;
+
+    border:1px solid rgba(96,165,250,.18);
+
+    border-radius:12px;
+
+    background:#0d2042;
+
+    box-shadow:
+        0 18px 45px rgba(0,0,0,.55),
+        0 0 0 1px rgba(30,64,175,.08);
+
+    z-index:500;
+}
+
+.vm-dropdown-menu.show{
+
+    display:block;
+}
+
+.vm-option{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    padding:9px 10px;
+
+    border-radius:8px;
+
+    color:#dbeafe;
+
+    font-size:13px;
+
+    cursor:pointer;
+
+    transition:.15s;
+}
+
+.vm-option:hover{
+
+    background:rgba(59,130,246,.12);
+}
+
+.vm-option input{
+
+    appearance:none;
+
+    width:17px;
+    height:17px;
+
+    min-width:17px;
+
+    margin:0;
+
+    border:1.5px solid #64748b;
+
+    border-radius:5px;
+
+    background:#0a1a35;
+
+    cursor:pointer;
+
+    position:relative;
+}
+
+.vm-option input:checked{
+
+    background:#3b82f6;
+
+    border-color:#3b82f6;
+}
+
+.vm-option input:checked::after{
+
+    content:"✓";
+
+    position:absolute;
+
+    left:2px;
+    top:-2px;
+
+    color:#fff;
+
+    font-size:12px;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.vm-search{
+
+    position:relative;
+}
+
+.vm-search input{
+
+    width:100%;
+
+    min-height:44px;
+
+    padding:
+        0 38px
+        0 40px;
+
+    border:1px solid rgba(96,165,250,.12);
+
+    border-radius:10px;
+
+    background:#102750;
+
+    color:#fff;
+
+    outline:none;
+
+    font-size:13px;
+
+    transition:.2s;
+}
+
+.vm-search input:focus{
+
+    border-color:rgba(96,165,250,.60);
+
+    background:#122d5a;
+
+    box-shadow:
+        0 0 0 3px rgba(59,130,246,.10);
+}
+
+.vm-search input::placeholder{
+
+    color:#7187a5;
+}
+
+.vm-search-icon{
+
+    position:absolute;
+
+    left:14px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#7187a5;
+
+    pointer-events:none;
+}
+
+.vm-search-clear{
+
+    position:absolute;
+
+    right:9px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:26px;
+    height:26px;
+
+    border:none;
+
+    border-radius:7px;
+
+    background:transparent;
+
+    color:#7187a5;
+
+    cursor:pointer;
+
+    display:none;
+}
+
+.vm-search-clear.show{
+
+    display:block;
+}
+
+.vm-search-clear:hover{
+
+    background:rgba(255,255,255,.08);
+
+    color:#fff;
+}
+
+
+/* =========================================================
+   TABLE CONTAINER
+========================================================= */
+
+.vm-table-wrapper{
+
+    border:1px solid rgba(96,165,250,.15);
+
+    border-radius:17px;
+
+    overflow:hidden;
+
+    background:#0b1d3a;
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.32),
+        inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.vm-table-top{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:15px 18px;
+
+    border-bottom:1px solid rgba(96,165,250,.12);
+
+    background:
+        linear-gradient(
+            180deg,
+            #12305f,
+            #0d2042
+        );
+}
+
+.vm-table-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#e2e8f0;
+}
+
+.vm-record-count{
+
+    padding:5px 9px;
+
+    border-radius:20px;
+
+    background:rgba(59,130,246,.12);
+
+    border:1px solid rgba(96,165,250,.10);
+
+    color:#93c5fd;
+
+    font-size:11px;
+
+    font-weight:700;
+}
+
+.vm-scroll{
+
+    overflow-x:auto;
+
+    max-width:100%;
+}
+
+.vm-scroll::-webkit-scrollbar{
+
+    height:8px;
+}
+
+.vm-scroll::-webkit-scrollbar-track{
+
+    background:#07152f;
+}
+
+.vm-scroll::-webkit-scrollbar-thumb{
+
+    background:
+        linear-gradient(
+            90deg,
+            #1e4078,
+            #315b9c
+        );
+
+    border-radius:20px;
+}
+
+.vm-scroll::-webkit-scrollbar-thumb:hover{
+
+    background:#3b6eb5;
+}
+
+table{
+
+    width:100%;
+
+    min-width:950px;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+thead th{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:10;
+
+    padding:14px 16px;
+
+    text-align:left;
+
+    white-space:nowrap;
+
+    background:
+        linear-gradient(
+            135deg,
+            #173b78,
+            #102b59
+        );
+
+    color:#eaf3ff;
+
+    border-bottom:1px solid rgba(96,165,250,.18);
+
+    font-size:11px;
+
+    font-weight:800;
+
+    letter-spacing:.7px;
+
+    text-transform:uppercase;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+tbody td{
+
+    padding:15px 16px;
+
+    border-bottom:1px solid rgba(96,165,250,.07);
+
+    color:#dbeafe;
+
+    font-size:13px;
+
+    white-space:nowrap;
+
+    background:#0d2042;
+
+    transition:.2s;
+}
+
+tbody tr:nth-child(even) td{
+
+    background:#102750;
+}
+
+tbody tr:hover td{
+
+    background:#173563;
+}
+
+tbody tr:last-child td{
+
+    border-bottom:none;
+}
+
+
+/* =========================================================
+   TRB
+========================================================= */
+
+.vm-trb{
+
+    color:#60a5fa;
+
+    font-weight:750;
+
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+}
+
+
+/* =========================================================
+   NAME
+========================================================= */
+
+.vm-name{
+
+    color:#f8fbff;
+
+    font-weight:700;
+}
+
+
+/* =========================================================
+   REQUIREMENT PROGRESS
+========================================================= */
+
+.vm-requirement{
+
+    width:145px;
+}
+
+.vm-progress-top{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:6px;
+
+    font-size:11px;
+
+    color:#8fa7c6;
+}
+
+.vm-progress-number{
+
+    color:#e2e8f0;
+
+    font-weight:700;
+}
+
+.vm-progress-track{
+
+    width:100%;
+
+    height:7px;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    background:#1b3564;
+
+    border:1px solid rgba(96,165,250,.08);
+}
+
+.vm-progress-fill{
+
+    height:100%;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #16a34a,
+            #4ade80,
+            #86efac
+        );
+
+    box-shadow:
+        0 0 8px rgba(34,197,94,.18);
+
+    transition:width .4s ease;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.vm-status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:7px 11px;
+
+    border-radius:30px;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    letter-spacing:.25px;
+
+    white-space:nowrap;
+}
+
+.vm-status-dot{
+
+    width:6px;
+    height:6px;
+
+    border-radius:50%;
+
+    background:currentColor;
+}
+
+.vm-status.verified{
+
+    color:#86efac;
+
+    background:rgba(34,197,94,.11);
+
+    border:1px solid rgba(34,197,94,.20);
+}
+
+.vm-status.pending{
+
+    color:#fcd34d;
+
+    background:rgba(245,158,11,.11);
+
+    border:1px solid rgba(245,158,11,.20);
+}
+
+.vm-status.qualified{
+
+    color:#93c5fd;
+
+    background:rgba(59,130,246,.11);
+
+    border:1px solid rgba(59,130,246,.20);
+}
+
+.vm-status.not-qualified{
+
+    color:#fca5a5;
+
+    background:rgba(239,68,68,.11);
+
+    border:1px solid rgba(239,68,68,.20);
+}
+
+
+/* =========================================================
+   VIEW BUTTON
+========================================================= */
+
+.vm-view-btn{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:7px;
+
+    padding:8px 13px;
+
+    border:none;
+
+    border-radius:9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #1d4ed8
+        );
+
+    color:white;
+
+    text-decoration:none;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    box-shadow:
+        0 5px 14px rgba(37,99,235,.22);
+
+    transition:.2s;
+}
+
+.vm-view-btn:hover{
+
+    transform:translateY(-1px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #60a5fa,
+            #2563eb
+        );
+
+    box-shadow:
+        0 8px 18px rgba(37,99,235,.40);
+
+    color:white;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.vm-empty{
+
+    text-align:center;
+
+    padding:55px 20px !important;
+
+    color:#7187a5 !important;
+
+    background:#0d2042 !important;
+}
+
+.vm-empty-icon{
+
+    width:55px;
+    height:55px;
+
+    margin:0 auto 12px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:rgba(59,130,246,.08);
+
+    border:1px solid rgba(96,165,250,.10);
+
+    font-size:24px;
+}
+
+.vm-empty strong{
+
+    display:block;
+
+    color:#cbdcf3;
+
+    margin-bottom:5px;
+}
+
+.vm-empty span{
+
+    font-size:12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1200px){
+
+    .vm-stats{
+
+        grid-template-columns:
+            repeat(3,minmax(0,1fr));
+    }
+
+    .vm-filters{
+
+        grid-template-columns:
+            repeat(2,minmax(160px,1fr));
+    }
+
+    .vm-search{
+
+        grid-column:span 2;
+    }
+}
+
+
+@media(max-width:768px){
+
+    .verification-page{
+
+        padding-top:0;
+    }
+
+    .vm-header{
+
+        align-items:flex-start;
+
+        padding:18px;
+
+        flex-direction:column;
+    }
+
+    .vm-header-badge{
+
+        align-self:flex-start;
+    }
+
+    .vm-header-text h2{
+
+        font-size:19px;
+    }
+
+    .vm-header-text p{
+
+        line-height:1.5;
+    }
+
+    .vm-stats{
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap:12px;
+    }
+
+    .vm-card{
+
+        min-height:125px;
+
+        padding:16px;
+    }
+
+    .vm-card-number{
+
+        font-size:29px;
+    }
+
+    .vm-card-icon{
+
+        width:40px;
+        height:40px;
+
+        font-size:18px;
+    }
+
+    .vm-filters{
+
+        grid-template-columns:1fr;
+    }
+
+    .vm-search{
+
+        grid-column:auto;
+    }
+
+    .vm-dropdown-menu{
+
+        position:relative;
+
+        top:5px;
+
+        width:100%;
+
+        box-shadow:none;
+
+        margin-bottom:5px;
+    }
+
+    .vm-table-top{
+
+        padding:13px 15px;
+    }
+
+    .vm-scroll{
+
+        overflow-x:auto;
+    }
+}
+
+
+@media(max-width:480px){
+
+    .vm-stats{
+
+        grid-template-columns:1fr;
+    }
+
+    .vm-header-left{
+
+        align-items:flex-start;
+    }
+
+    .vm-header-icon{
+
+        width:46px;
+        height:46px;
+
+        min-width:46px;
+
+        font-size:21px;
+    }
+
+    .vm-header-text h2{
+
+        font-size:17px;
+    }
+
+    .vm-header-text p{
+
+        font-size:12px;
+    }
+
+    .vm-card{
+
+        min-height:115px;
+    }
+
+    .vm-card-number{
+
+        font-size:27px;
+    }
+
+    .vm-filter-panel{
+
+        padding:14px;
+    }
+
+    .vm-table-wrapper{
+
+        border-radius:14px;
+    }
+
+}
+
+
+/* =========================================================
+   EXTRA NAVY ADMIN OVERRIDE
+   Prevents parent layout from showing unwanted white areas
+========================================================= */
+
+.verification-page{
+
+    isolation:isolate;
+}
+
+.verification-page::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:#07152f;
+
+    z-index:-2;
+
+    pointer-events:none;
+}
+
+.verification-page::after{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(59,130,246,.06),
+            transparent 25%
+        );
+
+    z-index:-1;
+
+    pointer-events:none;
+}
+
+
+/* =========================================================
+   MOBILE TABLE
+========================================================= */
+
+@media(max-width:768px){
+
+    .vm-table-wrapper{
+
+        width:100%;
+    }
+
+    table{
+
+        min-width:950px;
+    }
+
+    .vm-table-title{
+
+        font-size:12px;
+    }
+
+    .vm-record-count{
+
+        font-size:10px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media(max-width:360px){
+
+    .vm-header{
+
+        padding:15px;
+    }
+
+    .vm-header-left{
+
+        gap:11px;
+    }
+
+    .vm-header-icon{
+
+        width:42px;
+        height:42px;
+
+        min-width:42px;
+    }
+
+    .vm-header-text h2{
+
+        font-size:16px;
+    }
+
+    .vm-card{
+
+        padding:14px;
+    }
+
+    .vm-card-label{
+
+        font-size:11px;
+    }
+
+    .vm-card-number{
+
+        font-size:25px;
+    }
+
+}
+
+
+/* =========================================================
+   DROPDOWN SCROLLBAR
+========================================================= */
+
+.vm-dropdown-menu::-webkit-scrollbar{
+
+    width:6px;
+}
+
+.vm-dropdown-menu::-webkit-scrollbar-track{
+
+    background:#081a36;
+
+    border-radius:10px;
+}
+
+.vm-dropdown-menu::-webkit-scrollbar-thumb{
+
+    background:#28518a;
+
+    border-radius:10px;
+}
+
+.vm-dropdown-menu::-webkit-scrollbar-thumb:hover{
+
+    background:#3b6eb5;
+}
