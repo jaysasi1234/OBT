@@ -1,20 +1,21 @@
 @extends('layouts.superadmin')
 
-@section('header-title', 'Shipped On Order')
+@section('header-title', 'Special Order')
 
 @section('content')
 
 <style>
 /* =========================================================
-   PAGE
+   SPECIAL ORDER PAGE
+   DARK NAVY + PURPLE-BLUE THEME
 ========================================================= */
 
 .shipped-page {
     width: 100%;
     min-height: 100vh;
-    padding: 24px;
-    background: #f4f7fc;
-    color: #0f172a;
+    padding: 28px;
+    background: #07152f;
+    color: #ffffff;
 }
 
 .shipped-page *,
@@ -23,44 +24,53 @@
     box-sizing: border-box;
 }
 
-
 /* =========================================================
-   HEADER
+   PAGE HEADER
 ========================================================= */
 
 .shipped-header {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     margin-bottom: 24px;
-    padding: 20px 24px;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    box-shadow: 0 8px 25px rgba(15, 23, 42, .06);
+    padding: 22px 25px;
+    background: #2d2a67;
+    border: 1px solid #403d80;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.20);
 }
 
 .shipped-header-icon {
-    width: 46px;
-    height: 46px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 0 0 46px;
-    border-radius: 12px;
-    background: #dbeafe;
-    color: #0B3D91;
-    font-size: 20px;
+    flex: 0 0 50px;
+    border-radius: 14px;
+    background: rgba(92, 104, 214, 0.20);
+    color: #9ca9ff;
+    font-size: 21px;
+}
+
+.shipped-header-content {
+    min-width: 0;
 }
 
 .shipped-header h2 {
     margin: 0;
-    color: #0B3D91;
-    font-size: 26px;
+    color: #ffffff;
+    font-size: 25px;
     font-weight: 800;
     line-height: 1.2;
 }
 
+.shipped-header p {
+    margin: 5px 0 0;
+    color: #b9b9d6;
+    font-size: 13px;
+    font-weight: 500;
+}
 
 /* =========================================================
    STATISTICS
@@ -74,42 +84,64 @@
 }
 
 .shipped-stat {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
     min-width: 0;
-    padding: 20px;
-    background: linear-gradient(135deg, #fff, #f8fbff);
-    border: 1px solid #e5e7eb;
-    border-top: 4px solid #2563eb;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, .07);
-    transition: transform .2s ease, box-shadow .2s ease;
+    padding: 21px;
+    overflow: hidden;
+
+    background: #2d2a67;
+    border: 1px solid #403d80;
+    border-top: 4px solid #6573e8;
+    border-radius: 17px;
+
+    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.20);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.shipped-stat::after {
+    content: "";
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    right: -35px;
+    bottom: -40px;
+    border-radius: 50%;
+    background: rgba(120, 130, 255, 0.08);
+    pointer-events: none;
 }
 
 .shipped-stat:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, .11);
+    box-shadow: 0 13px 30px rgba(0, 0, 0, 0.28);
 }
 
 .shipped-stat-content {
     min-width: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .shipped-stat-value {
     margin: 0;
-    color: #0B3D91;
+    color: #ffffff;
     font-size: 30px;
     font-weight: 800;
     line-height: 1;
 }
 
 .shipped-stat-label {
-    margin: 7px 0 0;
-    color: #64748b;
-    font-size: 13px;
+    margin: 8px 0 0;
+    color: #b9b9d6;
+    font-size: 12px;
     font-weight: 700;
+    letter-spacing: 0.15px;
 }
 
 .shipped-stat-icon {
@@ -119,43 +151,55 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 56px;
-    border-radius: 14px;
-    color: #fff;
-    font-size: 23px;
+    position: relative;
+    z-index: 1;
+
+    border-radius: 15px;
+    color: #ffffff;
+    font-size: 22px;
+
+    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.20);
 }
 
+/* BLUE */
+
 .shipped-stat-blue {
-    border-top-color: #2563eb;
+    border-top-color: #6573e8;
 }
 
 .shipped-stat-blue .shipped-stat-icon {
-    background: #2563eb;
+    background: linear-gradient(135deg, #5865d8, #414cb5);
 }
 
+/* GRAY */
+
 .shipped-stat-gray {
-    border-top-color: #6b7280;
+    border-top-color: #7782a8;
 }
 
 .shipped-stat-gray .shipped-stat-icon {
-    background: #6b7280;
+    background: linear-gradient(135deg, #697492, #4d5876);
 }
+
+/* ORANGE */
 
 .shipped-stat-orange {
     border-top-color: #f59e0b;
 }
 
 .shipped-stat-orange .shipped-stat-icon {
-    background: #f59e0b;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
+/* GREEN */
+
 .shipped-stat-green {
-    border-top-color: #16a34a;
+    border-top-color: #22c55e;
 }
 
 .shipped-stat-green .shipped-stat-icon {
-    background: #16a34a;
+    background: linear-gradient(135deg, #22c55e, #15803d);
 }
-
 
 /* =========================================================
    FILTER CARD
@@ -164,38 +208,89 @@
 .shipped-filter-card {
     margin-bottom: 24px;
     padding: 20px;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(15, 23, 42, .07);
+
+    background: #07152f;
+    border: 1px solid #383b73;
+    border-radius: 17px;
+
+    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.20);
+}
+
+.shipped-filter-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 15px;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.shipped-filter-header i {
+    color: #8995ff;
+    font-size: 14px;
 }
 
 .shipped-filter-grid {
     display: grid;
-    grid-template-columns: minmax(180px, 1fr)
-                           minmax(180px, 1fr)
-                           minmax(240px, 1.5fr);
-    gap: 15px;
+    grid-template-columns:
+        minmax(180px, 1fr)
+        minmax(180px, 1fr)
+        minmax(240px, 1.5fr);
+
+    gap: 14px;
 }
+
+/* =========================================================
+   FILTER CONTROLS
+========================================================= */
 
 .shipped-filter-control {
     width: 100%;
     height: 44px;
     padding: 0 13px;
-    border: 1px solid #d9e2ec;
+
+    border: 1px solid #393d76;
     border-radius: 10px;
-    background: #fff;
-    color: #1e293b;
-    font-size: 14px;
-    transition: border-color .2s ease, box-shadow .2s ease;
+
+    outline: none;
+
+    background: #0b1d3a;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.shipped-filter-control:hover {
+    border-color: #55599a;
+    background: #0d2142;
 }
 
 .shipped-filter-control:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    border-color: #6875e8;
+    background: #0d2142;
+    box-shadow: 0 0 0 3px rgba(104, 117, 232, 0.15);
 }
 
+.shipped-filter-control::placeholder {
+    color: #777da8;
+    font-weight: 500;
+}
+
+/* SELECT OPTION */
+
+.shipped-filter-control option {
+    background: #0b1d3a;
+    color: #ffffff;
+}
 
 /* =========================================================
    SEARCH
@@ -210,16 +305,17 @@
     top: 50%;
     left: 14px;
     z-index: 1;
-    color: #94a3b8;
-    font-size: 14px;
+
+    color: #777da8;
+    font-size: 13px;
+
     transform: translateY(-50%);
     pointer-events: none;
 }
 
 .shipped-search input {
-    padding-left: 40px;
+    padding-left: 39px;
 }
-
 
 /* =========================================================
    TABLE CARD
@@ -228,23 +324,88 @@
 .shipped-table-card {
     width: 100%;
     overflow: hidden;
-    background: #fff;
-    border: 1px solid #e5e7eb;
+
+    background: #2d2a67;
+    border: 1px solid #403d80;
     border-radius: 18px;
-    box-shadow: 0 10px 28px rgba(15, 23, 42, .08);
+
+    box-shadow: 0 9px 27px rgba(0, 0, 0, 0.25);
 }
+
+/* =========================================================
+   TABLE TOP
+========================================================= */
+
+.shipped-table-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 17px 20px;
+
+    border-bottom: 1px solid #403d80;
+    background: #2d2a67;
+}
+
+.shipped-table-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.shipped-table-title i {
+    color: #9ca9ff;
+}
+
+.shipped-table-count {
+    padding: 5px 10px;
+
+    border: 1px solid #474582;
+    border-radius: 999px;
+
+    background: #242354;
+    color: #aeb7ff;
+
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
 
 .shipped-table-wrapper {
     width: 100%;
     overflow-x: auto;
 }
 
-.shipped-table {
-    width: 100%;
-    min-width: 950px;
-    border-collapse: collapse;
+.shipped-table-wrapper::-webkit-scrollbar {
+    height: 7px;
 }
 
+.shipped-table-wrapper::-webkit-scrollbar-track {
+    background: #171b3e;
+}
+
+.shipped-table-wrapper::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #4c4b88;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.shipped-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+}
 
 /* =========================================================
    TABLE HEADER
@@ -253,23 +414,30 @@
 .shipped-table thead {
     background: linear-gradient(
         135deg,
-        #0B3D91,
-        #1353bf
+        #232052,
+        #373477
     );
 }
 
 .shipped-table th {
     padding: 15px 14px;
-    color: #fff;
+
+    color: #ffffff;
     border: 0;
-    font-size: 12px;
+
+    font-size: 11px;
     font-weight: 800;
-    letter-spacing: .45px;
+    letter-spacing: 0.45px;
+
     text-align: center;
     text-transform: uppercase;
     white-space: nowrap;
 }
 
+.shipped-table th:first-child {
+    text-align: left;
+    padding-left: 20px;
+}
 
 /* =========================================================
    TABLE BODY
@@ -277,51 +445,58 @@
 
 .shipped-table td {
     padding: 15px 14px;
-    border-bottom: 1px solid #eef2f7;
-    color: #334155;
-    font-size: 14px;
+
+    border-bottom: 1px solid #403d80;
+
+    color: #d8d9ed;
+
+    font-size: 13px;
     text-align: center;
     vertical-align: middle;
     white-space: nowrap;
 }
 
+.shipped-table td:first-child {
+    padding-left: 20px;
+    text-align: left;
+}
+
 .shipped-table tbody tr {
-    transition: background .2s ease;
+    background: #2d2a67;
+    transition: background 0.2s ease;
 }
 
 .shipped-table tbody tr:hover {
-    background: #f8fbff;
+    background: #353276;
 }
 
 .shipped-table tbody tr:last-child td {
     border-bottom: 0;
 }
 
+.shipped-cadet-name {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.shipped-date {
+    color: #c5c8df;
+    font-weight: 600;
+}
+
+.shipped-muted {
+    color: #8589aa;
+    font-weight: 600;
+}
 
 /* =========================================================
-   EMPTY STATE
+   SO NUMBER
 ========================================================= */
 
-.shipped-empty {
-    padding: 45px 20px !important;
-    color: #64748b !important;
-    white-space: normal !important;
+.shipped-table td strong {
+    color: #ffffff;
 }
-
-.shipped-empty i {
-    display: block;
-    margin-bottom: 10px;
-    color: #94a3b8;
-    font-size: 34px;
-}
-
-.shipped-empty strong {
-    display: block;
-    margin-bottom: 4px;
-    color: #334155;
-    font-size: 15px;
-}
-
 
 /* =========================================================
    STATUS BADGES
@@ -332,26 +507,36 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-width: 120px;
+
+    min-width: 125px;
     padding: 7px 12px;
+
     border-radius: 999px;
-    color: #fff;
-    font-size: 11px;
+
+    color: #ffffff;
+
+    font-size: 10px;
     font-weight: 800;
     line-height: 1;
     white-space: nowrap;
+
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+}
+
+.shipped-status i {
+    font-size: 10px;
 }
 
 .shipped-status-pending {
-    background: #6b7280;
+    background: #59627d;
 }
 
 .shipped-status-deliberation {
-    background: #f59e0b;
+    background: #d97706;
 }
 
 .shipped-status-endorsement {
-    background: #2563eb;
+    background: #4f63d8;
 }
 
 .shipped-status-shipped {
@@ -362,7 +547,6 @@
     background: #16a34a;
 }
 
-
 /* =========================================================
    VIEW BUTTON
 ========================================================= */
@@ -372,24 +556,93 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    min-height: 38px;
+
+    min-height: 36px;
     padding: 0 14px;
-    border: 0;
+
+    border: 1px solid #5962c5;
     border-radius: 9px;
-    background: #0B3D91;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
+
+    background: #4b54c6;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+
     cursor: pointer;
-    transition: .2s ease;
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .shipped-view-btn:hover {
-    background: #072b67;
-    color: #fff;
+    background: #5b65dc;
+    color: #ffffff;
+
     transform: translateY(-1px);
+
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
 }
 
+.shipped-view-btn:active {
+    transform: translateY(0);
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.shipped-empty {
+    padding: 55px 20px !important;
+
+    color: #aeb1cc !important;
+
+    white-space: normal !important;
+    text-align: center !important;
+
+    background: #2d2a67 !important;
+}
+
+.shipped-empty-icon {
+    width: 62px;
+    height: 62px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 13px;
+
+    border: 1px solid #45437e;
+    border-radius: 16px;
+
+    background: #242354;
+    color: #858bd0;
+
+    font-size: 26px;
+}
+
+.shipped-empty strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.shipped-empty span {
+    color: #999dbd;
+    font-size: 12px;
+    font-weight: 500;
+}
 
 /* =========================================================
    MODAL
@@ -398,13 +651,18 @@
 .shipped-modal {
     position: fixed;
     inset: 0;
+
     z-index: 99999;
+
     display: none;
     align-items: center;
     justify-content: center;
+
     padding: 20px;
-    background: rgba(15, 23, 42, .65);
-    backdrop-filter: blur(4px);
+
+    background: rgba(3, 9, 25, 0.82);
+
+    backdrop-filter: blur(5px);
 }
 
 .shipped-modal.is-open {
@@ -414,27 +672,30 @@
 .shipped-modal-content {
     width: min(720px, 100%);
     max-height: 90vh;
+
     overflow: hidden;
-    background: #fff;
+
+    background: #2d2a67;
+
+    border: 1px solid #484681;
     border-radius: 18px;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, .30);
-    animation: shippedModalIn .2s ease;
+
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.50);
+
+    animation: shippedModalIn 0.22s ease;
 }
 
 @keyframes shippedModalIn {
-
     from {
         opacity: 0;
-        transform: translateY(20px) scale(.98);
+        transform: translateY(20px) scale(0.98);
     }
 
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
-
 }
-
 
 /* =========================================================
    MODAL HEADER
@@ -445,43 +706,93 @@
     align-items: center;
     justify-content: space-between;
     gap: 15px;
+
     padding: 18px 22px;
+
     background: linear-gradient(
         135deg,
-        #0B3D91,
-        #1353bf
+        #252253,
+        #373477
     );
-    color: #fff;
+
+    color: #ffffff;
+
+    border-bottom: 1px solid #45437f;
+}
+
+.shipped-modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.shipped-modal-header-icon {
+    width: 39px;
+    height: 39px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 39px;
+
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.10);
+    color: #aeb8ff;
+
+    font-size: 16px;
 }
 
 .shipped-modal-header h3 {
     min-width: 0;
+
     margin: 0;
-    font-size: 19px;
+
+    color: #ffffff;
+
+    font-size: 18px;
     font-weight: 800;
+}
+
+.shipped-modal-header p {
+    margin: 3px 0 0;
+
+    color: rgba(255, 255, 255, 0.65);
+
+    font-size: 11px;
+    font-weight: 500;
 }
 
 .shipped-modal-close {
     width: 38px;
     height: 38px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     flex: 0 0 38px;
+
     border: 0;
     border-radius: 50%;
-    background: rgba(255,255,255,.12);
-    color: #fff;
-    font-size: 25px;
+
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+
+    font-size: 23px;
     line-height: 1;
+
     cursor: pointer;
-    transition: .2s ease;
+
+    transition: background 0.2s ease;
 }
 
 .shipped-modal-close:hover {
-    background: rgba(255,255,255,.25);
+    background: rgba(255, 255, 255, 0.20);
 }
-
 
 /* =========================================================
    MODAL BODY
@@ -489,21 +800,48 @@
 
 .shipped-modal-body {
     max-height: calc(90vh - 135px);
+
     overflow-y: auto;
+
     padding: 22px;
+
+    background: #2d2a67;
 }
+
+.shipped-modal-body::-webkit-scrollbar {
+    width: 7px;
+}
+
+.shipped-modal-body::-webkit-scrollbar-track {
+    background: #211f4e;
+}
+
+.shipped-modal-body::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #4b4a87;
+}
+
+/* =========================================================
+   DETAILS
+========================================================= */
 
 .shipped-details {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
     gap: 14px;
 }
 
 .shipped-detail {
     min-width: 0;
-    padding: 14px;
-    background: #f8fafc;
-    border: 1px solid #e5e7eb;
+
+    padding: 15px;
+
+    background: #242354;
+
+    border: 1px solid #414078;
     border-radius: 12px;
 }
 
@@ -512,24 +850,47 @@
 }
 
 .shipped-detail-label {
-    display: block;
-    margin-bottom: 6px;
-    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin-bottom: 7px;
+
+    color: #969abc;
+
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: .55px;
+
+    letter-spacing: 0.55px;
     text-transform: uppercase;
+}
+
+.shipped-detail-label i {
+    color: #8995ff;
+    font-size: 10px;
 }
 
 .shipped-detail-value {
     display: block;
-    color: #1e293b;
+
+    color: #ffffff;
+
     font-size: 14px;
     font-weight: 700;
+
     line-height: 1.5;
+
     overflow-wrap: anywhere;
 }
 
+.shipped-detail-value.loading {
+    color: #9297b7;
+    font-weight: 600;
+}
+
+.shipped-detail-value.error {
+    color: #f87171;
+}
 
 /* =========================================================
    MODAL FOOTER
@@ -538,30 +899,44 @@
 .shipped-modal-footer {
     display: flex;
     justify-content: flex-end;
-    padding: 16px 22px;
-    border-top: 1px solid #e5e7eb;
+
+    padding: 15px 22px;
+
+    border-top: 1px solid #414078;
+
+    background: #242354;
 }
 
 .shipped-close-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 7px;
+
     min-height: 40px;
     padding: 0 17px;
-    border: 0;
+
+    border: 1px solid #555979;
     border-radius: 9px;
-    background: #64748b;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
+
+    background: #59627d;
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 800;
+
     cursor: pointer;
-    transition: .2s ease;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
 .shipped-close-btn:hover {
-    background: #475569;
+    background: #69748f;
+    transform: translateY(-1px);
 }
-
 
 /* =========================================================
    RESPONSIVE
@@ -570,19 +945,19 @@
 @media (max-width: 1100px) {
 
     .shipped-stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
     .shipped-filter-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
     .shipped-search {
         grid-column: 1 / -1;
     }
-
 }
-
 
 @media (max-width: 700px) {
 
@@ -593,17 +968,24 @@
     .shipped-header {
         margin-bottom: 18px;
         padding: 17px;
-    }
-
-    .shipped-header h2 {
-        font-size: 21px;
+        border-radius: 14px;
     }
 
     .shipped-header-icon {
-        width: 42px;
-        height: 42px;
-        flex-basis: 42px;
+        width: 43px;
+        height: 43px;
+        flex-basis: 43px;
+
+        border-radius: 11px;
         font-size: 18px;
+    }
+
+    .shipped-header h2 {
+        font-size: 20px;
+    }
+
+    .shipped-header p {
+        font-size: 11px;
     }
 
     .shipped-stats {
@@ -628,6 +1010,7 @@
 
     .shipped-filter-card {
         padding: 15px;
+        border-radius: 14px;
     }
 
     .shipped-filter-grid {
@@ -636,6 +1019,14 @@
 
     .shipped-search {
         grid-column: auto;
+    }
+
+    .shipped-table-top {
+        padding: 15px;
+    }
+
+    .shipped-table-card {
+        border-radius: 14px;
     }
 
     .shipped-modal {
@@ -648,15 +1039,19 @@
     }
 
     .shipped-modal-header {
-        padding: 15px 17px;
+        padding: 14px 15px;
     }
 
     .shipped-modal-header h3 {
-        font-size: 16px;
+        font-size: 15px;
+    }
+
+    .shipped-modal-header p {
+        display: none;
     }
 
     .shipped-modal-body {
-        max-height: calc(95vh - 130px);
+        max-height: calc(95vh - 125px);
         padding: 15px;
     }
 
@@ -669,13 +1064,51 @@
     }
 
     .shipped-modal-footer {
-        padding: 14px 15px;
+        padding: 13px 15px;
     }
 
     .shipped-close-btn {
         width: 100%;
     }
+}
 
+@media (max-width: 420px) {
+
+    .shipped-page {
+        padding: 10px;
+    }
+
+    .shipped-header {
+        padding: 14px;
+    }
+
+    .shipped-header-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+    }
+
+    .shipped-header h2 {
+        font-size: 18px;
+    }
+
+    .shipped-stat {
+        padding: 15px;
+    }
+
+    .shipped-stat-value {
+        font-size: 24px;
+    }
+
+    .shipped-stat-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+    }
+
+    .shipped-filter-control {
+        height: 42px;
+    }
 }
 </style>
 
@@ -692,9 +1125,17 @@
             <i class="fas fa-ship"></i>
         </div>
 
-        <h2>
-            Special Order
-        </h2>
+        <div class="shipped-header-content">
+
+            <h2>
+                Special Order
+            </h2>
+
+            <p>
+                Monitor cadet special order requests and CHED shipping status.
+            </p>
+
+        </div>
 
     </div>
 
@@ -801,6 +1242,17 @@
 
     <div class="shipped-filter-card">
 
+        <div class="shipped-filter-header">
+
+            <i class="fas fa-filter"></i>
+
+            <span>
+                Filter Records
+            </span>
+
+        </div>
+
+
         <form
             id="shippedFilterForm"
             method="GET"
@@ -892,6 +1344,25 @@
 
     <div class="shipped-table-card">
 
+        <div class="shipped-table-top">
+
+            <div class="shipped-table-title">
+
+                <i class="fas fa-list-check"></i>
+
+                <span>
+                    Special Order Records
+                </span>
+
+            </div>
+
+            <div class="shipped-table-count">
+                {{ $orders->count() }} Records
+            </div>
+
+        </div>
+
+
         <div class="shipped-table-wrapper">
 
             <table class="shipped-table">
@@ -900,7 +1371,9 @@
 
                     <tr>
 
-                        <th>Cadet</th>
+                        <th>
+                            Cadet
+                        </th>
 
                         <th>
                             Deliberation Date
@@ -985,9 +1458,11 @@
                             {{-- CADET --}}
                             <td>
 
-                                <strong>
+                                <span class="shipped-cadet-name">
+
                                     {{ $order->cadet->full_name ?? '-' }}
-                                </strong>
+
+                                </span>
 
                             </td>
 
@@ -997,13 +1472,19 @@
 
                                 @if($order->deliberation_date)
 
-                                    {{ \Carbon\Carbon::parse(
-                                        $order->deliberation_date
-                                    )->format('M d, Y') }}
+                                    <span class="shipped-date">
+
+                                        {{ \Carbon\Carbon::parse(
+                                            $order->deliberation_date
+                                        )->format('M d, Y') }}
+
+                                    </span>
 
                                 @else
 
-                                    —
+                                    <span class="shipped-muted">
+                                        —
+                                    </span>
 
                                 @endif
 
@@ -1031,13 +1512,19 @@
 
                                 @if($order->obt_endorsement_date)
 
-                                    {{ \Carbon\Carbon::parse(
-                                        $order->obt_endorsement_date
-                                    )->format('M d, Y') }}
+                                    <span class="shipped-date">
+
+                                        {{ \Carbon\Carbon::parse(
+                                            $order->obt_endorsement_date
+                                        )->format('M d, Y') }}
+
+                                    </span>
 
                                 @else
 
-                                    —
+                                    <span class="shipped-muted">
+                                        —
+                                    </span>
 
                                 @endif
 
@@ -1046,7 +1533,21 @@
 
                             {{-- SO NUMBER --}}
                             <td>
-                                {{ $order->so_number ?: '—' }}
+
+                                @if($order->so_number)
+
+                                    <strong>
+                                        {{ $order->so_number }}
+                                    </strong>
+
+                                @else
+
+                                    <span class="shipped-muted">
+                                        —
+                                    </span>
+
+                                @endif
+
                             </td>
 
 
@@ -1055,13 +1556,19 @@
 
                                 @if($order->so_date_issued)
 
-                                    {{ \Carbon\Carbon::parse(
-                                        $order->so_date_issued
-                                    )->format('M d, Y') }}
+                                    <span class="shipped-date">
+
+                                        {{ \Carbon\Carbon::parse(
+                                            $order->so_date_issued
+                                        )->format('M d, Y') }}
+
+                                    </span>
 
                                 @else
 
-                                    —
+                                    <span class="shipped-muted">
+                                        —
+                                    </span>
 
                                 @endif
 
@@ -1087,6 +1594,7 @@
 
                         </tr>
 
+
                     @empty
 
                         <tr>
@@ -1096,10 +1604,14 @@
                                 class="shipped-empty"
                             >
 
-                                <i class="fas fa-box-open"></i>
+                                <div class="shipped-empty-icon">
+
+                                    <i class="fas fa-box-open"></i>
+
+                                </div>
 
                                 <strong>
-                                    No Shipped On Order records found.
+                                    No Special Order records found.
                                 </strong>
 
                                 <span>
@@ -1141,16 +1653,29 @@
     >
 
         {{-- MODAL HEADER --}}
-
         <div class="shipped-modal-header">
 
-            <h3 id="shippedModalTitle">
+            <div class="shipped-modal-header-left">
 
-                <i class="fas fa-ship"></i>
+                <div class="shipped-modal-header-icon">
 
-                Special Order Details
+                    <i class="fas fa-ship"></i>
 
-            </h3>
+                </div>
+
+                <div>
+
+                    <h3 id="shippedModalTitle">
+                        Special Order Details
+                    </h3>
+
+                    <p>
+                        Complete order information
+                    </p>
+
+                </div>
+
+            </div>
 
 
             <button
@@ -1166,17 +1691,19 @@
 
 
         {{-- MODAL BODY --}}
-
         <div class="shipped-modal-body">
 
             <div class="shipped-details">
 
                 {{-- CADET --}}
-
                 <div class="shipped-detail shipped-detail-full">
 
                     <span class="shipped-detail-label">
+
+                        <i class="fas fa-user"></i>
+
                         Cadet
+
                     </span>
 
                     <span
@@ -1190,11 +1717,14 @@
 
 
                 {{-- DELIBERATION DATE --}}
-
                 <div class="shipped-detail">
 
                     <span class="shipped-detail-label">
+
+                        <i class="fas fa-calendar"></i>
+
                         Deliberation Date
+
                     </span>
 
                     <span
@@ -1208,11 +1738,14 @@
 
 
                 {{-- STATUS --}}
-
                 <div class="shipped-detail">
 
                     <span class="shipped-detail-label">
+
+                        <i class="fas fa-circle-info"></i>
+
                         Status
+
                     </span>
 
                     <span
@@ -1226,11 +1759,14 @@
 
 
                 {{-- ENDORSEMENT DATE --}}
-
                 <div class="shipped-detail">
 
                     <span class="shipped-detail-label">
+
+                        <i class="fas fa-paper-plane"></i>
+
                         OBT Endorsement Date
+
                     </span>
 
                     <span
@@ -1244,11 +1780,14 @@
 
 
                 {{-- SO NUMBER --}}
-
                 <div class="shipped-detail">
 
                     <span class="shipped-detail-label">
+
+                        <i class="fas fa-file-invoice"></i>
+
                         CHED SO Number
+
                     </span>
 
                     <span
@@ -1262,11 +1801,14 @@
 
 
                 {{-- DATE ISSUED --}}
-
                 <div class="shipped-detail">
 
                     <span class="shipped-detail-label">
+
+                        <i class="fas fa-calendar-check"></i>
+
                         Date Issued
+
                     </span>
 
                     <span
@@ -1280,11 +1822,14 @@
 
 
                 {{-- REMARKS --}}
-
                 <div class="shipped-detail shipped-detail-full">
 
                     <span class="shipped-detail-label">
+
+                        <i class="fas fa-comment"></i>
+
                         Remarks
+
                     </span>
 
                     <span
@@ -1302,7 +1847,6 @@
 
 
         {{-- MODAL FOOTER --}}
-
         <div class="shipped-modal-footer">
 
             <button
@@ -1310,7 +1854,11 @@
                 class="shipped-close-btn"
                 onclick="closeShippedModal()"
             >
+
+                <i class="fas fa-xmark"></i>
+
                 Close
+
             </button>
 
         </div>
@@ -1330,32 +1878,27 @@
        ELEMENTS
     ===================================================== */
 
-    const filterForm = document.getElementById(
-        'shippedFilterForm'
-    );
+    const filterForm =
+        document.getElementById('shippedFilterForm');
 
-    const courseFilter = document.getElementById(
-        'shippedCourseFilter'
-    );
+    const courseFilter =
+        document.getElementById('shippedCourseFilter');
 
-    const batchFilter = document.getElementById(
-        'shippedBatchFilter'
-    );
+    const batchFilter =
+        document.getElementById('shippedBatchFilter');
 
-    const searchInput = document.getElementById(
-        'shippedSearch'
-    );
+    const searchInput =
+        document.getElementById('shippedSearch');
 
-    const modal = document.getElementById(
-        'shippedViewModal'
-    );
+    const modal =
+        document.getElementById('shippedViewModal');
 
 
     /* =====================================================
        FILTERS
     ===================================================== */
 
-    if (courseFilter) {
+    if (courseFilter && filterForm) {
 
         courseFilter.addEventListener(
             'change',
@@ -1369,7 +1912,7 @@
     }
 
 
-    if (batchFilter) {
+    if (batchFilter && filterForm) {
 
         batchFilter.addEventListener(
             'change',
@@ -1385,7 +1928,8 @@
 
     let searchTimer = null;
 
-    if (searchInput) {
+
+    if (searchInput && filterForm) {
 
         searchInput.addEventListener(
             'input',
@@ -1453,7 +1997,7 @@
 
 
     /* =====================================================
-       PUBLIC FUNCTIONS
+       OPEN MODAL
     ===================================================== */
 
     window.openShippedModal = function (id) {
@@ -1463,53 +2007,56 @@
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Reset values
-        |--------------------------------------------------------------------------
-        */
+        /* -------------------------------------------------
+           RESET VALUES
+        ------------------------------------------------- */
 
         setShippedValue(
             'shippedCadet',
-            'Loading...'
+            'Loading...',
+            'loading'
         );
 
         setShippedValue(
             'shippedDeliberationDate',
-            'Loading...'
+            'Loading...',
+            'loading'
         );
 
         setShippedValue(
             'shippedStatus',
-            'Loading...'
+            'Loading...',
+            'loading'
         );
 
         setShippedValue(
             'shippedEndorsementDate',
-            'Loading...'
+            'Loading...',
+            'loading'
         );
 
         setShippedValue(
             'shippedSONumber',
-            'Loading...'
+            'Loading...',
+            'loading'
         );
 
         setShippedValue(
             'shippedSODate',
-            'Loading...'
+            'Loading...',
+            'loading'
         );
 
         setShippedValue(
             'shippedRemarks',
-            'Loading...'
+            'Loading...',
+            'loading'
         );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Open modal
-        |--------------------------------------------------------------------------
-        */
+        /* -------------------------------------------------
+           OPEN MODAL
+        ------------------------------------------------- */
 
         modal.classList.add('is-open');
 
@@ -1521,25 +2068,17 @@
         document.body.style.overflow = 'hidden';
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Detail URL
-        |--------------------------------------------------------------------------
-        |
-        | IMPORTANT:
-        | Keep your existing detail endpoint here.
-        |
-        */
+        /* -------------------------------------------------
+           DETAIL URL
+        ------------------------------------------------- */
 
         const detailUrl =
             `/super-admin/shipped-so/${id}`;
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Fetch record
-        |--------------------------------------------------------------------------
-        */
+        /* -------------------------------------------------
+           FETCH RECORD
+        ------------------------------------------------- */
 
         fetch(
             detailUrl,
@@ -1617,50 +2156,61 @@
         .catch(function (error) {
 
             console.error(
-                'Shipped On Order error:',
+                'Special Order error:',
                 error
             );
 
 
             setShippedValue(
                 'shippedCadet',
-                'Unable to load'
+                'Unable to load',
+                'error'
             );
 
             setShippedValue(
                 'shippedDeliberationDate',
-                'Unable to load'
+                'Unable to load',
+                'error'
             );
 
             setShippedValue(
                 'shippedStatus',
-                'Unable to load'
+                'Unable to load',
+                'error'
             );
 
             setShippedValue(
                 'shippedEndorsementDate',
-                'Unable to load'
+                'Unable to load',
+                'error'
             );
 
             setShippedValue(
                 'shippedSONumber',
-                'Unable to load'
+                'Unable to load',
+                'error'
             );
 
             setShippedValue(
                 'shippedSODate',
-                'Unable to load'
+                'Unable to load',
+                'error'
             );
 
             setShippedValue(
                 'shippedRemarks',
-                'Unable to load this record.'
+                'Unable to load this record.',
+                'error'
             );
 
         });
 
     };
 
+
+    /* =====================================================
+       CLOSE MODAL
+    ===================================================== */
 
     window.closeShippedModal = function () {
 
@@ -1681,12 +2231,13 @@
 
 
     /* =====================================================
-       HELPERS
+       SET VALUE
     ===================================================== */
 
     function setShippedValue(
         elementId,
-        value
+        value,
+        state = ''
     ) {
 
         const element =
@@ -1699,8 +2250,21 @@
         element.textContent =
             value || '—';
 
+        element.classList.remove(
+            'loading',
+            'error'
+        );
+
+        if (state) {
+            element.classList.add(state);
+        }
+
     }
 
+
+    /* =====================================================
+       FORMAT DATE
+    ===================================================== */
 
     function formatShippedDate(date) {
 
@@ -1708,10 +2272,8 @@
             return '—';
         }
 
-
         const parsedDate =
             new Date(date);
-
 
         if (
             Number.isNaN(
@@ -1723,7 +2285,6 @@
 
         }
 
-
         return parsedDate.toLocaleDateString(
             'en-US',
             {
@@ -1734,7 +2295,6 @@
         );
 
     }
-
 
 })();
 </script>

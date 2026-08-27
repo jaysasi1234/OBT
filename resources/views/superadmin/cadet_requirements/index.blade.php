@@ -1,23 +1,26 @@
 @extends('layouts.superadmin')
 
 @section('header-title', 'Cadet Requirement Monitoring')
+
 @section('content')
 
 <style>
-/* =========================================
-   PAGE LAYOUT
-========================================= */
+
+/* =========================================================
+   MAIN PAGE
+========================================================= */
 
 .page {
     padding: 30px;
-    background: #f8fafc;
     min-height: 100vh;
+    background: #07152f;
+    color: #ffffff;
 }
 
 
-/* =========================================
+/* =========================================================
    PAGE HEADER
-========================================= */
+========================================================= */
 
 .page-header {
     display: flex;
@@ -30,19 +33,23 @@
     margin: 0;
     font-size: 30px;
     font-weight: 800;
-    color: #0f172a;
+    color: #ffffff;
+}
+
+.page-header h2 i {
+    color: #60a5fa;
 }
 
 .page-header p {
     margin-top: 8px;
-    color: #64748b;
+    color: #b8c7e6;
     font-size: 15px;
 }
 
 
-/* =========================================
+/* =========================================================
    SUMMARY CARDS
-========================================= */
+========================================================= */
 
 .summary-grid {
     display: grid;
@@ -52,7 +59,7 @@
 }
 
 .summary-card {
-    background: #ffffff;
+    background: #2d2a67;
     padding: 22px;
     border-radius: 18px;
 
@@ -60,19 +67,27 @@
     align-items: center;
     gap: 18px;
 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border: 1px solid rgba(129, 140, 248, 0.18);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, .25);
 
     transition: .25s ease;
 }
 
 .summary-card:hover {
     transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, .35);
 }
 
 
 .summary-icon {
     width: 60px;
     height: 60px;
+
+    flex-shrink: 0;
 
     border-radius: 16px;
 
@@ -85,23 +100,23 @@
 
 
 .icon-blue {
-    background: #dbeafe;
-    color: #2563eb;
+    background: rgba(59, 130, 246, .18);
+    color: #60a5fa;
 }
 
 .icon-green {
-    background: #dcfce7;
-    color: #16a34a;
+    background: rgba(34, 197, 94, .18);
+    color: #4ade80;
 }
 
 .icon-yellow {
-    background: #fef3c7;
-    color: #d97706;
+    background: rgba(234, 179, 8, .18);
+    color: #facc15;
 }
 
 .icon-red {
-    background: #fee2e2;
-    color: #dc2626;
+    background: rgba(239, 68, 68, .18);
+    color: #f87171;
 }
 
 
@@ -110,23 +125,23 @@
 
     font-size: 28px;
     font-weight: 800;
-    color: #0f172a;
+
+    color: #ffffff;
 }
 
 
 .summary-card span {
-    color: #64748b;
+    color: #b8c7e6;
     font-size: 14px;
 }
 
 
-
-/* =========================================
+/* =========================================================
    FILTER TOOLBAR
-========================================= */
+========================================================= */
 
 .monitor-toolbar {
-    background: #ffffff;
+    background: #2d2a67;
 
     padding: 20px;
 
@@ -142,41 +157,52 @@
 
     margin-bottom: 30px;
 
-    box-shadow: 0 8px 20px rgba(0,0,0,.05);
+    border: 1px solid rgba(129, 140, 248, .18);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, .25);
 }
 
 
 .search-box {
     flex: 1;
+    min-width: 220px;
 }
 
 
 .search-box input {
-
     width: 100%;
 
     padding: 13px 16px;
 
     border-radius: 12px;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(129, 140, 248, .25);
 
     outline: none;
+
+    background: #07152f;
+
+    color: #ffffff;
 
     transition: .2s;
 }
 
 
 .search-box input:focus {
+    border-color: #6366f1;
 
-    border-color: #2563eb;
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, .20);
+}
 
-    box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+
+.search-box input::placeholder {
+    color: #94a3c7;
 }
 
 
 .filters {
-
     display: flex;
 
     gap: 10px;
@@ -186,61 +212,473 @@
 
 
 .filters select {
-
     min-width: 170px;
 
     padding: 12px 15px;
 
     border-radius: 12px;
 
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(129, 140, 248, .25);
 
     outline: none;
+
+    background: #07152f;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    transition: .2s;
 }
 
 
-
-
-
-.cadet-card:hover {
-
-    transform: translateY(-5px);
+.filters select:focus {
+    border-color: #6366f1;
 
     box-shadow:
-    0 15px 35px rgba(0,0,0,.12);
+        0 0 0 3px rgba(99, 102, 241, .20);
 }
 
 
+.filters select option {
+    background: #0d2042;
+    color: #ffffff;
+}
 
 
-.cadet-profile h4 {
+/* =========================================================
+   TABLE CARD
+========================================================= */
 
+.card {
+    width: 100%;
+
+    background: #2d2a67;
+
+    border-radius: 18px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    border: 1px solid rgba(129, 140, 248, .18);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, .30);
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table {
+    width: 100%;
+
+    min-width: 1000px;
+
+    border-collapse: collapse;
+
+    background: #2d2a67;
+}
+
+
+.table thead {
+    background: #4f46e5;
+    color: #ffffff;
+}
+
+
+.table th {
+    padding: 16px;
+
+    text-transform: uppercase;
+
+    font-size: 14px;
+
+    letter-spacing: .5px;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    color: #ffffff;
+}
+
+
+.table td {
+    padding: 16px;
+
+    border-bottom:
+        1px solid rgba(148, 163, 184, .15);
+
+    vertical-align: middle;
+
+    text-align: center;
+
+    color: #f8fafc;
+
+    white-space: nowrap;
+
+    background: #2d2a67;
+}
+
+
+.table tbody tr {
+    transition: background .2s ease;
+}
+
+
+.table tbody tr:hover td {
+    background: rgba(99, 102, 241, .12);
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   TABLE SMALL TEXT
+========================================================= */
+
+.table small {
+    color: #b8c7e6 !important;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-wrap {
+    min-width: 180px;
+}
+
+
+.progress-bar {
+    width: 100%;
+
+    height: 10px;
+
+    background: #18264a;
+
+    border-radius: 50px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(129, 140, 248, .15);
+}
+
+
+.progress-fill {
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #3b82f6,
+            #60a5fa
+        );
+
+    border-radius: 50px;
+
+    transition: width .3s ease;
+}
+
+
+/* =========================================================
+   PRIMARY BUTTON
+========================================================= */
+
+.btn-primary {
+    background: #4f46e5;
+
+    color: #ffffff;
+
+    border: 1px solid rgba(255,255,255,.08);
+
+    border-radius: 10px;
+
+    padding: 10px 18px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s ease;
+}
+
+
+.btn-primary:hover {
+    background: #6366f1;
+
+    color: #ffffff;
+
+    transform: translateY(-1px);
+}
+
+
+.btn-primary i {
+    margin-right: 5px;
+}
+
+
+/* =========================================================
+   EMPTY TABLE STATE
+========================================================= */
+
+.table tbody tr td[colspan] {
+    background: #2d2a67;
+
+    color: #b8c7e6 !important;
+
+    padding: 40px 20px;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   CHECKLIST MODAL
+========================================================= */
+
+.modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(3, 10, 28, .82);
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+}
+
+
+.modal-content {
+    width: 950px;
+
+    max-width: calc(100vw - 40px);
+
+    height: auto;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #2d2a67;
+
+    color: #ffffff;
+
+    border-radius: 22px;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(129, 140, 248, .25);
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.50);
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.modal-header-custom {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+
+    padding-bottom: 15px;
+
+    border-bottom:
+        1px solid rgba(148, 163, 184, .20);
+}
+
+
+.modal-header-custom h3 {
     margin: 0;
 
-    font-size: 20px;
+    font-size: 24px;
 
     font-weight: 800;
 
-    color: #0f172a;
+    color: #ffffff;
 }
 
 
-.cadet-profile small {
-
-    color: #64748b;
-
+.modal-header-custom h3 i {
+    color: #60a5fa;
 }
 
 
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
 
-/* =========================================
-   STATUS BADGE
-========================================= */
+.close-btn {
+    width: 40px;
 
-.status-badge {
+    height: 40px;
 
-    display: inline-block;
+    border: 1px solid rgba(148, 163, 184, .15);
 
+    border-radius: 50%;
+
+    background: #18264a;
+
+    color: #dbeafe;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+
+.close-btn:hover {
+    background: #dc2626;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   EMPTY REQUIREMENTS
+========================================================= */
+
+.empty-requirements {
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 30px 20px;
+
+    min-height: 0;
+
+    height: auto;
+
+    background: #2d2a67;
+
+    color: #b8c7e6;
+
+    border-radius: 15px;
+}
+
+
+.empty-requirements i {
+    font-size: 40px;
+
+    color: #60a5fa;
+
+    margin-bottom: 12px;
+}
+
+
+.empty-requirements h5 {
+    margin: 0 0 6px 0;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #ffffff;
+}
+
+
+.empty-requirements p {
+    margin: 0;
+
+    font-size: 14px;
+
+    color: #b8c7e6;
+}
+
+
+/* =========================================================
+   REQUIREMENT CARD
+========================================================= */
+
+.requirement-card {
+    background: #242257;
+
+    border:
+        1px solid rgba(129, 140, 248, .18);
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    margin-bottom: 20px;
+
+    transition: .2s;
+}
+
+
+.requirement-card:hover {
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.25);
+
+    border-color:
+        rgba(129, 140, 248, .30);
+}
+
+
+/* =========================================================
+   REQUIREMENT HEADER
+========================================================= */
+
+.req-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+
+.req-header h3 {
+    margin: 0;
+
+    font-size: 19px;
+
+    font-weight: 800;
+
+    color: #ffffff;
+}
+
+
+.req-header h3 i {
+    color: #60a5fa;
+}
+
+
+/* =========================================================
+   REQUIREMENT STATUS
+========================================================= */
+
+.requirement-status {
     padding: 7px 15px;
 
     border-radius: 50px;
@@ -251,600 +689,325 @@
 }
 
 
-.status-ongoing {
+.status-approved {
+    background: rgba(34, 197, 94, .18);
 
-    background: #dcfce7;
+    color: #4ade80;
 
-    color: #166534;
+    border: 1px solid rgba(74, 222, 128, .20);
 }
 
 
-.status-completed {
+.status-submitted {
+    background: rgba(59, 130, 246, .18);
 
-    background: #dbeafe;
+    color: #60a5fa;
 
-    color: #1d4ed8;
+    border: 1px solid rgba(96, 165, 250, .20);
 }
 
 
+.status-pending {
+    background: rgba(234, 179, 8, .18);
 
-/* =========================================
-   CADET INFORMATION
-========================================= */
+    color: #facc15;
 
-
-
-.cadet-info p {
-
-    margin-bottom: 8px;
-
-    color: #475569;
-
+    border: 1px solid rgba(250, 204, 21, .20);
 }
 
 
+.status-rejected {
+    background: rgba(239, 68, 68, .18);
 
-/* =========================================
-   PROGRESS BAR
-========================================= */
+    color: #f87171;
 
-
-.progress-bar {
-
-    height: 100%;
-
-    background:
-    linear-gradient(
-        90deg,
-        #2563eb,
-        #22c55e
-    );
-}
-
-.card{
-    background:#fff;
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-}
-
-.table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-.table thead{
-    background:#0f172a;
-    color:#fff;
-}
-
-.table th{
-    padding:16px;
-    text-transform:uppercase;
-    font-size:14px;
-    letter-spacing:.5px;
-    text-align:center;
-}
-
-.table td{
-    padding:16px;
-    border-bottom:1px solid #ececec;
-    vertical-align:middle;
-    text-align:center;
-}
-
-.table tbody tr:hover{
-    background:#f8fbff;
-}
-
-.progress-wrap{
-    min-width:180px;
-}
-
-.progress-bar{
-    width:100%;
-    height:10px;
-    background:#e5e7eb;
-    border-radius:50px;
-    overflow:hidden;
-}
-
-.progress-fill{
-    height:100%;
-    background:linear-gradient(90deg,#2563eb,#60a5fa);
-}
-
-.btn-primary{
-    background:#2563eb;
-    color:#fff;
-    border:none;
-    border-radius:10px;
-    padding:10px 18px;
-}
-
-.btn-primary:hover{
-    background:#1d4ed8;
+    border: 1px solid rgba(248, 113, 113, .20);
 }
 
 
-/* =========================================
+/* =========================================================
+   REQUIREMENT INFORMATION
+========================================================= */
+
+.req-body {
+    background: #07152f;
+
+    padding: 18px;
+
+    border-radius: 14px;
+
+    border:
+        1px solid rgba(129, 140, 248, .12);
+}
+
+
+.req-body p {
+    margin-bottom: 10px;
+
+    color: #b8c7e6;
+}
+
+
+.req-body p:last-child {
+    margin-bottom: 0;
+}
+
+
+.req-body strong {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   ATTACHMENT AREA
+========================================================= */
+
+.attachment-section {
+    margin-top: 20px;
+
+    padding: 18px;
+
+    background: #07152f;
+
+    border-radius: 15px;
+
+    border:
+        1px solid rgba(129, 140, 248, .12);
+}
+
+
+.attachment-title {
+    font-weight: 700;
+
+    margin-bottom: 12px;
+
+    color: #ffffff;
+}
+
+
+.attachment-section button,
+.attachment-section a {
+    border-radius: 10px;
+
+    padding: 9px 15px;
+}
+
+
+/* =========================================================
+   VIEW ONLY FOOTER
+========================================================= */
+
+.req-footer {
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+
+.req-footer button {
+    flex: 1;
+
+    border-radius: 12px;
+
+    padding: 12px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PREVIEW MODAL
+========================================================= */
+
+.preview-container {
+    width: 100%;
+
+    min-height: 400px;
+
+    background: #07152f;
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    border:
+        1px solid rgba(129, 140, 248, .12);
+}
+
+
+/* =========================================================
+   BOOTSTRAP / TEXT OVERRIDES
+========================================================= */
+
+.text-primary {
+    color: #60a5fa !important;
+}
+
+
+.text-muted {
+    color: #b8c7e6 !important;
+}
+
+
+.alert-danger {
+    background: rgba(220, 38, 38, .15);
+
+    border:
+        1px solid rgba(248, 113, 113, .25);
+
+    color: #fca5a5;
+}
+
+
+/* =========================================================
    RESPONSIVE
-========================================= */
+========================================================= */
 
-@media(max-width:768px) {
+@media(max-width: 992px) {
 
     .page {
+        padding: 20px;
+    }
 
+    .summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media(max-width: 768px) {
+
+    .page {
         padding: 15px;
-
     }
 
 
     .page-header h2 {
-
         font-size: 24px;
-
     }
 
 
     .monitor-toolbar {
-
         flex-direction: column;
 
         align-items: stretch;
+    }
 
+
+    .search-box {
+        width: 100%;
     }
 
 
     .filters {
-
         width: 100%;
 
+        flex-direction: column;
     }
 
 
     .filters select {
-
         width: 100%;
-
     }
 
 
-    .cadet-grid {
-
+    .summary-grid {
         grid-template-columns: 1fr;
 
+        gap: 15px;
     }
 
-}
 
-/* =========================================
-   CHECKLIST MODAL
-========================================= */
+    .card {
+        overflow-x: auto;
+    }
 
 
-.modal {
+    .modal {
+        padding: 15px;
+    }
 
-    display: none;
 
-    position: fixed;
+    .modal-content {
+        max-width:
+            calc(100vw - 30px);
 
-    inset: 0;
+        max-height: 95vh;
 
-    background: rgba(15,23,42,.65);
-
-    justify-content: center;
-
-    align-items: center;
-
-    z-index: 9999;
-
-    padding: 20px;
-
-}
-
-.modal-content {
-    width: 950px;
-    max-width: calc(100vw - 40px);
-
-    height: auto;
-    max-height: 90vh;
-
-    overflow-y: auto;
-
-    background: #ffffff;
-
-    border-radius: 22px;
-
-    padding: 30px;
-
-    box-sizing: border-box;
-
-    box-shadow: 0 25px 50px rgba(0,0,0,.2);
-}
-
-/* =========================================
-   EMPTY REQUIREMENTS STATE
-========================================= */
-
-.empty-requirements {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    text-align: center;
-
-    padding: 30px 20px;
-
-    min-height: 0;
-    height: auto;
-
-    color: #475569;
-}
-
-.empty-requirements i {
-    font-size: 32px;
-    color: #2563eb;
-    margin-bottom: 12px;
-}
-
-.empty-requirements h5 {
-    margin: 0 0 6px 0;
-
-    font-size: 18px;
-    font-weight: 700;
-
-    color: #0f172a;
-}
-
-.empty-requirements p {
-    margin: 0;
-
-    font-size: 14px;
-    color: #64748b;
-}
-/* =========================================
-   MODAL HEADER
-========================================= */
-
-
-.modal-header-custom {
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:25px;
-
-    padding-bottom:15px;
-
-    border-bottom:1px solid #e2e8f0;
-
-}
-
-
-.modal-header-custom h3 {
-
-    margin:0;
-
-    font-size:24px;
-
-    font-weight:800;
-
-    color:#0f172a;
-
-}
-
-
-
-.close-btn {
-
-    width:40px;
-
-    height:40px;
-
-    border:none;
-
-    border-radius:50%;
-
-    background:#f1f5f9;
-
-    color:#475569;
-
-    font-size:20px;
-
-    cursor:pointer;
-
-    transition:.2s;
-
-}
-
-
-.close-btn:hover {
-
-    background:#fee2e2;
-
-    color:#dc2626;
-
-}
-
-
-
-
-
-/* =========================================
-   REQUIREMENT CARD
-========================================= */
-
-
-.requirement-card {
-
-    background:#ffffff;
-
-    border:1px solid #e2e8f0;
-
-    border-radius:18px;
-
-    padding:22px;
-
-    margin-bottom:20px;
-
-    transition:.2s;
-
-}
-
-
-.requirement-card:hover {
-
-    box-shadow:
-    0 10px 25px rgba(0,0,0,.08);
-
-}
-
-
-
-
-.req-header {
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:20px;
-
-}
-
-
-.req-header h3 {
-
-    margin:0;
-
-    font-size:19px;
-
-    font-weight:800;
-
-}
-
-
-
-
-/* STATUS BADGE */
-
-.requirement-status {
-
-    padding:7px 15px;
-
-    border-radius:50px;
-
-    font-size:12px;
-
-    font-weight:700;
-
-}
-
-.status-approved {
-
-    background:#dcfce7;
-
-    color:#166534;
-
-}
-
-.status-submitted {
-
-    background:#dbeafe;
-
-    color:#1d4ed8;
-
-}
-
-.status-pending {
-
-    background:#fef3c7;
-
-    color:#92400e;
-
-}
-
-.status-rejected {
-
-    background:#fee2e2;
-
-    color:#b91c1c;
-
-}
-/* =========================================
-   REQUIREMENT INFORMATION
-========================================= */
-
-
-.req-body {
-
-    background:#f8fafc;
-
-    padding:18px;
-
-    border-radius:14px;
-
-}
-
-.req-body p {
-
-    margin-bottom:10px;
-
-    color:#475569;
-
-}
-
-.req-body strong {
-
-    color:#0f172a;
-
-}
-/* =========================================
-   ATTACHMENT AREA
-========================================= */
-.attachment-section {
-
-
-    margin-top:20px;
-
-    padding:18px;
-
-    background:#f8fafc;
-
-    border-radius:15px;
-
-}
-
-.attachment-title {
-
-    font-weight:700;
-
-    margin-bottom:12px;
-
-}
-
-.attachment-section button,
-
-.attachment-section a {
-
-
-    border-radius:10px;
-
-    padding:9px 15px;
-
-}
-/* =========================================
-   ADMIN ACTION
-========================================= */
-.req-footer {
-
-    display:flex;
-
-    gap:12px;
-
-    margin-top:20px;
-
-}
-
-.req-footer button {
-
-
-    flex:1;
-
-    border-radius:12px;
-
-    padding:12px;
-
-    font-weight:700;
-
-}
-/* =========================================
-   PREVIEW MODAL
-========================================= */
-
-
-.preview-container {
-
-
-    width:100%;
-
-    min-height:400px;
-
-    background:#f8fafc;
-
-    border-radius:15px;
-
-    padding:15px;
-
-}
-
-/* =========================================
-   FORCE TABLE TEXT VISIBILITY
-========================================= */
-
-.card .table tbody td {
-    color: #0f172a !important;
-    background: #ffffff;
-}
-
-.card .table tbody tr:hover td {
-    color: #0f172a !important;
-    background: #f8fbff;
-}
-
-.card .table tbody td small {
-    color: #64748b !important;
-}
-
-.monitor-toolbar input,
-.monitor-toolbar select {
-    color: #0f172a !important;
-    background: #ffffff !important;
-}
-
-.monitor-toolbar input::placeholder {
-    color: #64748b !important;
-}
-
-.monitor-toolbar select option {
-    color: #0f172a !important;
-    background: #ffffff;
-}
-/* MOBILE */
-
-@media(max-width:768px){
+        padding: 20px;
+    }
 
 
     .req-header {
+        flex-direction: column;
 
-        flex-direction:column;
+        align-items: flex-start;
 
-        align-items:flex-start;
-
-        gap:10px;
-
+        gap: 10px;
     }
 
 
     .req-footer {
+        flex-direction: column;
+    }
 
-        flex-direction:column;
+}
 
+
+@media(max-width: 480px) {
+
+    .page {
+        padding: 12px;
     }
 
 
+    .page-header h2 {
+        font-size: 21px;
+    }
+
+
+    .page-header p {
+        font-size: 13px;
+    }
+
+
+    .summary-card {
+        padding: 18px;
+    }
+
+
+    .summary-icon {
+        width: 50px;
+        height: 50px;
+
+        font-size: 21px;
+    }
+
+
+    .summary-card h3 {
+        font-size: 24px;
+    }
+
+
+    .modal-content {
+        padding: 15px;
+    }
+
+
+    .modal-header-custom h3 {
+        font-size: 18px;
+    }
+
 }
+
 </style>
 
-<div class="page">
 
+<div class="page">
 
     {{-- =========================================
          PAGE HEADER
@@ -854,10 +1017,10 @@
 
         <div>
 
-<h2>
-    <i class="fas fa-user-check text-primary me-2"></i>
-    Cadet Requirement Monitoring
-</h2>
+            <h2>
+                <i class="fas fa-user-check me-2"></i>
+                Cadet Requirement Monitoring
+            </h2>
 
             <p>
                 Monitor deployed cadets and their onboard requirement progress.
@@ -868,13 +1031,11 @@
     </div>
 
 
-
     {{-- =========================================
          SUMMARY CARDS
     ========================================== --}}
 
     <div class="summary-grid">
-
 
         {{-- TOTAL CADETS --}}
 
@@ -885,7 +1046,6 @@
                 <i class="fas fa-users"></i>
 
             </div>
-
 
             <div>
 
@@ -902,8 +1062,6 @@
         </div>
 
 
-
-
         {{-- APPROVED --}}
 
         <div class="summary-card">
@@ -914,7 +1072,6 @@
 
             </div>
 
-
             <div>
 
                 <h3>
@@ -923,7 +1080,7 @@
                         $cadets->sum(function ($cadet) {
 
                             return $cadet->onboardRequirements
-                                ->where('status','Approved')
+                                ->where('status', 'Approved')
                                 ->count();
 
                         })
@@ -931,24 +1088,18 @@
 
                 </h3>
 
-
                 <span>
                     Approved Requirements
                 </span>
-
 
             </div>
 
         </div>
 
 
-
-
-
         {{-- PENDING --}}
 
         <div class="summary-card">
-
 
             <div class="summary-icon icon-yellow">
 
@@ -956,8 +1107,6 @@
 
             </div>
 
-
-
             <div>
 
                 <h3>
@@ -966,7 +1115,7 @@
                         $cadets->sum(function ($cadet) {
 
                             return $cadet->onboardRequirements
-                                ->where('status','Pending')
+                                ->where('status', 'Pending')
                                 ->count();
 
                         })
@@ -974,25 +1123,18 @@
 
                 </h3>
 
-
                 <span>
                     Pending Review
                 </span>
 
-
             </div>
 
-
         </div>
-
-
-
 
 
         {{-- REJECTED --}}
 
         <div class="summary-card">
-
 
             <div class="summary-icon icon-red">
 
@@ -1000,8 +1142,6 @@
 
             </div>
 
-
-
             <div>
 
                 <h3>
@@ -1010,7 +1150,7 @@
                         $cadets->sum(function ($cadet) {
 
                             return $cadet->onboardRequirements
-                                ->where('status','Rejected')
+                                ->where('status', 'Rejected')
                                 ->count();
 
                         })
@@ -1018,35 +1158,24 @@
 
                 </h3>
 
-
                 <span>
                     Rejected Documents
                 </span>
 
-
             </div>
-
 
         </div>
 
-
     </div>
-
-
-
-
 
 
     {{-- =========================================
          SEARCH AND FILTERS
     ========================================== --}}
 
-
     <div class="monitor-toolbar">
 
-
         <div class="search-box">
-
 
             <input
                 type="text"
@@ -1054,22 +1183,16 @@
                 placeholder="Search cadet name..."
             >
 
-
         </div>
-
-
 
 
         <div class="filters">
 
-
             <select id="batchFilter">
-
 
                 <option value="">
                     All Batch
                 </option>
-
 
                 @foreach($batches as $batch)
 
@@ -1079,27 +1202,18 @@
 
                     </option>
 
-
                 @endforeach
-
 
             </select>
 
 
-
-
-
             <select id="courseFilter">
-
 
                 <option value="">
                     All Course
                 </option>
 
-
-
                 @foreach($courses as $course)
-
 
                     <option value="{{ $course->course }}">
 
@@ -1107,495 +1221,647 @@
 
                     </option>
 
-
                 @endforeach
-
 
             </select>
 
 
-
-
-
             <select id="deploymentFilter">
-
 
                 <option value="">
                     All Deployment
                 </option>
 
-
                 <option value="Ongoing">
                     Ongoing
                 </option>
-
 
                 <option value="Completed">
                     Completed
                 </option>
 
-
             </select>
-
 
         </div>
 
-
     </div>
-
-
-
-
-
 
 
     {{-- =========================================
-         CADET CARDS
+         CADET TABLE
     ========================================== --}}
 
+    <div class="card">
 
- <div class="card">
+        <table class="table">
 
-    <table class="table">
+            <thead>
 
-        <thead>
-            <tr>
-                <th>#</th>
-                <th><i class="fa-solid fa-id-card"></i> TRB</th>
-                <th><i class="fa-solid fa-user"></i> Cadet</th>
-                <th><i class="fa-solid fa-book"></i> Course</th>
-                <th><i class="fa-solid fa-layer-group"></i> Batch</th>
-                <th><i class="fa-solid fa-ship"></i> Deployment</th>
-                <th><i class="fa-solid fa-chart-line"></i> Progress</th>
-                <th><i class="fa-solid fa-gear"></i> Action</th>
-            </tr>
-        </thead>
+                <tr>
 
-        <tbody>
+                    <th>#</th>
 
-        @forelse($cadets as $cadet)
+                    <th>
+                        <i class="fa-solid fa-id-card"></i>
+                        TRB
+                    </th>
 
-            @php
-                $totalRequirements = $cadet->onboardRequirements->count();
+                    <th>
+                        <i class="fa-solid fa-user"></i>
+                        Cadet
+                    </th>
 
-                $approvedRequirements = $cadet->onboardRequirements
-                    ->where('status','Approved')
-                    ->count();
+                    <th>
+                        <i class="fa-solid fa-book"></i>
+                        Course
+                    </th>
 
-                $percentage = $totalRequirements
-                    ? ($approvedRequirements/$totalRequirements)*100
-                    : 0;
-            @endphp
+                    <th>
+                        <i class="fa-solid fa-layer-group"></i>
+                        Batch
+                    </th>
 
-            <tr
-                data-name="{{ strtolower($cadet->full_name) }}"
-                data-batch="{{ optional($cadet->batch)->batch_year }}"
-                data-course="{{ strtolower($cadet->course) }}"
-                data-deployment="{{ strtolower($cadet->deployment->status ?? '') }}"
-            >
+                    <th>
+                        <i class="fa-solid fa-ship"></i>
+                        Deployment
+                    </th>
 
-                <td>{{ $loop->iteration }}</td>
+                    <th>
+                        <i class="fa-solid fa-chart-line"></i>
+                        Progress
+                    </th>
 
-                <td>{{ $cadet->trb_control_number }}</td>
+                    <th>
+                        <i class="fa-solid fa-gear"></i>
+                        Action
+                    </th>
 
-                <td>{{ $cadet->full_name }}</td>
+                </tr>
 
-                <td>{{ $cadet->course }}</td>
+            </thead>
 
-                <td>{{ optional($cadet->batch)->batch_year ?? '-' }}</td>
+            <tbody>
 
-                <td>{{ $cadet->deployment->status ?? '-' }}</td>
+            @forelse($cadets as $cadet)
 
-                <td>
+                @php
 
-                    <div class="progress-wrap">
+                    $totalRequirements =
+                        $cadet->onboardRequirements->count();
 
-                        <div class="progress-bar">
+                    $approvedRequirements =
+                        $cadet->onboardRequirements
+                            ->where('status', 'Approved')
+                            ->count();
 
-                            <div
-                                class="progress-fill"
-                                style="width:{{ $percentage }}%">
+                    $percentage =
+                        $totalRequirements
+                            ? ($approvedRequirements / $totalRequirements) * 100
+                            : 0;
+
+                @endphp
+
+
+                <tr
+                    data-name="{{ strtolower($cadet->full_name) }}"
+                    data-batch="{{ optional($cadet->batch)->batch_year }}"
+                    data-course="{{ strtolower($cadet->course) }}"
+                    data-deployment="{{ strtolower($cadet->deployment->status ?? '') }}"
+                >
+
+                    <td>
+                        {{ $loop->iteration }}
+                    </td>
+
+
+                    <td>
+                        {{ $cadet->trb_control_number }}
+                    </td>
+
+
+                    <td>
+                        {{ $cadet->full_name }}
+                    </td>
+
+
+                    <td>
+                        {{ $cadet->course }}
+                    </td>
+
+
+                    <td>
+                        {{ optional($cadet->batch)->batch_year ?? '-' }}
+                    </td>
+
+
+                    <td>
+                        {{ $cadet->deployment->status ?? '-' }}
+                    </td>
+
+
+                    <td>
+
+                        <div class="progress-wrap">
+
+                            <div class="progress-bar">
+
+                                <div
+                                    class="progress-fill"
+                                    style="width:{{ $percentage }}%"
+                                ></div>
+
                             </div>
+
+                            <small>
+
+                                {{ $approvedRequirements }}
+                                /
+                                {{ $totalRequirements }}
+
+                                Requirements
+
+                            </small>
 
                         </div>
 
-                        <small>
-
-                            {{ $approvedRequirements }}
-                            /
-                            {{ $totalRequirements }}
-
-                            Requirements
-
-                        </small>
-
-                    </div>
-
-                </td>
-
-                <td class="text-center">
-                    <button
-                        type="button"
-                        class="btn btn-primary"
-                        onclick='viewChecklist(
-                            {{ $cadet->id }},
-                            @json(route("superadmin.cadet-requirements.show", $cadet->id))
-                        )'
-                    >
-                        <i class="fa fa-eye"></i>
-                        View
-                    </button>
-                </td>
-
-            </tr>
-
-        @empty
-
-            <tr>
-
-                <td colspan="8" class="text-center">
-
-                    No deployed cadets found.
-
-                </td>
-
-            </tr>
-
-        @endforelse
-
-        </tbody>
-
-    </table>
-
-</div>
-
-{{-- =========================================
-     CHECKLIST MODAL
-========================================= --}}
+                    </td>
 
 
-<div id="checklistModal" class="modal">
+                    <td class="text-center">
 
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            onclick='viewChecklist(
+                                {{ $cadet->id }},
+                                @json(route("superadmin.cadet-requirements.show", $cadet->id))
+                            )'
+                        >
 
-    <div class="modal-content">
+                            <i class="fa fa-eye"></i>
 
+                            View
 
-        <div class="modal-header-custom">
+                        </button>
 
+                    </td>
 
-            <h3>
+                </tr>
 
-                <i class="fas fa-file-alt text-primary me-2"></i>
+            @empty
 
-                <span id="cadetName">
-                    
-                </span>
+                <tr>
 
-            </h3>
+                    <td colspan="8">
 
+                        <i class="fas fa-users-slash me-2"></i>
 
+                        No deployed cadets found.
 
-            <button
+                    </td>
 
-                class="close-btn"
+                </tr>
 
-                onclick="closeChecklist()"
+            @endforelse
 
-            >
+            </tbody>
 
-                ✕
-
-
-            </button>
-
-
-
-        </div>
-
-
-
-
-        <div id="checklistBody">
-
-
-        </div>
-
-
+        </table>
 
     </div>
 
 
-</div>
+    {{-- =========================================
+         CHECKLIST MODAL
+    ========================================== --}}
+
+    <div id="checklistModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header-custom">
+
+                <h3>
+
+                    <i class="fas fa-file-alt me-2"></i>
+
+                    <span id="cadetName"></span>
+
+                </h3>
 
 
+                <button
+                    class="close-btn"
+                    onclick="closeChecklist()"
+                    type="button"
+                >
 
+                    ✕
 
-
-
-{{-- =========================================
-     ATTACHMENT PREVIEW MODAL
-========================================= --}}
-
-
-
-<div id="previewModal" class="modal">
-
-
-    <div class="modal-content">
-
-
-        <div class="modal-header-custom">
-
-
-            <h3>
-
-                <i class="fas fa-eye text-primary me-2"></i>
-
-                Attachment Preview
-
-            </h3>
-
-
-
-            <button
-
-                class="close-btn"
-
-                onclick="closePreview()"
-
-            >
-
-                ✕
-
-            </button>
-
-
-        </div>
-
-
-
-
-
-        <div class="preview-container">
-
-
-            <div id="previewBody">
-
+                </button>
 
             </div>
 
 
+            <div id="checklistBody"></div>
+
         </div>
-
-
-
 
     </div>
 
 
+    {{-- =========================================
+         ATTACHMENT PREVIEW MODAL
+    ========================================== --}}
+
+    <div id="previewModal" class="modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header-custom">
+
+                <h3>
+
+                    <i class="fas fa-eye me-2"></i>
+
+                    Attachment Preview
+
+                </h3>
+
+
+                <button
+                    class="close-btn"
+                    onclick="closePreview()"
+                    type="button"
+                >
+
+                    ✕
+
+                </button>
+
+            </div>
+
+
+            <div class="preview-container">
+
+                <div id="previewBody"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
+
 <script>
+
+/* =========================================================
+   VIEW CHECKLIST
+========================================================= */
+
 function viewChecklist(id, url) {
 
-    const modal = document.getElementById('checklistModal');
-    const body = document.getElementById('checklistBody');
-    const name = document.getElementById('cadetName');
+    const modal =
+        document.getElementById('checklistModal');
+
+    const body =
+        document.getElementById('checklistBody');
+
+    const name =
+        document.getElementById('cadetName');
+
 
     modal.style.display = 'flex';
 
     name.textContent = 'Loading...';
 
+
     body.innerHTML = `
+
         <div class="text-center py-5">
-            <div class="spinner-border text-primary"></div>
+
+            <div
+                class="spinner-border"
+                style="color:#60a5fa;"
+            ></div>
 
             <p class="mt-3 text-muted">
+
                 Loading requirements...
+
             </p>
+
         </div>
+
     `;
 
+
     console.log('Loading cadet:', id);
+
     console.log('URL:', url);
 
+
     fetch(url, {
+
         method: 'GET',
+
         headers: {
+
             'Accept': 'application/json',
+
             'X-Requested-With': 'XMLHttpRequest'
+
         }
+
     })
+
     .then(async response => {
 
-        console.log('HTTP Status:', response.status);
+        console.log(
+            'HTTP Status:',
+            response.status
+        );
 
-        const text = await response.text();
 
-        console.log('Server Response:', text);
+        const text =
+            await response.text();
+
+
+        console.log(
+            'Server Response:',
+            text
+        );
+
 
         if (!response.ok) {
+
             throw new Error(
                 `Server returned ${response.status}`
             );
+
         }
 
+
         try {
+
             return JSON.parse(text);
-        } catch (error) {
+
+        }
+
+        catch (error) {
+
             throw new Error(
                 'Server did not return valid JSON.'
             );
+
         }
+
     })
+
     .then(data => {
 
-        console.log('Cadet data:', data);
+        console.log(
+            'Cadet data:',
+            data
+        );
 
-        name.textContent = data.full_name || 'Cadet';
+
+        name.textContent =
+            data.full_name || 'Cadet';
+
 
         const requirements =
-            Array.isArray(data.onboard_requirements)
+            Array.isArray(
+                data.onboard_requirements
+            )
                 ? data.onboard_requirements
                 : [];
 
-            if (requirements.length === 0) {
 
-                body.innerHTML = `
-                    <div class="empty-requirements">
+        if (requirements.length === 0) {
 
-                        <i class="fas fa-file-circle-xmark"></i>
+            body.innerHTML = `
 
-                        <h5>No Requirements Found</h5>
+                <div class="empty-requirements">
 
-                        <p>
-                            This cadet currently has no onboard
-                            requirements assigned.
-                        </p>
+                    <i class="fas fa-file-circle-xmark"></i>
 
-                    </div>
-                `;
+                    <h5>
+                        No Requirements Found
+                    </h5>
 
-                return;
-            }
+                    <p>
+                        This cadet currently has no onboard
+                        requirements assigned.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
 
         let html = '';
 
+
         requirements.forEach(item => {
 
-            let statusClass = 'status-pending';
+            let statusClass =
+                'status-pending';
+
 
             switch (item.status) {
 
                 case 'Approved':
-                    statusClass = 'status-approved';
+
+                    statusClass =
+                        'status-approved';
+
                     break;
+
 
                 case 'Submitted':
-                    statusClass = 'status-submitted';
+
+                    statusClass =
+                        'status-submitted';
+
                     break;
+
 
                 case 'Rejected':
-                    statusClass = 'status-rejected';
+
+                    statusClass =
+                        'status-rejected';
+
                     break;
 
+
                 case 'Pending':
-                    statusClass = 'status-pending';
+
+                    statusClass =
+                        'status-pending';
+
                     break;
+
             }
+
 
             const requirementTitle =
                 item.requirement?.title || '-';
 
+
             const frequency =
                 item.requirement?.frequency || '-';
+
 
             const attachmentHtml = item.attachment
 
                 ? `
+
                     <button
                         type="button"
                         class="btn btn-info btn-sm"
                         onclick="previewAttachment(
                             '/storage/${item.attachment}'
-                        )">
+                        )"
+                    >
 
                         <i class="fas fa-eye"></i>
+
                         Preview
 
                     </button>
 
+
                     <a
                         href="/storage/${item.attachment}"
                         download
-                        class="btn btn-success btn-sm">
+                        class="btn btn-success btn-sm"
+                    >
 
                         <i class="fas fa-download"></i>
+
                         Download
 
                     </a>
+
                 `
 
                 : `
-                    <span class="text-muted">
+
+                    <span
+                        class="text-muted"
+                    >
+
                         No uploaded file
+
                     </span>
+
                 `;
 
+
             html += `
+
                 <div class="requirement-card">
 
                     <div class="req-header">
 
                         <h3>
-                            <i class="fas fa-file-alt text-primary me-2"></i>
+
+                            <i
+                                class="fas fa-file-alt me-2"
+                                style="color:#60a5fa;"
+                            ></i>
+
                             ${requirementTitle}
+
                         </h3>
+
 
                         <span class="
                             requirement-status
                             ${statusClass}
                         ">
+
                             ${item.status || 'Pending'}
+
                         </span>
 
                     </div>
 
+
                     <div class="req-body">
 
                         <p>
-                            <strong>Frequency:</strong>
+
+                            <strong>
+                                Frequency:
+                            </strong>
+
                             ${frequency}
+
                         </p>
 
+
                         <p>
-                            <strong>Submitted:</strong>
+
+                            <strong>
+                                Submitted:
+                            </strong>
+
                             ${item.submitted_at || '-'}
+
                         </p>
 
+
                         <p>
-                            <strong>Approved:</strong>
+
+                            <strong>
+                                Approved:
+                            </strong>
+
                             ${item.approved_at || '-'}
+
                         </p>
 
+
                         <p>
-                            <strong>Remarks:</strong>
+
+                            <strong>
+                                Remarks:
+                            </strong>
+
                             ${item.remarks || '-'}
+
                         </p>
 
                     </div>
+
 
                     <div class="attachment-section">
 
                         <div class="attachment-title">
+
                             <i class="fas fa-paperclip"></i>
+
                             Attachment
+
                         </div>
 
+
                         <div>
+
                             ${attachmentHtml}
+
                         </div>
 
                     </div>
+
 
                     <div class="req-footer">
 
@@ -1603,13 +1869,15 @@ function viewChecklist(id, url) {
                             width:100%;
                             text-align:center;
                             padding:12px;
-                            background:#f1f5f9;
-                            color:#64748b;
+                            background:#18264a;
+                            color:#b8c7e6;
+                            border:1px solid rgba(129,140,248,.15);
                             border-radius:12px;
                             font-weight:600;
                         ">
 
                             <i class="fas fa-eye"></i>
+
                             View Only
 
                         </div>
@@ -1617,394 +1885,278 @@ function viewChecklist(id, url) {
                     </div>
 
                 </div>
+
             `;
+
         });
 
+
         body.innerHTML = html;
+
     })
+
     .catch(error => {
 
-        console.error('Checklist Error:', error);
+        console.error(
+            'Checklist Error:',
+            error
+        );
 
-        name.textContent = 'Unable to Load';
+
+        name.textContent =
+            'Unable to Load';
+
 
         body.innerHTML = `
+
             <div class="alert alert-danger">
 
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="
+                    fas
+                    fa-exclamation-triangle
+                "></i>
 
                 <strong>
                     Failed to load cadet requirements.
                 </strong>
 
                 <p class="mb-0 mt-2">
+
                     ${error.message}
+
                 </p>
 
             </div>
+
         `;
+
     });
-}
-
-function showNotification(
-    message,
-    type='success'
-){
-
-
-    const notification =
-    document.getElementById(
-        'notification'
-    );
-
-
-
-    if(!notification){
-
-        return;
-
-    }
-
-
-
-    const title =
-    notification.querySelector(
-        '.notif-title'
-    );
-
-
-
-    const text =
-    document.getElementById(
-        'notifMessage'
-    );
-
-
-
-    const icon =
-    notification.querySelector(
-        '.notif-icon'
-    );
-
-
-
-
-    text.textContent = message;
-
-
-
-
-    if(type === 'success'){
-
-
-        title.textContent =
-        'Success';
-
-
-        icon.innerHTML =
-        '✓';
-
-
-    }
-
-
-    else{
-
-
-        title.textContent =
-        'Error';
-
-
-        icon.innerHTML =
-        '✕';
-
-
-    }
-
-
-
-    notification.classList.add(
-        'show'
-    );
-
-
-
-    setTimeout(()=>{
-
-
-        notification.classList.remove(
-            'show'
-        );
-
-
-    },3000);
-
-
 
 }
 
 
+/* =========================================================
+   CLOSE CHECKLIST
+========================================================= */
+
+function closeChecklist() {
+
+    document
+        .getElementById('checklistModal')
+        .style.display = 'none';
+
+}
 
 
-function hideNotification(){
+/* =========================================================
+   CLOSE PREVIEW
+========================================================= */
+
+function closePreview() {
+
+    document
+        .getElementById('previewModal')
+        .style.display = 'none';
 
 
     document
-    .getElementById(
-        'notification'
-    )
-    .classList.remove(
-        'show'
+        .getElementById('previewBody')
+        .innerHTML = '';
+
+}
+
+
+/* =========================================================
+   CLICK OUTSIDE MODALS
+========================================================= */
+
+document
+    .getElementById('checklistModal')
+    .addEventListener(
+        'click',
+        function (e) {
+
+            if (e.target === this) {
+
+                closeChecklist();
+
+            }
+
+        }
     );
 
 
-}
+document
+    .getElementById('previewModal')
+    .addEventListener(
+        'click',
+        function (e) {
+
+            if (e.target === this) {
+
+                closePreview();
+
+            }
+
+        }
+    );
 
 
+/* =========================================================
+   ESCAPE KEY
+========================================================= */
 
+document.addEventListener(
+    'keydown',
+    function (e) {
 
+        if (e.key === 'Escape') {
 
+            closeChecklist();
 
+            closePreview();
 
+        }
 
-/* =========================================
-   MODAL CONTROL
-========================================= */
-
-
-function closeChecklist(){
-
-
-    document
-    .getElementById(
-        'checklistModal'
-    )
-    .style.display='none';
-
-
-}
-
-
-
-
-function closePreview(){
-
-
-    document
-    .getElementById(
-        'previewModal'
-    )
-    .style.display='none';
-
-
-
-    document
-    .getElementById(
-        'previewBody'
-    )
-    .innerHTML='';
-
-
-
-}
-
-
-// Close Checklist Modal when clicking outside
-document.getElementById('checklistModal').addEventListener('click', function (e) {
-
-    if (e.target === this) {
-        closeChecklist();
     }
-
-});
-
-// Close Preview Modal when clicking outside
-document.getElementById('previewModal').addEventListener('click', function (e) {
-
-    if (e.target === this) {
-        closePreview();
-    }
-
-});
+);
 
 
-/* =========================================
+/* =========================================================
    ATTACHMENT PREVIEW
-========================================= */
+========================================================= */
 
-
-function previewAttachment(url){
-
+function previewAttachment(url) {
 
     const extension =
-    url.split('.')
-    .pop()
-    .toLowerCase();
-
+        url
+            .split('.')
+            .pop()
+            .toLowerCase();
 
 
     let html = '';
 
 
-
-    if(
+    if (
         [
             'jpg',
             'jpeg',
             'png',
             'webp'
-        ]
-        .includes(extension)
-    ){
-
+        ].includes(extension)
+    ) {
 
         html = `
 
             <img
-
                 src="${url}"
-
                 style="
-                width:100%;
-                border-radius:15px;
+                    width:100%;
+                    border-radius:15px;
                 "
-
+                alt="Attachment Preview"
             >
 
         `;
 
-
     }
 
 
-
-    else if(extension === 'pdf'){
-
+    else if (extension === 'pdf') {
 
         html = `
 
-
             <iframe
-
                 src="${url}"
-
                 width="100%"
-
                 height="650"
-
                 style="
-                border:none;
-                border-radius:15px;
+                    border:none;
+                    border-radius:15px;
                 "
-
             ></iframe>
-
 
         `;
 
-
     }
 
 
-
-    else{
-
+    else {
 
         html = `
 
-
-            <div class="text-center">
-
+            <div
+                class="text-center"
+                style="color:#b8c7e6;"
+            >
 
                 <p>
-
                     Preview not available.
-
                 </p>
 
 
-
                 <a
-
-                href="${url}"
-
-                download
-
-                class="btn btn-success"
-
+                    href="${url}"
+                    download
+                    class="btn btn-success"
                 >
 
                     Download File
 
                 </a>
 
-
             </div>
 
-
         `;
-
 
     }
 
 
-
+    document
+        .getElementById('previewBody')
+        .innerHTML = html;
 
 
     document
-    .getElementById(
-        'previewBody'
-    )
-    .innerHTML = html;
-
-
-
-    document
-    .getElementById(
-        'previewModal'
-    )
-    .style.display='flex';
-
+        .getElementById('previewModal')
+        .style.display = 'flex';
 
 }
 
 
-
-
-
-
-
-
-
-/* =========================================
+/* =========================================================
    SEARCH + FILTER
-========================================= */
+========================================================= */
 
-
-function filterCadets(){
+function filterCadets() {
 
     const search =
         document
-        .getElementById('searchCadet')
-        .value
-        .toLowerCase()
-        .trim();
+            .getElementById('searchCadet')
+            .value
+            .toLowerCase()
+            .trim();
+
 
     const batch =
         document
-        .getElementById('batchFilter')
-        .value;
+            .getElementById('batchFilter')
+            .value;
+
 
     const course =
         document
-        .getElementById('courseFilter')
-        .value;
+            .getElementById('courseFilter')
+            .value;
+
 
     const deployment =
         document
-        .getElementById('deploymentFilter')
-        .value
-        .toLowerCase();
+            .getElementById('deploymentFilter')
+            .value
+            .toLowerCase();
+
 
     document
         .querySelectorAll('.table tbody tr')
@@ -2012,34 +2164,38 @@ function filterCadets(){
 
             const matchSearch =
                 (row.dataset.name || '')
-                .includes(search);
+                    .includes(search);
+
 
             const matchBatch =
                 !batch ||
                 (row.dataset.batch || '') == batch;
 
+
             const matchCourse =
                 !course ||
-                (row.dataset.course || '') == course.toLowerCase();
+                (row.dataset.course || '') ==
+                    course.toLowerCase();
+
 
             const matchDeployment =
                 !deployment ||
-                (row.dataset.deployment || '') == deployment;
+                (row.dataset.deployment || '') ==
+                    deployment;
 
 
-            if(
+            if (
                 matchSearch &&
                 matchBatch &&
                 matchCourse &&
                 matchDeployment
-            ){
+            ) {
 
-                // IMPORTANT:
-                // Keep the <tr> as a table row
                 row.style.display = '';
 
             }
-            else{
+
+            else {
 
                 row.style.display = 'none';
 
@@ -2050,43 +2206,41 @@ function filterCadets(){
 }
 
 
+/* =========================================================
+   FILTER EVENTS
+========================================================= */
+
+document
+    .getElementById('searchCadet')
+    ?.addEventListener(
+        'input',
+        filterCadets
+    );
 
 
 document
-.getElementById('searchCadet')
-?.addEventListener(
-'input',
-filterCadets
-);
-
-
-
-document
-.getElementById('batchFilter')
-?.addEventListener(
-'change',
-filterCadets
-);
-
+    .getElementById('batchFilter')
+    ?.addEventListener(
+        'change',
+        filterCadets
+    );
 
 
 document
-.getElementById('courseFilter')
-?.addEventListener(
-'change',
-filterCadets
-);
-
+    .getElementById('courseFilter')
+    ?.addEventListener(
+        'change',
+        filterCadets
+    );
 
 
 document
-.getElementById('deploymentFilter')
-?.addEventListener(
-'change',
-filterCadets
-);
-
-
+    .getElementById('deploymentFilter')
+    ?.addEventListener(
+        'change',
+        filterCadets
+    );
 
 </script>
+
 @endsection

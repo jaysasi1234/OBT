@@ -6,15 +6,37 @@
 
 <style>
 /* =========================================================
-   PAGE
+   DARK NAVY / PURPLE-BLUE THEME
 ========================================================= */
 
 .bs-page {
+    --bs-bg: #07152f;
+    --bs-bg-deep: #061126;
+
+    --bs-card: #2d2a67;
+    --bs-card-hover: #35327a;
+    --bs-card-deep: #242252;
+
+    --bs-border: #45438a;
+    --bs-border-soft: #39376f;
+
+    --bs-input: #081832;
+    --bs-input-hover: #0b1d3d;
+
+    --bs-text: #ffffff;
+    --bs-text-light: #dbe5ff;
+    --bs-text-muted: #aeb9d6;
+    --bs-text-soft: #8f9bc0;
+
+    --bs-blue: #4f8cff;
+    --bs-blue-hover: #6a9eff;
+    --bs-blue-dark: #315fc2;
+
     width: 100%;
     min-height: 100vh;
-    padding: 24px;
-    background: #f4f7fb;
-    color: #0f172a;
+    padding: 28px;
+    background: var(--bs-bg);
+    color: var(--bs-text);
 }
 
 .bs-page *,
@@ -22,7 +44,6 @@
 .bs-page *::after {
     box-sizing: border-box;
 }
-
 
 /* =========================================================
    HEADER
@@ -39,24 +60,25 @@
 .bs-header-content h2 {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 11px;
     margin: 0;
-    color: #111827;
+    color: var(--bs-text);
     font-size: 28px;
     font-weight: 800;
     line-height: 1.2;
 }
 
 .bs-header-content h2 i {
-    color: #2563eb;
+    color: var(--bs-blue);
+    font-size: 25px;
 }
 
 .bs-header-content p {
-    margin: 7px 0 0;
-    color: #64748b;
+    margin: 8px 0 0;
+    color: var(--bs-text-muted);
     font-size: 14px;
+    line-height: 1.5;
 }
-
 
 /* =========================================================
    STATISTICS
@@ -76,16 +98,21 @@
     min-width: 0;
     min-height: 120px;
     padding: 20px;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    box-shadow: 0 6px 22px rgba(15, 23, 42, .07);
-    transition: transform .2s ease, box-shadow .2s ease;
+    background: var(--bs-card);
+    border: 1px solid var(--bs-border);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .20);
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
 }
 
 .bs-stat:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, .11);
+    background: var(--bs-card-hover);
+    border-color: #5754a3;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, .28);
 }
 
 .bs-stat-icon {
@@ -95,26 +122,29 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 15px;
+    border-radius: 14px;
     color: #fff;
-    font-size: 23px;
-    box-shadow: 0 7px 16px rgba(0, 0, 0, .12);
+    font-size: 22px;
+    box-shadow: 0 7px 18px rgba(0, 0, 0, .25);
 }
 
+/* Keep the different statistic identities,
+   but make them fit the dark theme. */
+
 .bs-stat-blue .bs-stat-icon {
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    background: linear-gradient(135deg, #315fc2, #4f8cff);
 }
 
 .bs-stat-green .bs-stat-icon {
-    background: linear-gradient(135deg, #16a34a, #22c55e);
+    background: linear-gradient(135deg, #15803d, #22c55e);
 }
 
 .bs-stat-orange .bs-stat-icon {
-    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    background: linear-gradient(135deg, #b45309, #f59e0b);
 }
 
 .bs-stat-purple .bs-stat-icon {
-    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    background: linear-gradient(135deg, #6d28d9, #8b5cf6);
 }
 
 .bs-stat-content {
@@ -123,20 +153,19 @@
 
 .bs-stat-label {
     margin: 0;
-    color: #64748b;
+    color: var(--bs-text-muted);
     font-size: 13px;
     font-weight: 700;
     line-height: 1.4;
 }
 
 .bs-stat-value {
-    margin: 5px 0 0;
-    color: #111827;
+    margin: 6px 0 0;
+    color: var(--bs-text);
     font-size: 30px;
     font-weight: 800;
     line-height: 1;
 }
-
 
 /* =========================================================
    FILTER CARD
@@ -145,10 +174,10 @@
 .bs-filter-card {
     margin-bottom: 20px;
     padding: 20px;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    box-shadow: 0 6px 22px rgba(15, 23, 42, .07);
+    background: var(--bs-bg-deep);
+    border: 1px solid var(--bs-border);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .20);
 }
 
 .bs-filter-title {
@@ -159,19 +188,24 @@
 }
 
 .bs-filter-title i {
-    color: #2563eb;
+    color: var(--bs-blue);
+    font-size: 15px;
 }
 
 .bs-filter-title h3 {
     margin: 0;
-    color: #111827;
-    font-size: 18px;
+    color: var(--bs-text);
+    font-size: 17px;
     font-weight: 800;
 }
 
 .bs-filter-row {
     display: grid;
-    grid-template-columns: minmax(220px, 1.4fr) minmax(180px, 1fr) minmax(180px, 1fr) auto;
+    grid-template-columns:
+        minmax(220px, 1.4fr)
+        minmax(180px, 1fr)
+        minmax(180px, 1fr)
+        auto;
     gap: 14px;
     align-items: end;
 }
@@ -183,8 +217,8 @@
 .bs-filter-group label {
     display: block;
     margin-bottom: 7px;
-    color: #475569;
-    font-size: 13px;
+    color: var(--bs-text-muted);
+    font-size: 12px;
     font-weight: 700;
 }
 
@@ -192,25 +226,44 @@
     width: 100%;
     height: 44px;
     padding: 0 13px;
-    background: #fff;
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
-    color: #111827;
+    background: var(--bs-input);
+    border: 1px solid var(--bs-border-soft);
+    border-radius: 9px;
+    color: var(--bs-text);
     font-size: 14px;
-    transition: border-color .2s ease, box-shadow .2s ease;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.bs-filter-control:hover {
+    background: var(--bs-input-hover);
+    border-color: var(--bs-border);
 }
 
 .bs-filter-control:focus {
     outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+    background: var(--bs-input);
+    border-color: var(--bs-blue);
+    box-shadow: 0 0 0 3px rgba(79, 140, 255, .15);
+}
+
+.bs-filter-control::placeholder {
+    color: #7180a5;
+}
+
+/* Select dropdown */
+
+.bs-filter-control option {
+    background: #081832;
+    color: #ffffff;
 }
 
 .bs-filter-actions {
     display: flex;
     gap: 8px;
 }
-
 
 /* =========================================================
    BUTTONS
@@ -224,35 +277,40 @@
     min-height: 44px;
     padding: 0 16px;
     border: 0;
-    border-radius: 10px;
+    border-radius: 9px;
     font-size: 13px;
     font-weight: 700;
     text-decoration: none;
     cursor: pointer;
-    transition: .2s ease;
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
 }
 
 .bs-btn-primary {
-    background: #2563eb;
+    background: var(--bs-blue);
     color: #fff;
 }
 
 .bs-btn-primary:hover {
-    background: #1d4ed8;
+    background: var(--bs-blue-hover);
     color: #fff;
     transform: translateY(-1px);
 }
 
 .bs-btn-reset {
-    background: #64748b;
-    color: #fff;
+    background: #1b2850;
+    border: 1px solid var(--bs-border);
+    color: var(--bs-text-light);
 }
 
 .bs-btn-reset:hover {
-    background: #475569;
+    background: #273565;
+    border-color: #5754a3;
     color: #fff;
+    transform: translateY(-1px);
 }
-
 
 /* =========================================================
    TABLE CARD
@@ -261,15 +319,43 @@
 .bs-table-card {
     width: 100%;
     overflow: hidden;
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    box-shadow: 0 6px 22px rgba(15, 23, 42, .07);
+    background: var(--bs-card);
+    border: 1px solid var(--bs-border);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, .22);
 }
 
 .bs-table-wrapper {
     width: 100%;
     overflow-x: auto;
+}
+
+/* Custom scrollbar */
+
+.bs-table-wrapper::-webkit-scrollbar,
+.bs-modal-body::-webkit-scrollbar,
+.bs-modal-table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.bs-table-wrapper::-webkit-scrollbar-track,
+.bs-modal-body::-webkit-scrollbar-track,
+.bs-modal-table-wrapper::-webkit-scrollbar-track {
+    background: #171945;
+}
+
+.bs-table-wrapper::-webkit-scrollbar-thumb,
+.bs-modal-body::-webkit-scrollbar-thumb,
+.bs-modal-table-wrapper::-webkit-scrollbar-thumb {
+    background: #45438a;
+    border-radius: 999px;
+}
+
+.bs-table-wrapper::-webkit-scrollbar-thumb:hover,
+.bs-modal-body::-webkit-scrollbar-thumb:hover,
+.bs-modal-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #5a57a5;
 }
 
 .bs-table {
@@ -279,14 +365,14 @@
 }
 
 .bs-table thead {
-    background: #0f172a;
+    background: #191847;
     color: #fff;
 }
 
 .bs-table th {
     padding: 15px 14px;
-    border: 0;
-    font-size: 12px;
+    border-bottom: 1px solid var(--bs-border);
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: .45px;
     text-align: center;
@@ -294,50 +380,68 @@
     white-space: nowrap;
 }
 
+.bs-table th i {
+    margin-right: 5px;
+    color: #91b8ff;
+}
+
 .bs-table td {
-    padding: 14px;
-    border-bottom: 1px solid #eef2f7;
-    color: #1e293b;
+    padding: 15px 14px;
+    border-bottom: 1px solid var(--bs-border-soft);
+    color: var(--bs-text-light);
     font-size: 14px;
     text-align: center;
     vertical-align: middle;
 }
 
+.bs-table td strong {
+    color: #ffffff;
+    font-weight: 750;
+}
+
 .bs-table tbody tr {
-    transition: background .2s ease;
+    background: var(--bs-card);
+    transition:
+        background .2s ease,
+        box-shadow .2s ease;
 }
 
 .bs-table tbody tr:hover {
-    background: #f8fbff;
+    background: var(--bs-card-hover);
 }
 
 .bs-table tbody tr:last-child td {
     border-bottom: 0;
 }
 
-
 /* =========================================================
    EMPTY STATE
 ========================================================= */
 
 .bs-empty {
-    padding: 45px 20px !important;
-    color: #64748b !important;
+    padding: 55px 20px !important;
+    background: var(--bs-card) !important;
+    color: var(--bs-text-muted) !important;
 }
 
 .bs-empty i {
     display: block;
-    margin-bottom: 10px;
-    color: #94a3b8;
-    font-size: 34px;
+    margin-bottom: 12px;
+    color: #7379b5;
+    font-size: 36px;
 }
 
 .bs-empty strong {
     display: block;
-    color: #334155;
+    margin-bottom: 4px;
+    color: #ffffff;
     font-size: 15px;
 }
 
+.bs-empty span {
+    color: var(--bs-text-soft);
+    font-size: 13px;
+}
 
 /* =========================================================
    PROGRESS
@@ -352,26 +456,27 @@
     width: 100%;
     height: 9px;
     overflow: hidden;
-    background: #e5e7eb;
+    background: #171b43;
+    border: 1px solid #38376f;
     border-radius: 999px;
 }
 
 .bs-progress-fill {
     height: 100%;
     min-width: 0;
-    background: linear-gradient(90deg, #2563eb, #60a5fa);
+    background: linear-gradient(90deg, #3e76e8, #6ea3ff);
     border-radius: 999px;
     transition: width .3s ease;
+    box-shadow: 0 0 8px rgba(79, 140, 255, .35);
 }
 
 .bs-progress-text {
     display: block;
-    margin-top: 6px;
-    color: #64748b;
-    font-size: 12px;
+    margin-top: 7px;
+    color: var(--bs-text-muted);
+    font-size: 11px;
     font-weight: 700;
 }
-
 
 /* =========================================================
    BADGES
@@ -383,6 +488,7 @@
     justify-content: center;
     gap: 6px;
     padding: 6px 11px;
+    border: 1px solid transparent;
     border-radius: 999px;
     font-size: 11px;
     font-weight: 800;
@@ -391,30 +497,34 @@
 }
 
 .bs-badge-approved {
-    background: #dcfce7;
-    color: #166534;
+    background: rgba(34, 197, 94, .13);
+    border-color: rgba(34, 197, 94, .25);
+    color: #6ee7a0;
 }
 
 .bs-badge-pending {
-    background: #fef3c7;
-    color: #92400e;
+    background: rgba(245, 158, 11, .13);
+    border-color: rgba(245, 158, 11, .25);
+    color: #fcd36d;
 }
 
 .bs-badge-rejected {
-    background: #fee2e2;
-    color: #991b1b;
+    background: rgba(239, 68, 68, .13);
+    border-color: rgba(239, 68, 68, .25);
+    color: #ff8f8f;
 }
 
 .bs-badge-info {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: rgba(79, 140, 255, .13);
+    border-color: rgba(79, 140, 255, .28);
+    color: #9fc1ff;
 }
 
 .bs-badge-legacy {
-    background: #dcfce7;
-    color: #166534;
+    background: rgba(34, 197, 94, .13);
+    border-color: rgba(34, 197, 94, .25);
+    color: #6ee7a0;
 }
-
 
 /* =========================================================
    VIEW BUTTON
@@ -427,21 +537,25 @@
     gap: 7px;
     min-height: 38px;
     padding: 0 13px;
-    border: 0;
-    border-radius: 9px;
-    background: #2563eb;
+    border: 1px solid rgba(79, 140, 255, .35);
+    border-radius: 8px;
+    background: #315fc2;
     color: #fff;
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    transition: .2s ease;
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
 }
 
 .bs-view-btn:hover {
-    background: #1d4ed8;
+    background: #4075df;
+    color: #fff;
     transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(49, 95, 194, .30);
 }
-
 
 /* =========================================================
    HIDDEN MODAL DATA
@@ -451,9 +565,8 @@
     display: none;
 }
 
-
 /* =========================================================
-   MODAL
+   MODAL BACKDROP
 ========================================================= */
 
 .bs-modal {
@@ -464,21 +577,26 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: rgba(15, 23, 42, .68);
-    backdrop-filter: blur(5px);
+    background: rgba(2, 8, 23, .82);
+    backdrop-filter: blur(6px);
 }
 
 .bs-modal.is-open {
     display: flex;
 }
 
+/* =========================================================
+   MODAL CONTENT
+========================================================= */
+
 .bs-modal-content {
     width: min(1100px, 100%);
     max-height: 90vh;
     overflow: hidden;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, .3);
+    background: var(--bs-card);
+    border: 1px solid var(--bs-border);
+    border-radius: 15px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .55);
     animation: bsModalIn .2s ease;
 }
 
@@ -494,13 +612,18 @@
     }
 }
 
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
 .bs-modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
     padding: 17px 22px;
-    background: #0f172a;
+    background: #191847;
+    border-bottom: 1px solid var(--bs-border);
     color: #fff;
 }
 
@@ -511,6 +634,7 @@
 .bs-modal-title h3 {
     overflow: hidden;
     margin: 0;
+    color: #fff;
     font-size: 20px;
     font-weight: 800;
     text-overflow: ellipsis;
@@ -524,9 +648,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 0;
+    border: 1px solid rgba(255,255,255,.10);
     border-radius: 9px;
-    background: rgba(255,255,255,.08);
+    background: rgba(255,255,255,.06);
     color: #fff;
     font-size: 24px;
     cursor: pointer;
@@ -534,15 +658,20 @@
 }
 
 .bs-modal-close:hover {
-    background: #ef4444;
+    background: #dc2626;
+    border-color: #ef4444;
 }
+
+/* =========================================================
+   MODAL BODY
+========================================================= */
 
 .bs-modal-body {
     max-height: calc(90vh - 75px);
     overflow: auto;
     padding: 22px;
+    background: var(--bs-card);
 }
-
 
 /* =========================================================
    MODAL SUMMARY
@@ -559,22 +688,21 @@
     gap: 20px;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid var(--bs-border);
 }
 
 .bs-summary-name h4 {
     margin: 0 0 5px;
-    color: #111827;
+    color: #ffffff;
     font-size: 21px;
     font-weight: 800;
 }
 
 .bs-summary-name small {
-    color: #64748b;
+    color: var(--bs-text-muted);
     font-size: 13px;
     font-weight: 600;
 }
-
 
 /* =========================================================
    ATTACHMENT
@@ -586,8 +714,8 @@
     gap: 10px;
     min-width: 250px;
     padding: 9px 11px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
+    background: #171945;
+    border: 1px solid var(--bs-border-soft);
     border-radius: 10px;
 }
 
@@ -599,8 +727,9 @@
     align-items: center;
     justify-content: center;
     border-radius: 9px;
-    background: #fee2e2;
-    color: #dc2626;
+    background: rgba(239, 68, 68, .14);
+    border: 1px solid rgba(239, 68, 68, .20);
+    color: #ff8f8f;
     font-size: 18px;
 }
 
@@ -613,7 +742,7 @@
 .bs-attachment-name {
     display: block;
     overflow: hidden;
-    color: #111827;
+    color: #ffffff;
     font-size: 13px;
     font-weight: 700;
     text-overflow: ellipsis;
@@ -621,7 +750,7 @@
 }
 
 .bs-attachment-info small {
-    color: #64748b;
+    color: var(--bs-text-soft);
     font-size: 11px;
 }
 
@@ -643,20 +772,20 @@
 }
 
 .bs-file-view {
-    background: #2563eb;
+    background: #315fc2;
 }
 
 .bs-file-view:hover {
-    background: #1d4ed8;
+    background: #4075df;
     color: #fff;
 }
 
 .bs-file-download {
-    background: #16a34a;
+    background: #15803d;
 }
 
 .bs-file-download:hover {
-    background: #15803d;
+    background: #16a34a;
     color: #fff;
 }
 
@@ -664,15 +793,22 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    color: #94a3b8;
+    color: var(--bs-text-soft);
     font-size: 13px;
     font-weight: 700;
 }
 
-
 /* =========================================================
    MODAL TABLE
 ========================================================= */
+
+.bs-modal-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--bs-border);
+    border-radius: 12px;
+    background: #29265e;
+}
 
 .bs-modal-table {
     width: 100%;
@@ -680,63 +816,70 @@
     border-collapse: collapse;
 }
 
-.bs-modal-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-}
-
 .bs-modal-table th {
     padding: 12px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e5e7eb;
-    color: #475569;
+    background: #191847;
+    border-bottom: 1px solid var(--bs-border);
+    color: var(--bs-text-muted);
     font-size: 11px;
     font-weight: 800;
     text-align: center;
     text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .bs-modal-table td {
     padding: 13px 12px;
-    border-bottom: 1px solid #eef2f7;
-    color: #334155;
+    border-bottom: 1px solid var(--bs-border-soft);
+    color: var(--bs-text-light);
     font-size: 13px;
     text-align: center;
     vertical-align: middle;
+}
+
+.bs-modal-table td strong {
+    color: #ffffff;
+}
+
+.bs-modal-table tbody tr {
+    background: #2d2a67;
+    transition: background .2s ease;
+}
+
+.bs-modal-table tbody tr:hover {
+    background: #35327a;
 }
 
 .bs-modal-table tbody tr:last-child td {
     border-bottom: 0;
 }
 
-.bs-modal-table tbody tr:hover {
-    background: #f8fbff;
-}
-
 .bs-remarks {
     max-width: 220px;
     margin: 0 auto;
     overflow-wrap: anywhere;
-    color: #475569;
+    color: var(--bs-text-muted);
 }
-
 
 /* =========================================================
    MODAL EMPTY
 ========================================================= */
 
 .bs-modal-empty {
-    padding: 40px 20px !important;
-    color: #64748b;
+    padding: 45px 20px !important;
+    background: #2d2a67 !important;
+    color: var(--bs-text-muted) !important;
 }
 
 .bs-modal-empty i {
     display: block;
     margin-bottom: 10px;
-    color: #94a3b8;
+    color: #7379b5;
     font-size: 32px;
+}
+
+.bs-modal-empty div {
+    color: #ffffff;
 }
 
 .bs-legacy {
@@ -746,15 +889,15 @@
     margin-top: 10px;
     padding: 6px 11px;
     border-radius: 999px;
-    background: #dcfce7;
-    color: #166534;
+    background: rgba(34, 197, 94, .13);
+    border: 1px solid rgba(34, 197, 94, .25);
+    color: #6ee7a0;
     font-size: 11px;
     font-weight: 800;
 }
 
-
 /* =========================================================
-   MOBILE
+   MOBILE / TABLET
 ========================================================= */
 
 @media (max-width: 1100px) {
@@ -771,7 +914,6 @@
         grid-column: 1 / -1;
     }
 }
-
 
 @media (max-width: 700px) {
 
@@ -857,6 +999,49 @@
         width: 100%;
         min-width: 0;
     }
+
+    .bs-progress {
+        width: 150px;
+    }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+    .bs-page {
+        padding: 12px;
+    }
+
+    .bs-header-content h2 {
+        font-size: 20px;
+    }
+
+    .bs-stat {
+        padding: 15px;
+    }
+
+    .bs-stat-icon {
+        flex-basis: 48px;
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+    }
+
+    .bs-stat-value {
+        font-size: 24px;
+    }
+
+    .bs-table th,
+    .bs-table td {
+        padding: 12px 10px;
+    }
+
+    .bs-modal-body {
+        padding: 12px;
+    }
 }
 </style>
 
@@ -913,6 +1098,7 @@
     <div class="bs-stats">
 
         {{-- TOTAL --}}
+
         <div class="bs-stat bs-stat-blue">
 
             <div class="bs-stat-icon">
@@ -920,16 +1106,22 @@
             </div>
 
             <div class="bs-stat-content">
-                <p class="bs-stat-label">Total Cadets</p>
+
+                <p class="bs-stat-label">
+                    Total Cadets
+                </p>
+
                 <h3 class="bs-stat-value">
                     {{ $totalCadets }}
                 </h3>
+
             </div>
 
         </div>
 
 
         {{-- SUBMITTED --}}
+
         <div class="bs-stat bs-stat-green">
 
             <div class="bs-stat-icon">
@@ -937,16 +1129,22 @@
             </div>
 
             <div class="bs-stat-content">
-                <p class="bs-stat-label">Requirements Submitted</p>
+
+                <p class="bs-stat-label">
+                    Requirements Submitted
+                </p>
+
                 <h3 class="bs-stat-value">
                     {{ $submittedRequirements }}
                 </h3>
+
             </div>
 
         </div>
 
 
         {{-- PENDING --}}
+
         <div class="bs-stat bs-stat-orange">
 
             <div class="bs-stat-icon">
@@ -954,16 +1152,22 @@
             </div>
 
             <div class="bs-stat-content">
-                <p class="bs-stat-label">Pending Cadets</p>
+
+                <p class="bs-stat-label">
+                    Pending Cadets
+                </p>
+
                 <h3 class="bs-stat-value">
                     {{ $pendingCadets }}
                 </h3>
+
             </div>
 
         </div>
 
 
         {{-- COMPLETED --}}
+
         <div class="bs-stat bs-stat-purple">
 
             <div class="bs-stat-icon">
@@ -971,10 +1175,15 @@
             </div>
 
             <div class="bs-stat-content">
-                <p class="bs-stat-label">Completed</p>
+
+                <p class="bs-stat-label">
+                    Completed
+                </p>
+
                 <h3 class="bs-stat-value">
                     {{ $completedCadets }}
                 </h3>
+
             </div>
 
         </div>
@@ -992,7 +1201,9 @@
 
             <i class="fa-solid fa-filter"></i>
 
-            <h3>Filter Cadets</h3>
+            <h3>
+                Filter Cadets
+            </h3>
 
         </div>
 
@@ -1006,6 +1217,7 @@
             <div class="bs-filter-row">
 
                 {{-- SEARCH --}}
+
                 <div class="bs-filter-group">
 
                     <label for="bs-search">
@@ -1026,6 +1238,7 @@
 
 
                 {{-- COURSE --}}
+
                 <div class="bs-filter-group">
 
                     <label for="bs-course">
@@ -1059,6 +1272,7 @@
 
 
                 {{-- BATCH --}}
+
                 <div class="bs-filter-group">
 
                     <label for="bs-batch">
@@ -1092,14 +1306,18 @@
 
 
                 {{-- RESET --}}
+
                 <div class="bs-filter-actions">
 
                     <a
                         href="{{ route('superadmin.cadet-bs-requirements.index') }}"
                         class="bs-btn bs-btn-reset"
                     >
+
                         <i class="fa-solid fa-rotate-right"></i>
+
                         Reset
+
                     </a>
 
                 </div>
@@ -1125,7 +1343,9 @@
 
                     <tr>
 
-                        <th>#</th>
+                        <th>
+                            #
+                        </th>
 
                         <th>
                             <i class="fa-solid fa-id-card"></i>
@@ -1185,38 +1405,46 @@
                         <tr>
 
                             {{-- NUMBER --}}
+
                             <td>
                                 {{ $loop->iteration }}
                             </td>
 
 
                             {{-- TRB --}}
+
                             <td>
+
                                 <strong>
                                     {{ $cadet->trb_control_number }}
                                 </strong>
+
                             </td>
 
 
                             {{-- NAME --}}
+
                             <td>
                                 {{ $cadet->full_name }}
                             </td>
 
 
                             {{-- COURSE --}}
+
                             <td>
                                 {{ $cadet->course ?: '—' }}
                             </td>
 
 
                             {{-- BATCH --}}
+
                             <td>
                                 {{ optional($cadet->batch)->batch_year ?? 'No Batch' }}
                             </td>
 
 
                             {{-- PROGRESS --}}
+
                             <td>
 
                                 <div class="bs-progress">
@@ -1233,10 +1461,13 @@
                                     <span class="bs-progress-text">
 
                                         {{ $submitted }}
+
                                         /
+
                                         {{ $totalRequirements }}
 
                                         Requirements
+
                                         ({{ $percentage }}%)
 
                                     </span>
@@ -1247,6 +1478,7 @@
 
 
                             {{-- ACTION --}}
+
                             <td>
 
                                 <button
@@ -1267,6 +1499,7 @@
                             </td>
 
                         </tr>
+
 
                     @empty
 
@@ -1318,6 +1551,7 @@
         <div class="bs-summary">
 
             {{-- SUMMARY HEADER --}}
+
             <div class="bs-summary-header">
 
                 <div class="bs-summary-name">
@@ -1339,7 +1573,9 @@
                     <i class="fa-solid fa-file-circle-check"></i>
 
                     {{ $cadet->bsRequirements->count() }}
+
                     /
+
                     {{ $totalRequirements }}
 
                     Submitted
@@ -1350,6 +1586,7 @@
 
 
             {{-- REQUIREMENT TABLE --}}
+
             <div class="bs-modal-table-wrapper">
 
                 <table class="bs-modal-table">
@@ -1358,12 +1595,29 @@
 
                         <tr>
 
-                            <th>Requirement</th>
-                            <th>Status</th>
-                            <th>Attachment</th>
-                            <th>Remarks</th>
-                            <th>Date</th>
-                            <th>Access</th>
+                            <th>
+                                Requirement
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Attachment
+                            </th>
+
+                            <th>
+                                Remarks
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Access
+                            </th>
 
                         </tr>
 
@@ -1386,6 +1640,7 @@
                             <tr>
 
                                 {{-- REQUIREMENT --}}
+
                                 <td>
 
                                     <strong>
@@ -1396,6 +1651,7 @@
 
 
                                 {{-- STATUS --}}
+
                                 <td>
 
                                     @switch($status)
@@ -1455,15 +1711,19 @@
 
 
                                 {{-- ATTACHMENT --}}
+
                                 <td>
 
                                     @if($submission->attachment)
 
                                         @php
+
                                             $fileUrl = asset(
                                                 'storage/' . $submission->attachment
                                             );
+
                                         @endphp
+
 
                                         <div class="bs-attachment">
 
@@ -1533,6 +1793,7 @@
 
 
                                 {{-- REMARKS --}}
+
                                 <td>
 
                                     <div class="bs-remarks">
@@ -1545,6 +1806,7 @@
 
 
                                 {{-- DATE --}}
+
                                 <td>
 
                                     @if($submission->submitted_at)
@@ -1563,6 +1825,7 @@
 
 
                                 {{-- ACCESS --}}
+
                                 <td>
 
                                     <span class="bs-badge bs-badge-info">
@@ -1576,6 +1839,7 @@
                                 </td>
 
                             </tr>
+
 
                         @empty
 
@@ -1694,57 +1958,88 @@
             'bs-cadet-' + id
         );
 
+
         if (!source) {
+
             console.error(
                 'BS requirement data not found for cadet:',
                 id
             );
+
             return;
         }
 
-        modalTitle.textContent = name || 'Cadet Requirements';
 
-        modalBody.innerHTML = source.innerHTML;
+        modalTitle.textContent =
+            name || 'Cadet Requirements';
+
+
+        modalBody.innerHTML =
+            source.innerHTML;
+
 
         modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
+
+        modal.setAttribute(
+            'aria-hidden',
+            'false'
+        );
+
 
         document.body.style.overflow = 'hidden';
+
     };
 
 
     window.closeBsModal = function () {
 
         modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
+
+        modal.setAttribute(
+            'aria-hidden',
+            'true'
+        );
 
         modalBody.innerHTML = '';
 
         document.body.style.overflow = '';
+
     };
 
 
     /* Close when clicking backdrop */
-    modal.addEventListener('click', function (event) {
 
-        if (event.target === modal) {
-            closeBsModal();
+    modal.addEventListener(
+        'click',
+        function (event) {
+
+            if (event.target === modal) {
+
+                closeBsModal();
+
+            }
+
         }
-
-    });
+    );
 
 
     /* Close with ESC */
-    document.addEventListener('keydown', function (event) {
 
-        if (
-            event.key === 'Escape' &&
-            modal.classList.contains('is-open')
-        ) {
-            closeBsModal();
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key === 'Escape' &&
+                modal.classList.contains('is-open')
+            ) {
+
+                closeBsModal();
+
+            }
+
         }
-
-    });
+    );
 
 })();
 
@@ -1753,67 +2048,84 @@
    AUTO FILTER
 ========================================================= */
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
 
-    const form = document.getElementById('filterForm');
-
-    if (!form) {
-        return;
-    }
-
-
-    const searchInput = form.querySelector(
-        'input[name="search"]'
-    );
+        const form =
+            document.getElementById('filterForm');
 
 
-    const selects = form.querySelectorAll(
-        'select[name="course"], select[name="batch"]'
-    );
+        if (!form) {
+            return;
+        }
 
 
-    let searchTimer = null;
+        const searchInput =
+            form.querySelector(
+                'input[name="search"]'
+            );
 
 
-    /*
-     * Search after user stops typing.
-     */
-    if (searchInput) {
+        const selects =
+            form.querySelectorAll(
+                'select[name="course"], select[name="batch"]'
+            );
 
-        searchInput.addEventListener(
-            'input',
-            function () {
 
-                clearTimeout(searchTimer);
+        let searchTimer = null;
 
-                searchTimer = setTimeout(
+
+        /*
+         * Search after user stops typing.
+         */
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                'input',
+                function () {
+
+                    clearTimeout(searchTimer);
+
+
+                    searchTimer = setTimeout(
+                        function () {
+
+                            form.submit();
+
+                        },
+                        500
+                    );
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Submit immediately when
+         * course/batch changes.
+         */
+
+        selects.forEach(
+            function (select) {
+
+                select.addEventListener(
+                    'change',
                     function () {
+
                         form.submit();
-                    },
-                    500
+
+                    }
                 );
 
             }
         );
 
     }
-
-
-    /*
-     * Submit immediately when course/batch changes.
-     */
-    selects.forEach(function (select) {
-
-        select.addEventListener(
-            'change',
-            function () {
-                form.submit();
-            }
-        );
-
-    });
-
-});
+);
 </script>
 
 @endsection
