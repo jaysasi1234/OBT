@@ -147,6 +147,18 @@
         .forgot-password a:hover {
             text-decoration: underline;
         }
+
+        .success-message {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -166,6 +178,12 @@
         <h1 class="system-title">On Board Training Report System</h1>
         <p class="school-subtitle">Merchant Marine Academy of Caraga Inc.</p>
     </div>
+
+    @if(session('success'))
+    <div class="success-message">
+        {{ session('success') }}
+    </div>
+@endif
 
     <h2 class="login-section-title">Dean Login</h2>
 

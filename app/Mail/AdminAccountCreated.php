@@ -25,10 +25,12 @@ class AdminAccountCreated extends Mailable
 
     public function build()
     {
+        $subject = $this->user->role === 'dean'
+            ? 'Your Dean Account Has Been Created'
+            : 'Your Administrator Account Has Been Created';
+
         return $this
-            ->subject(
-                'Your Administrator Account Has Been Created'
-            )
+            ->subject($subject)
             ->view('emails.admin-account-created');
     }
 }

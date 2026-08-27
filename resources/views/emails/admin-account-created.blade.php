@@ -220,10 +220,16 @@
                         ">
 
                             <a
-                                href="{{ route('admin.password.reset', [
-                                    'token' => $token,
-                                    'email' => $user->email
-                                ]) }}"
+                                href="{{ $user->role === 'dean'
+                                    ? route('superadmin.password.reset', [
+                                        'token' => $token,
+                                        'email' => $user->email
+                                    ])
+                                    : route('admin.password.reset', [
+                                        'token' => $token,
+                                        'email' => $user->email
+                                    ])
+                                }}"
                                 style="
                                     display:inline-block;
                                     background:#2a6f97;

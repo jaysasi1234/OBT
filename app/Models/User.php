@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Models\Cadet;
+use Illuminate\Auth\Notifications\ResetPassword;
 
 class User extends Authenticatable
 {
@@ -73,4 +74,31 @@ class User extends Authenticatable
     {
         return $this->role === 'cadet';
     }
+
+    public function sendPasswordResetNotification($token): void
+{
+    ResetPassword::createUrlUsing(function ($notifiable, $token) {
+
+        if (in_array($notifiable->role, ['dean', 'superadmin'])) {
+            return url(route('superadmin.password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+        }
+
+        if ($notifiable->role === 'admin') {
+            return url(route('admin.password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+        }
+
+        return url(route('password.reset', [
+            'token' => $token,
+            'email' => $notifiable->getEmailForPasswordReset(),
+        ], false));
+    });
+
+    $this->notify(new ResetPassword($token));
+}
 }
