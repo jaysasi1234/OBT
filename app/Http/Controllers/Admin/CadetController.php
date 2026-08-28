@@ -51,78 +51,187 @@ class CadetController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'trb_control_number' => 'nullable|unique:cadets,trb_control_number',
-            'full_name' => 'required|string',
-            'course' => 'required|string',
-            'batch_id' => 'required|exists:batches,id',
-            'date_of_birth' => 'nullable|date',
-            'place_of_birth' => 'required|string',
-            'rank' => 'required|string',
-            'address' => 'required|string',
-            'contact_number' => 'nullable|string|max:20',
-            'email' => 'nullable|email',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+public function store(Request $request)
+{
+    $request->validate([
+        'trb_control_number' => 'nullable|string|max:255',
+        'full_name' => 'required|string',
+        'course' => 'required|string',
+        'batch_id' => 'required|exists:batches,id',
+        'date_of_birth' => 'nullable|date',
+        'place_of_birth' => 'required|string',
+        'rank' => 'required|string',
+        'address' => 'required|string',
+        'contact_number' => 'nullable|string|max:20',
+        'email' => 'nullable|email',
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        if (Cadet::whereRaw(
-            'LOWER(full_name) = ?',
-            [strtolower(trim($request->full_name))]
-        )->exists()) {
+    /*
+    |--------------------------------------------------------------------------
+    | CLEAN TRB CONTROL NUMBER
+    |--------------------------------------------------------------------------
+    */
+
+    $trb = trim((string) $request->input('trb_control_number'));
+
+    // Convert empty/whitespace value to NULL.
+    $trb = $trb === '' ? null : $trb;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECK TRB DUPLICATE ONLY WHEN A VALUE WAS PROVIDED
+    |--------------------------------------------------------------------------
+    */
+
+    if ($trb !== null) {
+        $trbExists = Cadet::where('trb_control_number', $trb)->exists();
+
+        if ($trbExists) {
             return back()
                 ->withInput()
-                ->withErrors(['full_name' => 'This cadet already exists.']);
-        }
-
-        $photoPath = $request->hasFile('photo')
-            ? $request->file('photo')->store('cadets', 'public')
-            : null;
-
-        try {
-            Cadet::create([
-                'trb_control_number' => $request->filled('trb_control_number')
-                    ? $request->trb_control_number
-                    : null,
-                'full_name' => $request->full_name,
-                'course' => $request->course,
-                'batch_id' => $request->batch_id,
-                'date_of_birth' => $request->date_of_birth,
-                'place_of_birth' => $request->place_of_birth,
-                'rank' => $request->rank,
-                'address' => $request->address,
-                'contact_number' => $request->contact_number,
-                'email' => $request->email,
-                'photo' => $photoPath,
-                'parent_guardian_name' => trim(
-                    $request->parent_first . ' ' .
-                    $request->parent_middle . ' ' .
-                    $request->parent_last
-                ),
-                'parent_guardian_contact' => $request->parent_contact,
-                'parent_guardian_email' => $request->parent_email,
-                'parent_guardian_address' => $request->parent_address,
-                'verification_status' => 'Pending',
-                'date_of_enrollment' => now(),
-            ]);
-
-            return redirect()
-                ->route('admin.cadets.index')
-                ->with('success', 'Cadet added successfully!');
-        } catch (QueryException $e) {
-            if ($e->getCode() == 23000) {
-                return back()
-                    ->withInput()
-                    ->withErrors([
-                        'trb_control_number' =>
-                            'TRB Control Number already exists. Please use a different one.'
-                    ]);
-            }
-
-            throw $e;
+                ->withErrors([
+                    'trb_control_number' =>
+                        'TRB Control Number already exists. Please use a different one.'
+                ]);
         }
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECK DUPLICATE CADET NAME
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        Cadet::whereRaw(
+            'LOWER(TRIM(full_name)) = ?',
+            [strtolower(trim($request->full_name))]
+        )->exists()
+    ) {
+        return back()
+            ->withInput()
+            ->withErrors([
+                'full_name' => 'This cadet already exists.'
+            ]);
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PHOTO
+    |--------------------------------------------------------------------------
+    */
+
+    $photoPath = $request->hasFile('photo')
+        ? $request->file('photo')->store('cadets', 'public')
+        : null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CREATE CADET
+    |--------------------------------------------------------------------------
+    */
+
+    try {
+
+        $cadet = Cadet::create([
+
+            'trb_control_number' => $trb,
+
+            'full_name' => trim($request->full_name),
+
+            'course' => $request->course,
+
+            'batch_id' => $request->batch_id,
+
+            'date_of_birth' => $request->date_of_birth,
+
+            'place_of_birth' => $request->place_of_birth,
+
+            'rank' => $request->rank,
+
+            'address' => $request->address,
+
+            'contact_number' => $request->contact_number,
+
+            'email' => $request->email,
+
+            'photo' => $photoPath,
+
+            'parent_guardian_name' => trim(
+                ($request->parent_first ?? '') . ' ' .
+                ($request->parent_middle ?? '') . ' ' .
+                ($request->parent_last ?? '')
+            ),
+
+            'parent_guardian_contact' =>
+                $request->parent_contact,
+
+            'parent_guardian_email' =>
+                $request->parent_email,
+
+            'parent_guardian_address' =>
+                $request->parent_address,
+
+            'verification_status' => 'Pending',
+
+            'date_of_enrollment' => now(),
+        ]);
+
+
+        return redirect()
+            ->route('admin.cadets.index')
+            ->with('success', 'Cadet added successfully!');
+
+    } catch (QueryException $e) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | ONLY REPORT A TRB DUPLICATE IF MYSQL ACTUALLY REPORTS THAT INDEX
+        |--------------------------------------------------------------------------
+        */
+
+        $message = $e->getMessage();
+
+        if (
+            str_contains($message, 'trb_control_number') &&
+            (
+                str_contains($message, 'Duplicate entry') ||
+                str_contains($message, '1062')
+            )
+        ) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'trb_control_number' =>
+                        'TRB Control Number already exists. Please use a different one.'
+                ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | OTHER DATABASE ERRORS
+        |--------------------------------------------------------------------------
+        */
+
+        \Log::error('Cadet creation failed', [
+            'error' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ]);
+
+        return back()
+            ->withInput()
+            ->withErrors([
+                'general' =>
+                    'The cadet could not be added. Please check the server logs for the database error.'
+            ]);
+    }
+}
 
     public function show(Cadet $cadet)
     {
