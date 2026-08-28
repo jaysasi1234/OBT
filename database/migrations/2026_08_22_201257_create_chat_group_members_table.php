@@ -8,28 +8,27 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('chat_group_members', function (Blueprint $table) {
+        if (!Schema::hasTable('chat_group_members')) {
+            Schema::create('chat_group_members', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('chat_group_id');
+                $table->unsignedBigInteger('user_id');
+                $table->timestamp('joined_at')->nullable();
+                $table->timestamps();
 
-            $table->id();
+                $table->foreign('chat_group_id')
+                    ->references('id')
+                    ->on('chat_groups')
+                    ->onDelete('cascade');
 
-            $table->foreignId('chat_group_id')
-                ->constrained('chat_groups')
-                ->cascadeOnDelete();
+                $table->foreign('user_id')
+                    ->references('id')
+                    ->on('users')
+                    ->onDelete('cascade');
 
-            $table->foreignId('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
-
-            $table->timestamp('joined_at')
-                ->nullable();
-
-            $table->timestamps();
-
-            $table->unique([
-                'chat_group_id',
-                'user_id'
-            ]);
-        });
+                $table->unique(['chat_group_id', 'user_id']);
+            });
+        }
     }
 
     public function down(): void
