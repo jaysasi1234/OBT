@@ -25,69 +25,40 @@ class ProfileController extends Controller
         return view('cadet.profile_edit', compact('user'));
     }
 
+    // 👉 UPDATE PERSONAL INFO
 public function update(Request $request)
 {
     $request->validate([
-        'name'           => 'required|string|max:255',
-        'date_of_birth'  => 'nullable|date',
-        'place_of_birth' => 'nullable|string|max:255',
-        'address'        => 'nullable|string|max:255',
-        'contact_number' => 'nullable|string|max:50',
-
-        // Guardian fields
-        'guardian_name'    => 'nullable|string|max:255',
-        'relationship'     => 'nullable|string|max:100',
-        'guardian_contact' => 'nullable|string|max:50',
-        'guardian_address' => 'nullable|string|max:255',
+        'name' => 'required|string|max:255',
+        'course' => 'nullable|string|max:255',
+        'dob' => 'nullable|date',
+        'birth_place' => 'nullable|string|max:255',
+        'address' => 'nullable|string|max:255',
+        'contact_no' => 'nullable|string|max:50',
     ]);
 
     $user = Auth::user();
 
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE USER
-    |--------------------------------------------------------------------------
-    */
-
+    // Update User table
     $user->update([
-        'name'            => $request->name,
-        'guardian_name'   => $request->guardian_name,
-        'relationship'    => $request->relationship,
-        'guardian_contact'=> $request->guardian_contact,
-        'guardian_address'=> $request->guardian_address,
+        'name' => $request->name,
     ]);
 
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE CADET
-    |--------------------------------------------------------------------------
-    */
-
+    // Update Cadet table
     $cadet = Cadet::where('user_id', $user->id)->first();
 
     if ($cadet) {
-
         $cadet->update([
-            'full_name'      => $request->name,
-            'date_of_birth'  => $request->date_of_birth,
-            'place_of_birth' => $request->place_of_birth,
-            'address'        => $request->address,
-            'contact_number' => $request->contact_number,
-
-            /*
-             * IMPORTANT:
-             * Do NOT update course here.
-             *
-             * The cadet profile Blade currently does not
-             * submit a course field.
-             *
-             * Therefore we preserve the existing database value.
-             */
+            'full_name'        => $request->name,
+            'course'           => $request->course,
+            'date_of_birth'    => $request->dob,
+            'place_of_birth'   => $request->birth_place,
+            'address'          => $request->address,
+            'contact_number'   => $request->contact_no,
         ]);
     }
 
-    return redirect()
-        ->route('cadet.profile')
+    return redirect()->route('cadet.profile')
         ->with('success', 'Profile updated successfully!');
 }
 
@@ -138,27 +109,68 @@ public function update(Request $request)
         return back()->with('success', 'Password updated successfully!');
     }
 
-    // 👉 UPLOAD PHOTO
+// 👉 UPLOAD PHOTO
 public function upload(Request $request)
 {
     $request->validate([
-        'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
     ]);
 
     $user = Auth::user();
 
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE OLD PROFILE PHOTO
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        $user->profile_picture &&
+        Storage::disk('public')->exists($user->profile_picture)
+    ) {
+        Storage::disk('public')->delete($user->profile_picture);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STORE NEW PHOTO
+    |--------------------------------------------------------------------------
+    */
+
     $path = $request->file('photo')->store('profile_pictures', 'public');
 
-    $user->profile_picture = $path;
-    $user->save();
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE USER TABLE
+    |--------------------------------------------------------------------------
+    */
+
+    $user->update([
+        'profile_picture' => $path,
+    ]);
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE CADET TABLE
+    |--------------------------------------------------------------------------
+    */
 
     $cadet = Cadet::where('user_id', $user->id)->first();
 
     if ($cadet) {
-        $cadet->photo = $path;
-        $cadet->save();
+        $cadet->update([
+            'photo' => $path,
+        ]);
     }
 
-    return back()->with('success','Photo updated successfully.');
+    /*
+    |--------------------------------------------------------------------------
+    | RETURN TO PROFILE
+    |--------------------------------------------------------------------------
+    */
+
+    return redirect()
+        ->route('cadet.profile')
+        ->with('success', 'Photo updated successfully!');
 }
 }
