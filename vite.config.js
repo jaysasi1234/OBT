@@ -12,6 +12,8 @@ export default defineConfig({
                 // Admin
                 'resources/css/admin/dashboard.css',
 
+                'resources/css/chat/chat.css',
+
                 // Cadets
                 'resources/css/admin/cadets/cadets.css',
                 'resources/css/admin/cadets/create.css',
