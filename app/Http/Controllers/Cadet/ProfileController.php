@@ -25,40 +25,69 @@ class ProfileController extends Controller
         return view('cadet.profile_edit', compact('user'));
     }
 
-    // 👉 UPDATE PERSONAL INFO
 public function update(Request $request)
 {
     $request->validate([
-        'name' => 'required|string|max:255',
-        'course' => 'nullable|string|max:255',
-        'dob' => 'nullable|date',
-        'birth_place' => 'nullable|string|max:255',
-        'address' => 'nullable|string|max:255',
-        'contact_no' => 'nullable|string|max:50',
+        'name'           => 'required|string|max:255',
+        'date_of_birth'  => 'nullable|date',
+        'place_of_birth' => 'nullable|string|max:255',
+        'address'        => 'nullable|string|max:255',
+        'contact_number' => 'nullable|string|max:50',
+
+        // Guardian fields
+        'guardian_name'    => 'nullable|string|max:255',
+        'relationship'     => 'nullable|string|max:100',
+        'guardian_contact' => 'nullable|string|max:50',
+        'guardian_address' => 'nullable|string|max:255',
     ]);
 
     $user = Auth::user();
 
-    // Update User table
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE USER
+    |--------------------------------------------------------------------------
+    */
+
     $user->update([
-        'name' => $request->name,
+        'name'            => $request->name,
+        'guardian_name'   => $request->guardian_name,
+        'relationship'    => $request->relationship,
+        'guardian_contact'=> $request->guardian_contact,
+        'guardian_address'=> $request->guardian_address,
     ]);
 
-    // Update Cadet table
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE CADET
+    |--------------------------------------------------------------------------
+    */
+
     $cadet = Cadet::where('user_id', $user->id)->first();
 
     if ($cadet) {
+
         $cadet->update([
-            'full_name'        => $request->name,
-            'course'           => $request->course,
-            'date_of_birth'    => $request->dob,
-            'place_of_birth'   => $request->birth_place,
-            'address'          => $request->address,
-            'contact_number'   => $request->contact_no,
+            'full_name'      => $request->name,
+            'date_of_birth'  => $request->date_of_birth,
+            'place_of_birth' => $request->place_of_birth,
+            'address'        => $request->address,
+            'contact_number' => $request->contact_number,
+
+            /*
+             * IMPORTANT:
+             * Do NOT update course here.
+             *
+             * The cadet profile Blade currently does not
+             * submit a course field.
+             *
+             * Therefore we preserve the existing database value.
+             */
         ]);
     }
 
-    return redirect()->route('cadet.profile')
+    return redirect()
+        ->route('cadet.profile')
         ->with('success', 'Profile updated successfully!');
 }
 

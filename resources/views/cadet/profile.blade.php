@@ -1524,24 +1524,31 @@
                             </div>
 
 
-                            {{-- COURSE --}}
+{{-- COURSE --}}
 
-                    <div class="profile-row">
+<div class="profile-row">
 
-                        <div class="profile-label">
-                            <i class="bi bi-mortarboard"></i>
-                            Course
-                        </div>
+    <div class="profile-label">
+        <i class="bi bi-mortarboard"></i>
+        Course
+    </div>
 
-                        <div>
+    <div>
 
-                            <span class="profile-value">
-                                {{ $user->course ?? $user->cadet?->course ?? 'N/A' }}
-                            </span>
+        <span class="profile-value">
+            {{ $user->cadet?->course ?? $user->course ?? 'N/A' }}
+        </span>
 
-                        </div>
+        <input
+            type="text"
+            name="course"
+            class="profile-input"
+            value="{{ old('course', $user->cadet?->course ?? $user->course ?? '') }}"
+            required>
 
-                    </div>
+    </div>
+
+</div>
 
 
                             {{-- BATCH --}}
