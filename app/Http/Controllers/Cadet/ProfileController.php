@@ -144,82 +144,64 @@ class ProfileController extends Controller
     // UPLOAD PROFILE PHOTO
     // =========================================================
 
-    public function upload(Request $request)
-    {
-        // -----------------------------------------------------
-        // VALIDATE PHOTO
-        // -----------------------------------------------------
+public function upload(Request $request)
+{
+    $request->validate([
+        'photo' => [
+            'required',
+            'image',
+            'mimes:jpg,jpeg,png,webp',
+            'max:2048',
+        ],
+    ]);
 
-        $request->validate([
-            'photo' => [
-                'required',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:2048',
-            ],
-        ]);
+    $user = Auth::user();
 
-        $user = Auth::user();
+    /*
+    |--------------------------------------------------------------------------
+    | DELETE OLD PROFILE PHOTO
+    |--------------------------------------------------------------------------
+    */
 
+    if ($user->profile_picture) {
 
-        // -----------------------------------------------------
-        // DELETE OLD PROFILE PHOTO
-        // -----------------------------------------------------
+        $oldPath = $user->profile_picture;
 
-        if ($user->profile_picture) {
-
-            $oldPath = $user->profile_picture;
-
-            // Only delete files belonging to profile_pictures
-            if (
-                str_starts_with($oldPath, 'profile_pictures/')
-                && Storage::disk('public')->exists($oldPath)
-            ) {
-                Storage::disk('public')->delete($oldPath);
-            }
+        if (
+            str_starts_with($oldPath, 'profile_pictures/')
+            && Storage::disk('public')->exists($oldPath)
+        ) {
+            Storage::disk('public')->delete($oldPath);
         }
-
-
-        // -----------------------------------------------------
-        // STORE NEW PROFILE PHOTO
-        // -----------------------------------------------------
-
-        $path = $request
-            ->file('photo')
-            ->store('profile_pictures', 'public');
-
-
-        // -----------------------------------------------------
-        // UPDATE USER TABLE
-        // -----------------------------------------------------
-
-        $user->profile_picture = $path;
-
-        // Make sure updated_at changes so the browser
-        // receives a new cache-busting version.
-        $user->touch();
-
-        $user->save();
-
-
-        // -----------------------------------------------------
-        // UPDATE CADET TABLE
-        // -----------------------------------------------------
-
-        $cadet = Cadet::where('user_id', $user->id)->first();
-
-        if ($cadet) {
-            $cadet->photo = $path;
-            $cadet->save();
-        }
-
-
-        // -----------------------------------------------------
-        // RETURN TO PROFILE
-        // -----------------------------------------------------
-
-        return redirect()
-            ->route('cadet.profile')
-            ->with('success', 'Photo updated successfully!');
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STORE NEW PHOTO
+    |--------------------------------------------------------------------------
+    */
+
+    $path = $request
+        ->file('photo')
+        ->store('profile_pictures', 'public');
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE USER
+    |--------------------------------------------------------------------------
+    */
+
+    $user->profile_picture = $path;
+    $user->save();
+
+    /*
+    |--------------------------------------------------------------------------
+    | REDIRECT
+    |--------------------------------------------------------------------------
+    */
+
+    return redirect()
+        ->route('cadet.profile')
+        ->with('success', 'Photo updated successfully!');
+}
 }
