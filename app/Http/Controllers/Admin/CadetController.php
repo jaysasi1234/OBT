@@ -335,51 +335,26 @@ public function store(Request $request)
 
 public function update(Request $request, Cadet $cadet)
 {
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDATE REQUEST
-    |--------------------------------------------------------------------------
-    */
-
     $validated = $request->validate([
         'trb_control_number' => 'nullable|string|max:255',
-        'full_name' => 'required|string|max:255',
-
-        // Course MUST have a value
+        'full_name' => 'required|string',
         'course' => 'required|string|max:255',
-
         'batch_id' => 'nullable|exists:batches,id',
         'date_of_birth' => 'nullable|date',
-        'place_of_birth' => 'nullable|string|max:255',
-        'rank' => 'required|string|max:255',
+        'place_of_birth' => 'nullable|string',
+        'rank' => 'required|string',
         'address' => 'nullable|string',
         'contact_number' => 'nullable|string|max:20',
-        'email' => 'nullable|email|max:255',
-
+        'email' => 'nullable|email',
         'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-
-        /*
-        |--------------------------------------------------------------------------
-        | PARENT / GUARDIAN
-        |--------------------------------------------------------------------------
-        */
 
         'guardian_relationship' => 'nullable|string|max:255',
 
         'parent_guardian_name' => 'nullable|string|max:255',
         'parent_guardian_contact' => 'nullable|string|max:20',
-        'parent_guardian_email' => 'nullable|email|max:255',
+        'parent_guardian_email' => 'nullable|email',
         'parent_guardian_address' => 'nullable|string',
-
-        /*
-        |--------------------------------------------------------------------------
-        | PHOTO REMOVE
-        |--------------------------------------------------------------------------
-        */
-
-        'remove_photo' => 'nullable|boolean',
     ]);
-
 
     /*
     |--------------------------------------------------------------------------
@@ -387,42 +362,24 @@ public function update(Request $request, Cadet $cadet)
     |--------------------------------------------------------------------------
     */
 
-    $trb = trim(
-        (string) ($validated['trb_control_number'] ?? '')
-    );
+    $trb = trim((string) ($validated['trb_control_number'] ?? ''));
+    $trb = $trb === '' ? null : $trb;
 
-    $trb = $trb === ''
-        ? null
-        : $trb;
-
+    $course = trim((string) ($validated['course'] ?? ''));
 
     /*
     |--------------------------------------------------------------------------
-    | CLEAN COURSE
-    |--------------------------------------------------------------------------
-    */
-
-    $course = trim(
-        (string) ($validated['course'] ?? '')
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | COURSE CANNOT BE EMPTY
+    | MAKE SURE COURSE IS NOT EMPTY
     |--------------------------------------------------------------------------
     */
 
     if ($course === '') {
-
         return back()
             ->withInput()
             ->withErrors([
-                'course' =>
-                    'Please select or enter a course.'
+                'course' => 'Please select a course.'
             ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -436,16 +393,10 @@ public function update(Request $request, Cadet $cadet)
             'trb_control_number',
             $trb
         )
-        ->where(
-            'id',
-            '!=',
-            $cadet->id
-        )
+        ->where('id', '!=', $cadet->id)
         ->exists();
 
-
         if ($trbExists) {
-
             return back()
                 ->withInput()
                 ->withErrors([
@@ -455,7 +406,6 @@ public function update(Request $request, Cadet $cadet)
         }
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | PHOTO
@@ -464,33 +414,16 @@ public function update(Request $request, Cadet $cadet)
 
     if ($request->hasFile('photo')) {
 
-        /*
-        | Delete old photo
-        */
-
         if (
             $cadet->photo &&
-            Storage::disk('public')->exists(
-                $cadet->photo
-            )
+            Storage::disk('public')->exists($cadet->photo)
         ) {
-
-            Storage::disk('public')->delete(
-                $cadet->photo
-            );
+            Storage::disk('public')->delete($cadet->photo);
         }
 
-
-        /*
-        | Store new photo
-        */
-
-        $validated['photo'] =
-            $request
-                ->file('photo')
-                ->store('cadets', 'public');
+        $cadet->photo =
+            $request->file('photo')->store('cadets', 'public');
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -498,25 +431,20 @@ public function update(Request $request, Cadet $cadet)
     |--------------------------------------------------------------------------
     */
 
-    elseif (
-        $request->boolean('remove_photo')
+    if (
+        $request->input('remove_photo') === '1' &&
+        !$request->hasFile('photo')
     ) {
 
         if (
             $cadet->photo &&
-            Storage::disk('public')->exists(
-                $cadet->photo
-            )
+            Storage::disk('public')->exists($cadet->photo)
         ) {
-
-            Storage::disk('public')->delete(
-                $cadet->photo
-            );
+            Storage::disk('public')->delete($cadet->photo);
         }
 
-        $validated['photo'] = null;
+        $cadet->photo = null;
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -524,93 +452,49 @@ public function update(Request $request, Cadet $cadet)
     |--------------------------------------------------------------------------
     */
 
-    $cadet->trb_control_number =
-        $trb;
-
+    $cadet->trb_control_number = $trb;
 
     $cadet->full_name =
-        trim(
-            $validated['full_name']
-        );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | IMPORTANT:
-    | ALWAYS SAVE THE CLEAN COURSE VALUE
-    |--------------------------------------------------------------------------
-    */
+        trim($validated['full_name']);
 
     $cadet->course =
         $course;
 
-
     $cadet->batch_id =
         $validated['batch_id'] ?? null;
-
 
     $cadet->date_of_birth =
         $validated['date_of_birth'] ?? null;
 
-
     $cadet->place_of_birth =
         $validated['place_of_birth'] ?? null;
-
 
     $cadet->rank =
         $validated['rank'];
 
-
     $cadet->address =
         $validated['address'] ?? null;
-
 
     $cadet->contact_number =
         $validated['contact_number'] ?? null;
 
-
     $cadet->email =
         $validated['email'] ?? null;
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PARENT / GUARDIAN
-    |--------------------------------------------------------------------------
-    */
 
     $cadet->guardian_relationship =
         $validated['guardian_relationship'] ?? null;
 
-
     $cadet->parent_guardian_name =
         $validated['parent_guardian_name'] ?? null;
-
 
     $cadet->parent_guardian_contact =
         $validated['parent_guardian_contact'] ?? null;
 
-
     $cadet->parent_guardian_email =
         $validated['parent_guardian_email'] ?? null;
 
-
     $cadet->parent_guardian_address =
         $validated['parent_guardian_address'] ?? null;
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PHOTO
-    |--------------------------------------------------------------------------
-    */
-
-    if (array_key_exists('photo', $validated)) {
-
-        $cadet->photo =
-            $validated['photo'];
-    }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -619,7 +503,6 @@ public function update(Request $request, Cadet $cadet)
     */
 
     $cadet->save();
-
 
     /*
     |--------------------------------------------------------------------------
