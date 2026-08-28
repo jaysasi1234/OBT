@@ -65,6 +65,14 @@ public function store(Request $request)
         'contact_number' => 'nullable|string|max:20',
         'email' => 'nullable|email',
         'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+
+        // Parent / Guardian
+        'parent_first' => 'nullable|string|max:255',
+        'parent_middle' => 'nullable|string|max:255',
+        'parent_last' => 'nullable|string|max:255',
+        'parent_contact' => 'nullable|string|max:20',
+        'parent_email' => 'nullable|email',
+        'parent_address' => 'nullable|string',
     ]);
 
     /*
@@ -75,20 +83,25 @@ public function store(Request $request)
 
     $trb = trim((string) $request->input('trb_control_number'));
 
-    // Convert empty/whitespace value to NULL.
+    // Convert empty value to NULL
     $trb = $trb === '' ? null : $trb;
 
 
     /*
     |--------------------------------------------------------------------------
-    | CHECK TRB DUPLICATE ONLY WHEN A VALUE WAS PROVIDED
+    | CHECK TRB DUPLICATE
     |--------------------------------------------------------------------------
     */
 
     if ($trb !== null) {
-        $trbExists = Cadet::where('trb_control_number', $trb)->exists();
+
+        $trbExists = Cadet::where(
+            'trb_control_number',
+            $trb
+        )->exists();
 
         if ($trbExists) {
+
             return back()
                 ->withInput()
                 ->withErrors([
@@ -105,16 +118,20 @@ public function store(Request $request)
     |--------------------------------------------------------------------------
     */
 
+    $fullName = trim($request->input('full_name'));
+
     if (
         Cadet::whereRaw(
             'LOWER(TRIM(full_name)) = ?',
-            [strtolower(trim($request->full_name))]
+            [strtolower($fullName)]
         )->exists()
     ) {
+
         return back()
             ->withInput()
             ->withErrors([
-                'full_name' => 'This cadet already exists.'
+                'full_name' =>
+                    'This cadet already exists.'
             ]);
     }
 
@@ -132,6 +149,48 @@ public function store(Request $request)
 
     /*
     |--------------------------------------------------------------------------
+    | PARENT / GUARDIAN INFORMATION
+    |--------------------------------------------------------------------------
+    */
+
+    $parentGuardianName = trim(
+        ($request->input('parent_first') ?? '') . ' ' .
+        ($request->input('parent_middle') ?? '') . ' ' .
+        ($request->input('parent_last') ?? '')
+    );
+
+    // Empty string becomes NULL
+    $parentGuardianName = $parentGuardianName === ''
+        ? null
+        : $parentGuardianName;
+
+    $parentGuardianContact = trim(
+        (string) $request->input('parent_contact', '')
+    );
+
+    $parentGuardianContact = $parentGuardianContact === ''
+        ? null
+        : $parentGuardianContact;
+
+    $parentGuardianEmail = trim(
+        (string) $request->input('parent_email', '')
+    );
+
+    $parentGuardianEmail = $parentGuardianEmail === ''
+        ? null
+        : $parentGuardianEmail;
+
+    $parentGuardianAddress = trim(
+        (string) $request->input('parent_address', '')
+    );
+
+    $parentGuardianAddress = $parentGuardianAddress === ''
+        ? null
+        : $parentGuardianAddress;
+
+
+    /*
+    |--------------------------------------------------------------------------
     | CREATE CADET
     |--------------------------------------------------------------------------
     */
@@ -142,7 +201,7 @@ public function store(Request $request)
 
             'trb_control_number' => $trb,
 
-            'full_name' => trim($request->full_name),
+            'full_name' => $fullName,
 
             'course' => $request->course,
 
@@ -162,20 +221,13 @@ public function store(Request $request)
 
             'photo' => $photoPath,
 
-            'parent_guardian_name' => trim(
-                ($request->parent_first ?? '') . ' ' .
-                ($request->parent_middle ?? '') . ' ' .
-                ($request->parent_last ?? '')
-            ),
+            'parent_guardian_name' => $parentGuardianName,
 
-            'parent_guardian_contact' =>
-                $request->parent_contact,
+            'parent_guardian_contact' => $parentGuardianContact,
 
-            'parent_guardian_email' =>
-                $request->parent_email,
+            'parent_guardian_email' => $parentGuardianEmail,
 
-            'parent_guardian_address' =>
-                $request->parent_address,
+            'parent_guardian_address' => $parentGuardianAddress,
 
             'verification_status' => 'Pending',
 
@@ -183,27 +235,49 @@ public function store(Request $request)
         ]);
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | SUCCESS
+        |--------------------------------------------------------------------------
+        */
+
         return redirect()
             ->route('admin.cadets.index')
-            ->with('success', 'Cadet added successfully!');
+            ->with(
+                'success',
+                'Cadet added successfully!'
+            );
+
 
     } catch (QueryException $e) {
 
         /*
         |--------------------------------------------------------------------------
-        | ONLY REPORT A TRB DUPLICATE IF MYSQL ACTUALLY REPORTS THAT INDEX
+        | TRB DUPLICATE FROM DATABASE
         |--------------------------------------------------------------------------
         */
 
         $message = $e->getMessage();
 
         if (
-            str_contains($message, 'trb_control_number') &&
+            str_contains(
+                $message,
+                'trb_control_number'
+            )
+            &&
             (
-                str_contains($message, 'Duplicate entry') ||
-                str_contains($message, '1062')
+                str_contains(
+                    $message,
+                    'Duplicate entry'
+                )
+                ||
+                str_contains(
+                    $message,
+                    '1062'
+                )
             )
         ) {
+
             return back()
                 ->withInput()
                 ->withErrors([
@@ -212,17 +286,28 @@ public function store(Request $request)
                 ]);
         }
 
+
         /*
         |--------------------------------------------------------------------------
-        | OTHER DATABASE ERRORS
+        | LOG OTHER DATABASE ERRORS
         |--------------------------------------------------------------------------
         */
 
-        \Log::error('Cadet creation failed', [
-            'error' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-        ]);
+        \Log::error(
+            'Cadet creation failed',
+            [
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TEMPORARY DEVELOPMENT ERROR
+        |--------------------------------------------------------------------------
+        */
 
         return back()
             ->withInput()
