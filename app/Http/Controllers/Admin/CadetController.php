@@ -227,8 +227,7 @@ public function store(Request $request)
         return back()
             ->withInput()
             ->withErrors([
-                'general' =>
-                    'The cadet could not be added. Please check the server logs for the database error.'
+                'general' => $e->getMessage()
             ]);
     }
 }
