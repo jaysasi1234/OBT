@@ -1,7 +1,9 @@
 @extends('layouts.cadet')
 
 @php
-    use Illuminate\Support\Facades\Storage;
+    $profilePhoto = $user->profile_picture
+        ? asset('storage/' . $user->profile_picture) . '?v=' . time()
+        : asset('images/default-avatar.png');
 @endphp
 
 @section('content')
@@ -1267,9 +1269,7 @@
                     <img
                         id="profilePreview"
                         class="profile-avatar"
-                            src="{{ $user->profile_picture
-                                ? Storage::url($user->profile_picture) . '?v=' . time()
-                                : asset('images/default-avatar.png') }}"
+                        src="{{ $profilePhoto }}"
                         alt="Profile Photo">
 
                     <div class="profile-identity-text">
@@ -1812,9 +1812,7 @@
                                 <img
                                     id="photoPreview"
                                     class="profile-photo"
-                                    src="{{ $user->profile_picture
-                                        ? Storage::url($user->profile_picture) . '?v=' . time()
-                                        : asset('images/default-avatar.png') }}"
+                                    src="{{ $profilePhoto }}"
                                     alt="Profile Photo">
 
                                 <span class="photo-status"></span>
