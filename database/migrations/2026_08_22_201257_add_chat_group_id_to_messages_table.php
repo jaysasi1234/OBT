@@ -8,27 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('messages', function (Blueprint $table) {
-
-            $table->foreignId('chat_group_id')
-                ->nullable()
-                ->after('receiver_id')
-                ->constrained('chat_groups')
-                ->nullOnDelete();
-
-        });
+        if (!Schema::hasColumn('messages', 'chat_group_id')) {
+            Schema::table('messages', function (Blueprint $table) {
+                $table->unsignedBigInteger('chat_group_id')
+                    ->nullable()
+                    ->after('receiver_id');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('messages', function (Blueprint $table) {
-
-            $table->dropForeign([
-                'chat_group_id'
-            ]);
-
-            $table->dropColumn('chat_group_id');
-
-        });
+        if (Schema::hasColumn('messages', 'chat_group_id')) {
+            Schema::table('messages', function (Blueprint $table) {
+                $table->dropColumn('chat_group_id');
+            });
+        }
     }
 };
