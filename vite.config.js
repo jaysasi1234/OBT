@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/css/admin/dashboard.css',
 
                 'resources/css/chat/chat.css',
+                'resources/css/admin/profile.css',
 
                 // Cadets
                 'resources/css/admin/cadets/cadets.css',
