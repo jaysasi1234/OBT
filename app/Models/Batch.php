@@ -13,6 +13,7 @@ use App\Models\ChatGroup;
 class Batch extends Model
 {
     protected $fillable = [
+        'name',
         'batch_year',
     ];
 
