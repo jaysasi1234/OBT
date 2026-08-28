@@ -109,27 +109,38 @@ public function update(Request $request)
         return back()->with('success', 'Password updated successfully!');
     }
 
-    // 👉 UPLOAD PHOTO
 public function upload(Request $request)
 {
     $request->validate([
-        'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        'photo' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
     ]);
 
     $user = Auth::user();
 
+    // Delete old profile photo
+    if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+        Storage::disk('public')->delete($user->profile_picture);
+    }
+
+    // Store new photo
     $path = $request->file('photo')->store('profile_pictures', 'public');
 
-    $user->profile_picture = $path;
-    $user->save();
+    // Update user
+    $user->update([
+        'profile_picture' => $path,
+    ]);
 
+    // Update cadet photo
     $cadet = Cadet::where('user_id', $user->id)->first();
 
     if ($cadet) {
-        $cadet->photo = $path;
-        $cadet->save();
+        $cadet->update([
+            'photo' => $path,
+        ]);
     }
 
-    return back()->with('success','Photo updated successfully.');
+    return redirect()
+        ->route('cadet.profile')
+        ->with('success', 'Photo updated successfully.');
 }
 }
