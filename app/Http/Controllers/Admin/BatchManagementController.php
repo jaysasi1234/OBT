@@ -9,63 +9,78 @@ use App\Models\Course;
 
 class BatchManagementController extends Controller
 {
+    /**
+     * Display the batch management page.
+     */
     public function index()
     {
-        $batches = Batch::with('courses')->latest()->get();
+        $batches = Batch::with('courses')
+            ->orderBy('batch_year', 'desc')
+            ->get();
 
-        $courses = Course::all();
+        $courses = Course::orderBy('course_name')->get();
 
         return view('admin.settings.batch', compact('batches', 'courses'));
     }
 
+    /**
+     * Store a new batch.
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'batch_year' => 'required',
-            'courses' => 'required|array',
+        $validated = $request->validate([
+            'batch_year' => 'required|string|max:20',
+            'courses' => 'required|array|min:1',
+            'courses.*' => 'exists:courses,id',
         ]);
 
-        // Create batch with both the legacy `name`
-        // and the newer `batch_year` field.
+        // Only use the column that currently exists
+        // in the production batches table.
         $batch = Batch::create([
-            'name' => $request->batch_year,
-            'batch_year' => $request->batch_year,
+            'batch_year' => $validated['batch_year'],
         ]);
 
-        // Attach selected courses to the batch.
-        $batch->courses()->attach($request->courses);
+        // Attach selected courses.
+        $batch->courses()->attach($validated['courses']);
 
         return back()->with('success', 'Batch Added Successfully');
     }
 
+    /**
+     * Update an existing batch.
+     */
     public function update(Request $request, int $id)
     {
-        $request->validate([
-            'batch_year' => 'required',
-            'courses' => 'required|array',
+        $validated = $request->validate([
+            'batch_year' => 'required|string|max:20',
+            'courses' => 'required|array|min:1',
+            'courses.*' => 'exists:courses,id',
         ]);
 
         $batch = Batch::findOrFail($id);
 
-        // Keep both fields synchronized.
+        // Only update batch_year.
         $batch->update([
-            'name' => $request->batch_year,
-            'batch_year' => $request->batch_year,
+            'batch_year' => $validated['batch_year'],
         ]);
 
-        // Replace existing courses with the selected courses.
-        $batch->courses()->sync($request->courses);
+        // Replace the existing course assignments.
+        $batch->courses()->sync($validated['courses']);
 
         return back()->with('success', 'Batch Updated Successfully');
     }
 
+    /**
+     * Delete a batch.
+     */
     public function destroy(int $id)
     {
         $batch = Batch::findOrFail($id);
 
-        // Detach pivot records before deleting the batch.
+        // Remove pivot records first.
         $batch->courses()->detach();
 
+        // Delete the batch.
         $batch->delete();
 
         return back()->with('success', 'Batch Deleted Successfully');
