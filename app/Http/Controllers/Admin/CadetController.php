@@ -333,62 +333,307 @@ public function store(Request $request)
         ]);
     }
 
-    public function update(Request $request, Cadet $cadet)
-    {
-        $validated = $request->validate([
-            'trb_control_number' => 'nullable|unique:cadets,trb_control_number,' . $cadet->id,
-            'full_name' => 'required|string',
-            'course' => 'required|string',
-            'batch_id' => 'nullable|exists:batches,id',
-            'date_of_birth' => 'nullable|date',
-            'place_of_birth' => 'nullable|string',
-            'rank' => 'required|string',
-            'address' => 'nullable|string',
-            'contact_number' => 'nullable|string|max:20',
-            'email' => 'nullable|email',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'parent_guardian_name' => 'nullable|string',
-            'parent_guardian_contact' => 'nullable|string',
-            'parent_guardian_email' => 'nullable|email',
-            'parent_guardian_address' => 'nullable|string',
-        ]);
+public function update(Request $request, Cadet $cadet)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDATE REQUEST
+    |--------------------------------------------------------------------------
+    */
 
-        if ($request->hasFile('photo')) {
-            if ($cadet->photo && Storage::disk('public')->exists($cadet->photo)) {
-                Storage::disk('public')->delete($cadet->photo);
-            }
+    $validated = $request->validate([
+        'trb_control_number' => 'nullable|string|max:255',
+        'full_name' => 'required|string|max:255',
 
-            $validated['photo'] =
-                $request->file('photo')->store('cadets', 'public');
-        }
+        // Course MUST have a value
+        'course' => 'required|string|max:255',
 
-        $cadet->fill([
-            'trb_control_number' => $validated['trb_control_number'],
-            'full_name' => $validated['full_name'],
-            'course' => $validated['course'],
-            'batch_id' => $validated['batch_id'],
-            'date_of_birth' => $validated['date_of_birth'],
-            'place_of_birth' => $validated['place_of_birth'],
-            'rank' => $validated['rank'],
-            'address' => $validated['address'],
-            'contact_number' => $validated['contact_number'],
-            'email' => $validated['email'],
-            'parent_guardian_name' => $validated['parent_guardian_name'] ?? null,
-            'parent_guardian_contact' => $validated['parent_guardian_contact'] ?? null,
-            'parent_guardian_email' => $validated['parent_guardian_email'] ?? null,
-            'parent_guardian_address' => $validated['parent_guardian_address'] ?? null,
-        ]);
+        'batch_id' => 'nullable|exists:batches,id',
+        'date_of_birth' => 'nullable|date',
+        'place_of_birth' => 'nullable|string|max:255',
+        'rank' => 'required|string|max:255',
+        'address' => 'nullable|string',
+        'contact_number' => 'nullable|string|max:20',
+        'email' => 'nullable|email|max:255',
 
-        if (isset($validated['photo'])) {
-            $cadet->photo = $validated['photo'];
-        }
+        'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
-        $cadet->save();
+        /*
+        |--------------------------------------------------------------------------
+        | PARENT / GUARDIAN
+        |--------------------------------------------------------------------------
+        */
 
-        return redirect()
-            ->route('admin.cadets.index')
-            ->with('success', 'Cadet information updated successfully!');
+        'guardian_relationship' => 'nullable|string|max:255',
+
+        'parent_guardian_name' => 'nullable|string|max:255',
+        'parent_guardian_contact' => 'nullable|string|max:20',
+        'parent_guardian_email' => 'nullable|email|max:255',
+        'parent_guardian_address' => 'nullable|string',
+
+        /*
+        |--------------------------------------------------------------------------
+        | PHOTO REMOVE
+        |--------------------------------------------------------------------------
+        */
+
+        'remove_photo' => 'nullable|boolean',
+    ]);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CLEAN VALUES
+    |--------------------------------------------------------------------------
+    */
+
+    $trb = trim(
+        (string) ($validated['trb_control_number'] ?? '')
+    );
+
+    $trb = $trb === ''
+        ? null
+        : $trb;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CLEAN COURSE
+    |--------------------------------------------------------------------------
+    */
+
+    $course = trim(
+        (string) ($validated['course'] ?? '')
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE CANNOT BE EMPTY
+    |--------------------------------------------------------------------------
+    */
+
+    if ($course === '') {
+
+        return back()
+            ->withInput()
+            ->withErrors([
+                'course' =>
+                    'Please select or enter a course.'
+            ]);
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHECK TRB DUPLICATE
+    |--------------------------------------------------------------------------
+    */
+
+    if ($trb !== null) {
+
+        $trbExists = Cadet::where(
+            'trb_control_number',
+            $trb
+        )
+        ->where(
+            'id',
+            '!=',
+            $cadet->id
+        )
+        ->exists();
+
+
+        if ($trbExists) {
+
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'trb_control_number' =>
+                        'TRB Control Number already exists. Please use a different one.'
+                ]);
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PHOTO
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->hasFile('photo')) {
+
+        /*
+        | Delete old photo
+        */
+
+        if (
+            $cadet->photo &&
+            Storage::disk('public')->exists(
+                $cadet->photo
+            )
+        ) {
+
+            Storage::disk('public')->delete(
+                $cadet->photo
+            );
+        }
+
+
+        /*
+        | Store new photo
+        */
+
+        $validated['photo'] =
+            $request
+                ->file('photo')
+                ->store('cadets', 'public');
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | REMOVE PHOTO
+    |--------------------------------------------------------------------------
+    */
+
+    elseif (
+        $request->boolean('remove_photo')
+    ) {
+
+        if (
+            $cadet->photo &&
+            Storage::disk('public')->exists(
+                $cadet->photo
+            )
+        ) {
+
+            Storage::disk('public')->delete(
+                $cadet->photo
+            );
+        }
+
+        $validated['photo'] = null;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE CADET
+    |--------------------------------------------------------------------------
+    */
+
+    $cadet->trb_control_number =
+        $trb;
+
+
+    $cadet->full_name =
+        trim(
+            $validated['full_name']
+        );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | IMPORTANT:
+    | ALWAYS SAVE THE CLEAN COURSE VALUE
+    |--------------------------------------------------------------------------
+    */
+
+    $cadet->course =
+        $course;
+
+
+    $cadet->batch_id =
+        $validated['batch_id'] ?? null;
+
+
+    $cadet->date_of_birth =
+        $validated['date_of_birth'] ?? null;
+
+
+    $cadet->place_of_birth =
+        $validated['place_of_birth'] ?? null;
+
+
+    $cadet->rank =
+        $validated['rank'];
+
+
+    $cadet->address =
+        $validated['address'] ?? null;
+
+
+    $cadet->contact_number =
+        $validated['contact_number'] ?? null;
+
+
+    $cadet->email =
+        $validated['email'] ?? null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PARENT / GUARDIAN
+    |--------------------------------------------------------------------------
+    */
+
+    $cadet->guardian_relationship =
+        $validated['guardian_relationship'] ?? null;
+
+
+    $cadet->parent_guardian_name =
+        $validated['parent_guardian_name'] ?? null;
+
+
+    $cadet->parent_guardian_contact =
+        $validated['parent_guardian_contact'] ?? null;
+
+
+    $cadet->parent_guardian_email =
+        $validated['parent_guardian_email'] ?? null;
+
+
+    $cadet->parent_guardian_address =
+        $validated['parent_guardian_address'] ?? null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PHOTO
+    |--------------------------------------------------------------------------
+    */
+
+    if (array_key_exists('photo', $validated)) {
+
+        $cadet->photo =
+            $validated['photo'];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SAVE
+    |--------------------------------------------------------------------------
+    */
+
+    $cadet->save();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUCCESS
+    |--------------------------------------------------------------------------
+    */
+
+    return redirect()
+        ->route('admin.cadets.index')
+        ->with(
+            'success',
+            'Cadet information updated successfully!'
+        );
+}
 
     public function destroy(Cadet $cadet)
     {
