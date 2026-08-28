@@ -1,8 +1,22 @@
 @extends('layouts.cadet')
 
 @php
+    use Illuminate\Support\Facades\Storage;
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFILE PHOTO
+    |--------------------------------------------------------------------------
+    | The database should contain:
+    | profile_pictures/filename.jpg
+    |
+    | Storage::disk('public')->url() generates:
+    | /storage/profile_pictures/filename.jpg
+    |--------------------------------------------------------------------------
+    */
+
     $profilePhoto = $user->profile_picture
-        ? asset('storage/' . $user->profile_picture) . '?v=' . time()
+        ? Storage::disk('public')->url($user->profile_picture) . '?v=' . ($user->updated_at?->timestamp ?? time())
         : asset('images/default-avatar.png');
 @endphp
 
@@ -1089,6 +1103,16 @@
 
 
 /* =========================================================
+   PHOTO ERROR / FALLBACK
+========================================================= */
+
+.profile-avatar,
+.profile-photo {
+    background: #0d0e32;
+}
+
+
+/* =========================================================
    MOBILE
 ========================================================= */
 
@@ -1256,6 +1280,7 @@
 
     <div class="profile-container">
 
+
         {{-- =====================================================
              HERO
         ====================================================== --}}
@@ -1270,7 +1295,8 @@
                         id="profilePreview"
                         class="profile-avatar"
                         src="{{ $profilePhoto }}"
-                        alt="Profile Photo">
+                        alt="Profile Photo"
+                        onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.png') }}';">
 
                     <div class="profile-identity-text">
 
@@ -1291,7 +1317,7 @@
 
                             <span class="profile-meta-badge">
                                 <i class="bi bi-book"></i>
-                                {{ $user->course ?? 'N/A' }}
+                                {{ $user->cadet?->course ?? $user->course ?? 'N/A' }}
                             </span>
 
                             <span class="profile-meta-badge">
@@ -1359,6 +1385,37 @@
                     <span>
                         {{ session('error') }}
                     </span>
+
+                </div>
+
+            </div>
+
+        @endif
+
+
+        {{-- =====================================================
+             VALIDATION ERRORS
+        ====================================================== --}}
+
+        @if($errors->any())
+
+            <div style="padding:18px 30px 0;">
+
+                <div class="profile-alert error">
+
+                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                    <div>
+
+                        @foreach($errors->all() as $error)
+
+                            <div>
+                                {{ $error }}
+                            </div>
+
+                        @endforeach
+
+                    </div>
 
                 </div>
 
@@ -1475,6 +1532,7 @@
 
                         <div class="profile-card-body">
 
+
                             {{-- FULL NAME --}}
 
                             <div class="profile-row">
@@ -1499,8 +1557,9 @@
                                         type="text"
                                         name="name"
                                         class="profile-input"
-                                        value="{{ $user->name }}"
-                                        autocomplete="name">
+                                        value="{{ old('name', $user->name) }}"
+                                        autocomplete="name"
+                                        required>
 
                                 </div>
 
@@ -1509,18 +1568,22 @@
 
                             {{-- RANK --}}
 
-
                             <div class="profile-row">
 
                                 <div class="profile-label">
+
                                     <i class="bi bi-award"></i>
+
                                     Rank
+
                                 </div>
 
                                 <div>
 
                                     <span class="profile-value">
+
                                         {{ $user->cadet?->rank ?? 'N/A' }}
+
                                     </span>
 
                                 </div>
@@ -1528,31 +1591,35 @@
                             </div>
 
 
-{{-- COURSE --}}
+                            {{-- COURSE --}}
 
-<div class="profile-row">
+                            <div class="profile-row">
 
-    <div class="profile-label">
-        <i class="bi bi-mortarboard"></i>
-        Course
-    </div>
+                                <div class="profile-label">
 
-    <div>
+                                    <i class="bi bi-mortarboard"></i>
 
-        <span class="profile-value">
-            {{ $user->cadet?->course ?? $user->course ?? 'N/A' }}
-        </span>
+                                    Course
 
-        <input
-            type="text"
-            name="course"
-            class="profile-input"
-            value="{{ old('course', $user->cadet?->course ?? $user->course ?? '') }}"
-            required>
+                                </div>
 
-    </div>
+                                <div>
 
-</div>
+                                    <span class="profile-value">
+
+                                        {{ $user->cadet?->course ?? $user->course ?? 'N/A' }}
+
+                                    </span>
+
+                                    <input
+                                        type="text"
+                                        name="course"
+                                        class="profile-input"
+                                        value="{{ old('course', $user->cadet?->course ?? $user->course ?? '') }}">
+
+                                </div>
+
+                            </div>
 
 
                             {{-- BATCH --}}
@@ -1607,9 +1674,7 @@
                                     <span class="profile-value">
 
                                         {{ $user->cadet?->date_of_birth
-                                            ? \Carbon\Carbon::parse(
-                                                $user->cadet->date_of_birth
-                                            )->format('F d, Y')
+                                            ? \Carbon\Carbon::parse($user->cadet->date_of_birth)->format('F d, Y')
                                             : 'N/A' }}
 
                                     </span>
@@ -1618,11 +1683,12 @@
                                         type="date"
                                         name="date_of_birth"
                                         class="profile-input"
-                                        value="{{ $user->cadet?->date_of_birth
-                                            ? \Carbon\Carbon::parse(
-                                                $user->cadet->date_of_birth
-                                            )->format('Y-m-d')
-                                            : '' }}">
+                                        value="{{ old(
+                                            'date_of_birth',
+                                            $user->cadet?->date_of_birth
+                                                ? \Carbon\Carbon::parse($user->cadet->date_of_birth)->format('Y-m-d')
+                                                : ''
+                                        ) }}">
 
                                 </div>
 
@@ -1653,7 +1719,7 @@
                                         type="text"
                                         name="place_of_birth"
                                         class="profile-input"
-                                        value="{{ $user->cadet?->place_of_birth ?? '' }}">
+                                        value="{{ old('place_of_birth', $user->cadet?->place_of_birth ?? '') }}">
 
                                 </div>
 
@@ -1684,7 +1750,7 @@
                                         type="text"
                                         name="address"
                                         class="profile-input"
-                                        value="{{ $user->cadet?->address ?? '' }}">
+                                        value="{{ old('address', $user->cadet?->address ?? '') }}">
 
                                 </div>
 
@@ -1715,7 +1781,7 @@
                                         type="text"
                                         name="contact_number"
                                         class="profile-input"
-                                        value="{{ $user->cadet?->contact_number ?? '' }}"
+                                        value="{{ old('contact_number', $user->cadet?->contact_number ?? '') }}"
                                         autocomplete="tel">
 
                                 </div>
@@ -1747,7 +1813,7 @@
                                         type="email"
                                         name="email"
                                         class="profile-input"
-                                        value="{{ $user->email ?? '' }}"
+                                        value="{{ old('email', $user->email ?? '') }}"
                                         autocomplete="email">
 
                                 </div>
@@ -1813,7 +1879,8 @@
                                     id="photoPreview"
                                     class="profile-photo"
                                     src="{{ $profilePhoto }}"
-                                    alt="Profile Photo">
+                                    alt="Profile Photo"
+                                    onerror="this.onerror=null; this.src='{{ asset('images/default-avatar.png') }}';">
 
                                 <span class="photo-status"></span>
 
@@ -1942,7 +2009,7 @@
                                     type="text"
                                     name="guardian_name"
                                     class="profile-input"
-                                    value="{{ $user->guardian_name ?? '' }}">
+                                    value="{{ old('guardian_name', $user->guardian_name ?? '') }}">
 
                             </div>
 
@@ -1973,7 +2040,7 @@
                                     type="text"
                                     name="relationship"
                                     class="profile-input"
-                                    value="{{ $user->relationship ?? '' }}">
+                                    value="{{ old('relationship', $user->relationship ?? '') }}">
 
                             </div>
 
@@ -2004,7 +2071,7 @@
                                     type="text"
                                     name="guardian_contact"
                                     class="profile-input"
-                                    value="{{ $user->guardian_contact ?? '' }}">
+                                    value="{{ old('guardian_contact', $user->guardian_contact ?? '') }}">
 
                             </div>
 
@@ -2035,15 +2102,16 @@
                                     type="text"
                                     name="guardian_address"
                                     class="profile-input"
-                                    value="{{ $user->guardian_address ?? '' }}">
+                                    value="{{ old('guardian_address', $user->guardian_address ?? '') }}">
 
                             </div>
 
                         </div>
 
 
-                        <div class="profile-save-area"
-                             style="grid-column:1/-1;">
+                        <div
+                            class="profile-save-area"
+                            style="grid-column:1/-1;">
 
                             <button
                                 type="button"
@@ -2217,12 +2285,33 @@
 
 
 <script>
+
+/* =========================================================
+   EDIT MODE
+========================================================= */
+
+let profileEditing = false;
+
+
+/*
+ * Get currently visible tab
+ */
+function getActiveTab()
+{
+    return document.querySelector('.tab-content.active');
+}
+
+
+/*
+ * Show tab
+ */
 function showTab(event, tabId)
 {
     /*
-     * Cancel current editing when switching tabs
+     * Cancel editing when changing tabs
      */
     profileEditing = false;
+
 
     /*
      * Remove active tab
@@ -2247,45 +2336,30 @@ function showTab(event, tabId)
     /*
      * Activate clicked tab
      */
-    event.currentTarget.classList.add('active');
-
-
-    const target =
-        document.getElementById(tabId);
-
-
-    if (target) {
-
-        target.classList.add('active');
-
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
     }
 
 
     /*
-     * Reset edit mode
+     * Show target tab
+     */
+    const target = document.getElementById(tabId);
+
+    if (target) {
+        target.classList.add('active');
+    }
+
+
+    /*
+     * Apply edit mode
      */
     applyEditMode();
 }
 
 
-/* =========================================================
-   EDIT MODE
-========================================================= */
-
-let profileEditing = false;
-
-
 /*
- * Get the currently visible tab
- */
-function getActiveTab()
-{
-    return document.querySelector('.tab-content.active');
-}
-
-
-/*
- * Toggle edit mode only for the active tab
+ * Toggle edit mode
  */
 function toggleEditMode()
 {
@@ -2295,13 +2369,14 @@ function toggleEditMode()
         return;
     }
 
+
     /*
      * Security tab has its own form.
-     * Do not activate profile edit mode there.
      */
     if (activeTab.id === 'security') {
         return;
     }
+
 
     profileEditing = !profileEditing;
 
@@ -2310,27 +2385,25 @@ function toggleEditMode()
 
 
 /*
- * Apply edit mode only to the active tab
+ * Apply edit mode
  */
 function applyEditMode()
 {
     const activeTab = getActiveTab();
 
+
     /*
-     * Remove edit mode from every profile card first.
+     * Remove edit mode from every profile card
      */
     document
         .querySelectorAll('.profile-card')
         .forEach(card => {
-
             card.classList.remove('edit-mode');
-
         });
 
 
     /*
-     * If editing is enabled,
-     * activate only the card inside the current tab.
+     * Enable edit mode only on current tab
      */
     if (profileEditing && activeTab) {
 
@@ -2339,7 +2412,8 @@ function applyEditMode()
             .forEach(card => {
 
                 /*
-                 * Never edit photo/security cards.
+                 * Photo and security cards are never
+                 * placed in edit mode.
                  */
                 if (
                     card.classList.contains('security-card') ||
@@ -2356,7 +2430,7 @@ function applyEditMode()
 
 
     /*
-     * Update Edit button
+     * Update global edit button
      */
     const button =
         document.getElementById('globalEditButton');
@@ -2369,34 +2443,28 @@ function applyEditMode()
     }
 
 
+    const icon =
+        button.querySelector('i');
+
+
     if (profileEditing) {
 
         button.classList.add('editing');
 
-        text.textContent =
-            'Cancel Editing';
-
-        const icon =
-            button.querySelector('i');
+        text.textContent = 'Cancel Editing';
 
         if (icon) {
-            icon.className =
-                'bi bi-x-lg';
+            icon.className = 'bi bi-x-lg';
         }
 
     } else {
 
         button.classList.remove('editing');
 
-        text.textContent =
-            'Edit Profile';
-
-        const icon =
-            button.querySelector('i');
+        text.textContent = 'Edit Profile';
 
         if (icon) {
-            icon.className =
-                'bi bi-pencil-square';
+            icon.className = 'bi bi-pencil-square';
         }
 
     }
@@ -2404,7 +2472,7 @@ function applyEditMode()
 
 
 /*
- * Cancel editing
+ * Cancel edit mode
  */
 function cancelEditMode()
 {
@@ -2446,7 +2514,6 @@ if (photoInput) {
             /*
              * Maximum 2MB
              */
-
             if (
                 file.size >
                 2 * 1024 * 1024
@@ -2459,14 +2526,12 @@ if (photoInput) {
                 this.value = '';
 
                 return;
-
             }
 
 
             /*
              * Validate image type
              */
-
             const allowedTypes = [
                 'image/jpeg',
                 'image/png',
@@ -2475,9 +2540,7 @@ if (photoInput) {
 
 
             if (
-                !allowedTypes.includes(
-                    file.type
-                )
+                !allowedTypes.includes(file.type)
             ) {
 
                 alert(
@@ -2487,10 +2550,12 @@ if (photoInput) {
                 this.value = '';
 
                 return;
-
             }
 
 
+            /*
+             * Preview selected image
+             */
             const reader =
                 new FileReader();
 
@@ -2503,18 +2568,12 @@ if (photoInput) {
 
 
                     if (photoPreview) {
-
-                        photoPreview.src =
-                            source;
-
+                        photoPreview.src = source;
                     }
 
 
                     if (profilePreview) {
-
-                        profilePreview.src =
-                            source;
-
+                        profilePreview.src = source;
                     }
 
                 };
@@ -2574,6 +2633,22 @@ if (passwordForm) {
     );
 
 }
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function() {
+
+        profileEditing = false;
+
+        applyEditMode();
+
+    }
+);
 
 </script>
 
