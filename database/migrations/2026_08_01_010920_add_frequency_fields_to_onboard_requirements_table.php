@@ -10,16 +10,20 @@ return new class extends Migration
     {
         Schema::table('onboard_requirements', function (Blueprint $table) {
 
-            $table->enum('frequency', [
-                'One Time',
-                'Weekly',
-                'Monthly',
-                'End of Training'
-            ])->default('One Time')->after('description');
+            if (!Schema::hasColumn('onboard_requirements', 'frequency')) {
+                $table->enum('frequency', [
+                    'One Time',
+                    'Weekly',
+                    'Monthly',
+                    'End of Training'
+                ])->default('One Time')->after('description');
+            }
 
-            $table->unsignedInteger('due_after_days')
-                  ->nullable()
-                  ->after('frequency');
+            if (!Schema::hasColumn('onboard_requirements', 'due_after_days')) {
+                $table->unsignedInteger('due_after_days')
+                    ->nullable()
+                    ->after('frequency');
+            }
 
         });
     }
@@ -28,10 +32,13 @@ return new class extends Migration
     {
         Schema::table('onboard_requirements', function (Blueprint $table) {
 
-            $table->dropColumn([
-                'frequency',
-                'due_after_days'
-            ]);
+            if (Schema::hasColumn('onboard_requirements', 'due_after_days')) {
+                $table->dropColumn('due_after_days');
+            }
+
+            if (Schema::hasColumn('onboard_requirements', 'frequency')) {
+                $table->dropColumn('frequency');
+            }
 
         });
     }
