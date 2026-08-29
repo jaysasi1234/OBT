@@ -3,11 +3,11 @@
 namespace App\Events;
 
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NotificationCreated implements ShouldBroadcast
+class NotificationCreated implements ShouldBroadcastNow
 {
     use Dispatchable, SerializesModels;
 
@@ -15,8 +15,10 @@ class NotificationCreated implements ShouldBroadcast
 
     public int $userId;
 
-    public function __construct(string $message, int $userId)
-    {
+    public function __construct(
+        string $message,
+        int $userId
+    ) {
         $this->message = $message;
         $this->userId = $userId;
     }
