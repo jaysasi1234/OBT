@@ -394,25 +394,43 @@
 
                     <td>
 
-                        @if($submission->status == 'Approved')
+                            @if($submission->status == 'Approved')
 
-                            <span id="status-{{ $submission->id }}"class="badge success">
-                                Approved
-                            </span>
+                                <span
+                                    id="status-{{ $submission->id }}"
+                                    class="badge success"
+                                >
+                                    Approved
+                                </span>
 
-                        @elseif($submission->status == 'Rejected')
+                            @elseif($submission->status == 'Rejected')
 
-                            <span id="status-{{ $submission->id }}"class="badge danger">
-                                Rejected
-                            </span>
+                                <span
+                                    id="status-{{ $submission->id }}"
+                                    class="badge danger"
+                                >
+                                    Rejected
+                                </span>
 
-                        @else
+                            @elseif($submission->status == 'Submitted')
 
-                            <span id="status-{{ $submission->id }}"class="badge warning">
-                                Pending
-                            </span>
+                                <span
+                                    id="status-{{ $submission->id }}"
+                                    class="badge warning"
+                                >
+                                    Pending Review
+                                </span>
 
-                        @endif
+                            @else
+
+                                <span
+                                    id="status-{{ $submission->id }}"
+                                    class="badge warning"
+                                >
+                                    Pending
+                                </span>
+
+                            @endif
 
                     </td>
 
@@ -492,7 +510,7 @@
 
                     <td>
 
-                        @if($submission->status == 'Pending')
+                        @if(in_array($submission->status, ['Pending', 'Submitted']) && $submission->attachment)
 
                             <div class="action-buttons">
 
