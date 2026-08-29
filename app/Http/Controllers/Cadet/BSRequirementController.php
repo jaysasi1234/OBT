@@ -66,7 +66,7 @@ class BSRequirementController extends Controller
         $cadet = Cadet::where('user_id', Auth::id())->firstOrFail();
 
         $path = $request->file('attachment')
-            ->store('bs-requirements', 'public');
+            ->store('bs-requirements', 's3');
 
         $submission = CadetBSRequirement::updateOrCreate(
             [

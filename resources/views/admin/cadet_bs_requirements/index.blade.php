@@ -2,6 +2,10 @@
 
 @section('header-title','Cadet BS Requirements')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 @section('content')
 
 @vite(['resources/css/admin/cadet_bs_requirements/cadet_bs_requirements.css'])
@@ -435,8 +439,11 @@
                     </td>
 
 <td id="buttons-{{ $submission->id }}">
-
     @if($submission->attachment)
+
+        @php
+            $fileUrl = Storage::disk('public')->url($submission->attachment);
+        @endphp
 
         <div class="attachment-card">
 
@@ -454,20 +461,17 @@
 
             <div class="attachment-actions">
 
-                <a href="{{ asset('storage/'.$submission->attachment) }}"
+                <a href="{{ $fileUrl }}"
                    target="_blank"
+                   rel="noopener"
                    class="btn-view">
-
                     <i class="fa-solid fa-eye"></i>
-
                 </a>
 
-                <a href="{{ asset('storage/'.$submission->attachment) }}"
+                <a href="{{ $fileUrl }}"
                    download
                    class="btn-download">
-
                     <i class="fa-solid fa-download"></i>
-
                 </a>
 
             </div>
@@ -477,15 +481,11 @@
     @else
 
         <div class="no-file">
-
             <i class="fa-regular fa-file-circle-xmark"></i>
-
             <span>No Attachment</span>
-
         </div>
 
     @endif
-
 </td>
 
                     <td>
