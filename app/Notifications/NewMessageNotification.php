@@ -4,8 +4,9 @@ namespace App\Notifications;
 
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
-class NewMessageNotification extends Notification
+class NewMessageNotification extends Notification implements ShouldBroadcastNow
 {
     /**
      * Notification data.
