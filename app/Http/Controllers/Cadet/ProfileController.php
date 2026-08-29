@@ -117,18 +117,24 @@ public function upload(Request $request)
 
     $user = Auth::user();
 
-    // Delete old profile photo
-    if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+    // Store new photo first
+    $path = $request->file('photo')->store('profile_pictures', 'public');
+
+    if (!$path) {
+        return back()->with('error', 'Photo upload failed.');
+    }
+
+    // Delete old photo after successful upload
+    if (
+        $user->profile_picture &&
+        Storage::disk('public')->exists($user->profile_picture)
+    ) {
         Storage::disk('public')->delete($user->profile_picture);
     }
 
-    // Store new photo
-    $path = $request->file('photo')->store('profile_pictures', 'public');
-
-    // Update user
-    $user->update([
-        'profile_picture' => $path,
-    ]);
+    // Update user profile picture
+    $user->profile_picture = $path;
+    $user->save();
 
     // Update cadet photo
     $cadet = Cadet::where('user_id', $user->id)->first();

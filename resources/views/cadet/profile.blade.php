@@ -2,6 +2,10 @@
 
 @section('content')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 <style>
 
 /* =========================================================
@@ -1260,13 +1264,13 @@
 
                 <div class="profile-identity">
 
-<img
-    id="profilePreview"
-    class="profile-avatar"
-    src="{{ $user->profile_picture
-        ? asset('storage/' . $user->profile_picture) . '?v=' . ($user->updated_at?->timestamp ?? time())
-        : asset('images/default-avatar.png') }}"
-    alt="Profile Photo">
+                        <img
+                            id="profilePreview"
+                            class="profile-avatar"
+                            src="{{ $user->profile_picture
+                                ? Storage::disk('public')->url($user->profile_picture) . '?v=' . ($user->updated_at?->timestamp ?? time())
+                                : asset('images/default-avatar.png') }}"
+                            alt="Profile Photo">
 
                     <div class="profile-identity-text">
 
@@ -1798,13 +1802,13 @@
 
                             <div class="photo-wrapper">
                                 
-<img
-    id="photoPreview"
-    class="profile-photo"
-    src="{{ $user->profile_picture
-        ? asset('storage/' . $user->profile_picture) . '?v=' . ($user->updated_at?->timestamp ?? time())
-        : asset('images/default-avatar.png') }}"
-    alt="Profile Photo">
+                                    <img
+                                        id="photoPreview"
+                                        class="profile-photo"
+                                        src="{{ $user->profile_picture
+                                            ? Storage::disk('public')->url($user->profile_picture) . '?v=' . ($user->updated_at?->timestamp ?? time())
+                                            : asset('images/default-avatar.png') }}"
+                                        alt="Profile Photo">
 
                                 <span class="photo-status"></span>
 
