@@ -17,41 +17,52 @@ class ProfileController extends Controller
     }
 
     // UPDATE PROFILE
-    public function update(Request $request)
-    {
-        $user = Auth::user();
+public function update(Request $request)
+{
+    $user = Auth::user();
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'contact' => 'nullable|string|max:20',
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ]);
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'contact' => 'nullable|string|max:20',
+        'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
 
-        // UPLOAD PROFILE PHOTO
-        if ($request->hasFile('profile_picture')) {
+    // Upload new profile picture FIRST
+    if ($request->hasFile('profile_picture')) {
 
-        if ($user->profile_picture &&
-            Storage::disk('public')->exists($user->profile_picture)) {
+        // Store the new image
+        $path = $request->file('profile_picture')
+            ->store('profile_pictures', 'public');
 
+        // Make sure the upload succeeded
+        if (!$path) {
+            return back()
+                ->withInput()
+                ->with('error', 'Profile picture upload failed.');
+        }
+
+        // Delete old image AFTER new image is successfully stored
+        if (
+            $user->profile_picture &&
+            Storage::disk('public')->exists($user->profile_picture)
+        ) {
             Storage::disk('public')->delete($user->profile_picture);
         }
 
-        $path = $request->file('profile_picture')
-                    ->store('profile_pictures', 'public');
-
+        // Save new path
         $user->profile_picture = $path;
-        }
-
-        // UPDATE USER INFO
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->contact = $request->contact;
-
-        $user->save();
-
-        return back()->with('success', 'Profile updated successfully.');
     }
+
+    // Update user information
+    $user->name = $validated['name'];
+    $user->email = $validated['email'];
+    $user->contact = $validated['contact'] ?? null;
+
+    $user->save();
+
+    return back()->with('success', 'Profile updated successfully.');
+}
 
     // CHANGE PASSWORD
     public function changePassword(Request $request)
