@@ -138,10 +138,15 @@ if (userId) {
 
 if (userId) {
 
+    const chatChannel =
+        `chat.user.${userId}`;
+
+    console.log(
+        `[Echo] Subscribing to chat channel: ${chatChannel}`
+    );
+
     window.Echo
-        .private(
-            `chat.${userId}`
-        )
+        .private(chatChannel)
         .listen(
             '.message.sent',
             (event) => {
@@ -151,16 +156,13 @@ if (userId) {
                     event
                 );
 
-
                 window.dispatchEvent(
-
                     new CustomEvent(
                         'chat-message',
                         {
                             detail: event
                         }
                     )
-
                 );
 
             }
@@ -869,10 +871,3 @@ setInterval(
     sendHeartbeat,
     30000
 );
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allow your team to quickly build robust real-time web applications.
- */
-
-import './echo';
