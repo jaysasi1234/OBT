@@ -70,12 +70,39 @@ class VerificationRequirementUploadedNotification extends Notification
     /**
      * Broadcast notification in realtime.
      */
-    public function toBroadcast($notifiable): BroadcastMessage
-    {
-        return new BroadcastMessage(
-            $this->notificationData()
-        );
-    }
+/**
+ * Realtime broadcast notification.
+ */
+public function toBroadcast($notifiable): BroadcastMessage
+{
+    return (new BroadcastMessage([
+        'type' => 'verification_requirement_uploaded',
+
+        'title' => 'New Verification Requirement',
+
+        'message' =>
+            ($this->cadet->full_name ?? 'A cadet') .
+            ' submitted ' .
+            ($this->document->name ?? 'a document') .
+            ' for verification.',
+
+        'cadet_id' => $this->cadet->id,
+
+        'document_id' => $this->document->id,
+
+        'document_name' => $this->document->name,
+
+        'url' => route(
+            'admin.verification.show',
+            $this->cadet->id
+        ),
+
+        'icon' => 'fa-file-circle-check',
+
+        'color' => 'blue',
+    ]))
+    ->onConnection('sync');
+}
 
     /**
      * Array representation.
