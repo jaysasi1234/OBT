@@ -2,6 +2,14 @@
 
 @section('content')
 
+@php
+    $user = Auth::user();
+
+    $profilePhoto = $user->profile_picture
+        ? Storage::disk('public')->url($user->profile_picture) . '?v=' . $user->updated_at->timestamp
+        : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+@endphp
+
 @vite(['resources/css/admin/profile.css'])
 
 
@@ -60,13 +68,11 @@
             <!-- LEFT PROFILE -->
             <div class="profile-card">
 
-                <div class="profile-image">
-                        <img id="previewImage"
-                            src="{{ Auth::user()->profile_picture
-                                ? Storage::disk('public')->url(Auth::user()->profile_picture) . '?v=' . time()
-                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}"
-                            alt="Profile Picture">
-                </div>
+<div class="profile-image">
+    <img id="previewImage"
+         src="{{ $profilePhoto }}"
+         alt="Profile Picture">
+</div>
 
                 <div class="profile-info">
 
@@ -174,9 +180,7 @@
                                 <div class="upload-left">
 
                                     <img id="smallPreview"
-                                        src="{{ Auth::user()->profile_picture
-                                            ? Storage::disk('public')->url(Auth::user()->profile_picture) . '?v=' . time()
-                                            : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}"
+                                        src="{{ $profilePhoto }}"
                                         alt="Profile Picture">
 
                                     <div>
@@ -192,10 +196,11 @@
 
                                     ⬆ Upload Photo
 
-                                    <input type="file"
-                                    hidden
-                                    name="profile_picture"
-                                    onchange="previewFile(this)">
+                                        <input type="file"
+                                            hidden
+                                            name="profile_picture"
+                                            accept=".jpg,.jpeg,.png"
+                                            onchange="previewFile(this)">
 
                                 </label>
 
