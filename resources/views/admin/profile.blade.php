@@ -61,11 +61,11 @@
             <div class="profile-card">
 
                 <div class="profile-image">
-                    <img id="previewImage"
-                        src="{{ Auth::user()->profile_picture
-                            ? Storage::disk('public')->url(Auth::user()->profile_picture) . '?v=' . time()
-                            : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}"
-                        alt="Profile Picture">
+                        <img id="previewImage"
+                            src="{{ Auth::user()->profile_picture
+                                ? Storage::disk('public')->url(Auth::user()->profile_picture) . '?v=' . time()
+                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}"
+                            alt="Profile Picture">
                 </div>
 
                 <div class="profile-info">
@@ -173,11 +173,11 @@
 
                                 <div class="upload-left">
 
-                                        <img id="smallPreview"
-                                            src="{{ Auth::user()->profile_picture
-                                                ? Storage::disk('public')->url(Auth::user()->profile_picture) . '?v=' . time()
-                                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}"
-                                            alt="Profile Picture">
+                                    <img id="smallPreview"
+                                        src="{{ Auth::user()->profile_picture
+                                            ? Storage::disk('public')->url(Auth::user()->profile_picture) . '?v=' . time()
+                                            : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png' }}"
+                                        alt="Profile Picture">
 
                                     <div>
                                         <div>Upload</div>
