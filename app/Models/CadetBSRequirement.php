@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CadetBSRequirement extends Model
 {
@@ -17,13 +18,20 @@ class CadetBSRequirement extends Model
         'submitted_at',
     ];
 
-    public function cadet()
+    protected $casts = [
+        'submitted_at' => 'datetime',
+    ];
+
+    public function cadet(): BelongsTo
     {
         return $this->belongsTo(Cadet::class);
     }
 
-    public function requirement()
+    public function requirement(): BelongsTo
     {
-        return $this->belongsTo(BSRequirement::class, 'b_s_requirement_id');
+        return $this->belongsTo(
+            BSRequirement::class,
+            'b_s_requirement_id'
+        );
     }
 }
