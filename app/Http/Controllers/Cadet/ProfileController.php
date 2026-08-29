@@ -30,11 +30,10 @@ public function update(Request $request)
 {
     $request->validate([
         'name' => 'required|string|max:255',
-        'course' => 'nullable|string|max:255',
-        'dob' => 'nullable|date',
-        'birth_place' => 'nullable|string|max:255',
+        'date_of_birth' => 'nullable|date',
+        'place_of_birth' => 'nullable|string|max:255',
         'address' => 'nullable|string|max:255',
-        'contact_no' => 'nullable|string|max:50',
+        'contact_number' => 'nullable|string|max:50',
     ]);
 
     $user = Auth::user();
@@ -49,16 +48,16 @@ public function update(Request $request)
 
     if ($cadet) {
         $cadet->update([
-            'full_name'        => $request->name,
-            'course'           => $request->course,
-            'date_of_birth'    => $request->dob,
-            'place_of_birth'   => $request->birth_place,
-            'address'          => $request->address,
-            'contact_number'   => $request->contact_no,
+            'full_name'       => $request->name,
+            'date_of_birth'   => $request->date_of_birth,
+            'place_of_birth'  => $request->place_of_birth,
+            'address'         => $request->address,
+            'contact_number'  => $request->contact_number,
         ]);
     }
 
-    return redirect()->route('cadet.profile')
+    return redirect()
+        ->route('cadet.profile')
         ->with('success', 'Profile updated successfully!');
 }
 
