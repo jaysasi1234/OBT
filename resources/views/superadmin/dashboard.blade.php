@@ -1176,9 +1176,6 @@ Last Updated
 
 </div>
 
-<!-- CHART JS -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
 const barCtx=document.getElementById('barChart');
 

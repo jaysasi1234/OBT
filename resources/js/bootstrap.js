@@ -12,6 +12,9 @@
 import axios from 'axios';
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
+import Chart from 'chart.js/auto';
+
+window.Chart = Chart;
 
 
 // =========================================================
