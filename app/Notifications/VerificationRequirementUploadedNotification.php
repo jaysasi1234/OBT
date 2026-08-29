@@ -4,15 +4,11 @@ namespace App\Notifications;
 
 use App\Models\Cadet;
 use App\Models\Document;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 
-class VerificationRequirementUploadedNotification extends Notification implements ShouldQueue
+class VerificationRequirementUploadedNotification extends Notification
 {
-    use Queueable;
-
     public function __construct(
         public Cadet $cadet,
         public Document $document
