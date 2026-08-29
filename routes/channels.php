@@ -54,7 +54,7 @@ Broadcast::channel(
 |--------------------------------------------------------------------------
 */
 
-Broadcast::channel('chat.{userId}', function ($user, $userId) {
+Broadcast::channel('chat.user.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 });
 
