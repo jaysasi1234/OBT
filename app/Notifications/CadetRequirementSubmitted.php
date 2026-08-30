@@ -4,11 +4,14 @@ namespace App\Notifications;
 
 use App\Models\Cadet;
 use App\Models\OnboardRequirement;
-use Illuminate\Notifications\Notification;
+use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Notification;
 
 class CadetRequirementSubmitted extends Notification
 {
+    use Queueable;
+
     public function __construct(
         public Cadet $cadet,
         public OnboardRequirement $requirement
@@ -32,17 +35,19 @@ class CadetRequirementSubmitted extends Notification
     public function toDatabase($notifiable): array
     {
         return [
-            'type' => 'onboard_requirement_submitted',
+            'type' => 'cadet_requirement_submitted',
 
             'title' => 'New Requirement Submitted',
 
             'message' =>
-                ($this->cadet->full_name ?? 'A cadet')
-                . ' submitted "'
-                . ($this->requirement->title ?? 'an onboard requirement')
-                . '"',
+                ($this->cadet->full_name ?? 'A cadet') .
+                ' submitted "' .
+                ($this->requirement->title ?? 'a requirement') .
+                '"',
 
             'icon' => 'fa-file-circle-check',
+
+            'color' => 'blue',
 
             'url' => route(
                 'admin.cadet.requirements.index'
@@ -53,8 +58,6 @@ class CadetRequirementSubmitted extends Notification
             'requirement_id' => $this->requirement->id,
 
             'requirement_title' => $this->requirement->title,
-
-            'color' => 'blue',
         ];
     }
 
@@ -63,38 +66,8 @@ class CadetRequirementSubmitted extends Notification
      */
     public function toBroadcast($notifiable): BroadcastMessage
     {
-        return new BroadcastMessage([
-            'type' => 'onboard_requirement_submitted',
-
-            'title' => 'New Requirement Submitted',
-
-            'message' =>
-                ($this->cadet->full_name ?? 'A cadet')
-                . ' submitted "'
-                . ($this->requirement->title ?? 'an onboard requirement')
-                . '"',
-
-            'icon' => 'fa-file-circle-check',
-
-            'url' => route(
-                'admin.cadet.requirements.index'
-            ),
-
-            'cadet_id' => $this->cadet->id,
-
-            'requirement_id' => $this->requirement->id,
-
-            'requirement_title' => $this->requirement->title,
-
-            'color' => 'blue',
-        ]);
-    }
-
-    /**
-     * Array representation.
-     */
-    public function toArray($notifiable): array
-    {
-        return $this->toDatabase($notifiable);
+        return new BroadcastMessage(
+            $this->toDatabase($notifiable)
+        );
     }
 }
