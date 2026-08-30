@@ -83,7 +83,7 @@ class BSRequirementStatusNotification extends Notification
              * not `cadet.dashboard`.
              */
             'url' =>
-                route('dashboard'),
+                route('cadet.bs.requirements'),
 
             'icon' =>
                 $isApproved
@@ -97,13 +97,16 @@ class BSRequirementStatusNotification extends Notification
         ];
     }
 
+
     /**
      * Realtime broadcast notification.
      */
     public function toBroadcast(User $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage(
+        return (new BroadcastMessage(
             $this->toDatabase($notifiable)
-        );
+        ))
+        ->onConnection('sync');
     }
+
 }

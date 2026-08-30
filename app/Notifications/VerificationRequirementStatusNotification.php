@@ -5,12 +5,11 @@ namespace App\Notifications;
 use App\Models\Cadet;
 use App\Models\Document;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification;
 use App\Models\User;
 
-class VerificationRequirementStatusNotification extends Notification implements ShouldQueue
+class VerificationRequirementStatusNotification extends Notification
 {
     use Queueable;
 
@@ -83,13 +82,16 @@ class VerificationRequirementStatusNotification extends Notification implements 
         ];
     }
 
+
     /**
      * Realtime broadcast notification.
      */
     public function toBroadcast(User $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage(
+        return (new BroadcastMessage(
             $this->toDatabase($notifiable)
-        );
+        ))
+        ->onConnection('sync');
     }
+
 }

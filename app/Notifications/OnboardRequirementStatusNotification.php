@@ -85,13 +85,15 @@ class OnboardRequirementStatusNotification extends Notification
         ];
     }
 
+
     /**
      * Realtime broadcast notification.
      */
     public function toBroadcast(User $notifiable): BroadcastMessage
     {
-        return new BroadcastMessage(
+        return (new BroadcastMessage(
             $this->toDatabase($notifiable)
-        );
+        ))
+        ->onConnection('sync');
     }
 }
