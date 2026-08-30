@@ -18,11 +18,9 @@ class CadetRequirementSubmitted extends Notification
     ) {
     }
 
-
-    // =========================================================
-    // CHANNELS
-    // =========================================================
-
+    /**
+     * Notification channels.
+     */
     public function via($notifiable): array
     {
         return [
@@ -31,99 +29,46 @@ class CadetRequirementSubmitted extends Notification
         ];
     }
 
-
-    // =========================================================
-    // DATABASE
-    // =========================================================
-
+    /**
+     * Database notification.
+     */
     public function toDatabase($notifiable): array
     {
         return [
-            'type' =>
-                'cadet_requirement_submitted',
+            'type' => 'cadet_requirement_submitted',
 
-            'title' =>
-                'New Requirement Submitted',
+            'title' => 'New Requirement Submitted',
 
             'message' =>
-                ($this->cadet->full_name ?? 'A cadet')
-                . ' submitted "'
-                . ($this->requirement->title ?? 'a requirement')
-                . '"',
+                ($this->cadet->full_name ?? 'A cadet') .
+                ' submitted "' .
+                ($this->requirement->title ?? 'a requirement') .
+                '"',
 
-            'icon' =>
-                'fa-file-circle-check',
+            'icon' => 'fa-file-circle-check',
 
-            'color' =>
-                'blue',
+            'color' => 'blue',
 
-            'url' =>
-                route(
-                    'admin.cadet.requirements.index'
-                ),
+            'url' => route(
+                'admin.cadet.requirements.index'
+            ),
 
-            'cadet_id' =>
-                $this->cadet->id,
+            'cadet_id' => $this->cadet->id,
 
-            'requirement_id' =>
-                $this->requirement->id,
+            'requirement_id' => $this->requirement->id,
 
-            'requirement_title' =>
-                $this->requirement->title,
+            'requirement_title' => $this->requirement->title,
         ];
     }
 
-
-    // =========================================================
-    // REALTIME BROADCAST
-    // =========================================================
-
+    /**
+     * Realtime broadcast notification.
+     */
     public function toBroadcast($notifiable): BroadcastMessage
     {
-        return new BroadcastMessage(
-            [
-                'type' =>
-                    'cadet_requirement_submitted',
-
-                'title' =>
-                    'New Requirement Submitted',
-
-                'message' =>
-                    ($this->cadet->full_name ?? 'A cadet')
-                    . ' submitted "'
-                    . ($this->requirement->title ?? 'a requirement')
-                    . '"',
-
-                'icon' =>
-                    'fa-file-circle-check',
-
-                'color' =>
-                    'blue',
-
-                'url' =>
-                    route(
-                        'admin.cadet.requirements.index'
-                    ),
-
-                'cadet_id' =>
-                    $this->cadet->id,
-
-                'requirement_id' =>
-                    $this->requirement->id,
-
-                'requirement_title' =>
-                    $this->requirement->title,
-            ]
-        );
-    }
-
-
-    // =========================================================
-    // BROADCAST TYPE
-    // =========================================================
-
-    public function broadcastType(): string
-    {
-        return 'cadet.requirement.submitted';
+        return (new BroadcastMessage(
+            $this->toDatabase($notifiable)
+        ))
+        ->onConnection('sync');
     }
 }
