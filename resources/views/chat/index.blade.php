@@ -134,7 +134,7 @@
                  DIRECT MESSAGES
             ================================================== --}}
 
-            <div class="chat-section">
+            <div class="chat-section direct-section">
 
 
                 <div class="section-title">
