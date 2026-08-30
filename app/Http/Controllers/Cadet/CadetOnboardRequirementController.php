@@ -1,94 +1,95 @@
 <?php
 
-namespace App\Http\Controllers\Cadet;
+namespace App\Notifications;
 
-use App\Http\Controllers\Controller;
 use App\Models\Cadet;
-use App\Models\CadetOnboardRequirement;
 use App\Models\OnboardRequirement;
-use App\Models\User;
-use App\Notifications\CadetRequirementSubmitted;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class CadetOnboardRequirementController extends Controller
+class CadetRequirementSubmitted extends Notification
 {
+    use Queueable;
+
+    public function __construct(
+        public Cadet $cadet,
+        public OnboardRequirement $requirement
+    ) {
+    }
+
     /**
-     * Upload or replace an onboard requirement.
+     * Notification channels.
      */
-    public function upload(Request $request)
+    public function via($notifiable): array
     {
-        // Validate uploaded data
-        $validated = $request->validate([
-            'requirement_id' => [
-                'required',
-                'exists:onboard_requirements,id',
-            ],
+        return [
+            'database',
+            'broadcast',
+        ];
+    }
 
-            'attachment' => [
-                'required',
-                'file',
-                'max:10240', // 10 MB
-            ],
+    /**
+     * Database notification.
+     */
+    public function toDatabase($notifiable): array
+    {
+        return [
+            'type' => 'cadet_requirement_submitted',
 
-            'remarks' => [
-                'nullable',
-                'string',
-            ],
+            'title' => 'New Requirement Submitted',
+
+            'message' =>
+                ($this->cadet->full_name ?? 'A cadet') .
+                ' submitted "' .
+                ($this->requirement->title ?? 'a requirement') .
+                '"',
+
+            'icon' => 'fa-file-circle-check',
+
+            'color' => 'blue',
+
+            'url' => route(
+                'admin.cadet.requirements.index'
+            ),
+
+            'cadet_id' => $this->cadet->id,
+
+            'requirement_id' => $this->requirement->id,
+
+            'requirement_title' => $this->requirement->title,
+        ];
+    }
+
+    /**
+     * Realtime broadcast notification.
+     */
+    public function toBroadcast($notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'type' => 'cadet_requirement_submitted',
+
+            'title' => 'New Requirement Submitted',
+
+            'message' =>
+                ($this->cadet->full_name ?? 'A cadet') .
+                ' submitted "' .
+                ($this->requirement->title ?? 'a requirement') .
+                '"',
+
+            'icon' => 'fa-file-circle-check',
+
+            'color' => 'blue',
+
+            'url' => route(
+                'admin.cadet.requirements.index'
+            ),
+
+            'cadet_id' => $this->cadet->id,
+
+            'requirement_id' => $this->requirement->id,
+
+            'requirement_title' => $this->requirement->title,
         ]);
-
-        // Get the currently authenticated cadet
-        $cadet = Cadet::where(
-            'user_id',
-            Auth::id()
-        )->firstOrFail();
-
-        // Get the requirement
-        $requirement = OnboardRequirement::findOrFail(
-            $validated['requirement_id']
-        );
-
-        // Store uploaded file
-        $path = $request
-            ->file('attachment')
-            ->store(
-                'onboard_requirements',
-                'public'
-            );
-
-        // Create or update the cadet submission
-        CadetOnboardRequirement::updateOrCreate(
-            [
-                'cadet_id' => $cadet->id,
-                'onboard_requirement_id' => $requirement->id,
-            ],
-            [
-                'attachment' => $path,
-                'remarks' => $validated['remarks'] ?? null,
-
-                // Cadet has submitted the requirement.
-                // Admin will review it later.
-                'status' => 'Submitted',
-
-                'submitted_at' => now(),
-            ]
-        );
-
-        // Notify all administrators
-        $admins = User::where('role', 'admin')->get();
-
-        foreach ($admins as $admin) {
-            $admin->notify(
-                new CadetRequirementSubmitted(
-                    $cadet,
-                    $requirement
-                )
-            );
-        }
-
-        return back()->with(
-            'success',
-            'Requirement submitted successfully and is awaiting verification.'
-        );
     }
 }
