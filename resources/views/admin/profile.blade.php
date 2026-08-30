@@ -7,7 +7,7 @@
 
     $profilePhoto = $user->profile_picture
         ? Storage::disk('public')->url($user->profile_picture) . '?v=' . $user->updated_at->timestamp
-        : asset('images/avatar.png');
+        : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 @endphp
 
 @vite(['resources/css/admin/profile.css'])
