@@ -1392,12 +1392,11 @@
                     <div class="dropdown" id="dropdownMenu">
 
                                     <div class="dropdown-profile-card">
-                                            <img
-                                                src="{{ Auth::user()->profile_picture
-                                                    ? asset('storage/' . Auth::user()->profile_picture) . '?v=' . (Auth::user()->updated_at?->timestamp ?? time())
-                                                    : asset('images/default-avatar.png') }}"
-                                                alt="Profile Photo"
-                                                onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}';">
+                                        <img
+                                            src="{{ Auth::user()->profile_picture
+                                                ? asset('storage/' . Auth::user()->profile_picture) . '?v=' . (Auth::user()->updated_at?->timestamp ?? time())
+                                                : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->name) }}"
+                                            alt="Profile Photo">
 
                                         <h4>{{ Auth::user()->name }}</h4>
                                         <p>Cadet</p>

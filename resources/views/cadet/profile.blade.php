@@ -1809,7 +1809,8 @@
                                         src="{{ $user->profile_picture
                                             ? Storage::disk('public')->url($user->profile_picture) . '?v=' . ($user->updated_at?->timestamp ?? time())
                                             : asset('images/default-avatar.png') }}"
-                                        alt="Profile Photo">
+                                        alt="Profile Photo"
+                                        onerror="this.onerror=null;this.src='{{ asset('images/default-avatar.png') }}';">
 
                                 <span class="photo-status"></span>
 
