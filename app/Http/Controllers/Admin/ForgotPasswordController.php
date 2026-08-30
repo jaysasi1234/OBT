@@ -58,7 +58,7 @@ class ForgotPasswordController extends Controller
                 )
                 ->withErrors([
                     'email' =>
-                        'No authorized administrator account was found with that email address.'
+                        'If an account with that email address exists, password reset instructions have been sent to your email.'
                 ]);
         }
 
