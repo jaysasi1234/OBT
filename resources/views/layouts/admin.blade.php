@@ -122,7 +122,153 @@
 
 
         /* =========================================================
+           NORMAL PAGE LOADING OVERLAY
+           
+           This is a simple normal loading screen.
+           
+           It covers the entire viewport while another page
+           is loading.
+        ========================================================== */
+
+        .admin-page-loader {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 999999;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                rgba(241,245,249,.94);
+
+            backdrop-filter:
+                blur(3px);
+
+            -webkit-backdrop-filter:
+                blur(3px);
+
+            opacity: 1;
+
+            visibility: visible;
+
+            pointer-events: auto;
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease;
+
+        }
+
+
+        .admin-page-loader.hide {
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+
+        }
+
+
+        .admin-loader-box {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 14px;
+
+            min-width: 145px;
+
+            padding: 24px;
+
+            background:
+                #ffffff;
+
+            border:
+                1px solid rgba(15,23,42,.06);
+
+            border-radius: 14px;
+
+            box-shadow:
+                0 15px 40px rgba(15,23,42,.15);
+
+        }
+
+
+        .admin-loader-spinner {
+
+            width: 40px;
+
+            height: 40px;
+
+            border:
+                4px solid #dbeafe;
+
+            border-top-color:
+                var(--admin-blue-dark);
+
+            border-radius: 50%;
+
+            animation:
+                adminLoaderSpin .8s linear infinite;
+
+        }
+
+
+        .admin-loader-text {
+
+            color:
+                #334155;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            letter-spacing: .2px;
+
+        }
+
+
+        @keyframes adminLoaderSpin {
+
+            from {
+
+                transform:
+                    rotate(0deg);
+
+            }
+
+            to {
+
+                transform:
+                    rotate(360deg);
+
+            }
+
+        }
+
+
+        /* =========================================================
            BASIC ADMIN RESET
+           
+           IMPORTANT:
+           No overflow / isolation / transform is applied to
+           the shell or page-content containers.
+
+           This allows child pages to use position: fixed
+           modals safely.
         ========================================================== */
 
         .admin-shell,
@@ -173,285 +319,6 @@
         .admin-shell a {
 
             text-decoration: none;
-
-        }
-
-
-        /* =========================================================
-           GLOBAL PAGE LOADER
-        ========================================================== */
-
-        .admin-page-loader {
-
-            position: fixed;
-
-            inset: 0;
-
-            z-index: 999999;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #071525 0%,
-                    #0a192f 55%,
-                    #0d2039 100%
-                );
-
-            opacity: 1;
-
-            visibility: visible;
-
-            transition:
-                opacity .35s ease,
-                visibility .35s ease;
-
-        }
-
-
-        .admin-page-loader.hidden {
-
-            opacity: 0;
-
-            visibility: hidden;
-
-            pointer-events: none;
-
-        }
-
-
-        .admin-page-loader-content {
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            justify-content: center;
-
-            text-align: center;
-
-            padding: 20px;
-
-        }
-
-
-        .admin-page-loader-logo {
-
-            width: 78px;
-
-            height: 78px;
-
-            object-fit: cover;
-
-            border-radius: 50%;
-
-            border:
-                2px solid rgba(255,255,255,.18);
-
-            box-shadow:
-                0 10px 35px rgba(0,0,0,.35);
-
-            animation:
-                adminLoaderPulse 1.5s ease-in-out infinite;
-
-        }
-
-
-        .admin-page-loader-spinner {
-
-            width: 34px;
-
-            height: 34px;
-
-            margin-top: 22px;
-
-            border:
-                3px solid rgba(255,255,255,.12);
-
-            border-top-color:
-                #60a5fa;
-
-            border-right-color:
-                #3b82f6;
-
-            border-radius: 50%;
-
-            animation:
-                adminLoaderSpin .8s linear infinite;
-
-        }
-
-
-        .admin-page-loader-title {
-
-            margin-top: 16px;
-
-            color: #ffffff;
-
-            font-size: 15px;
-
-            font-weight: 800;
-
-            letter-spacing: .2px;
-
-        }
-
-
-        .admin-page-loader-text {
-
-            margin-top: 5px;
-
-            color: #94a3b8;
-
-            font-size: 11px;
-
-            font-weight: 500;
-
-        }
-
-
-        /* =========================================================
-           LOADING TOP BAR
-        ========================================================== */
-
-        .admin-page-loader::before {
-
-            content: "";
-
-            position: absolute;
-
-            top: 0;
-
-            left: 0;
-
-            width: 100%;
-
-            height: 3px;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    transparent,
-                    #60a5fa,
-                    #3b82f6,
-                    transparent
-                );
-
-            background-size:
-                200% 100%;
-
-            animation:
-                adminLoaderBar 1.2s linear infinite;
-
-        }
-
-
-        /* =========================================================
-           LOADER ANIMATIONS
-        ========================================================== */
-
-        @keyframes adminLoaderSpin {
-
-            from {
-
-                transform:
-                    rotate(0deg);
-
-            }
-
-            to {
-
-                transform:
-                    rotate(360deg);
-
-            }
-
-        }
-
-
-        @keyframes adminLoaderPulse {
-
-            0%,
-            100% {
-
-                transform:
-                    scale(1);
-
-                box-shadow:
-                    0 10px 35px rgba(0,0,0,.35);
-
-            }
-
-            50% {
-
-                transform:
-                    scale(1.04);
-
-                box-shadow:
-                    0 14px 45px rgba(59,130,246,.22);
-
-            }
-
-        }
-
-
-        @keyframes adminLoaderBar {
-
-            0% {
-
-                background-position:
-                    200% 0;
-
-            }
-
-            100% {
-
-                background-position:
-                    -200% 0;
-
-            }
-
-        }
-
-
-        /* =========================================================
-           PAGE ENTRY ANIMATION
-        ========================================================== */
-
-        .admin-page-content {
-
-            animation:
-                adminPageEnter .35s ease both;
-
-        }
-
-
-        @keyframes adminPageEnter {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(6px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-
-            }
 
         }
 
@@ -2009,6 +1876,13 @@
 
         /* =========================================================
            PAGE CONTENT
+           
+           IMPORTANT:
+           No overflow hidden.
+           No isolation.
+           No transform.
+           
+           This allows fixed-position child-page modals to work.
         ========================================================== */
 
         .admin-page-content {
@@ -2026,6 +1900,26 @@
             padding: 24px;
 
             min-width: 0;
+
+        }
+
+
+        /* =========================================================
+           MODAL SAFETY
+        ========================================================== */
+
+        .admin-page-content
+        .modal-overlay,
+        .admin-page-content
+        .modal-backdrop,
+        .admin-page-content
+        .modal-wrapper {
+
+            /*
+             * Intentionally empty.
+             *
+             * Child pages control their own modal.
+             */
 
         }
 
@@ -2387,17 +2281,6 @@
 
             }
 
-
-            .admin-page-loader-logo {
-
-                width:
-                    70px;
-
-                height:
-                    70px;
-
-            }
-
         }
 
 
@@ -2532,18 +2415,32 @@
             }
 
 
-            .admin-page-loader-title {
+            .admin-loader-box {
 
-                font-size:
-                    14px;
+                min-width:
+                    130px;
+
+                padding:
+                    20px;
 
             }
 
 
-            .admin-page-loader-text {
+            .admin-loader-spinner {
+
+                width:
+                    34px;
+
+                height:
+                    34px;
+
+            }
+
+
+            .admin-loader-text {
 
                 font-size:
-                    10px;
+                    12px;
 
             }
 
@@ -2597,7 +2494,7 @@
 
         @media(prefers-reduced-motion: reduce) {
 
-            .admin-shell *,
+            .admin-shell * ,
             .admin-shell *::before,
             .admin-shell *::after {
 
@@ -2619,7 +2516,15 @@
             .admin-page-loader {
 
                 transition:
-                    none !important;
+                    none;
+
+            }
+
+
+            .admin-loader-spinner {
+
+                animation:
+                    none;
 
             }
 
@@ -2632,10 +2537,10 @@
 
         @media print {
 
+            .admin-page-loader,
             .admin-sidebar,
             .admin-header,
-            .admin-sidebar-overlay,
-            .admin-page-loader {
+            .admin-sidebar-overlay {
 
                 display:
                     none !important;
@@ -2681,31 +2586,29 @@
 
 
 {{-- =============================================================
-     GLOBAL PAGE LOADER
+     NORMAL PAGE LOADING OVERLAY
+     
+     IMPORTANT:
+     This must be directly inside body, outside admin-shell.
 ============================================================= --}}
 
 <div
-    class="admin-page-loader"
     id="adminPageLoader"
-    aria-hidden="true"
+    class="admin-page-loader"
+    aria-hidden="false"
 >
 
-    <div class="admin-page-loader-content">
+    <div class="admin-loader-box">
 
-        <img
-            src="{{ asset('images/MMACI Logo.jpg') }}"
-            alt="MMACI"
-            class="admin-page-loader-logo"
-        >
+        <div
+            class="admin-loader-spinner"
+            aria-hidden="true"
+        ></div>
 
-        <div class="admin-page-loader-spinner"></div>
+        <div class="admin-loader-text">
 
-        <div class="admin-page-loader-title">
-            OBT Supervisor
-        </div>
+            Loading...
 
-        <div class="admin-page-loader-text">
-            Loading page...
         </div>
 
     </div>
@@ -3292,22 +3195,12 @@
                                     <div class="admin-notif-icon">
 
                                         @php
-
-                                            $icon =
-                                                $notification->data['icon']
-                                                ?? 'fa-bell';
-
+                                            $icon = $notification->data['icon'] ?? 'fa-bell';
                                         @endphp
-
 
                                         @if(str_starts_with($icon, 'fa-'))
 
-                                            <i
-                                                class="
-                                                    fas
-                                                    {{ $icon }}
-                                                "
-                                            ></i>
+                                            <i class="fas {{ $icon }}"></i>
 
                                         @else
 
@@ -3322,20 +3215,14 @@
 
                                         <div class="admin-notif-text">
 
-                                            {{
-                                                $notification->data['message']
-                                                ?? 'Notification'
-                                            }}
+                                            {{ $notification->data['message'] ?? 'Notification' }}
 
                                         </div>
 
 
                                         <div class="admin-notif-time">
 
-                                            {{
-                                                $notification->created_at
-                                                    ->diffForHumans()
-                                            }}
+                                            {{ $notification->created_at->diffForHumans() }}
 
                                         </div>
 
@@ -3354,9 +3241,7 @@
 
                                 <div class="admin-notif-icon">
 
-                                    <i
-                                        class="fas fa-bell-slash"
-                                    ></i>
+                                    <i class="fas fa-bell-slash"></i>
 
                                 </div>
 
@@ -3616,27 +3501,6 @@ document.addEventListener('DOMContentLoaded', function () {
        PAGE LOADER
     ========================================================== */
 
-    function hideAdminPageLoader() {
-
-        if (!pageLoader) {
-
-            return;
-
-        }
-
-
-        pageLoader.classList.add('hidden');
-
-
-        setTimeout(function () {
-
-            pageLoader.style.display = 'none';
-
-        }, 400);
-
-    }
-
-
     function showAdminPageLoader() {
 
         if (!pageLoader) {
@@ -3645,186 +3509,229 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
+        pageLoader.classList.remove('hide');
 
-        pageLoader.style.display = 'flex';
+        pageLoader.setAttribute(
+            'aria-hidden',
+            'false'
+        );
 
-        pageLoader.classList.remove('hidden');
+    }
+
+
+    function hideAdminPageLoader() {
+
+        if (!pageLoader) {
+
+            return;
+
+        }
+
+        pageLoader.classList.add('hide');
+
+        pageLoader.setAttribute(
+            'aria-hidden',
+            'true'
+        );
 
     }
 
 
     /*
-     * Hide loader when page has finished loading.
-     */
-    window.addEventListener(
-        'load',
-        function () {
-
-            setTimeout(
-                hideAdminPageLoader,
-                150
-            );
-
-        }
-    );
-
-
-    /*
-     * Fallback.
+     * Hide the loader after the current page has loaded.
      *
-     * Prevents the loader from staying forever
-     * if something delays the load event.
+     * A small delay prevents a flash where the loader disappears
+     * before the browser has finished painting the page.
      */
-    setTimeout(
-        hideAdminPageLoader,
-        2500
-    );
+
+    requestAnimationFrame(function () {
+
+        setTimeout(
+            hideAdminPageLoader,
+            150
+        );
+
+    });
 
 
-    /*
-     * Show loader when navigating to another
-     * internal page.
-     */
-    document.addEventListener(
-        'click',
-        function (event) {
+    /* =========================================================
+       NORMAL INTERNAL PAGE NAVIGATION
+    ========================================================== */
 
-            const link =
-                event.target.closest('a');
+    document
+        .querySelectorAll(
+            '.admin-shell a[href]'
+        )
+        .forEach(function (link) {
 
+            link.addEventListener(
+                'click',
+                function (event) {
 
-            if (!link) {
+                    /*
+                     * Respect browser modifier keys.
+                     *
+                     * Ctrl + Click
+                     * Cmd + Click
+                     * Shift + Click
+                     * Alt + Click
+                     */
 
-                return;
+                    if (
+                        event.defaultPrevented ||
+                        event.ctrlKey ||
+                        event.metaKey ||
+                        event.shiftKey ||
+                        event.altKey
+                    ) {
 
-            }
+                        return;
 
-
-            const href =
-                link.getAttribute('href');
-
-
-            if (!href) {
-
-                return;
-
-            }
-
-
-            /*
-             * Ignore anchors and javascript links.
-             */
-            if (
-                href === '#' ||
-                href.startsWith('#') ||
-                href.startsWith('javascript:')
-            ) {
-
-                return;
-
-            }
+                    }
 
 
-            /*
-             * Ignore new-tab links.
-             */
-            if (
-                link.target === '_blank' ||
-                link.hasAttribute('download')
-            ) {
-
-                return;
-
-            }
+                    const href =
+                        link.getAttribute('href');
 
 
-            /*
-             * Ignore Ctrl / Cmd / Shift / Alt clicks.
-             */
-            if (
-                event.ctrlKey ||
-                event.metaKey ||
-                event.shiftKey ||
-                event.altKey
-            ) {
+                    /*
+                     * Ignore empty links and anchors.
+                     */
 
-                return;
+                    if (
+                        !href ||
+                        href === '#' ||
+                        href.startsWith('#') ||
+                        href.startsWith('javascript:')
+                    ) {
 
-            }
+                        return;
 
-
-            /*
-             * Check if link is internal.
-             */
-            try {
-
-                const url =
-                    new URL(
-                        link.href,
-                        window.location.href
-                    );
+                    }
 
 
-                if (
-                    url.origin !==
-                    window.location.origin
-                ) {
+                    let targetUrl;
 
-                    return;
+                    try {
+
+                        targetUrl =
+                            new URL(
+                                href,
+                                window.location.href
+                            );
+
+                    } catch (error) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Only show the loader for internal
+                     * Laravel pages.
+                     */
+
+                    if (
+                        targetUrl.origin !==
+                        window.location.origin
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Do not show it when clicking the
+                     * exact page currently being viewed.
+                     */
+
+                    const currentUrl =
+                        new URL(
+                            window.location.href
+                        );
+
+
+                    if (
+                        targetUrl.href ===
+                        currentUrl.href
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Show normal loading screen.
+                     */
+
+                    showAdminPageLoader();
+
+
+                    /*
+                     * Close mobile sidebar immediately.
+                     */
+
+                    if (
+                        window.innerWidth <= 1024
+                    ) {
+
+                        closeAdminSidebar();
+
+                    }
 
                 }
+            );
 
-            } catch (error) {
-
-                return;
-
-            }
+        });
 
 
-            /*
-             * Don't show loader when clicking
-             * the exact current URL.
-             */
-            if (
-                link.href ===
-                window.location.href
-            ) {
+    /* =========================================================
+       FORM SUBMISSIONS
+    ========================================================== */
 
-                return;
+    document
+        .querySelectorAll(
+            '.admin-shell form'
+        )
+        .forEach(function (form) {
 
-            }
+            form.addEventListener(
+                'submit',
+                function (event) {
 
+                    /*
+                     * If another JavaScript handler cancelled
+                     * the form submission, don't show loader.
+                     */
 
-            /*
-             * Close mobile sidebar.
-             */
-            if (
-                window.innerWidth <= 1024
-            ) {
+                    if (event.defaultPrevented) {
 
-                closeAdminSidebar();
+                        return;
 
-            }
-
-
-            /*
-             * Close dropdowns.
-             */
-            closeAdminDropdowns();
+                    }
 
 
-            /*
-             * Show page transition.
-             */
-            showAdminPageLoader();
+                    /*
+                     * Show loader for normal Laravel forms.
+                     *
+                     * This includes logout.
+                     */
 
-        }
-    );
+                    showAdminPageLoader();
+
+                }
+            );
+
+        });
 
 
-    /*
-     * Browser back / forward.
-     */
+    /* =========================================================
+       BROWSER BACK / FORWARD
+    ========================================================== */
+
     window.addEventListener(
         'pageshow',
         function () {
@@ -3847,7 +3754,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         sidebar.classList.toggle('open');
 
         overlay.classList.toggle('show');
@@ -3862,7 +3768,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
 
         }
-
 
         sidebar.classList.remove('open');
 
@@ -3897,13 +3802,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         if (!profileMenu) {
 
             return;
 
         }
-
 
         profileMenu.classList.toggle('show');
 
@@ -3929,13 +3832,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         if (!notificationMenu) {
 
             return;
 
         }
-
 
         notificationMenu.classList.toggle('show');
 
@@ -3961,7 +3862,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         obtMenu.classList.toggle('show');
 
         obtArrow.classList.toggle('rotate');
@@ -3970,7 +3870,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /* =========================================================
-       CLOSE DROPDOWNS
+       CLOSE ALL DROPDOWNS
     ========================================================== */
 
     function closeAdminDropdowns() {
@@ -3980,7 +3880,6 @@ document.addEventListener('DOMContentLoaded', function () {
             profileMenu.classList.remove('show');
 
         }
-
 
         if (notificationMenu) {
 
@@ -3998,6 +3897,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener(
         'click',
         function (event) {
+
 
             if (
                 profileMenu &&
@@ -4039,7 +3939,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
 
             }
-
 
             closeAdminSidebar();
 
@@ -4092,6 +3991,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 closeAdminSidebar();
 
             }
+
+        }
+    );
+
+
+    /* =========================================================
+       SAFETY:
+       IF PAGE LOADS FROM BFCACHE
+    ========================================================== */
+
+    window.addEventListener(
+        'load',
+        function () {
+
+            hideAdminPageLoader();
 
         }
     );
