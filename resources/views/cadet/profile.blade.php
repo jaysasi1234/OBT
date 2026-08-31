@@ -1962,7 +1962,7 @@
 
                                 <span class="profile-value">
 
-                                    {{ $user->cadet?->parent_guardian_relationship ?? 'N/A' }}
+                                    {{ $user->cadet?->relationship ?? 'N/A' }}
 
                                 </span>
 
@@ -1970,7 +1970,7 @@
                                     type="text"
                                     name="relationship"
                                     class="profile-input"
-                                    value="{{ $user->cadet?->parent_guardian_relationship ?? '' }}">
+                                    value="{{ $user->cadet?->relationship ?? '' }}">
 
                             </div>
 
