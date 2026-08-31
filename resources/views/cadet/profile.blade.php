@@ -1931,7 +1931,7 @@
 
                                 <span class="profile-value">
 
-                                    {{ $user->guardian_name ?? 'N/A' }}
+                                    {{ $user->cadet?->parent_guardian_name ?? 'N/A' }}
 
                                 </span>
 
@@ -1939,7 +1939,7 @@
                                     type="text"
                                     name="guardian_name"
                                     class="profile-input"
-                                    value="{{ $user->guardian_name ?? '' }}">
+                                    value="{{ $user->cadet?->parent_guardian_name ?? '' }}">
 
                             </div>
 
@@ -1962,7 +1962,7 @@
 
                                 <span class="profile-value">
 
-                                    {{ $user->relationship ?? 'N/A' }}
+                                    {{ $user->cadet?->parent_guardian_relationship ?? 'N/A' }}
 
                                 </span>
 
@@ -1970,7 +1970,7 @@
                                     type="text"
                                     name="relationship"
                                     class="profile-input"
-                                    value="{{ $user->relationship ?? '' }}">
+                                    value="{{ $user->cadet?->parent_guardian_relationship ?? '' }}">
 
                             </div>
 
@@ -1993,7 +1993,7 @@
 
                                 <span class="profile-value">
 
-                                    {{ $user->guardian_contact ?? 'N/A' }}
+                                    {{ $user->cadet?->parent_guardian_contact ?? 'N/A' }}
 
                                 </span>
 
@@ -2001,7 +2001,7 @@
                                     type="text"
                                     name="guardian_contact"
                                     class="profile-input"
-                                    value="{{ $user->guardian_contact ?? '' }}">
+                                    value="{{ $user->cadet?->parent_guardian_contact ?? '' }}">
 
                             </div>
 
@@ -2024,7 +2024,7 @@
 
                                 <span class="profile-value">
 
-                                    {{ $user->guardian_address ?? 'N/A' }}
+                                    {{ $user->cadet?->parent_guardian_address ?? 'N/A' }}
 
                                 </span>
 
@@ -2032,7 +2032,7 @@
                                     type="text"
                                     name="guardian_address"
                                     class="profile-input"
-                                    value="{{ $user->guardian_address ?? '' }}">
+                                    value="{{ $user->cadet?->parent_guardian_address ?? '' }}">
 
                             </div>
 

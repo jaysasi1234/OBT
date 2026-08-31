@@ -83,6 +83,7 @@ public function updateGuardian(Request $request)
 
     $cadet->update([
         'parent_guardian_name'    => $request->guardian_name,
+        'relationship'            => $request->relationship,
         'parent_guardian_contact' => $request->guardian_contact,
         'parent_guardian_address' => $request->guardian_address,
     ]);

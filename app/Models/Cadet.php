@@ -56,12 +56,11 @@ class Cadet extends Model
 
         'is_off_semester',
 
+        // Guardian information
         'parent_guardian_name',
-
+        'relationship',
         'parent_guardian_contact',
-
         'parent_guardian_email',
-
         'parent_guardian_address',
 
         'remarks_month',
