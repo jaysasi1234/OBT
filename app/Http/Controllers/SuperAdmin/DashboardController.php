@@ -6,16 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Cadet;
 use App\Models\Complaint;
 use App\Models\Deployment;
-use App\Models\Document;
 use App\Models\Batch;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // =========================
+        // =========================================================
         // BS QUALIFIED
-        // =========================
+        // =========================================================
 
         $bsCompleted = Cadet::with('bsRequirements')
             ->get()
@@ -24,216 +23,419 @@ class DashboardController extends Controller
                 $totalBS = $cadet->bsRequirements->count();
 
                 $completedBS = $cadet->bsRequirements
-                    ->whereIn('status', ['Approved', 'Completed'])
+                    ->whereIn('status', [
+                        'Approved',
+                        'Completed'
+                    ])
                     ->count();
 
-                return $totalBS > 0 && $completedBS == $totalBS;
+                return $totalBS > 0 && $completedBS === $totalBS;
             })
             ->count();
 
 
-        // =========================
+        // =========================================================
         // CADET COUNTS
-        // =========================
+        // =========================================================
 
         $totalCadets = Cadet::count();
 
-        $totalDeployed = Deployment::where('status', 'Ongoing')->count();
 
-        $totalCompleted = Deployment::where('status', 'Completed')->count();
-
-
-        $notDeployed = Cadet::where(function ($query) {
-
-            $query->doesntHave('deployment')
-                ->orWhereHas('deployment', function ($q) {
-                    $q->where('status', 'Not Deployed');
-                });
-
-        })->count();
+        // Ongoing deployments
+        $totalDeployed = Deployment::where(
+            'status',
+            'Ongoing'
+        )->count();
 
 
-        // =========================
+        // Completed deployments
+        $totalCompleted = Deployment::where(
+            'status',
+            'Completed'
+        )->count();
+
+
+        // =========================================================
+        // NOT DEPLOYED
+        // =========================================================
+
+        $notDeployed = Cadet::whereDoesntHave('deployment')
+            ->orWhereHas('deployment', function ($query) {
+
+                $query->where(
+                    'status',
+                    'Not Deployed'
+                );
+
+            })
+            ->count();
+
+
+        // =========================================================
         // VERIFICATION COUNTS
-        // SAME LOGIC AS ADMIN
-        // =========================
-
-        $totalRequirements = Document::count();
+        // =========================================================
+        //
+        // Verification is calculated per cadet.
+        //
+        // Approved = all documents assigned to the cadet
+        // are approved.
+        //
+        // Deficiency = at least one document is rejected.
+        //
+        // Pending = documents are still waiting for approval.
+        //
+        // =========================================================
 
         $verified = 0;
+
         $pendingVerification = 0;
-
-        $verificationCadets = Cadet::with('documents')->get();
-
-        foreach ($verificationCadets as $cadet) {
-
-            $approvedDocuments = $cadet->documents
-                ->where('pivot.status', 'Approved')
-                ->count();
-
-            if (
-                $totalRequirements > 0 &&
-                $approvedDocuments == $totalRequirements
-            ) {
-                $verified++;
-            } else {
-                $pendingVerification++;
-            }
-        }
 
         $deficiency = 0;
 
 
-        // =========================
+        $verificationCadets = Cadet::with('documents')
+            ->get();
+
+
+        foreach ($verificationCadets as $cadet) {
+
+            $documents = $cadet->documents;
+
+
+            // No documents yet
+            if ($documents->isEmpty()) {
+
+                $pendingVerification++;
+
+                continue;
+            }
+
+
+            $totalDocuments = $documents->count();
+
+
+            $approvedDocuments = $documents
+                ->where('pivot.status', 'Approved')
+                ->count();
+
+
+            $rejectedDocuments = $documents
+                ->where('pivot.status', 'Rejected')
+                ->count();
+
+
+            // All documents approved
+            if (
+                $totalDocuments > 0 &&
+                $approvedDocuments === $totalDocuments
+            ) {
+
+                $verified++;
+
+            }
+
+            // At least one rejected document
+            elseif ($rejectedDocuments > 0) {
+
+                $deficiency++;
+
+            }
+
+            // Still waiting for approval
+            else {
+
+                $pendingVerification++;
+            }
+        }
+
+
+        // =========================================================
         // COMPLAINTS
-        // =========================
+        // =========================================================
 
-        $openComplaints = Complaint::where('status', 'Open')->count();
+        $openComplaints = Complaint::where(
+            'status',
+            'Open'
+        )->count();
 
-        $resolvedComplaints = Complaint::where('status', 'Resolved')->count();
+
+        $resolvedComplaints = Complaint::where(
+            'status',
+            'Resolved'
+        )->count();
 
 
-        // =========================
+        // =========================================================
         // INCOMPLETE REQUIREMENTS
-        // =========================
+        // =========================================================
 
         $incompleteRequirements = Cadet::with('documents')
             ->get()
-            ->filter(function ($cadet) use ($totalRequirements) {
+            ->filter(function ($cadet) {
 
-                $approvedDocuments = $cadet->documents
+                $documents = $cadet->documents;
+
+
+                // No documents = incomplete
+                if ($documents->isEmpty()) {
+
+                    return true;
+                }
+
+
+                $approvedDocuments = $documents
                     ->where('pivot.status', 'Approved')
                     ->count();
 
-                return $approvedDocuments < $totalRequirements;
+
+                return $approvedDocuments < $documents->count();
             })
             ->take(5);
 
 
-        // =========================
-        // OVERALL DEPLOYMENT %
-        // =========================
+        // =========================================================
+        // OVERALL DEPLOYMENT PERCENTAGE
+        // =========================================================
 
         $deploymentPercentage = $totalCadets > 0
             ? round(
-                (($totalDeployed + $totalCompleted) / $totalCadets) * 100
+                (
+                    ($totalDeployed + $totalCompleted)
+                    / $totalCadets
+                ) * 100
             )
             : 0;
 
 
-        // =========================
-        // DYNAMIC COURSE DEPLOYMENT
-        // =========================
+        // Prevent percentage above 100
+        $deploymentPercentage = min(
+            $deploymentPercentage,
+            100
+        );
+
+
+        // =========================================================
+        // COURSE DEPLOYMENT
+        // =========================================================
 
         $courseDeployment = [];
+
 
         $courses = Cadet::select('course')
             ->whereNotNull('course')
             ->where('course', '!=', '')
             ->distinct()
+            ->orderBy('course')
             ->get();
+
 
         foreach ($courses as $course) {
 
             $courseName = $course->course;
 
-            $totalCourseCadets = Cadet::where('course', $courseName)
-                ->orWhere('course', 'LIKE', "%$courseName%")
-                ->count();
 
-            $deployedCourseCadets = Cadet::where(function ($q) use ($courseName) {
+            // Total cadets in this course
+            $totalCourseCadets = Cadet::where(
+                'course',
+                $courseName
+            )->count();
 
-                    $q->where('course', $courseName)
-                        ->orWhere('course', 'LIKE', "%$courseName%");
 
-                })
-                ->whereHas('deployment', function ($q) {
+            // Deployed cadets in this course
+            $deployedCourseCadets = Cadet::where(
+                'course',
+                $courseName
+            )
+            ->whereHas('deployment', function ($query) {
 
-                    $q->whereIn('status', ['Ongoing', 'Completed']);
+                $query->whereIn(
+                    'status',
+                    [
+                        'Ongoing',
+                        'Completed'
+                    ]
+                );
 
-                })
-                ->count();
+            })
+            ->count();
+
 
             $percentage = $totalCourseCadets > 0
                 ? round(
-                    ($deployedCourseCadets / $totalCourseCadets) * 100
+                    (
+                        $deployedCourseCadets
+                        / $totalCourseCadets
+                    ) * 100
                 )
                 : 0;
 
+
+            $percentage = min(
+                $percentage,
+                100
+            );
+
+
             $courseDeployment[] = [
+
                 'course' => $courseName,
+
                 'total' => $totalCourseCadets,
+
                 'deployed' => $deployedCourseCadets,
+
                 'percentage' => $percentage,
+
             ];
         }
 
 
-        // =========================
+        // =========================================================
         // BATCH DEPLOYMENT SUMMARY
-        // =========================
+        // =========================================================
 
         $batchLabels = [];
+
         $batchTotals = [];
+
         $batchDeployed = [];
+
         $batchPercentages = [];
 
-        $batches = Batch::orderBy('batch_year')->get();
+
+        $batches = Batch::orderBy(
+            'batch_year'
+        )->get();
+
 
         foreach ($batches as $batch) {
 
-            $total = Cadet::where('batch_id', $batch->id)->count();
+            // Total cadets
+            $total = Cadet::where(
+                'batch_id',
+                $batch->id
+            )->count();
 
-            $deployed = Cadet::where('batch_id', $batch->id)
-                ->whereHas('deployment', function ($q) {
-                    $q->whereIn('status', ['Ongoing', 'Completed']);
-                })
-                ->count();
+
+            // Ongoing + Completed
+            $deployed = Cadet::where(
+                'batch_id',
+                $batch->id
+            )
+            ->whereHas('deployment', function ($query) {
+
+                $query->whereIn(
+                    'status',
+                    [
+                        'Ongoing',
+                        'Completed'
+                    ]
+                );
+
+            })
+            ->count();
+
 
             $percentage = $total > 0
-                ? round(($deployed / $total) * 100)
+                ? round(
+                    ($deployed / $total) * 100
+                )
                 : 0;
 
-            $batchLabels[] = $batch->batch_year;
+
+            $percentage = min(
+                $percentage,
+                100
+            );
+
+
+            // Make sure labels are strings
+            $batchLabels[] = (string) $batch->batch_year;
+
+
             $batchTotals[] = $total;
+
+
             $batchDeployed[] = $deployed;
+
+
             $batchPercentages[] = $percentage;
         }
 
 
-        // =========================
-        // RETURN VIEW
-        // =========================
+        // =========================================================
+        // RETURN DASHBOARD
+        // =========================================================
 
-        return view('superadmin.dashboard', [
+        return view(
+            'superadmin.dashboard',
+            [
 
-            'totalCadets' => $totalCadets,
+                'totalCadets' =>
+                    $totalCadets,
 
-            'totalDeployed' => $totalDeployed,
-            'totalCompleted' => $totalCompleted,
-            'notDeployed' => $notDeployed,
+                'totalDeployed' =>
+                    $totalDeployed,
 
-            'pendingVerification' => $pendingVerification,
-            'verified' => $verified,
-            'deficiency' => $deficiency,
+                'totalCompleted' =>
+                    $totalCompleted,
 
-            'completeVerification' => $verified,
-            'incompleteVerification' => $pendingVerification + $deficiency,
+                'notDeployed' =>
+                    $notDeployed,
 
-            'withComplaints' => $openComplaints,
-            'resolvedComplaints' => $resolvedComplaints,
 
-            'incompleteRequirements' => $incompleteRequirements,
+                'pendingVerification' =>
+                    $pendingVerification,
 
-            'deploymentPercentage' => $deploymentPercentage,
-            'courseDeployment' => $courseDeployment,
+                'verified' =>
+                    $verified,
 
-            'batchLabels' => $batchLabels,
-            'batchTotals' => $batchTotals,
-            'batchDeployed' => $batchDeployed,
-            'batchPercentages' => $batchPercentages,
+                'deficiency' =>
+                    $deficiency,
 
-            'bsCompleted' => $bsCompleted,
-        ]);
+
+                'completeVerification' =>
+                    $verified,
+
+                'incompleteVerification' =>
+                    $pendingVerification + $deficiency,
+
+
+                'withComplaints' =>
+                    $openComplaints,
+
+                'resolvedComplaints' =>
+                    $resolvedComplaints,
+
+
+                'incompleteRequirements' =>
+                    $incompleteRequirements,
+
+
+                'deploymentPercentage' =>
+                    $deploymentPercentage,
+
+                'courseDeployment' =>
+                    $courseDeployment,
+
+
+                'batchLabels' =>
+                    $batchLabels,
+
+                'batchTotals' =>
+                    $batchTotals,
+
+                'batchDeployed' =>
+                    $batchDeployed,
+
+                'batchPercentages' =>
+                    $batchPercentages,
+
+
+                'bsCompleted' =>
+                    $bsCompleted,
+
+            ]
+        );
     }
 }
