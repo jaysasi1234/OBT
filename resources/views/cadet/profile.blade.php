@@ -1892,10 +1892,10 @@
                 </div>
 
 
-                <form
-                    method="POST"
-                    action="{{ route('cadet.profile.update') }}"
-                    class="profile-card single-column-card">
+                    <form
+                        method="POST"
+                        action="{{ route('cadet.profile.guardian.update') }}"
+                        class="profile-card single-column-card">
 
                     @csrf
                     @method('PUT')

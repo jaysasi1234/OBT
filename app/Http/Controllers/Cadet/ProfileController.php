@@ -30,6 +30,7 @@ public function update(Request $request)
 {
     $request->validate([
         'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
         'date_of_birth' => 'nullable|date',
         'place_of_birth' => 'nullable|string|max:255',
         'address' => 'nullable|string|max:255',
@@ -41,6 +42,7 @@ public function update(Request $request)
     // Update User table
     $user->update([
         'name' => $request->name,
+        'email' => $request->email,
     ]);
 
     // Update Cadet table
@@ -48,11 +50,11 @@ public function update(Request $request)
 
     if ($cadet) {
         $cadet->update([
-            'full_name'       => $request->name,
-            'date_of_birth'   => $request->date_of_birth,
-            'place_of_birth'  => $request->place_of_birth,
-            'address'         => $request->address,
-            'contact_number'  => $request->contact_number,
+            'full_name'      => $request->name,
+            'date_of_birth'  => $request->date_of_birth,
+            'place_of_birth' => $request->place_of_birth,
+            'address'        => $request->address,
+            'contact_number' => $request->contact_number,
         ]);
     }
 
@@ -61,27 +63,29 @@ public function update(Request $request)
         ->with('success', 'Profile updated successfully!');
 }
 
-    // 👉 UPDATE GUARDIAN INFO
-    public function updateGuardian(Request $request)
-    {
-        $request->validate([
-            'guardian_name' => 'nullable|string|max:255',
-            'relationship' => 'nullable|string|max:100',
-            'guardian_contact' => 'nullable|string|max:50',
-            'guardian_address' => 'nullable|string|max:255',
-        ]);
 
-        $user = Auth::user();
+public function updateGuardian(Request $request)
+{
+    $request->validate([
+        'guardian_name' => 'nullable|string|max:255',
+        'relationship' => 'nullable|string|max:100',
+        'guardian_contact' => 'nullable|string|max:50',
+        'guardian_address' => 'nullable|string|max:255',
+    ]);
 
-        $user->update([
-            'guardian_name' => $request->guardian_name,
-            'relationship' => $request->relationship,
-            'guardian_contact' => $request->guardian_contact,
-            'guardian_address' => $request->guardian_address,
-        ]);
+    $user = Auth::user();
 
-        return back()->with('success', 'Guardian information updated!');
-    }
+    $user->update([
+        'guardian_name'    => $request->guardian_name,
+        'relationship'     => $request->relationship,
+        'guardian_contact' => $request->guardian_contact,
+        'guardian_address' => $request->guardian_address,
+    ]);
+
+    return redirect()
+        ->route('cadet.profile')
+        ->with('success', 'Guardian information updated successfully!');
+}
 
     // 👉 UPDATE PASSWORD
     public function updatePassword(Request $request)
