@@ -2411,6 +2411,236 @@
 
         }
 
+        /* =========================================================
+   GLOBAL PAGE LOADING TRANSITION
+========================================================= */
+
+.admin-page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #071525 0%,
+            #0a192f 55%,
+            #0d2039 100%
+        );
+
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity .35s ease,
+        visibility .35s ease;
+}
+
+.admin-page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.admin-page-loader-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.admin-page-loader-logo {
+    width: 78px;
+    height: 78px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border:
+        2px solid rgba(255,255,255,.18);
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.35);
+
+    animation:
+        adminLoaderPulse 1.5s ease-in-out infinite;
+}
+
+.admin-page-loader-spinner {
+    width: 34px;
+    height: 34px;
+
+    margin-top: 22px;
+
+    border:
+        3px solid rgba(255,255,255,.12);
+
+    border-top-color:
+        #60a5fa;
+
+    border-right-color:
+        #3b82f6;
+
+    border-radius: 50%;
+
+    animation:
+        adminLoaderSpin .8s linear infinite;
+}
+
+.admin-page-loader-title {
+    margin-top: 16px;
+
+    color: #ffffff;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    letter-spacing: .2px;
+}
+
+.admin-page-loader-text {
+    margin-top: 5px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   LOADING BAR
+========================================================= */
+
+.admin-page-loader::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #60a5fa,
+            #3b82f6,
+            transparent
+        );
+
+    background-size: 200% 100%;
+
+    animation:
+        adminLoaderBar 1.2s linear infinite;
+}
+
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes adminLoaderSpin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+@keyframes adminLoaderPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow:
+            0 10px 35px rgba(0,0,0,.35);
+    }
+
+    50% {
+        transform: scale(1.04);
+        box-shadow:
+            0 14px 45px rgba(59,130,246,.22);
+    }
+
+}
+
+
+@keyframes adminLoaderBar {
+
+    0% {
+        background-position:
+            200% 0;
+    }
+
+    100% {
+        background-position:
+            -200% 0;
+    }
+
+}
+
+
+/* =========================================================
+   PAGE CONTENT ENTRY ANIMATION
+========================================================= */
+
+.admin-page-content {
+    animation:
+        adminPageEnter .35s ease both;
+}
+
+@keyframes adminPageEnter {
+
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+@media(prefers-reduced-motion: reduce) {
+
+    .admin-page-loader,
+    .admin-page-loader-logo,
+    .admin-page-loader-spinner,
+    .admin-page-loader::before,
+    .admin-page-content {
+
+        animation: none !important;
+        transition: none !important;
+
+    }
+
+}
+
     </style>
 
 
@@ -2420,6 +2650,38 @@
 
 
 <body>
+
+{{-- =============================================================
+     GLOBAL PAGE LOADER
+============================================================= --}}
+
+<div
+    class="admin-page-loader"
+    id="adminPageLoader"
+    aria-hidden="true"
+>
+
+    <div class="admin-page-loader-content">
+
+        <img
+            src="{{ asset('images/MMACI Logo.jpg') }}"
+            alt="MMACI"
+            class="admin-page-loader-logo"
+        >
+
+        <div class="admin-page-loader-spinner"></div>
+
+        <div class="admin-page-loader-title">
+            OBT Supervisor
+        </div>
+
+        <div class="admin-page-loader-text">
+            Loading page...
+        </div>
+
+    </div>
+
+</div>
 
 
 <div class="admin-shell">
@@ -3297,6 +3559,227 @@ document.addEventListener('DOMContentLoaded', function () {
     const obtArrow =
         document.getElementById('adminObtArrow');
 
+    const pageLoader =
+        document.getElementById('adminPageLoader');
+
+
+    /* =========================================================
+       GLOBAL PAGE LOADER
+    ========================================================== */
+
+    function hideAdminPageLoader() {
+
+        if (!pageLoader) {
+            return;
+        }
+
+        pageLoader.classList.add('hidden');
+
+        setTimeout(function () {
+
+            pageLoader.style.display = 'none';
+
+        }, 400);
+
+    }
+
+
+    function showAdminPageLoader() {
+
+        if (!pageLoader) {
+            return;
+        }
+
+        pageLoader.style.display = 'flex';
+
+        requestAnimationFrame(function () {
+
+            pageLoader.classList.remove('hidden');
+
+        });
+
+    }
+
+
+    /*
+     * Hide loader after current page finishes loading.
+     */
+    window.addEventListener(
+        'load',
+        function () {
+
+            setTimeout(
+                hideAdminPageLoader,
+                150
+            );
+
+        }
+    );
+
+
+    /*
+     * Fallback in case load event already fired.
+     */
+    setTimeout(
+        hideAdminPageLoader,
+        2000
+    );
+
+
+    /*
+     * Show loader when navigating to another page.
+     *
+     * We intentionally ignore:
+     *
+     * - # links
+     * - javascript links
+     * - new tabs
+     * - downloads
+     * - external links
+     * - forms
+     */
+    document.addEventListener(
+        'click',
+        function (event) {
+
+            const link =
+                event.target.closest('a');
+
+            if (!link) {
+                return;
+            }
+
+
+            const href =
+                link.getAttribute('href');
+
+
+            if (!href) {
+                return;
+            }
+
+
+            if (
+                href === '#' ||
+                href.startsWith('#') ||
+                href.startsWith('javascript:') ||
+                link.target === '_blank' ||
+                link.hasAttribute('download')
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Ignore modifier-key clicks.
+             */
+            if (
+                event.ctrlKey ||
+                event.metaKey ||
+                event.shiftKey ||
+                event.altKey
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Ignore external links.
+             */
+            try {
+
+                const url =
+                    new URL(
+                        link.href,
+                        window.location.href
+                    );
+
+                if (
+                    url.origin !==
+                    window.location.origin
+                ) {
+
+                    return;
+
+                }
+
+            } catch (error) {
+
+                return;
+
+            }
+
+
+            /*
+             * Don't show loader if the user clicked
+             * the current page.
+             */
+            if (
+                link.href ===
+                window.location.href
+            ) {
+
+                return;
+
+            }
+
+
+            /*
+             * Close mobile sidebar first.
+             */
+            if (
+                window.innerWidth <= 1024
+            ) {
+
+                closeAdminSidebar();
+
+            }
+
+
+            /*
+             * Close dropdowns.
+             */
+            closeAdminDropdowns();
+
+
+            /*
+             * Show loading transition.
+             */
+            showAdminPageLoader();
+
+        }
+    );
+
+
+    /*
+     * Browser back / forward.
+     */
+    window.addEventListener(
+        'pageshow',
+        function () {
+
+            hideAdminPageLoader();
+
+        }
+    );
+
+
+    /*
+     * Before browser leaves page.
+     */
+    window.addEventListener(
+        'beforeunload',
+        function () {
+
+            showAdminPageLoader();
+
+        }
+    );
+
 
     /* =========================================================
        SIDEBAR
@@ -3305,9 +3788,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.toggleAdminSidebar = function () {
 
         if (!sidebar || !overlay) {
-
             return;
-
         }
 
         sidebar.classList.toggle('open');
@@ -3320,9 +3801,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.closeAdminSidebar = function () {
 
         if (!sidebar || !overlay) {
-
             return;
-
         }
 
         sidebar.classList.remove('open');
@@ -3453,7 +3932,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener(
         'click',
         function (event) {
-
 
             if (
                 profileMenu &&
