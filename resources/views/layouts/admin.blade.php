@@ -122,11 +122,365 @@
 
 
         /* =========================================================
+           GLOBAL PAGE LOADING TRANSITION
+        ========================================================== */
+
+        #adminPageLoader {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 99999;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #071525 0%,
+                    #0a192f 50%,
+                    #0d2039 100%
+                );
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease;
+
+        }
+
+
+        #adminPageLoader.show {
+
+            opacity: 1;
+
+            visibility: visible;
+
+            pointer-events: all;
+
+        }
+
+
+        .admin-loader-container {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 18px;
+
+            text-align: center;
+
+            transform:
+                translateY(8px)
+                scale(.97);
+
+            opacity: 0;
+
+            transition:
+                opacity .3s ease,
+                transform .3s ease;
+
+        }
+
+
+        #adminPageLoader.show
+        .admin-loader-container {
+
+            opacity: 1;
+
+            transform:
+                translateY(0)
+                scale(1);
+
+        }
+
+
+        .admin-loader-logo {
+
+            width: 72px;
+
+            height: 72px;
+
+            object-fit: cover;
+
+            border-radius: 50%;
+
+            border:
+                2px solid rgba(255,255,255,.18);
+
+            box-shadow:
+                0 12px 35px rgba(0,0,0,.35);
+
+            animation:
+                adminLoaderLogo 1.8s ease-in-out infinite;
+
+        }
+
+
+        @keyframes adminLoaderLogo {
+
+            0%,
+            100% {
+
+                transform:
+                    scale(1);
+
+            }
+
+            50% {
+
+                transform:
+                    scale(1.04);
+
+            }
+
+        }
+
+
+        .admin-loader-spinner {
+
+            width: 42px;
+
+            height: 42px;
+
+            border:
+                3px solid rgba(255,255,255,.12);
+
+            border-top-color:
+                var(--admin-blue-light);
+
+            border-right-color:
+                var(--admin-blue);
+
+            border-radius: 50%;
+
+            animation:
+                adminLoaderSpin .75s linear infinite;
+
+        }
+
+
+        @keyframes adminLoaderSpin {
+
+            to {
+
+                transform:
+                    rotate(360deg);
+
+            }
+
+        }
+
+
+        .admin-loader-title {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            letter-spacing: .2px;
+
+        }
+
+
+        .admin-loader-text {
+
+            margin: -10px 0 0;
+
+            color:
+                #94a3b8;
+
+            font-size: 11px;
+
+            font-weight: 500;
+
+        }
+
+
+        .admin-loader-dots {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            margin-top: -4px;
+
+        }
+
+
+        .admin-loader-dot {
+
+            width: 5px;
+
+            height: 5px;
+
+            border-radius: 50%;
+
+            background:
+                var(--admin-blue-light);
+
+            animation:
+                adminLoaderDot 1.2s infinite ease-in-out;
+
+        }
+
+
+        .admin-loader-dot:nth-child(1) {
+
+            animation-delay:
+                0s;
+
+        }
+
+
+        .admin-loader-dot:nth-child(2) {
+
+            animation-delay:
+                .15s;
+
+        }
+
+
+        .admin-loader-dot:nth-child(3) {
+
+            animation-delay:
+                .3s;
+
+        }
+
+
+        @keyframes adminLoaderDot {
+
+            0%,
+            60%,
+            100% {
+
+                opacity: .35;
+
+                transform:
+                    translateY(0);
+
+            }
+
+            30% {
+
+                opacity: 1;
+
+                transform:
+                    translateY(-4px);
+
+            }
+
+        }
+
+
+        /* =========================================================
+           TOP LOADING BAR
+        ========================================================== */
+
+        #adminLoadingBar {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            width: 0;
+
+            height: 3px;
+
+            z-index: 100000;
+
+            opacity: 0;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--admin-blue-dark),
+                    var(--admin-blue-light),
+                    #93c5fd
+                );
+
+            box-shadow:
+                0 0 12px rgba(59,130,246,.65);
+
+            transition:
+                width .35s ease,
+                opacity .2s ease;
+
+        }
+
+
+        #adminLoadingBar.show {
+
+            opacity: 1;
+
+            width: 72%;
+
+            animation:
+                adminLoadingProgress 1.4s
+                ease-in-out infinite;
+
+        }
+
+
+        @keyframes adminLoadingProgress {
+
+            0% {
+
+                width: 10%;
+
+            }
+
+            50% {
+
+                width: 72%;
+
+            }
+
+            80% {
+
+                width: 88%;
+
+            }
+
+            100% {
+
+                width: 96%;
+
+            }
+
+        }
+
+
+        /* =========================================================
            RESET
         ========================================================== */
 
         .admin-shell,
-        .admin-shell *,
+        .admin-shell * ,
         .admin-shell *::before,
         .admin-shell *::after {
 
@@ -1877,6 +2231,35 @@
 
 
         /* =========================================================
+           DROPDOWN ANIMATION
+        ========================================================== */
+
+        @keyframes adminDropdownOpen {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(-6px)
+                    scale(.98);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+        }
+
+
+        /* =========================================================
            RESPONSIVE 1200
         ========================================================== */
 
@@ -2157,6 +2540,18 @@
 
             }
 
+
+            #adminPageLoader
+            .admin-loader-logo {
+
+                width:
+                    62px;
+
+                height:
+                    62px;
+
+            }
+
         }
 
 
@@ -2290,6 +2685,22 @@
 
             }
 
+
+            .admin-loader-title {
+
+                font-size:
+                    14px;
+
+            }
+
+
+            .admin-loader-text {
+
+                font-size:
+                    10px;
+
+            }
+
         }
 
 
@@ -2341,9 +2752,7 @@
         @media(prefers-reduced-motion: reduce) {
 
             .admin-shell *,
-
             .admin-shell *::before,
-
             .admin-shell *::after {
 
                 scroll-behavior:
@@ -2354,6 +2763,15 @@
 
                 animation-iteration-count:
                     1 !important;
+
+                transition-duration:
+                    .01ms !important;
+
+            }
+
+
+            #adminPageLoader,
+            #adminLoadingBar {
 
                 transition-duration:
                     .01ms !important;
@@ -2371,7 +2789,9 @@
 
             .admin-sidebar,
             .admin-header,
-            .admin-sidebar-overlay {
+            .admin-sidebar-overlay,
+            #adminPageLoader,
+            #adminLoadingBar {
 
                 display:
                     none !important;
@@ -2416,6 +2836,56 @@
 <body>
 
 
+{{-- =============================================================
+     GLOBAL PAGE LOADING SCREEN
+============================================================= --}}
+
+<div
+    id="adminPageLoader"
+    aria-hidden="true"
+>
+
+    <div class="admin-loader-container">
+
+        <img
+            src="{{ asset('images/MMACI Logo.jpg') }}"
+            alt="MMACI"
+            class="admin-loader-logo"
+        >
+
+        <div class="admin-loader-spinner"></div>
+
+        <p class="admin-loader-title">
+            On Board Training Report System
+        </p>
+
+        <p class="admin-loader-text">
+            Loading, please wait...
+        </p>
+
+        <div class="admin-loader-dots">
+
+            <span class="admin-loader-dot"></span>
+            <span class="admin-loader-dot"></span>
+            <span class="admin-loader-dot"></span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{{-- =============================================================
+     TOP LOADING BAR
+============================================================= --}}
+
+<div
+    id="adminLoadingBar"
+    aria-hidden="true"
+></div>
+
+
 <div class="admin-shell">
 
 
@@ -2444,7 +2914,9 @@
             onclick="closeAdminSidebar()"
             aria-label="Close sidebar"
         >
+
             <i class="fas fa-xmark"></i>
+
         </button>
 
 
@@ -2675,7 +3147,7 @@
                 class="
                     admin-menu-item
                     {{ request()->routeIs('admin.complaints.*') ? 'active' : '' }}
-            "
+                "
             >
 
                 <i class="fas fa-comments"></i>
@@ -2927,7 +3399,9 @@
                             id="adminNotificationBadge"
                             style="{{ ($unreadCount ?? 0) > 0 ? '' : 'display:none;' }}"
                         >
+
                             {{ $unreadCount ?? 0 }}
+
                         </span>
 
                     </button>
@@ -2937,7 +3411,6 @@
                         class="admin-notification-menu"
                         id="adminNotificationMenu"
                     >
-
 
                         <div class="admin-notification-header">
 
@@ -2963,7 +3436,6 @@
 
 
                         <div id="adminNotificationList">
-
 
                             @forelse(
                                 $notifications ?? [] as $notification
@@ -3058,7 +3530,6 @@
 
                             @endforelse
 
-
                         </div>
 
 
@@ -3075,7 +3546,6 @@
                             ></i>
 
                         </a>
-
 
                     </div>
 
@@ -3179,7 +3649,6 @@
 
                             </div>
 
-
                         </div>
 
 
@@ -3270,6 +3739,321 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /* =========================================================
+       GLOBAL PAGE LOADER
+    ========================================================== */
+
+    const pageLoader =
+        document.getElementById('adminPageLoader');
+
+    const loadingBar =
+        document.getElementById('adminLoadingBar');
+
+
+    let navigationLoading =
+        false;
+
+
+    function showAdminPageLoader() {
+
+        if (!pageLoader) {
+
+            return;
+
+        }
+
+
+        navigationLoading =
+            true;
+
+
+        pageLoader.classList.add('show');
+
+        pageLoader.setAttribute(
+            'aria-hidden',
+            'false'
+        );
+
+
+        if (loadingBar) {
+
+            loadingBar.classList.add('show');
+
+        }
+
+    }
+
+
+    function hideAdminPageLoader() {
+
+        if (!pageLoader) {
+
+            return;
+
+        }
+
+
+        navigationLoading =
+            false;
+
+
+        pageLoader.classList.remove('show');
+
+        pageLoader.setAttribute(
+            'aria-hidden',
+            'true'
+        );
+
+
+        if (loadingBar) {
+
+            loadingBar.style.width =
+                '100%';
+
+            setTimeout(function () {
+
+                loadingBar.classList.remove('show');
+
+                loadingBar.style.width =
+                    '';
+
+            }, 180);
+
+        }
+
+    }
+
+
+    /*
+     * Hide loader when the new page has finished loading.
+     */
+
+    window.addEventListener(
+        'load',
+        function () {
+
+            setTimeout(
+                hideAdminPageLoader,
+                100
+            );
+
+        }
+    );
+
+
+    /*
+     * Also hide it when navigating back/forward
+     * through browser history.
+     */
+
+    window.addEventListener(
+        'pageshow',
+        function () {
+
+            hideAdminPageLoader();
+
+        }
+    );
+
+
+    /*
+     * Show loading transition for internal links.
+     */
+
+    document
+        .querySelectorAll(
+            'a[href]'
+        )
+        .forEach(function (link) {
+
+            link.addEventListener(
+                'click',
+                function (event) {
+
+                    /*
+                     * Ignore modified clicks.
+                     */
+
+                    if (
+                        event.ctrlKey ||
+                        event.metaKey ||
+                        event.shiftKey ||
+                        event.altKey
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Ignore middle mouse button.
+                     */
+
+                    if (
+                        event.button !== 0
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Ignore target="_blank".
+                     */
+
+                    if (
+                        link.target === '_blank'
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    const href =
+                        link.getAttribute('href');
+
+
+                    /*
+                     * Ignore empty/hash links.
+                     */
+
+                    if (
+                        !href ||
+                        href === '#' ||
+                        href.startsWith('#')
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Ignore javascript links.
+                     */
+
+                    if (
+                        href.startsWith(
+                            'javascript:'
+                        )
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Ignore mail and telephone links.
+                     */
+
+                    if (
+                        href.startsWith('mailto:') ||
+                        href.startsWith('tel:')
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Ignore external domains.
+                     */
+
+                    try {
+
+                        const targetUrl =
+                            new URL(
+                                href,
+                                window.location.href
+                            );
+
+
+                        if (
+                            targetUrl.origin !==
+                            window.location.origin
+                        ) {
+
+                            return;
+
+                        }
+
+                    } catch (error) {
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Ignore notification dropdown
+                     * links when needed? No — those are
+                     * internal navigation and should load.
+                     */
+
+                    showAdminPageLoader();
+
+
+                    /*
+                     * Close mobile sidebar immediately
+                     * before navigation.
+                     */
+
+                    if (
+                        window.innerWidth <= 1024
+                    ) {
+
+                        closeAdminSidebar();
+
+                    }
+
+                }
+            );
+
+        });
+
+
+    /*
+     * Show loader for normal POST forms.
+     *
+     * This includes logout and admin forms.
+     */
+
+    document
+        .querySelectorAll(
+            'form'
+        )
+        .forEach(function (form) {
+
+            form.addEventListener(
+                'submit',
+                function () {
+
+                    showAdminPageLoader();
+
+                }
+            );
+
+        });
+
+
+    /*
+     * Public function in case another page needs
+     * to manually trigger the loading transition.
+     */
+
+    window.showAdminPageLoader =
+        showAdminPageLoader;
+
+
+    window.hideAdminPageLoader =
+        hideAdminPageLoader;
+
+
+    /* =========================================================
        ELEMENTS
     ========================================================== */
 
@@ -3336,7 +4120,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateNotificationBadge(count) {
 
         adminUnreadCount =
-            Math.max(0, Number(count) || 0);
+            Math.max(
+                0,
+                Number(count) || 0
+            );
 
 
         if (!notificationBadge) {
@@ -3546,17 +4333,10 @@ document.addEventListener('DOMContentLoaded', function () {
         );
 
 
-        /*
-         * Put the newest notification at the top.
-         */
+        notificationList.prepend(
+            item
+        );
 
-        notificationList.prepend(item);
-
-
-        /*
-         * Prevent the notification dropdown from
-         * becoming excessively large.
-         */
 
         const items =
             notificationList.querySelectorAll(
@@ -3575,10 +4355,6 @@ document.addEventListener('DOMContentLoaded', function () {
             adminUnreadCount + 1
         );
 
-
-        /*
-         * Animate bell.
-         */
 
         if (notificationButton) {
 
@@ -3610,14 +4386,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /* =========================================================
        REALTIME NOTIFICATION LISTENER
-       
-       IMPORTANT:
-       Laravel's default notification channel is:
-
-       App.Models.User.{userId}
-
-       This is the ONLY notification listener in this layout.
-       Do not duplicate this listener in child Blade pages.
     ========================================================== */
 
     function initializeRealtimeNotifications() {
@@ -3692,12 +4460,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     /*
-     * Wait a little for app.js / Echo initialization.
-     *
-     * This avoids racing against Vite's Echo setup.
+     * Wait for Echo initialization.
      */
 
-    if (typeof window.Echo !== 'undefined') {
+    if (
+        typeof window.Echo !== 'undefined'
+    ) {
 
         initializeRealtimeNotifications();
 
@@ -3725,7 +4493,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
 
-                if (echoAttempts >= 20) {
+                if (
+                    echoAttempts >= 20
+                ) {
 
                     clearInterval(
                         echoTimer
