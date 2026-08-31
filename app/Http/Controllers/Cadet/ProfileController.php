@@ -75,11 +75,16 @@ public function updateGuardian(Request $request)
 
     $user = Auth::user();
 
-    $user->update([
-        'guardian_name'    => $request->guardian_name,
-        'relationship'     => $request->relationship,
-        'guardian_contact' => $request->guardian_contact,
-        'guardian_address' => $request->guardian_address,
+    $cadet = Cadet::where('user_id', $user->id)->first();
+
+    if (!$cadet) {
+        return back()->with('error', 'Cadet record not found.');
+    }
+
+    $cadet->update([
+        'parent_guardian_name'    => $request->guardian_name,
+        'parent_guardian_contact' => $request->guardian_contact,
+        'parent_guardian_address' => $request->guardian_address,
     ]);
 
     return redirect()
