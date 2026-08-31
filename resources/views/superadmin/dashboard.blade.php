@@ -484,9 +484,10 @@ background:#10b981;
 
 }
 
-canvas{
-    width:100%!important;
-    height:320px!important;
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 320px;
 }
 
 /* =====================================
@@ -911,18 +912,22 @@ grid-template-columns:1fr;
 <div class="grid">
 
     <!-- Deployment Analytics -->
-    <div class="box">
+        <div class="box">
 
-        <div class="chart-header">
+            <div class="chart-header">
+                <div>
+                    <h3>Deployment Analytics</h3>
+                    <small>Current cadet deployment status</small>
+                </div>
 
-            <div>
-                <h3>Deployment Analytics</h3>
-                <small>Current cadet deployment status</small>
+                <span class="badge-chart">
+                    Live
+                </span>
             </div>
 
-            <span class="badge-chart">
-                Live
-            </span>
+            <div class="chart-container">
+                <canvas id="barChart"></canvas>
+            </div>
 
         </div>
 
@@ -934,7 +939,6 @@ grid-template-columns:1fr;
     <div class="box">
 
         <div class="chart-header">
-
             <div>
                 <h3>Verification Overview</h3>
                 <small>Document verification status</small>
@@ -943,33 +947,36 @@ grid-template-columns:1fr;
             <span class="badge-chart green">
                 Updated
             </span>
-
         </div>
 
-        <canvas id="pieChart"></canvas>
+        <div class="chart-container">
+            <canvas id="pieChart"></canvas>
+        </div>
 
     </div>
 
 </div>
 
-<div class="box analytics-box">
+        <div class="box analytics-box">
 
-    <div class="chart-header">
+            <div class="chart-header">
 
-        <div>
-            <h3>📈 Batch Deployment Graphical Summary</h3>
-            <small>Deployment comparison by batch</small>
+                <div>
+                    <h3>📈 Batch Deployment Graphical Summary</h3>
+                    <small>Deployment comparison by batch</small>
+                </div>
+
+                <span class="badge-chart">
+                    Batch Statistics
+                </span>
+
+            </div>
+
+            <div class="chart-container">
+                <canvas id="batchLineChart"></canvas>
+            </div>
+
         </div>
-
-        <span class="badge-chart">
-            Batch Statistics
-        </span>
-
-    </div>
-
-    <canvas id="batchLineChart"></canvas>
-
-</div>
 
 <!-- ===========================
      ANALYTICS SECTION
@@ -1175,6 +1182,8 @@ Last Updated
 {{ now()->format('M d, Y h:i A') }}
 
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 const barCtx=document.getElementById('barChart');
