@@ -68,7 +68,7 @@
     <style>
 
         /* =========================================================
-           ADMIN VARIABLES
+           ADMIN LAYOUT VARIABLES
         ========================================================== */
 
         :root {
@@ -122,365 +122,18 @@
 
 
         /* =========================================================
-           GLOBAL PAGE LOADING TRANSITION
-        ========================================================== */
-
-        #adminPageLoader {
-
-            position: fixed;
-
-            inset: 0;
-
-            z-index: 99999;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #071525 0%,
-                    #0a192f 50%,
-                    #0d2039 100%
-                );
-
-            opacity: 0;
-
-            visibility: hidden;
-
-            pointer-events: none;
-
-            transition:
-                opacity .25s ease,
-                visibility .25s ease;
-
-        }
-
-
-        #adminPageLoader.show {
-
-            opacity: 1;
-
-            visibility: visible;
-
-            pointer-events: all;
-
-        }
-
-
-        .admin-loader-container {
-
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            justify-content: center;
-
-            gap: 18px;
-
-            text-align: center;
-
-            transform:
-                translateY(8px)
-                scale(.97);
-
-            opacity: 0;
-
-            transition:
-                opacity .3s ease,
-                transform .3s ease;
-
-        }
-
-
-        #adminPageLoader.show
-        .admin-loader-container {
-
-            opacity: 1;
-
-            transform:
-                translateY(0)
-                scale(1);
-
-        }
-
-
-        .admin-loader-logo {
-
-            width: 72px;
-
-            height: 72px;
-
-            object-fit: cover;
-
-            border-radius: 50%;
-
-            border:
-                2px solid rgba(255,255,255,.18);
-
-            box-shadow:
-                0 12px 35px rgba(0,0,0,.35);
-
-            animation:
-                adminLoaderLogo 1.8s ease-in-out infinite;
-
-        }
-
-
-        @keyframes adminLoaderLogo {
-
-            0%,
-            100% {
-
-                transform:
-                    scale(1);
-
-            }
-
-            50% {
-
-                transform:
-                    scale(1.04);
-
-            }
-
-        }
-
-
-        .admin-loader-spinner {
-
-            width: 42px;
-
-            height: 42px;
-
-            border:
-                3px solid rgba(255,255,255,.12);
-
-            border-top-color:
-                var(--admin-blue-light);
-
-            border-right-color:
-                var(--admin-blue);
-
-            border-radius: 50%;
-
-            animation:
-                adminLoaderSpin .75s linear infinite;
-
-        }
-
-
-        @keyframes adminLoaderSpin {
-
-            to {
-
-                transform:
-                    rotate(360deg);
-
-            }
-
-        }
-
-
-        .admin-loader-title {
-
-            margin: 0;
-
-            color: #ffffff;
-
-            font-size: 15px;
-
-            font-weight: 800;
-
-            letter-spacing: .2px;
-
-        }
-
-
-        .admin-loader-text {
-
-            margin: -10px 0 0;
-
-            color:
-                #94a3b8;
-
-            font-size: 11px;
-
-            font-weight: 500;
-
-        }
-
-
-        .admin-loader-dots {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 5px;
-
-            margin-top: -4px;
-
-        }
-
-
-        .admin-loader-dot {
-
-            width: 5px;
-
-            height: 5px;
-
-            border-radius: 50%;
-
-            background:
-                var(--admin-blue-light);
-
-            animation:
-                adminLoaderDot 1.2s infinite ease-in-out;
-
-        }
-
-
-        .admin-loader-dot:nth-child(1) {
-
-            animation-delay:
-                0s;
-
-        }
-
-
-        .admin-loader-dot:nth-child(2) {
-
-            animation-delay:
-                .15s;
-
-        }
-
-
-        .admin-loader-dot:nth-child(3) {
-
-            animation-delay:
-                .3s;
-
-        }
-
-
-        @keyframes adminLoaderDot {
-
-            0%,
-            60%,
-            100% {
-
-                opacity: .35;
-
-                transform:
-                    translateY(0);
-
-            }
-
-            30% {
-
-                opacity: 1;
-
-                transform:
-                    translateY(-4px);
-
-            }
-
-        }
-
-
-        /* =========================================================
-           TOP LOADING BAR
-        ========================================================== */
-
-        #adminLoadingBar {
-
-            position: fixed;
-
-            top: 0;
-
-            left: 0;
-
-            width: 0;
-
-            height: 3px;
-
-            z-index: 100000;
-
-            opacity: 0;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    var(--admin-blue-dark),
-                    var(--admin-blue-light),
-                    #93c5fd
-                );
-
-            box-shadow:
-                0 0 12px rgba(59,130,246,.65);
-
-            transition:
-                width .35s ease,
-                opacity .2s ease;
-
-        }
-
-
-        #adminLoadingBar.show {
-
-            opacity: 1;
-
-            width: 72%;
-
-            animation:
-                adminLoadingProgress 1.4s
-                ease-in-out infinite;
-
-        }
-
-
-        @keyframes adminLoadingProgress {
-
-            0% {
-
-                width: 10%;
-
-            }
-
-            50% {
-
-                width: 72%;
-
-            }
-
-            80% {
-
-                width: 88%;
-
-            }
-
-            100% {
-
-                width: 96%;
-
-            }
-
-        }
-
-
-        /* =========================================================
-           RESET
+           BASIC ADMIN RESET
+           
+           IMPORTANT:
+           No overflow / isolation / transform is applied to
+           the shell or page-content containers.
+
+           This allows child pages to use position: fixed
+           modals safely.
         ========================================================== */
 
         .admin-shell,
-        .admin-shell * ,
+        .admin-shell *,
         .admin-shell *::before,
         .admin-shell *::after {
 
@@ -732,7 +385,7 @@
 
 
         /* =========================================================
-           CLOSE BUTTON
+           SIDEBAR CLOSE BUTTON
         ========================================================== */
 
         .admin-sidebar-close {
@@ -1193,7 +846,15 @@
 
 
         /* =========================================================
-           MAIN
+           MAIN CONTENT
+           
+           IMPORTANT:
+           NO overflow:hidden
+           NO isolation
+           NO transform
+           
+           This is intentional so fixed modals from child pages
+           can use the viewport as their containing area.
         ========================================================== */
 
         .admin-main {
@@ -1401,7 +1062,7 @@
 
 
         /* =========================================================
-           NOTIFICATIONS
+           NOTIFICATION
         ========================================================== */
 
         .admin-notification-wrapper {
@@ -1760,26 +1421,14 @@
         }
 
 
-        /* =========================================================
-           REALTIME NOTIFICATION ANIMATION
-        ========================================================== */
-
-        .admin-notification-item.realtime-new {
-
-            animation:
-                realtimeNotificationIn .35s ease;
-
-        }
-
-
-        @keyframes realtimeNotificationIn {
+        @keyframes adminDropdownOpen {
 
             from {
 
                 opacity: 0;
 
                 transform:
-                    translateY(-8px);
+                    translateY(-5px);
 
             }
 
@@ -1789,43 +1438,6 @@
 
                 transform:
                     translateY(0);
-
-            }
-
-        }
-
-
-        .admin-notification-button.realtime-pulse {
-
-            animation:
-                notificationPulse .55s ease;
-
-        }
-
-
-        @keyframes notificationPulse {
-
-            0% {
-
-                transform: scale(1);
-
-            }
-
-            35% {
-
-                transform: scale(1.12);
-
-            }
-
-            70% {
-
-                transform: scale(.96);
-
-            }
-
-            100% {
-
-                transform: scale(1);
 
             }
 
@@ -2133,6 +1745,17 @@
 
         /* =========================================================
            PAGE CONTENT
+           
+           CRITICAL MODAL FIX:
+           
+           No:
+               overflow: hidden
+               overflow-x: hidden
+               isolation: isolate
+               transform
+           
+           This allows fixed-position child-page modals to use
+           the viewport correctly.
         ========================================================== */
 
         .admin-page-content {
@@ -2150,6 +1773,37 @@
             padding: 24px;
 
             min-width: 0;
+
+        }
+
+
+        /* =========================================================
+           MODAL SAFETY
+           
+           We intentionally do NOT create a stacking context here.
+           
+           Child page modal example:
+           
+           .modal-overlay {
+               position: fixed;
+               inset: 0;
+               z-index: 99999;
+           }
+        ========================================================== */
+
+        .admin-page-content
+        .modal-overlay,
+        .admin-page-content
+        .modal-backdrop,
+        .admin-page-content
+        .modal-wrapper {
+
+            /*
+             * Do not force position, overflow, transform,
+             * isolation or z-index here.
+             *
+             * The child page owns its modal styling.
+             */
 
         }
 
@@ -2231,36 +1885,7 @@
 
 
         /* =========================================================
-           DROPDOWN ANIMATION
-        ========================================================== */
-
-        @keyframes adminDropdownOpen {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(-6px)
-                    scale(.98);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0)
-                    scale(1);
-
-            }
-
-        }
-
-
-        /* =========================================================
-           RESPONSIVE 1200
+           RESPONSIVE — 1200px
         ========================================================== */
 
         @media(max-width:1200px) {
@@ -2292,7 +1917,7 @@
 
 
         /* =========================================================
-           RESPONSIVE 1024
+           RESPONSIVE — 1024px
         ========================================================== */
 
         @media(max-width:1024px) {
@@ -2369,7 +1994,7 @@
 
 
         /* =========================================================
-           TABLET 768
+           TABLET — 768px
         ========================================================== */
 
         @media(max-width:768px) {
@@ -2540,23 +2165,11 @@
 
             }
 
-
-            #adminPageLoader
-            .admin-loader-logo {
-
-                width:
-                    62px;
-
-                height:
-                    62px;
-
-            }
-
         }
 
 
         /* =========================================================
-           SMALL PHONES
+           SMALL PHONES — 480px
         ========================================================== */
 
         @media(max-width:480px) {
@@ -2685,27 +2298,11 @@
 
             }
 
-
-            .admin-loader-title {
-
-                font-size:
-                    14px;
-
-            }
-
-
-            .admin-loader-text {
-
-                font-size:
-                    10px;
-
-            }
-
         }
 
 
         /* =========================================================
-           360
+           VERY SMALL PHONES — 360px
         ========================================================== */
 
         @media(max-width:360px) {
@@ -2769,15 +2366,6 @@
 
             }
 
-
-            #adminPageLoader,
-            #adminLoadingBar {
-
-                transition-duration:
-                    .01ms !important;
-
-            }
-
         }
 
 
@@ -2789,9 +2377,7 @@
 
             .admin-sidebar,
             .admin-header,
-            .admin-sidebar-overlay,
-            #adminPageLoader,
-            #adminLoadingBar {
+            .admin-sidebar-overlay {
 
                 display:
                     none !important;
@@ -2836,56 +2422,6 @@
 <body>
 
 
-{{-- =============================================================
-     GLOBAL PAGE LOADING SCREEN
-============================================================= --}}
-
-<div
-    id="adminPageLoader"
-    aria-hidden="true"
->
-
-    <div class="admin-loader-container">
-
-        <img
-            src="{{ asset('images/MMACI Logo.jpg') }}"
-            alt="MMACI"
-            class="admin-loader-logo"
-        >
-
-        <div class="admin-loader-spinner"></div>
-
-        <p class="admin-loader-title">
-            On Board Training Report System
-        </p>
-
-        <p class="admin-loader-text">
-            Loading, please wait...
-        </p>
-
-        <div class="admin-loader-dots">
-
-            <span class="admin-loader-dot"></span>
-            <span class="admin-loader-dot"></span>
-            <span class="admin-loader-dot"></span>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-{{-- =============================================================
-     TOP LOADING BAR
-============================================================= --}}
-
-<div
-    id="adminLoadingBar"
-    aria-hidden="true"
-></div>
-
-
 <div class="admin-shell">
 
 
@@ -2908,6 +2444,7 @@
         id="adminSidebar"
     >
 
+
         <button
             type="button"
             class="admin-sidebar-close"
@@ -2929,6 +2466,7 @@
                 alt="MMACI Logo"
                 class="admin-sidebar-logo"
             >
+
 
             <div class="admin-sidebar-text">
 
@@ -3021,6 +2559,7 @@
 
             <div class="admin-menu-group">
 
+
                 <button
                     type="button"
                     class="admin-menu-item"
@@ -3032,6 +2571,7 @@
                     <span>
                         OBT Cadet Requirements
                     </span>
+
 
                     <i
                         class="
@@ -3068,6 +2608,7 @@
                     id="adminObtMenu"
                 >
 
+
                     <a
                         href="{{ route('admin.verification.index') }}"
                         class="
@@ -3079,7 +2620,7 @@
                         <i class="fas fa-user-check"></i>
 
                         <span>
-                            Before OBT Requirements
+                            Before OBT Requirements 
                         </span>
 
                     </a>
@@ -3096,7 +2637,7 @@
                         <i class="fas fa-file-circle-check"></i>
 
                         <span>
-                            During OBT Requirements
+                            During OBT Requirements 
                         </span>
 
                     </a>
@@ -3134,6 +2675,7 @@
                         </span>
 
                     </a>
+
 
                 </div>
 
@@ -3327,6 +2869,7 @@
 
             <div class="admin-header-left">
 
+
                 <button
                     type="button"
                     class="admin-mobile-btn"
@@ -3348,6 +2891,7 @@
 
                 </h1>
 
+
             </div>
 
 
@@ -3364,10 +2908,8 @@
                     <button
                         type="button"
                         class="admin-notification-button"
-                        id="adminNotificationButton"
                         onclick="toggleAdminNotificationMenu(event)"
                         aria-label="Notifications"
-                        aria-expanded="false"
                     >
 
                         <svg
@@ -3394,15 +2936,16 @@
                         </svg>
 
 
-                        <span
-                            class="admin-notification-badge"
-                            id="adminNotificationBadge"
-                            style="{{ ($unreadCount ?? 0) > 0 ? '' : 'display:none;' }}"
-                        >
+                        @if(($unreadCount ?? 0) > 0)
 
-                            {{ $unreadCount ?? 0 }}
+                            <span class="admin-notification-badge">
 
-                        </span>
+                                {{ $unreadCount }}
+
+                            </span>
+
+                        @endif
+
 
                     </button>
 
@@ -3412,6 +2955,7 @@
                         id="adminNotificationMenu"
                     >
 
+
                         <div class="admin-notification-header">
 
                             <span>
@@ -3419,93 +2963,51 @@
                             </span>
 
 
-                            <span
-                                id="adminNotificationUnreadText"
-                                style="
-                                    color:#60a5fa;
-                                    font-size:10px;
-                                    {{ ($unreadCount ?? 0) > 0 ? '' : 'display:none;' }}
-                                "
-                            >
+                            @if(($unreadCount ?? 0) > 0)
 
-                                {{ $unreadCount ?? 0 }} unread
+                                <span
+                                    style="
+                                        color:#60a5fa;
+                                        font-size:10px;
+                                    "
+                                >
 
-                            </span>
+                                    {{ $unreadCount }} unread
+
+                                </span>
+
+                            @endif
 
                         </div>
 
 
-                        <div id="adminNotificationList">
-
-                            @forelse(
-                                $notifications ?? [] as $notification
-                            )
-
-                                <a
-                                    href="{{ route('notifications.open', $notification->id) }}"
-                                    class="admin-notification-link"
-                                    data-notification-id="{{ $notification->id }}"
-                                    style="text-decoration:none;"
-                                >
-
-                                    <div
-                                        class="
-                                            admin-notification-item
-                                            {{ is_null($notification->read_at) ? 'unread' : '' }}
-                                        "
-                                    >
-
-                                        <div class="admin-notif-icon">
-
-                                            @php
-                                                $icon = $notification->data['icon'] ?? 'fa-bell';
-                                            @endphp
-
-                                            @if(str_starts_with($icon, 'fa-'))
-
-                                                <i class="fas {{ $icon }}"></i>
-
-                                            @else
-
-                                                {{ $icon }}
-
-                                            @endif
-
-                                        </div>
+                        @forelse(
+                            $notifications ?? [] as $notification
+                        )
 
 
-                                        <div class="admin-notif-content">
-
-                                            <div class="admin-notif-text">
-
-                                                {{ $notification->data['message'] ?? 'Notification' }}
-
-                                            </div>
-
-
-                                            <div class="admin-notif-time">
-
-                                                {{ $notification->created_at->diffForHumans() }}
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </a>
-
-                            @empty
+                            <a
+                                href="{{ route('notifications.open', $notification->id) }}"
+                                style="text-decoration:none;"
+                            >
 
                                 <div
-                                    class="admin-notification-item"
-                                    id="adminNoNotifications"
+                                    class="
+                                        admin-notification-item
+                                        {{ is_null($notification->read_at) ? 'unread' : '' }}
+                                    "
                                 >
 
                                     <div class="admin-notif-icon">
+                                        @php
+                                            $icon = $notification->data['icon'] ?? 'fa-bell';
+                                        @endphp
 
-                                        <i class="fas fa-bell-slash"></i>
-
+                                        @if(str_starts_with($icon, 'fa-'))
+                                            <i class="fas {{ $icon }}"></i>
+                                        @else
+                                            {{ $icon }}
+                                        @endif
                                     </div>
 
 
@@ -3513,24 +3015,58 @@
 
                                         <div class="admin-notif-text">
 
-                                            No notifications found.
+                                            {{ $notification->data['message'] ?? 'Notification' }}
 
                                         </div>
 
 
                                         <div class="admin-notif-time">
 
-                                            You're all caught up.
+                                            {{ $notification->created_at->diffForHumans() }}
 
                                         </div>
 
                                     </div>
 
+
                                 </div>
 
-                            @endforelse
+                            </a>
 
-                        </div>
+
+                        @empty
+
+
+                            <div class="admin-notification-item">
+
+                                <div class="admin-notif-icon">
+
+                                    <i class="fas fa-bell-slash"></i>
+
+                                </div>
+
+
+                                <div class="admin-notif-content">
+
+                                    <div class="admin-notif-text">
+
+                                        No notifications found.
+
+                                    </div>
+
+
+                                    <div class="admin-notif-time">
+
+                                        You're all caught up.
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        @endforelse
 
 
                         <a
@@ -3546,6 +3082,7 @@
                             ></i>
 
                         </a>
+
 
                     </div>
 
@@ -3564,6 +3101,7 @@
                         onclick="toggleAdminProfileMenu(event)"
                     >
 
+
                         <div class="admin-profile-avatar">
 
                             <img
@@ -3573,7 +3111,6 @@
                                     : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563eb&color=fff'
                                 }}"
                                 alt="Profile"
-                                onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=2563eb&color=fff';"
                             >
 
                         </div>
@@ -3605,6 +3142,7 @@
                             "
                         ></i>
 
+
                     </div>
 
 
@@ -3626,7 +3164,6 @@
                                         : 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2563eb&color=fff'
                                     }}"
                                     alt="Profile"
-                                    onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=2563eb&color=fff';"
                                 >
 
                             </div>
@@ -3648,6 +3185,7 @@
                                 </div>
 
                             </div>
+
 
                         </div>
 
@@ -3714,6 +3252,10 @@
 
         {{-- =====================================================
              PAGE CONTENT
+             
+             IMPORTANT:
+             Child-page modals are allowed to escape this
+             container using position: fixed.
         ====================================================== --}}
 
         <div class="admin-page-content">
@@ -3737,326 +3279,6 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-
-    /* =========================================================
-       GLOBAL PAGE LOADER
-    ========================================================== */
-
-    const pageLoader =
-        document.getElementById('adminPageLoader');
-
-    const loadingBar =
-        document.getElementById('adminLoadingBar');
-
-
-    let navigationLoading =
-        false;
-
-
-    function showAdminPageLoader() {
-
-        if (!pageLoader) {
-
-            return;
-
-        }
-
-
-        navigationLoading =
-            true;
-
-
-        pageLoader.classList.add('show');
-
-        pageLoader.setAttribute(
-            'aria-hidden',
-            'false'
-        );
-
-
-        if (loadingBar) {
-
-            loadingBar.classList.add('show');
-
-        }
-
-    }
-
-
-    function hideAdminPageLoader() {
-
-        if (!pageLoader) {
-
-            return;
-
-        }
-
-
-        navigationLoading =
-            false;
-
-
-        pageLoader.classList.remove('show');
-
-        pageLoader.setAttribute(
-            'aria-hidden',
-            'true'
-        );
-
-
-        if (loadingBar) {
-
-            loadingBar.style.width =
-                '100%';
-
-            setTimeout(function () {
-
-                loadingBar.classList.remove('show');
-
-                loadingBar.style.width =
-                    '';
-
-            }, 180);
-
-        }
-
-    }
-
-
-    /*
-     * Hide loader when the new page has finished loading.
-     */
-
-    window.addEventListener(
-        'load',
-        function () {
-
-            setTimeout(
-                hideAdminPageLoader,
-                100
-            );
-
-        }
-    );
-
-
-    /*
-     * Also hide it when navigating back/forward
-     * through browser history.
-     */
-
-    window.addEventListener(
-        'pageshow',
-        function () {
-
-            hideAdminPageLoader();
-
-        }
-    );
-
-
-    /*
-     * Show loading transition for internal links.
-     */
-
-    document
-        .querySelectorAll(
-            'a[href]'
-        )
-        .forEach(function (link) {
-
-            link.addEventListener(
-                'click',
-                function (event) {
-
-                    /*
-                     * Ignore modified clicks.
-                     */
-
-                    if (
-                        event.ctrlKey ||
-                        event.metaKey ||
-                        event.shiftKey ||
-                        event.altKey
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Ignore middle mouse button.
-                     */
-
-                    if (
-                        event.button !== 0
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Ignore target="_blank".
-                     */
-
-                    if (
-                        link.target === '_blank'
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    const href =
-                        link.getAttribute('href');
-
-
-                    /*
-                     * Ignore empty/hash links.
-                     */
-
-                    if (
-                        !href ||
-                        href === '#' ||
-                        href.startsWith('#')
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Ignore javascript links.
-                     */
-
-                    if (
-                        href.startsWith(
-                            'javascript:'
-                        )
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Ignore mail and telephone links.
-                     */
-
-                    if (
-                        href.startsWith('mailto:') ||
-                        href.startsWith('tel:')
-                    ) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Ignore external domains.
-                     */
-
-                    try {
-
-                        const targetUrl =
-                            new URL(
-                                href,
-                                window.location.href
-                            );
-
-
-                        if (
-                            targetUrl.origin !==
-                            window.location.origin
-                        ) {
-
-                            return;
-
-                        }
-
-                    } catch (error) {
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Ignore notification dropdown
-                     * links when needed? No — those are
-                     * internal navigation and should load.
-                     */
-
-                    showAdminPageLoader();
-
-
-                    /*
-                     * Close mobile sidebar immediately
-                     * before navigation.
-                     */
-
-                    if (
-                        window.innerWidth <= 1024
-                    ) {
-
-                        closeAdminSidebar();
-
-                    }
-
-                }
-            );
-
-        });
-
-
-    /*
-     * Show loader for normal POST forms.
-     *
-     * This includes logout and admin forms.
-     */
-
-    document
-        .querySelectorAll(
-            'form'
-        )
-        .forEach(function (form) {
-
-            form.addEventListener(
-                'submit',
-                function () {
-
-                    showAdminPageLoader();
-
-                }
-            );
-
-        });
-
-
-    /*
-     * Public function in case another page needs
-     * to manually trigger the loading transition.
-     */
-
-    window.showAdminPageLoader =
-        showAdminPageLoader;
-
-
-    window.hideAdminPageLoader =
-        hideAdminPageLoader;
-
-
-    /* =========================================================
-       ELEMENTS
-    ========================================================== */
-
     const sidebar =
         document.getElementById('adminSidebar');
 
@@ -4069,447 +3291,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const notificationMenu =
         document.getElementById('adminNotificationMenu');
 
-    const notificationButton =
-        document.getElementById('adminNotificationButton');
-
-    const notificationBadge =
-        document.getElementById('adminNotificationBadge');
-
-    const notificationUnreadText =
-        document.getElementById('adminNotificationUnreadText');
-
-    const notificationList =
-        document.getElementById('adminNotificationList');
-
     const obtMenu =
         document.getElementById('adminObtMenu');
 
     const obtArrow =
         document.getElementById('adminObtArrow');
-
-
-    /* =========================================================
-       CURRENT USER
-    ========================================================== */
-
-    const userIdMeta =
-        document.querySelector('meta[name="user-id"]');
-
-    const userId =
-        userIdMeta
-            ? userIdMeta.getAttribute('content')
-            : null;
-
-
-    /* =========================================================
-       LOCAL UNREAD COUNT
-    ========================================================== */
-
-    let adminUnreadCount =
-        Number(
-            notificationBadge
-                ? notificationBadge.textContent.trim()
-                : 0
-        ) || 0;
-
-
-    /* =========================================================
-       UPDATE NOTIFICATION BADGE
-    ========================================================== */
-
-    function updateNotificationBadge(count) {
-
-        adminUnreadCount =
-            Math.max(
-                0,
-                Number(count) || 0
-            );
-
-
-        if (!notificationBadge) {
-
-            return;
-
-        }
-
-
-        if (adminUnreadCount > 0) {
-
-            notificationBadge.textContent =
-                adminUnreadCount;
-
-            notificationBadge.style.display =
-                'flex';
-
-        } else {
-
-            notificationBadge.textContent =
-                '0';
-
-            notificationBadge.style.display =
-                'none';
-
-        }
-
-
-        if (notificationUnreadText) {
-
-            if (adminUnreadCount > 0) {
-
-                notificationUnreadText.textContent =
-                    adminUnreadCount + ' unread';
-
-                notificationUnreadText.style.display =
-                    '';
-
-            } else {
-
-                notificationUnreadText.textContent =
-                    '';
-
-                notificationUnreadText.style.display =
-                    'none';
-
-            }
-
-        }
-
-    }
-
-
-    /* =========================================================
-       REALTIME NOTIFICATION HTML
-    ========================================================== */
-
-    function createRealtimeNotification(notification) {
-
-        if (!notificationList) {
-
-            return;
-
-        }
-
-
-        const emptyState =
-            document.getElementById(
-                'adminNoNotifications'
-            );
-
-
-        if (emptyState) {
-
-            emptyState.remove();
-
-        }
-
-
-        const url =
-            notification.url ||
-            notification.data?.url ||
-            '#';
-
-
-        const message =
-            notification.message ||
-            notification.data?.message ||
-            'New notification';
-
-
-        const icon =
-            notification.icon ||
-            notification.data?.icon ||
-            'fa-bell';
-
-
-        const id =
-            notification.id ||
-            notification.data?.id ||
-            ('realtime-' + Date.now());
-
-
-        const createdAt =
-            notification.created_at ||
-            notification.data?.created_at ||
-            new Date().toISOString();
-
-
-        const item =
-            document.createElement('a');
-
-
-        item.href =
-            url;
-
-        item.className =
-            'admin-notification-link';
-
-        item.dataset.notificationId =
-            id;
-
-        item.style.textDecoration =
-            'none';
-
-
-        const wrapper =
-            document.createElement('div');
-
-        wrapper.className =
-            'admin-notification-item unread realtime-new';
-
-
-        const iconContainer =
-            document.createElement('div');
-
-        iconContainer.className =
-            'admin-notif-icon';
-
-
-        if (
-            typeof icon === 'string' &&
-            icon.startsWith('fa-')
-        ) {
-
-            const iconElement =
-                document.createElement('i');
-
-            iconElement.className =
-                'fas ' + icon;
-
-            iconContainer.appendChild(
-                iconElement
-            );
-
-        } else {
-
-            iconContainer.textContent =
-                icon;
-
-        }
-
-
-        const content =
-            document.createElement('div');
-
-        content.className =
-            'admin-notif-content';
-
-
-        const text =
-            document.createElement('div');
-
-        text.className =
-            'admin-notif-text';
-
-        text.textContent =
-            message;
-
-
-        const time =
-            document.createElement('div');
-
-        time.className =
-            'admin-notif-time';
-
-        time.textContent =
-            'Just now';
-
-
-        content.appendChild(text);
-
-        content.appendChild(time);
-
-
-        wrapper.appendChild(
-            iconContainer
-        );
-
-        wrapper.appendChild(
-            content
-        );
-
-
-        item.appendChild(
-            wrapper
-        );
-
-
-        notificationList.prepend(
-            item
-        );
-
-
-        const items =
-            notificationList.querySelectorAll(
-                '.admin-notification-link'
-            );
-
-
-        if (items.length > 20) {
-
-            items[items.length - 1].remove();
-
-        }
-
-
-        updateNotificationBadge(
-            adminUnreadCount + 1
-        );
-
-
-        if (notificationButton) {
-
-            notificationButton.classList.remove(
-                'realtime-pulse'
-            );
-
-
-            void notificationButton.offsetWidth;
-
-
-            notificationButton.classList.add(
-                'realtime-pulse'
-            );
-
-
-            setTimeout(function () {
-
-                notificationButton.classList.remove(
-                    'realtime-pulse'
-                );
-
-            }, 700);
-
-        }
-
-    }
-
-
-    /* =========================================================
-       REALTIME NOTIFICATION LISTENER
-    ========================================================== */
-
-    function initializeRealtimeNotifications() {
-
-        if (!userId) {
-
-            console.warn(
-                '[Admin Notifications] No authenticated user ID found.'
-            );
-
-            return;
-
-        }
-
-
-        if (
-            typeof window.Echo === 'undefined'
-        ) {
-
-            console.warn(
-                '[Admin Notifications] Laravel Echo is not available.'
-            );
-
-            return;
-
-        }
-
-
-        try {
-
-            const channelName =
-                'App.Models.User.' + userId;
-
-
-            console.log(
-                '[Admin Notifications] Subscribing to:',
-                channelName
-            );
-
-
-            window.Echo
-                .private(channelName)
-                .notification(function (notification) {
-
-                    console.log(
-                        '[Admin Notifications] Realtime notification received:',
-                        notification
-                    );
-
-
-                    createRealtimeNotification(
-                        notification
-                    );
-
-                });
-
-
-            console.log(
-                '[Admin Notifications] Realtime listener initialized.'
-            );
-
-        } catch (error) {
-
-            console.error(
-                '[Admin Notifications] Failed to initialize realtime notifications:',
-                error
-            );
-
-        }
-
-    }
-
-
-    /*
-     * Wait for Echo initialization.
-     */
-
-    if (
-        typeof window.Echo !== 'undefined'
-    ) {
-
-        initializeRealtimeNotifications();
-
-    } else {
-
-        let echoAttempts =
-            0;
-
-        const echoTimer =
-            setInterval(function () {
-
-                echoAttempts++;
-
-
-                if (
-                    typeof window.Echo !== 'undefined'
-                ) {
-
-                    clearInterval(
-                        echoTimer
-                    );
-
-                    initializeRealtimeNotifications();
-
-                }
-
-
-                if (
-                    echoAttempts >= 20
-                ) {
-
-                    clearInterval(
-                        echoTimer
-                    );
-
-                    console.warn(
-                        '[Admin Notifications] Echo initialization timeout.'
-                    );
-
-                }
-
-            }, 250);
-
-    }
 
 
     /* =========================================================
@@ -4523,7 +3309,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
 
         }
-
 
         sidebar.classList.toggle('open');
 
@@ -4539,7 +3324,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
 
         }
-
 
         sidebar.classList.remove('open');
 
@@ -4574,13 +3358,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         if (!profileMenu) {
 
             return;
 
         }
-
 
         profileMenu.classList.toggle('show');
 
@@ -4588,16 +3370,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (notificationMenu) {
 
             notificationMenu.classList.remove('show');
-
-        }
-
-
-        if (notificationButton) {
-
-            notificationButton.setAttribute(
-                'aria-expanded',
-                'false'
-            );
 
         }
 
@@ -4616,28 +3388,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         if (!notificationMenu) {
 
             return;
 
         }
 
-
-        const isShowing =
-            notificationMenu.classList.toggle('show');
-
-
-        if (notificationButton) {
-
-            notificationButton.setAttribute(
-                'aria-expanded',
-                isShowing
-                    ? 'true'
-                    : 'false'
-            );
-
-        }
+        notificationMenu.classList.toggle('show');
 
 
         if (profileMenu) {
@@ -4661,7 +3418,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         obtMenu.classList.toggle('show');
 
         obtArrow.classList.toggle('rotate');
@@ -4681,20 +3437,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
 
-
         if (notificationMenu) {
 
             notificationMenu.classList.remove('show');
-
-        }
-
-
-        if (notificationButton) {
-
-            notificationButton.setAttribute(
-                'aria-expanded',
-                'false'
-            );
 
         }
 
@@ -4717,9 +3462,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 )
             ) {
 
-                profileMenu.classList.remove(
-                    'show'
-                );
+                profileMenu.classList.remove('show');
 
             }
 
@@ -4731,19 +3474,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 )
             ) {
 
-                notificationMenu.classList.remove(
-                    'show'
-                );
-
-
-                if (notificationButton) {
-
-                    notificationButton.setAttribute(
-                        'aria-expanded',
-                        'false'
-                    );
-
-                }
+                notificationMenu.classList.remove('show');
 
             }
 
@@ -4764,7 +3495,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
 
             }
-
 
             closeAdminSidebar();
 
@@ -4820,7 +3550,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         }
     );
-
 
 });
 
