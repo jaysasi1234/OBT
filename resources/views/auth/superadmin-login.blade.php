@@ -26,7 +26,6 @@
             position: relative;
         }
 
-        /* ✅ FIXED OVERLAY (WAS BLOCKING CLICK) */
         .wave-pattern {
             position: absolute;
             inset: 0;
@@ -34,7 +33,7 @@
             background:
                 radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
                 radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 50%);
-            pointer-events: none;   /* 🔥 IMPORTANT FIX */
+            pointer-events: none;
             z-index: 0;
         }
 
@@ -46,7 +45,7 @@
             padding: 2.5rem 2rem;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             position: relative;
-            z-index: 1; /* 🔥 MUST BE ABOVE BACKGROUND */
+            z-index: 1;
         }
 
         .card-header {
@@ -96,6 +95,48 @@
             outline: none;
             border-color: #2a6f97;
             box-shadow: 0 0 0 3px rgba(42,111,151,0.2);
+        }
+
+        /* PASSWORD WRAPPER */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-input {
+            padding-right: 3rem;
+        }
+
+        /* EYE BUTTON */
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+
+            width: 32px;
+            height: 32px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: none;
+            background: transparent;
+
+            color: #64748b;
+            font-size: 1.1rem;
+
+            cursor: pointer;
+            border-radius: 6px;
+        }
+
+        .toggle-password:hover {
+            background: #f1f5f9;
+            color: #2a6f97;
+        }
+
+        .toggle-password:focus {
+            outline: 2px solid rgba(42,111,151,0.25);
         }
 
         .login-btn {
@@ -164,69 +205,193 @@
 
 <body>
 
-<!-- BACKGROUND -->
 <div class="wave-pattern"></div>
 
-<!-- LOGIN CARD -->
 <div class="login-card">
 
     <div class="card-header">
+
         <div class="logo-container">
             <img src="{{ asset('images/MMACI Logo.jpg') }}" alt="Logo">
         </div>
 
-        <h1 class="system-title">On Board Training Report System</h1>
-        <p class="school-subtitle">Merchant Marine Academy of Caraga Inc.</p>
+        <h1 class="system-title">
+            On Board Training Report System
+        </h1>
+
+        <p class="school-subtitle">
+            Merchant Marine Academy of Caraga Inc.
+        </p>
+
     </div>
 
     @if(session('success'))
-    <div class="success-message">
-        {{ session('success') }}
-    </div>
-@endif
 
-    <h2 class="login-section-title">Dean Login</h2>
+        <div class="success-message">
+            {{ session('success') }}
+        </div>
 
-<form method="POST" action="{{ route('superadmin.login.submit') }}">
-    @csrf
+    @endif
 
-    <div class="form-group">
-        <input type="email" name="email" class="form-input" placeholder="Email" required>
-        @error('email')
-            <div class="error-message">{{ $message }}</div>
-        @enderror
-    </div>
+    <h2 class="login-section-title">
+        Dean Login
+    </h2>
 
-<div class="form-group">
-    <input
-        type="password"
-        name="password"
-        class="form-input"
-        placeholder="Password"
-        required
-    >
+    <form method="POST" action="{{ route('superadmin.login.submit') }}">
 
-    @error('password')
-        <div class="error-message">{{ $message }}</div>
-    @enderror
+        @csrf
+
+        {{-- EMAIL --}}
+        <div class="form-group">
+
+            <input
+                type="email"
+                name="email"
+                class="form-input"
+                placeholder="Email"
+                value="{{ old('email') }}"
+                required
+                autocomplete="email"
+            >
+
+            @error('email')
+                <div class="error-message">
+                    {{ $message }}
+                </div>
+            @enderror
+
+        </div>
+
+
+        {{-- PASSWORD --}}
+        <div class="form-group">
+
+            <div class="password-wrapper">
+
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    class="form-input"
+                    placeholder="Password"
+                    required
+                    autocomplete="current-password"
+                >
+
+                <button
+                    type="button"
+                    class="toggle-password"
+                    id="togglePassword"
+                    aria-label="Show password"
+                    title="Show password"
+                >
+                    👁
+                </button>
+
+            </div>
+
+            @error('password')
+                <div class="error-message">
+                    {{ $message }}
+                </div>
+            @enderror
+
+        </div>
+
+
+        {{-- FORGOT PASSWORD --}}
+        <div class="forgot-password">
+
+            <a href="{{ route('superadmin.password.request') }}">
+                Forgot Password?
+            </a>
+
+        </div>
+
+
+        {{-- LOGIN --}}
+        <button
+            type="submit"
+            class="login-btn"
+        >
+            Log In
+        </button>
+
+
+        {{-- BACK HOME --}}
+        <a
+            href="{{ url('/') }}"
+            class="secondary-btn"
+        >
+            Go Back Home Page
+        </a>
+
+    </form>
+
 </div>
 
-<div class="forgot-password">
-    <a href="{{ route('superadmin.password.request') }}">
-        Forgot Password?
-    </a>
-</div>
 
-<button type="submit" class="login-btn">
-    Log In
-</button>
+<script>
 
-<a href="{{ url('/') }}" class="secondary-btn">
-    Go Back Home Page
-</a>
-</form>
+document.addEventListener('DOMContentLoaded', function () {
 
-</div>
+    const password =
+        document.getElementById('password');
+
+    const togglePassword =
+        document.getElementById('togglePassword');
+
+
+    if (!password || !togglePassword) {
+        return;
+    }
+
+
+    togglePassword.addEventListener('click', function () {
+
+        const isPassword =
+            password.type === 'password';
+
+
+        if (isPassword) {
+
+            password.type = 'text';
+
+            togglePassword.textContent = '🙈';
+
+            togglePassword.setAttribute(
+                'aria-label',
+                'Hide password'
+            );
+
+            togglePassword.setAttribute(
+                'title',
+                'Hide password'
+            );
+
+        } else {
+
+            password.type = 'password';
+
+            togglePassword.textContent = '👁';
+
+            togglePassword.setAttribute(
+                'aria-label',
+                'Show password'
+            );
+
+            togglePassword.setAttribute(
+                'title',
+                'Show password'
+            );
+
+        }
+
+    });
+
+});
+
+</script>
 
 </body>
 </html>

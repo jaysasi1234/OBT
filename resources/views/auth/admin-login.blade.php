@@ -431,6 +431,37 @@
                 color: #718096;
             }
 
+            .password-wrapper {
+                position: relative;
+            }
+
+            .password-wrapper .form-input {
+                padding-right: 50px;
+            }
+
+            .password-wrapper .toggle-password {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+
+                border: none;
+                background: transparent;
+
+                cursor: pointer;
+
+                font-size: 18px;
+                color: #718096;
+
+                padding: 5px;
+
+                z-index: 2;
+            }
+
+            .password-wrapper .toggle-password:hover {
+                color: #2a6f97;
+            }
+
             @media (max-width: 640px) {
                 body {
                     padding: 1rem;
@@ -511,26 +542,40 @@
                     @enderror
                 </div>
 
-                <div class="form-group">
-                    <div class="input-wrapper">
-                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
-                            <path d="M7 11V7C7 5.67392 7.52678 4.40215 8.46447 3.46447C9.40215 2.52678 10.6739 2 12 2C13.3261 2 14.5979 2.52678 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        <input 
-                            type="password" 
-                            name="password" 
-                            class="form-input" 
-                            placeholder="Enter your password" 
-                            required 
-                            autocomplete="new-password"
-                            data-lpignore="true"
-                        >
+                    <div class="form-group">
+                        <div class="input-wrapper password-wrapper">
+
+                            <svg class="input-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <path d="M7 11V7C7 5.67392 7.52678 2 12 2C13.3261 2 14.5979 2 15.5355 3.46447C16.4732 4.40215 17 5.67392 17 7V11" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+
+                            <input 
+                                type="password" 
+                                name="password" 
+                                id="adminPassword"
+                                class="form-input" 
+                                placeholder="Enter your password" 
+                                required 
+                                autocomplete="new-password"
+                                data-lpignore="true"
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                onclick="togglePassword('adminPassword', this)"
+                                aria-label="Show password"
+                            >
+                                👁
+                            </button>
+
+                        </div>
+
+                        @error('password')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </div>
-                    @error('password')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
-                </div>
 
                 <div class="login-options">
                     <div class="remember-wrapper">
@@ -618,6 +663,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }, 5000);
 
 });
+</script>
+
+<script>
+function togglePassword(inputId, button) {
+
+    const input = document.getElementById(inputId);
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = '🙈';
+        button.setAttribute('aria-label', 'Hide password');
+    } else {
+        input.type = 'password';
+        button.textContent = '👁';
+        button.setAttribute('aria-label', 'Show password');
+    }
+}
 </script>
 
     </body>
