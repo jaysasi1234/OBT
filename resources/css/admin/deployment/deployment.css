@@ -1532,6 +1532,37 @@ main {
 }
 
 /* =========================================================
+   DURATION OF SEA SERVICE
+========================================================= */
+
+.dm-sea-duration {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 145px;
+    padding: 8px 12px;
+    border: 1px solid rgba(96,165,250,.20);
+    border-radius: 10px;
+    background: rgba(59,130,246,.08);
+    color: #cbd5e1;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dm-sea-duration.completed {
+    border-color: rgba(34,197,94,.22);
+    background: rgba(34,197,94,.08);
+    color: #86efac;
+}
+
+.dm-sea-duration.empty {
+    border-color: rgba(148,163,184,.15);
+    background: rgba(148,163,184,.06);
+    color: #64748b;
+}
+
+/* =========================================================
    LOADING
 ========================================================= */
 
