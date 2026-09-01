@@ -1562,6 +1562,102 @@ main {
     color: #64748b;
 }
 
+ /* =========================================================
+    MODAL — DURATION OF SEA SERVICE
+ ========================================================= */
+
+.dm-sea-duration-modal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 14px;
+    border: 1px solid rgba(96,165,250,.18);
+    border-radius: 11px;
+    background: rgba(59,130,246,.07);
+    color: #e2e8f0;
+}
+
+.dm-sea-duration-modal-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.dm-sea-duration-modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: rgba(59,130,246,.14);
+    color: #60a5fa;
+    font-size: 14px;
+}
+
+.dm-sea-duration-modal-value {
+    color: #f8fafc;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dm-sea-duration-modal.completed {
+    border-color: rgba(34,197,94,.20);
+    background: rgba(34,197,94,.07);
+}
+
+.dm-sea-duration-modal.completed
+.dm-sea-duration-modal-icon {
+    background: rgba(34,197,94,.14);
+    color: #4ade80;
+}
+
+.dm-sea-duration-modal.completed
+.dm-sea-duration-modal-value {
+    color: #86efac;
+}
+
+.dm-sea-duration-modal.empty {
+    border-color: rgba(148,163,184,.12);
+    background: rgba(148,163,184,.05);
+}
+
+.dm-sea-duration-modal.empty
+.dm-sea-duration-modal-value {
+    color: #64748b;
+}
+
+
+/* =========================================================
+   MODAL — RESPONSIVE DURATION
+========================================================= */
+
+@media (max-width: 680px) {
+
+    .dm-sea-duration-modal {
+        min-height: 50px;
+        padding: 11px 12px;
+    }
+
+    .dm-sea-duration-modal-label {
+        font-size: 11px;
+    }
+
+    .dm-sea-duration-modal-value {
+        font-size: 12px;
+    }
+
+}
+
 /* =========================================================
    LOADING
 ========================================================= */
