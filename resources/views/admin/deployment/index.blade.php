@@ -526,23 +526,20 @@
 
                         {{-- EMBARKATION DATE --}}
 
-                        <td
-                            data-date="{{ $deployment->date_deployed ?? '' }}"
-                        >
+                    <td
+                        data-date="{{ $deployment?->getRawOriginal('date_deployed') ?? '' }}"
+                    >
+                        @php
+                            $rawEmbarkationDate =
+                                $deployment?->getRawOriginal('date_deployed');
+                        @endphp
 
-                            @if($deployment && $deployment->date_deployed)
-
-                                {{ \Carbon\Carbon::parse(
-                                    $deployment->date_deployed
-                                )->format('M d, Y') }}
-
-                            @else
-
-                                —
-
-                            @endif
-
-                        </td>
+                        @if($rawEmbarkationDate)
+                            {{ date('M d, Y', strtotime(substr($rawEmbarkationDate, 0, 10))) }}
+                        @else
+                            —
+                        @endif
+                    </td>
 
 
                         {{-- DISEMBARKATION PLACE --}}
@@ -555,19 +552,16 @@
                         {{-- DISEMBARKATION DATE --}}
 
                         <td>
+                            @php
+                                $rawDisembarkationDate =
+                                    $deployment?->getRawOriginal('date_disembarked');
+                            @endphp
 
-                            @if($deployment && $deployment->date_disembarked)
-
-                                {{ \Carbon\Carbon::parse(
-                                    $deployment->date_disembarked
-                                )->format('M d, Y') }}
-
+                            @if($rawDisembarkationDate)
+                                {{ date('M d, Y', strtotime(substr($rawDisembarkationDate, 0, 10))) }}
                             @else
-
                                 —
-
                             @endif
-
                         </td>
 
 
@@ -1645,9 +1639,7 @@ function openDeploymentModal(cadet) {
             "modalDeployed"
         ).value =
             dep.date_deployed
-                ? String(
-                    dep.date_deployed
-                ).substring(0, 10)
+                ? String(dep.date_deployed).slice(0, 10)
                 : "";
 
 
@@ -1655,9 +1647,7 @@ function openDeploymentModal(cadet) {
             "modalDisembarked"
         ).value =
             dep.date_disembarked
-                ? String(
-                    dep.date_disembarked
-                ).substring(0, 10)
+                ? String(dep.date_disembarked).slice(0, 10)
                 : "";
 
 
