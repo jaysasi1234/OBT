@@ -3,186 +3,320 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Cadet;
 use App\Models\Batch;
-use App\Models\Deployment;
-use Illuminate\Http\Request;
-use App\Models\OnboardRequirement;
+use App\Models\Cadet;
 use App\Models\CadetOnboardRequirement;
+use App\Models\Deployment;
+use App\Models\OnboardRequirement;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DeploymentController extends Controller
 {
-    // =========================
-    // INDEX
-    // =========================
- public function index()
-{
-        $cadets = Cadet::with(['batch', 'deployment'])
-            ->select(
+    /**
+     * Display the deployment monitoring page.
+     */
+    public function index()
+    {
+        $cadets = Cadet::query()
+            ->with([
+                'batch',
+                'deployment',
+            ])
+            ->select([
                 'id',
                 'trb_control_number',
                 'full_name',
                 'course',
                 'batch_id',
                 'verification_status',
-                'photo'
-            )
+                'photo',
+            ])
             ->orderBy('full_name')
             ->get();
 
-    $stats = Deployment::selectRaw("
-        COUNT(*) as total,
-        SUM(CASE WHEN status = 'Ongoing' THEN 1 ELSE 0 END) as ongoing,
-        SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed,
-        SUM(CASE WHEN status = 'Not Deployed' THEN 1 ELSE 0 END) as not_deployed
-    ")->first();
+        $stats = Deployment::query()
+            ->selectRaw("
+                COUNT(*) AS total,
+                SUM(CASE WHEN status = 'Ongoing' THEN 1 ELSE 0 END) AS ongoing,
+                SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) AS completed,
+                SUM(CASE WHEN status = 'Not Deployed' THEN 1 ELSE 0 END) AS not_deployed
+            ")
+            ->first();
 
-    $totalCadets = $stats->total ?? 0;
-    $ongoing = $stats->ongoing ?? 0;
-    $completed = $stats->completed ?? 0;
-    $notDeployed = $stats->not_deployed ?? 0;
+        $ongoing = (int) ($stats->ongoing ?? 0);
+        $completed = (int) ($stats->completed ?? 0);
+        $notDeployed = (int) ($stats->not_deployed ?? 0);
 
-    $verified = Cadet::where('verification_status', 'Verified')->count();
-    $pending = Cadet::where('verification_status', 'Pending')->count();
-    $deficient = Cadet::where('verification_status', 'Deficiency')->count();
+        $totalCadets = (int) ($stats->total ?? 0);
 
-    $totalDeployed = $ongoing + $completed;
+        /*
+         * A cadet is considered deployed when the deployment
+         * status is either Ongoing or Completed.
+         */
+        $totalDeployed = $ongoing + $completed;
 
-    $batches = Batch::orderBy('batch_year', 'desc')->get();
+        $verified = Cadet::where(
+            'verification_status',
+            'Verified'
+        )->count();
 
-    // ✅ ADD THIS LINE
-$courses = Cadet::select('course')
-    ->distinct()
-    ->orderBy('course')
-    ->get();
+        $pending = Cadet::where(
+            'verification_status',
+            'Pending'
+        )->count();
 
-    return view('admin.deployment.index', compact(
-        'cadets',
-        'totalCadets',
-        'ongoing',
-        'completed',
-        'notDeployed',
-        'totalDeployed',
-        'verified',
-        'pending',
-        'deficient',
-        'batches',
-        'courses' // ✅ IMPORTANT
-    ));
-}
+        $deficient = Cadet::where(
+            'verification_status',
+            'Deficiency'
+        )->count();
 
-public function show(Cadet $cadet)
-{
-    $cadet->load('deployment');
+        $batches = Batch::query()
+            ->orderByDesc('batch_year')
+            ->get();
 
-    return response()->json([
-        'deployment' => $cadet->deployment
-    ]);
-}
+        $courses = Cadet::query()
+            ->select('course')
+            ->whereNotNull('course')
+            ->where('course', '!=', '')
+            ->distinct()
+            ->orderBy('course')
+            ->get();
 
-    // =========================
-    // UPDATE DEPLOYMENT
-    // =========================
-public function update(Request $request, Cadet $cadet)
+        return view(
+            'admin.deployment.index',
+            compact(
+                'cadets',
+                'totalCadets',
+                'ongoing',
+                'completed',
+                'notDeployed',
+                'totalDeployed',
+                'verified',
+                'pending',
+                'deficient',
+                'batches',
+                'courses'
+            )
+        );
+    }
+
+    /**
+     * Return a cadet's deployment information.
+     */
+    public function show(Cadet $cadet): JsonResponse
     {
+        $cadet->load('deployment');
+
+        return response()->json([
+            'success' => true,
+            'deployment' => $cadet->deployment,
+        ]);
+    }
+
+    /**
+     * Create or update a cadet deployment.
+     */
+    public function update(
+        Request $request,
+        Cadet $cadet
+    ): JsonResponse {
+        $validated = $request->validate([
+            'status' => [
+                'required',
+                'string',
+                'in:Not Deployed,Ongoing,Completed',
+            ],
+
+            'vessel_name' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'company_name' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'deployment_type' => [
+                'required',
+                'in:Domestic,International',
+            ],
+
+            'embarkation_place' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'date_deployed' => [
+                'nullable',
+                'date',
+            ],
+
+            'disembarkation_place' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'date_disembarked' => [
+                'nullable',
+                'date',
+                'after_or_equal:date_deployed',
+            ],
+        ]);
+
+        /*
+         * Do not allow a disembarkation date without
+         * an embarkation date.
+         */
+        if (
+            !empty($validated['date_disembarked']) &&
+            empty($validated['date_deployed'])
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'An embarkation date is required before entering a disembarkation date.',
+            ], 422);
+        }
+
+        /*
+         * An ongoing deployment should not have a
+         * disembarkation date.
+         *
+         * If the cadet is still onboard, the sea service
+         * duration remains unfinalized.
+         */
+        if (
+            $validated['status'] === 'Ongoing' &&
+            !empty($validated['date_disembarked'])
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'An ongoing deployment cannot have a disembarkation date.',
+            ], 422);
+        }
+
+        /*
+         * A completed deployment should have both dates.
+         */
+        if (
+            $validated['status'] === 'Completed' &&
+            (
+                empty($validated['date_deployed']) ||
+                empty($validated['date_disembarked'])
+            )
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' =>
+                    'A completed deployment requires both embarkation and disembarkation dates.',
+            ], 422);
+        }
+
+        /*
+         * Automatically determine training progress
+         * from the deployment status.
+         */
+        $percentage = match ($validated['status']) {
+            'Not Deployed' => 0,
+            'Ongoing' => 50,
+            'Completed' => 100,
+        };
+
         try {
+            DB::transaction(function () use (
+                $validated,
+                $percentage,
+                $cadet
+            ) {
+                /*
+                 * Create the deployment if it does not exist,
+                 * otherwise update the existing record.
+                 */
+                $deployment = Deployment::firstOrNew([
+                    'cadet_id' => $cadet->id,
+                ]);
 
-            // =========================
-            // VALIDATION
-            // =========================
-            $validated = $request->validate([
-                'deployment_status'      => 'required|string',
-                'vessel_name'            => 'nullable|string|max:255',
-                'company'                => 'nullable|string|max:255',
-                'deployment_type'        => 'required|in:Domestic,International',
-                'embarkation_place'      => 'nullable|string|max:255',
-                'date_deployed'          => 'nullable|date',
-                'disembarkation_place'   => 'nullable|string|max:255',
-                'date_disembarked'       => 'nullable|date',
-            ]);
+                $deployment->fill([
+                    'status' => $validated['status'],
+                    'percentage' => $percentage,
+                    'vessel_name' => $validated['vessel_name'] ?? null,
+                    'company_name' => $validated['company_name'] ?? null,
+                    'deployment_type' => $validated['deployment_type'],
+                    'embarkation_place' =>
+                        $validated['embarkation_place'] ?? null,
+                    'date_deployed' =>
+                        $validated['date_deployed'] ?? null,
+                    'disembarkation_place' =>
+                        $validated['disembarkation_place'] ?? null,
+                    'date_disembarked' =>
+                        $validated['date_disembarked'] ?? null,
+                ]);
 
-            // =========================
-            // NORMALIZE STATUS (IMPORTANT FIX)
-            // =========================
-            $status = match ($validated['deployment_status']) {
-                'Not Deployed', 'Not Started' => 'Not Deployed',
-                'Ongoing' => 'Ongoing',
-                'Completed' => 'Completed',
-                default => 'Not Deployed'
-            };
+                $deployment->save();
 
-            // =========================
-            // AUTO PROGRESS
-            // =========================
-            $percent = match ($status) {
-                'Not Deployed' => 0,
-                'Ongoing' => 50,
-                'Completed' => 100,
-            };
+                /*
+                 * Automatically create onboard requirements
+                 * when the cadet actually starts training.
+                 */
+                if (
+                    in_array(
+                        $validated['status'],
+                        ['Ongoing', 'Completed'],
+                        true
+                    )
+                ) {
+                    $requirements = OnboardRequirement::query()
+                        ->where('is_active', true)
+                        ->get();
 
-            // =========================
-            // CREATE OR UPDATE DEPLOYMENT
-            // =========================
-            $deployment = Deployment::firstOrNew([
-                'cadet_id' => $cadet->id
-            ]);
+                    foreach ($requirements as $requirement) {
+                        CadetOnboardRequirement::firstOrCreate(
+                            [
+                                'cadet_id' =>
+                                    $cadet->id,
 
-            $deployment->status = $status;
-            $deployment->percentage = $percent;
-            $deployment->vessel_name = $validated['vessel_name'] ?? null;
-            $deployment->company_name = $validated['company'] ?? null;
-            $deployment->deployment_type = $validated['deployment_type'];
-            $deployment->embarkation_place = $validated['embarkation_place'] ?? null;
-            $deployment->date_deployed = $validated['date_deployed'] ?? null;
-            $deployment->disembarkation_place = $validated['disembarkation_place'] ?? null;
-            $deployment->date_disembarked = $validated['date_disembarked'] ?? null;
-
-            $deployment->save();
-
-            // Automatically assign onboard requirements
-            if (in_array($status, ['Ongoing', 'Completed'])) {
-
-                $requirements = OnboardRequirement::where('is_active', 1)->get();
-
-                foreach ($requirements as $requirement) {
-
-                    CadetOnboardRequirement::firstOrCreate(
-                        [
-                            'cadet_id' => $cadet->id,
-                            'onboard_requirement_id' => $requirement->id,
-                        ],
-                        [
-                            'status' => 'Pending',
-                        ]
-                    );
-
+                                'onboard_requirement_id' =>
+                                    $requirement->id,
+                            ],
+                            [
+                                'status' => 'Pending',
+                            ]
+                        );
+                    }
                 }
 
-            }
-
-            if ($status == 'Completed') {
-
-                $cadet->bs_status = 'Qualified';
-
-            } else {
-
-                $cadet->bs_status = 'Not Qualified';
-            }
-
-            $cadet->save();
+                /*
+                 * A completed deployment qualifies the cadet.
+                 */
+                $cadet->update([
+                    'bs_status' =>
+                        $validated['status'] === 'Completed'
+                            ? 'Qualified'
+                            : 'Not Qualified',
+                ]);
+            });
 
             return response()->json([
                 'success' => true,
-                'message' => 'Deployment updated successfully',
-                'percent' => $percent,
-                'status' => $status
+                'message' => 'Deployment updated successfully.',
+                'status' => $validated['status'],
+                'percent' => $percentage,
             ]);
-
         } catch (\Throwable $e) {
+            report($e);
 
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' =>
+                    'Unable to update the deployment. Please try again.',
             ], 500);
         }
     }
