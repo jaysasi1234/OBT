@@ -603,93 +603,74 @@
                         </td>
 
 
-                        {{-- =================================================
-                             DURATION OF SEA SERVICE
-                        ================================================== --}}
+{{-- DURATION OF SEA SERVICE --}}
 
-                        <td>
+<td>
+    @if(
+        $deployment &&
+        $deployment->date_deployed &&
+        $deployment->date_disembarked
+    )
 
-                            @if($deployment && $deployment->date_deployed)
+        @php
+            $startDate = \Carbon\Carbon::parse(
+                $deployment->date_deployed
+            );
 
-                                @php
+            $endDate = \Carbon\Carbon::parse(
+                $deployment->date_disembarked
+            );
 
-                                    $startDate = \Carbon\Carbon::parse(
-                                        $deployment->date_deployed
-                                    );
+            if ($endDate->greaterThanOrEqualTo($startDate)) {
 
-                                    $endDate = $deployment->date_disembarked
-                                        ? \Carbon\Carbon::parse(
-                                            $deployment->date_disembarked
-                                        )
-                                        : \Carbon\Carbon::today();
+                $duration = $startDate->diff($endDate);
 
-                                    if ($endDate->greaterThanOrEqualTo($startDate)) {
+                $months = ($duration->y * 12) + $duration->m;
+                $days = $duration->d;
 
-                                        $durationDays =
-                                            $startDate->diffInDays(
-                                                $endDate
-                                            );
+                $parts = [];
 
-                                        $durationMonths =
-                                            intdiv(
-                                                $durationDays,
-                                                30
-                                            );
+                if ($months > 0) {
+                    $parts[] =
+                        $months . ' ' .
+                        \Illuminate\Support\Str::plural('Month', $months);
+                }
 
-                                        $remainingDays =
-                                            $durationDays % 30;
+                if ($days > 0) {
+                    $parts[] =
+                        $days . ' ' .
+                        \Illuminate\Support\Str::plural('Day', $days);
+                }
 
-                                        if (
-                                            $durationMonths > 0 &&
-                                            $remainingDays > 0
-                                        ) {
+                $durationText = !empty($parts)
+                    ? implode(', ', $parts)
+                    : '0 Days';
 
-                                            $durationText =
-                                                $durationMonths .
-                                                ' Month' .
-                                                ($durationMonths !== 1 ? 's' : '') .
-                                                ', ' .
-                                                $remainingDays .
-                                                ' Day' .
-                                                ($remainingDays !== 1 ? 's' : '');
+            } else {
 
-                                        } elseif (
-                                            $durationMonths > 0
-                                        ) {
+                $durationText = '—';
 
-                                            $durationText =
-                                                $durationMonths .
-                                                ' Month' .
-                                                ($durationMonths !== 1 ? 's' : '');
+            }
+        @endphp
 
-                                        } else {
+        <span
+            class="dm-duration-text"
+            title="Sea service from {{ $startDate->format('M d, Y') }} to {{ $endDate->format('M d, Y') }}"
+        >
+            {{ $durationText }}
+        </span>
 
-                                            $durationText =
-                                                $remainingDays .
-                                                ' Day' .
-                                                ($remainingDays !== 1 ? 's' : '');
+    @else
 
-                                        }
+        <span
+            class="dm-duration-pending"
+            title="Duration will be calculated after the disembarkation date is entered"
+        >
+            —
+        </span>
 
-                                    } else {
-
-                                        $durationText = '—';
-
-                                    }
-
-                                @endphp
-
-                                <span class="dm-duration-text">
-                                    {{ $durationText }}
-                                </span>
-
-                            @else
-
-                                —
-
-                            @endif
-
-                        </td>
+    @endif
+</td>
 
 
                         {{-- PROGRESS --}}
@@ -1689,142 +1670,118 @@ function calculateSeaServiceDuration(
     embarkationDate,
     disembarkationDate = null
 ) {
-
-    if (!embarkationDate) {
-
-        return {
-
-            text: "—",
-
-            status:
-                "Embarkation date not available"
-
-        };
-
-    }
-
-
-    const start =
-        new Date(
-            embarkationDate +
-            "T00:00:00"
-        );
-
-
-    const end =
-        disembarkationDate
-            ? new Date(
-                disembarkationDate +
-                "T00:00:00"
-            )
-            : new Date();
-
-
-    if (
-        isNaN(start.getTime()) ||
-        isNaN(end.getTime()) ||
-        end < start
-    ) {
-
-        return {
-
-            text: "—",
-
-            status:
-                "Invalid deployment dates"
-
-        };
-
-    }
-
-
     /*
-     * Sea service calculation:
-     *
-     * 30 days = 1 month
+     * Sea Service Duration should only be calculated
+     * when BOTH embarkation and disembarkation dates
+     * are available.
      */
 
-    const totalDays =
-        Math.floor(
-            (
-                end - start
-            ) /
-            (
-                1000 *
-                60 *
-                60 *
-                24
-            )
-        );
-
-
-    const months =
-        Math.floor(
-            totalDays / 30
-        );
-
-
-    const days =
-        totalDays % 30;
-
-
-    let text = "";
-
-
-    if (months > 0) {
-
-        text +=
-            months +
-            " Month" +
-            (
-                months !== 1
-                    ? "s"
-                    : ""
-            );
-
+    if (!embarkationDate) {
+        return {
+            text: "—",
+            status: "Embarkation date not available"
+        };
     }
 
+    if (!disembarkationDate) {
+        return {
+            text: "—",
+            status: "Enter disembarkation date to calculate sea service"
+        };
+    }
+
+    const start = new Date(
+        embarkationDate + "T00:00:00"
+    );
+
+    const end = new Date(
+        disembarkationDate + "T00:00:00"
+    );
+
+    if (
+        Number.isNaN(start.getTime()) ||
+        Number.isNaN(end.getTime())
+    ) {
+        return {
+            text: "—",
+            status: "Invalid deployment dates"
+        };
+    }
+
+    if (end < start) {
+        return {
+            text: "—",
+            status: "Disembarkation date cannot be before embarkation date"
+        };
+    }
+
+    /*
+     * Calculate calendar-based duration.
+     *
+     * Example:
+     * Feb 01, 2026 → Feb 01, 2027
+     * = 12 Months
+     *
+     * Feb 01, 2026 → Mar 04, 2027
+     * = 13 Months, 3 Days
+     */
+
+    let years = end.getFullYear() - start.getFullYear();
+
+    let months = end.getMonth() - start.getMonth();
+
+    let days = end.getDate() - start.getDate();
+
+    if (days < 0) {
+        months--;
+
+        const previousMonth = new Date(
+            end.getFullYear(),
+            end.getMonth(),
+            0
+        );
+
+        days += previousMonth.getDate();
+    }
+
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    const totalMonths =
+        (years * 12) + months;
+
+    const parts = [];
+
+    if (totalMonths > 0) {
+        parts.push(
+            `${totalMonths} ${
+                totalMonths === 1
+                    ? "Month"
+                    : "Months"
+            }`
+        );
+    }
 
     if (days > 0) {
-
-        if (text) {
-
-            text += ", ";
-
-        }
-
-
-        text +=
-            days +
-            " Day" +
-            (
-                days !== 1
-                    ? "s"
-                    : ""
-            );
-
+        parts.push(
+            `${days} ${
+                days === 1
+                    ? "Day"
+                    : "Days"
+            }`
+        );
     }
-
-
-    if (!text) {
-
-        text =
-            "0 Days";
-
-    }
-
 
     return {
-
-        text: text,
+        text: parts.length
+            ? parts.join(", ")
+            : "0 Days",
 
         status:
-            disembarkationDate
-                ? "Completed sea service"
-                : "Current duration — deployment ongoing"
-
+            "Completed sea service"
     };
-
 }
 
 
