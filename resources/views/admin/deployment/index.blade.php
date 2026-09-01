@@ -7,7 +7,7 @@
     @php
         /*
         |--------------------------------------------------------------------------
-        | Deployment Monitoring Helpers
+        | DATE FORMATTER
         |--------------------------------------------------------------------------
         */
 
@@ -23,6 +23,7 @@
             }
         };
 
+
         /*
         |--------------------------------------------------------------------------
         | SEA SERVICE DURATION
@@ -32,24 +33,22 @@
         | Duration is ONLY calculated when BOTH dates exist.
         |
         | Ongoing deployment:
-        | Embarkation = Feb 01, 2026
-        | Disembarkation = NULL
+        | Embarkation date exists
+        | Disembarkation date = NULL
         | Result = —
         |
         | Completed deployment:
-        | Embarkation = Feb 01, 2026
-        | Disembarkation = Mar 04, 2026
-        | Result = 1 Month, 3 Days
+        | Embarkation date exists
+        | Disembarkation date exists
+        | Result = X Months, X Days
         |
         */
 
         $calculateDuration = function ($startDate, $endDate = null) {
 
             /*
-             * Do NOT calculate ongoing duration.
-             *
-             * Sea service duration is only finalized
-             * after the cadet has a disembarkation date.
+             * Do NOT calculate duration if there is no
+             * disembarkation date.
              */
             if (!$startDate || !$endDate) {
                 return null;
@@ -70,29 +69,29 @@
                 /*
                  * Calculate complete calendar months.
                  */
-                $months = $start->diffInMonths($end);
+                $months =
+                    ($end->year - $start->year) * 12
+                    + ($end->month - $start->month);
 
                 /*
-                 * Build the date after the calculated months.
+                 * Prevent over-counting.
                  */
                 $monthDate = $start->copy()->addMonthsNoOverflow($months);
 
-                /*
-                 * Protect against over-counting.
-                 */
                 if ($monthDate->gt($end)) {
 
                     $months--;
 
-                    $monthDate = $start
-                        ->copy()
-                        ->addMonthsNoOverflow(
-                            max(0, $months)
-                        );
+                    $monthDate =
+                        $start
+                            ->copy()
+                            ->addMonthsNoOverflow(
+                                max(0, $months)
+                            );
                 }
 
                 /*
-                 * Calculate remaining days.
+                 * Remaining days after complete months.
                  */
                 $days = $monthDate->diffInDays($end);
 
@@ -105,7 +104,6 @@
                         ($months === 1
                             ? 'Month'
                             : 'Months');
-
                 }
 
                 if ($days > 0) {
@@ -115,15 +113,16 @@
                         ($days === 1
                             ? 'Day'
                             : 'Days');
-
                 }
 
                 /*
-                 * Same embarkation and disembarkation date.
+                 * Same embarkation/disembarkation date.
                  */
-                return $parts
-                    ? implode(', ', $parts)
-                    : '0 Days';
+                if (!$parts) {
+                    return '0 Days';
+                }
+
+                return implode(', ', $parts);
 
             } catch (\Throwable $e) {
 
@@ -544,6 +543,7 @@
 
         <section class="dm-table-card">
 
+
             <div class="dm-table-header">
 
                 <div class="dm-table-title">
@@ -573,65 +573,21 @@
 
                         <tr>
 
-                            <th scope="col">
-                                TRB No.
-                            </th>
-
-                            <th scope="col">
-                                Name
-                            </th>
-
-                            <th scope="col">
-                                Course
-                            </th>
-
-                            <th scope="col">
-                                Batch
-                            </th>
-
-                            <th scope="col">
-                                Vessel
-                            </th>
-
-                            <th scope="col">
-                                Company
-                            </th>
-
-                            <th scope="col">
-                                Deployment Type
-                            </th>
-
-                            <th scope="col">
-                                Embarkation Place
-                            </th>
-
-                            <th scope="col">
-                                Embarkation Date
-                            </th>
-
-                            <th scope="col">
-                                Disembarkation Place
-                            </th>
-
-                            <th scope="col">
-                                Disembarkation Date
-                            </th>
-
-                            <th scope="col">
-                                Duration of Sea Service
-                            </th>
-
-                            <th scope="col">
-                                Progress
-                            </th>
-
-                            <th scope="col">
-                                Status
-                            </th>
-
-                            <th scope="col">
-                                Action
-                            </th>
+                            <th>TRB No.</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Batch</th>
+                            <th>Vessel</th>
+                            <th>Company</th>
+                            <th>Deployment Type</th>
+                            <th>Embarkation Place</th>
+                            <th>Embarkation Date</th>
+                            <th>Disembarkation Place</th>
+                            <th>Disembarkation Date</th>
+                            <th>Duration of Sea Service</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Action</th>
 
                         </tr>
 
@@ -661,7 +617,9 @@
                                 );
 
                                 $course = strtolower(
-                                    trim($cadet->course ?? '')
+                                    trim(
+                                        $cadet->course ?? ''
+                                    )
                                 );
 
                                 $batch = strtolower(
@@ -673,9 +631,8 @@
                                 /*
                                  * IMPORTANT:
                                  *
-                                 * Duration is ONLY calculated when
-                                 * date_deployed AND date_disembarked
-                                 * are both available.
+                                 * Duration is calculated ONLY if
+                                 * both dates exist.
                                  */
                                 $duration = $calculateDuration(
                                     $deployment?->date_deployed,
@@ -689,7 +646,7 @@
                                 data-course="{{ $course }}"
                                 data-batch="{{ $batch }}"
                                 data-status="{{ $status }}"
-                                data-deployment-date="{{ $deployment?->date_deployed ?? '' }}"
+                                data-deployment-date="{{ $deployment?->date_deployed ? \Carbon\Carbon::parse($deployment->date_deployed)->format('Y-m-d') : '' }}"
                             >
 
 
@@ -781,11 +738,11 @@
 
                                 {{-- EMBARKATION DATE --}}
 
-                                <td
-                                    data-date="{{ $deployment?->date_deployed ?? '' }}"
-                                >
+                                <td>
 
-                                    {{ $formatDate($deployment?->date_deployed) }}
+                                    {{ $formatDate(
+                                        $deployment?->date_deployed
+                                    ) }}
 
                                 </td>
 
@@ -801,20 +758,20 @@
 
                                 <td>
 
-                                    {{ $formatDate($deployment?->date_disembarked) }}
+                                    {{ $formatDate(
+                                        $deployment?->date_disembarked
+                                    ) }}
 
                                 </td>
 
 
-                                {{-- SEA SERVICE DURATION --}}
+                                {{-- =================================================
+                                     SEA SERVICE DURATION
+                                ================================================== --}}
 
                                 <td>
 
-                                    @if(
-                                        $deployment?->date_deployed &&
-                                        $deployment?->date_disembarked &&
-                                        $duration
-                                    )
+                                    @if($duration)
 
                                         <span class="dm-duration-text">
                                             {{ $duration }}
@@ -1064,7 +1021,6 @@
 
                 </div>
 
-
                 <button
                     type="button"
                     class="dm-modal-close"
@@ -1123,7 +1079,9 @@
                 </div>
 
 
-                {{-- SECTION 01 --}}
+                {{-- =================================================
+                     SECTION 01
+                ================================================== --}}
 
                 <section class="dm-section">
 
@@ -1141,6 +1099,7 @@
 
 
                     <div class="dm-form-grid">
+
 
                         <div class="dm-form-group">
 
@@ -1216,7 +1175,9 @@
                 <div class="dm-divider"></div>
 
 
-                {{-- SECTION 02 --}}
+                {{-- =================================================
+                     SECTION 02
+                ================================================== --}}
 
                 <section class="dm-section">
 
@@ -1234,6 +1195,7 @@
 
 
                     <div class="dm-form-grid">
+
 
                         <div class="dm-form-group">
 
@@ -1280,7 +1242,9 @@
                 <div class="dm-divider"></div>
 
 
-                {{-- SECTION 03 --}}
+                {{-- =================================================
+                     SECTION 03
+                ================================================== --}}
 
                 <section class="dm-section">
 
@@ -1298,6 +1262,7 @@
 
 
                     <div class="dm-form-grid">
+
 
                         <div class="dm-form-group">
 
@@ -1361,7 +1326,7 @@
                             </strong>
 
                             <small id="modalDurationStatus">
-                                Duration will be calculated after disembarkation
+                                Enter a disembarkation date to calculate completed sea service.
                             </small>
 
                         </div>
@@ -1374,7 +1339,9 @@
                 <div class="dm-divider"></div>
 
 
-                {{-- SECTION 04 --}}
+                {{-- =================================================
+                     SECTION 04
+                ================================================== --}}
 
                 <section class="dm-section">
 
@@ -1507,7 +1474,7 @@
 
 
             /* =====================================================
-               CONFIG
+               CONFIGURATION
             ====================================================== */
 
             const CONFIG = {
@@ -1531,79 +1498,129 @@
             const elements = {
 
                 modal:
-                    document.getElementById('deploymentModal'),
+                    document.getElementById(
+                        'deploymentModal'
+                    ),
 
                 modalId:
-                    document.getElementById('modalId'),
+                    document.getElementById(
+                        'modalId'
+                    ),
 
                 modalPhoto:
-                    document.getElementById('modalPhoto'),
+                    document.getElementById(
+                        'modalPhoto'
+                    ),
 
                 modalName:
-                    document.getElementById('modalName'),
+                    document.getElementById(
+                        'modalName'
+                    ),
 
                 modalTRB:
-                    document.getElementById('modalTRB'),
+                    document.getElementById(
+                        'modalTRB'
+                    ),
 
                 modalCourse:
-                    document.getElementById('modalCourse'),
+                    document.getElementById(
+                        'modalCourse'
+                    ),
 
                 modalVessel:
-                    document.getElementById('modalVessel'),
+                    document.getElementById(
+                        'modalVessel'
+                    ),
 
                 modalCompany:
-                    document.getElementById('modalCompany'),
+                    document.getElementById(
+                        'modalCompany'
+                    ),
 
                 modalDeploymentType:
-                    document.getElementById('modalDeploymentType'),
+                    document.getElementById(
+                        'modalDeploymentType'
+                    ),
 
                 modalEmbarkPlace:
-                    document.getElementById('modalEmbarkPlace'),
+                    document.getElementById(
+                        'modalEmbarkPlace'
+                    ),
 
                 modalDeployed:
-                    document.getElementById('modalDeployed'),
+                    document.getElementById(
+                        'modalDeployed'
+                    ),
 
                 modalDisembarkPlace:
-                    document.getElementById('modalDisembarkPlace'),
+                    document.getElementById(
+                        'modalDisembarkPlace'
+                    ),
 
                 modalDisembarked:
-                    document.getElementById('modalDisembarked'),
+                    document.getElementById(
+                        'modalDisembarked'
+                    ),
 
                 modalDuration:
-                    document.getElementById('modalDuration'),
+                    document.getElementById(
+                        'modalDuration'
+                    ),
 
                 modalDurationStatus:
-                    document.getElementById('modalDurationStatus'),
+                    document.getElementById(
+                        'modalDurationStatus'
+                    ),
 
                 modalStatus:
-                    document.getElementById('modalStatus'),
+                    document.getElementById(
+                        'modalStatus'
+                    ),
 
                 modalPercent:
-                    document.getElementById('modalPercent'),
+                    document.getElementById(
+                        'modalPercent'
+                    ),
 
                 modalProgress:
-                    document.getElementById('modalProgress'),
+                    document.getElementById(
+                        'modalProgress'
+                    ),
 
                 saveButton:
-                    document.getElementById('saveDeploymentBtn'),
+                    document.getElementById(
+                        'saveDeploymentBtn'
+                    ),
 
                 searchInput:
-                    document.getElementById('searchInput'),
+                    document.getElementById(
+                        'searchInput'
+                    ),
 
                 dateFrom:
-                    document.getElementById('dateFrom'),
+                    document.getElementById(
+                        'dateFrom'
+                    ),
 
                 dateTo:
-                    document.getElementById('dateTo'),
+                    document.getElementById(
+                        'dateTo'
+                    ),
 
                 tableBody:
-                    document.getElementById('deploymentTableBody'),
+                    document.getElementById(
+                        'deploymentTableBody'
+                    ),
 
                 filteredEmptyRow:
-                    document.getElementById('filteredEmptyRow'),
+                    document.getElementById(
+                        'filteredEmptyRow'
+                    ),
 
                 successToast:
-                    document.getElementById('successToast')
+                    document.getElementById(
+                        'successToast'
+                    )
 
             };
 
@@ -1613,9 +1630,11 @@
             ====================================================== */
 
             const csrfToken =
-                document.querySelector(
-                    'meta[name="csrf-token"]'
-                )?.getAttribute('content') || '';
+                document
+                    .querySelector(
+                        'meta[name="csrf-token"]'
+                    )
+                    ?.getAttribute('content') || '';
 
 
             /* =====================================================
@@ -1748,8 +1767,7 @@
                         row.dataset.deploymentDate || '';
 
                     const rowText =
-                        row.innerText
-                            .toLowerCase();
+                        row.innerText.toLowerCase();
 
 
                     const matchesCourse =
@@ -1764,8 +1782,11 @@
 
                     const matchesStatus =
                         !statuses.length ||
-                        statuses.some(selectedStatus =>
-                            status.includes(selectedStatus)
+                        statuses.some(
+                            selectedStatus =>
+                                status.includes(
+                                    selectedStatus
+                                )
                         );
 
 
@@ -1791,9 +1812,7 @@
 
 
                     row.style.display =
-                        visible
-                            ? ''
-                            : 'none';
+                        visible ? '' : 'none';
 
 
                     if (visible) {
@@ -1811,6 +1830,10 @@
             }
 
 
+            /* =====================================================
+               DATE FILTER
+            ====================================================== */
+
             function matchesDateRange(
                 deploymentDate,
                 from,
@@ -1825,8 +1848,11 @@
                     return false;
                 }
 
+
                 const current =
-                    normalizeDate(deploymentDate);
+                    normalizeDate(
+                        deploymentDate
+                    );
 
                 const minimum =
                     from
@@ -1868,52 +1894,36 @@
 
 
                 /*
-                 * Only use YYYY-MM-DD.
+                 * IMPORTANT:
                  *
-                 * This prevents browser timezone
-                 * conversion from changing the date.
+                 * Do NOT use new Date(value) here.
+                 *
+                 * We compare YYYY-MM-DD strings
+                 * directly to avoid timezone changes.
                  */
-                const clean =
+
+                const normalized =
                     String(value)
                         .substring(0, 10);
 
 
-                const parts =
-                    clean.split('-');
-
-
-                if (parts.length !== 3) {
-                    return null;
-                }
-
-
-                const year =
-                    Number(parts[0]);
-
-                const month =
-                    Number(parts[1]);
-
-                const day =
-                    Number(parts[2]);
-
-
                 if (
-                    !year ||
-                    !month ||
-                    !day
+                    !/^\d{4}-\d{2}-\d{2}$/.test(
+                        normalized
+                    )
                 ) {
                     return null;
                 }
 
 
-                return new Date(
-                    year,
-                    month - 1,
-                    day
-                ).getTime();
+                return normalized;
 
             }
 
+
+            /* =====================================================
+               EMPTY STATE
+            ====================================================== */
 
             function updateFilteredEmptyState(
                 totalRows,
@@ -1931,9 +1941,7 @@
 
 
                 elements.filteredEmptyRow.style.display =
-                    show
-                        ? ''
-                        : 'none';
+                    show ? '' : 'none';
 
             }
 
@@ -1957,7 +1965,9 @@
 
 
                     const isOpen =
-                        dropdown.classList.contains('open');
+                        dropdown.classList.contains(
+                            'open'
+                        );
 
 
                     closeAllDropdowns();
@@ -1968,7 +1978,6 @@
                         dropdown.classList.add(
                             'open'
                         );
-
 
                         button.setAttribute(
                             'aria-expanded',
@@ -2035,21 +2044,34 @@
 
             function calculateSeaServiceDuration(
                 embarkationDate,
-                disembarkationDate = null
+                disembarkationDate
             ) {
 
                 /*
+                 * NO EMBARKATION DATE
+                 */
+                if (!embarkationDate) {
+
+                    return {
+
+                        text: '—',
+
+                        status:
+                            'Embarkation date not available'
+
+                    };
+
+                }
+
+
+                /*
+                 * NO DISEMBARKATION DATE
+                 *
                  * IMPORTANT:
                  *
-                 * Never calculate duration using today.
-                 *
-                 * Sea Service Duration is only available
-                 * after the cadet has disembarked.
+                 * We do NOT calculate until today.
                  */
-                if (
-                    !embarkationDate ||
-                    !disembarkationDate
-                ) {
+                if (!disembarkationDate) {
 
                     return {
 
@@ -2064,11 +2086,14 @@
 
 
                 const start =
-                    parseDate(embarkationDate);
-
+                    parseDateOnly(
+                        embarkationDate
+                    );
 
                 const end =
-                    parseDate(disembarkationDate);
+                    parseDateOnly(
+                        disembarkationDate
+                    );
 
 
                 if (!start || !end) {
@@ -2099,13 +2124,23 @@
                 }
 
 
+                /*
+                 * Calculate complete calendar months.
+                 */
                 let months =
-                    calculateFullMonths(
-                        start,
-                        end
+                    (
+                        end.getFullYear() -
+                        start.getFullYear()
+                    ) * 12 +
+                    (
+                        end.getMonth() -
+                        start.getMonth()
                     );
 
 
+                /*
+                 * Safely add months.
+                 */
                 let monthDate =
                     addMonthsSafely(
                         start,
@@ -2113,6 +2148,9 @@
                     );
 
 
+                /*
+                 * Never over-count.
+                 */
                 if (monthDate > end) {
 
                     months--;
@@ -2129,6 +2167,9 @@
                 }
 
 
+                /*
+                 * Calculate remaining days.
+                 */
                 const days =
                     Math.floor(
                         (
@@ -2183,7 +2224,10 @@
             }
 
 
-            function parseDate(value) {
+            /*
+             * Parse YYYY-MM-DD WITHOUT timezone conversion.
+             */
+            function parseDateOnly(value) {
 
                 if (!value) {
                     return null;
@@ -2195,43 +2239,27 @@
                         .substring(0, 10);
 
 
-                const parts =
-                    clean.split('-');
+                const match =
+                    clean.match(
+                        /^(\d{4})-(\d{2})-(\d{2})$/
+                    );
 
 
-                if (parts.length !== 3) {
+                if (!match) {
                     return null;
                 }
 
 
                 const year =
-                    Number(parts[0]);
+                    Number(match[1]);
 
                 const month =
-                    Number(parts[1]);
+                    Number(match[2]);
 
                 const day =
-                    Number(parts[2]);
+                    Number(match[3]);
 
 
-                if (
-                    !year ||
-                    !month ||
-                    !day
-                ) {
-                    return null;
-                }
-
-
-                /*
-                 * Local date.
-                 *
-                 * Avoid:
-                 * new Date('2026-02-01')
-                 *
-                 * because that can be interpreted as UTC
-                 * and shift the displayed date.
-                 */
                 const date =
                     new Date(
                         year,
@@ -2240,52 +2268,27 @@
                     );
 
 
+                /*
+                 * Validate the date.
+                 */
                 if (
-                    Number.isNaN(
-                        date.getTime()
-                    )
+                    date.getFullYear() !== year ||
+                    date.getMonth() !== month - 1 ||
+                    date.getDate() !== day
                 ) {
                     return null;
                 }
 
 
-                return date;
-
-            }
-
-
-            function calculateFullMonths(
-                start,
-                end
-            ) {
-
-                let months =
-                    (
-                        end.getFullYear() -
-                        start.getFullYear()
-                    ) * 12 +
-                    (
-                        end.getMonth() -
-                        start.getMonth()
-                    );
-
-
-                const candidate =
-                    addMonthsSafely(
-                        start,
-                        months
-                    );
-
-
-                if (candidate > end) {
-                    months--;
-                }
-
-
-                return Math.max(
+                date.setHours(
                     0,
-                    months
+                    0,
+                    0,
+                    0
                 );
+
+
+                return date;
 
             }
 
@@ -2328,13 +2331,21 @@
                 );
 
 
+                result.setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+
                 return result;
 
             }
 
 
             /* =====================================================
-               UPDATE MODAL DURATION
+               MODAL DURATION
             ====================================================== */
 
             function updateModalDuration() {
@@ -2342,19 +2353,14 @@
                 const embarkation =
                     elements.modalDeployed?.value || '';
 
-
                 const disembarkation =
                     elements.modalDisembarked?.value || '';
 
 
-                /*
-                 * No disembarkation date =
-                 * no completed sea-service duration.
-                 */
                 const result =
                     calculateSeaServiceDuration(
                         embarkation,
-                        disembarkation || null
+                        disembarkation
                     );
 
 
@@ -2382,10 +2388,6 @@
 
             function setupModalEvents() {
 
-                /*
-                 * Update duration immediately when either
-                 * date changes.
-                 */
                 elements.modalDeployed?.addEventListener(
                     'change',
                     updateModalDuration
@@ -2398,13 +2400,21 @@
                 );
 
 
+                elements.modalStatus?.addEventListener(
+                    'change',
+                    updateModalDuration
+                );
+
+
                 document.addEventListener(
                     'keydown',
                     event => {
 
                         if (
                             event.key === 'Escape' &&
-                            elements.modal?.classList.contains('show')
+                            elements.modal?.classList.contains(
+                                'show'
+                            )
                         ) {
 
                             closeDeploymentModal();
@@ -2420,7 +2430,8 @@
                     event => {
 
                         if (
-                            event.target === elements.modal
+                            event.target ===
+                            elements.modal
                         ) {
 
                             closeDeploymentModal();
@@ -2455,7 +2466,7 @@
 
 
                     elements.modalId.value =
-                        cadet.id;
+                        String(cadet.id);
 
 
                     elements.modalName.textContent =
@@ -2484,6 +2495,16 @@
 
 
                     try {
+
+                        /*
+                         * IMPORTANT:
+                         *
+                         * Always fetch the deployment
+                         * directly from the database.
+                         *
+                         * This prevents stale serialized
+                         * relation data from being used.
+                         */
 
                         await loadDeployment(
                             cadet.id
@@ -2518,42 +2539,35 @@
                     ''
                 );
 
-
                 setValue(
                     elements.modalCompany,
                     ''
                 );
-
 
                 setValue(
                     elements.modalDeploymentType,
                     'Domestic'
                 );
 
-
                 setValue(
                     elements.modalEmbarkPlace,
                     ''
                 );
-
 
                 setValue(
                     elements.modalDeployed,
                     ''
                 );
 
-
                 setValue(
                     elements.modalDisembarkPlace,
                     ''
                 );
 
-
                 setValue(
                     elements.modalDisembarked,
                     ''
                 );
-
 
                 setValue(
                     elements.modalStatus,
@@ -2574,7 +2588,8 @@
             ) {
 
                 if (element) {
-                    element.value = value;
+                    element.value =
+                        value ?? '';
                 }
 
             }
@@ -2640,7 +2655,10 @@
                             },
 
                             credentials:
-                                'same-origin'
+                                'same-origin',
+
+                            cache:
+                                'no-store'
                         }
                     );
 
@@ -2652,9 +2670,13 @@
 
 
                 const deployment =
-                    data.deployment || {};
+                    data?.deployment || null;
 
 
+                /*
+                 * Always populate from the actual
+                 * deployment response.
+                 */
                 populateDeployment(
                     deployment
                 );
@@ -2670,15 +2692,26 @@
                 deployment
             ) {
 
+                if (!deployment) {
+
+                    updateModalDuration();
+
+                    updateModalProgress(0);
+
+                    return;
+
+                }
+
+
                 setValue(
                     elements.modalVessel,
-                    deployment.vessel_name || ''
+                    deployment.vessel_name
                 );
 
 
                 setValue(
                     elements.modalCompany,
-                    deployment.company_name || ''
+                    deployment.company_name
                 );
 
 
@@ -2691,22 +2724,17 @@
 
                 setValue(
                     elements.modalEmbarkPlace,
-                    deployment.embarkation_place || ''
+                    deployment.embarkation_place
                 );
 
 
                 /*
-                 * IMPORTANT DATE FIX
+                 * IMPORTANT:
                  *
-                 * Only take the first 10 characters.
+                 * formatInputDate() ONLY takes the
+                 * YYYY-MM-DD portion.
                  *
-                 * Database:
-                 * 2026-02-01
-                 *
-                 * becomes:
-                 * 2026-02-01
-                 *
-                 * No timezone conversion.
+                 * It does NOT convert timezone.
                  */
                 setValue(
                     elements.modalDeployed,
@@ -2718,7 +2746,7 @@
 
                 setValue(
                     elements.modalDisembarkPlace,
-                    deployment.disembarkation_place || ''
+                    deployment.disembarkation_place
                 );
 
 
@@ -2737,15 +2765,11 @@
                 );
 
 
-                /*
-                 * Duration is recalculated from
-                 * the two actual input dates.
-                 */
                 updateModalDuration();
 
 
                 updateModalProgress(
-                    deployment.percentage || 0
+                    deployment.percentage ?? 0
                 );
 
             }
@@ -2763,28 +2787,30 @@
 
 
                 /*
-                 * If Laravel returns:
+                 * Do NOT do:
                  *
-                 * 2026-02-01
-                 * 2026-02-01 00:00:00
-                 * 2026-02-01T00:00:00.000000Z
+                 * new Date(value)
                  *
-                 * only use:
+                 * because timezone conversion can
+                 * shift the displayed day.
                  *
-                 * 2026-02-01
+                 * Just use the database's date portion.
                  */
-                const clean =
-                    String(value)
-                        .substring(0, 10);
+
+                const valueString =
+                    String(value);
 
 
-                /*
-                 * Make sure it really is
-                 * YYYY-MM-DD.
-                 */
+                const dateOnly =
+                    valueString.substring(
+                        0,
+                        10
+                    );
+
+
                 if (
                     !/^\d{4}-\d{2}-\d{2}$/.test(
-                        clean
+                        dateOnly
                     )
                 ) {
 
@@ -2793,7 +2819,7 @@
                 }
 
 
-                return clean;
+                return dateOnly;
 
             }
 
@@ -2813,7 +2839,9 @@
                 if (
                     Number.isNaN(value)
                 ) {
+
                     value = 0;
+
                 }
 
 
@@ -2907,7 +2935,7 @@
 
 
             /* =====================================================
-               SAVE DEPLOYMENT
+               SAVE
             ====================================================== */
 
             window.saveDeploymentChanges =
@@ -2939,7 +2967,9 @@
 
                     if (
                         elements.saveButton
-                            ?.classList.contains('loading')
+                            ?.classList.contains(
+                                'loading'
+                            )
                     ) {
 
                         return;
@@ -3067,6 +3097,9 @@
                         elements.modalEmbarkPlace?.value
                             ?.trim() || '',
 
+                    /*
+                     * Send the exact date input value.
+                     */
                     date_deployed:
                         elements.modalDeployed?.value ||
                         '',
@@ -3075,6 +3108,9 @@
                         elements.modalDisembarkPlace?.value
                             ?.trim() || '',
 
+                    /*
+                     * Send the exact date input value.
+                     */
                     date_disembarked:
                         elements.modalDisembarked?.value ||
                         '',
@@ -3095,18 +3131,15 @@
             function validateDeploymentDates() {
 
                 const embarkation =
-                    elements.modalDeployed?.value;
-
+                    elements.modalDeployed?.value || '';
 
                 const disembarkation =
-                    elements.modalDisembarked?.value;
+                    elements.modalDisembarked?.value || '';
 
 
                 /*
-                 * Both dates are optional.
-                 *
-                 * Duration will remain —
-                 * if disembarkation is empty.
+                 * It is valid for an ongoing deployment
+                 * to have no disembarkation date.
                  */
                 if (
                     !embarkation ||
@@ -3119,21 +3152,17 @@
 
 
                 const start =
-                    normalizeDate(
+                    parseDateOnly(
                         embarkation
                     );
 
-
                 const end =
-                    normalizeDate(
+                    parseDateOnly(
                         disembarkation
                     );
 
 
-                if (
-                    start === null ||
-                    end === null
-                ) {
+                if (!start || !end) {
 
                     showError(
                         'Please enter valid deployment dates.'
@@ -3201,7 +3230,7 @@
 
 
             /* =====================================================
-               SAVE STATE
+               SAVE BUTTON
             ====================================================== */
 
             function setSavingState(
@@ -3211,7 +3240,9 @@
                 if (
                     !elements.saveButton
                 ) {
+
                     return;
+
                 }
 
 
@@ -3242,7 +3273,9 @@
                 if (
                     !elements.successToast
                 ) {
+
                     return;
+
                 }
 
 
@@ -3313,7 +3346,9 @@
                                 'button, input, select, a'
                             )
                         ) {
+
                             return;
+
                         }
 
 
@@ -3369,16 +3404,16 @@
                 );
 
 
-                const stopDragging = () => {
+                const stopDragging =
+                    () => {
 
-                    dragging = false;
+                        dragging = false;
 
+                        container.classList.remove(
+                            'is-dragging'
+                        );
 
-                    container.classList.remove(
-                        'is-dragging'
-                    );
-
-                };
+                    };
 
 
                 container.addEventListener(
