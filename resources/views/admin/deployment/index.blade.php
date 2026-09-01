@@ -4,8 +4,6 @@
 
 @vite(['resources/css/admin/deployment/deployment.css'])
 
-
-
 <div class="dm-page">
 
     {{-- =====================================================
@@ -277,27 +275,44 @@
                 >
 
                     <label class="dm-check-option">
+
                         <input
                             type="checkbox"
                             value="ongoing"
                         >
-                        <span>Ongoing</span>
+
+                        <span>
+                            Ongoing
+                        </span>
+
                     </label>
 
+
                     <label class="dm-check-option">
+
                         <input
                             type="checkbox"
                             value="completed"
                         >
-                        <span>Completed</span>
+
+                        <span>
+                            Completed
+                        </span>
+
                     </label>
 
+
                     <label class="dm-check-option">
+
                         <input
                             type="checkbox"
                             value="not deployed"
                         >
-                        <span>Not Deployed</span>
+
+                        <span>
+                            Not Deployed
+                        </span>
+
                     </label>
 
                 </div>
@@ -391,18 +406,33 @@
                     <tr>
 
                         <th>TRB No.</th>
+
                         <th>Name</th>
+
                         <th>Course</th>
+
                         <th>Batch</th>
+
                         <th>Vessel</th>
+
                         <th>Company</th>
+
                         <th>Deployment Type</th>
+
                         <th>Embarkation Place</th>
+
                         <th>Embarkation Date</th>
+
                         <th>Disembarkation Place</th>
+
                         <th>Disembarkation Date</th>
+
+                        <th>Duration of Sea Service</th>
+
                         <th>Progress</th>
+
                         <th>Status</th>
+
                         <th>Action</th>
 
                     </tr>
@@ -449,9 +479,11 @@
                         {{-- TRB --}}
 
                         <td>
+
                             <strong>
                                 {{ $cadet->trb_control_number }}
                             </strong>
+
                         </td>
 
 
@@ -571,6 +603,95 @@
                         </td>
 
 
+                        {{-- =================================================
+                             DURATION OF SEA SERVICE
+                        ================================================== --}}
+
+                        <td>
+
+                            @if($deployment && $deployment->date_deployed)
+
+                                @php
+
+                                    $startDate = \Carbon\Carbon::parse(
+                                        $deployment->date_deployed
+                                    );
+
+                                    $endDate = $deployment->date_disembarked
+                                        ? \Carbon\Carbon::parse(
+                                            $deployment->date_disembarked
+                                        )
+                                        : \Carbon\Carbon::today();
+
+                                    if ($endDate->greaterThanOrEqualTo($startDate)) {
+
+                                        $durationDays =
+                                            $startDate->diffInDays(
+                                                $endDate
+                                            );
+
+                                        $durationMonths =
+                                            intdiv(
+                                                $durationDays,
+                                                30
+                                            );
+
+                                        $remainingDays =
+                                            $durationDays % 30;
+
+                                        if (
+                                            $durationMonths > 0 &&
+                                            $remainingDays > 0
+                                        ) {
+
+                                            $durationText =
+                                                $durationMonths .
+                                                ' Month' .
+                                                ($durationMonths !== 1 ? 's' : '') .
+                                                ', ' .
+                                                $remainingDays .
+                                                ' Day' .
+                                                ($remainingDays !== 1 ? 's' : '');
+
+                                        } elseif (
+                                            $durationMonths > 0
+                                        ) {
+
+                                            $durationText =
+                                                $durationMonths .
+                                                ' Month' .
+                                                ($durationMonths !== 1 ? 's' : '');
+
+                                        } else {
+
+                                            $durationText =
+                                                $remainingDays .
+                                                ' Day' .
+                                                ($remainingDays !== 1 ? 's' : '');
+
+                                        }
+
+                                    } else {
+
+                                        $durationText = '—';
+
+                                    }
+
+                                @endphp
+
+                                <span class="dm-duration-text">
+                                    {{ $durationText }}
+                                </span>
+
+                            @else
+
+                                —
+
+                            @endif
+
+                        </td>
+
+
                         {{-- PROGRESS --}}
 
                         <td>
@@ -639,7 +760,9 @@
                                 class="dm-view-btn"
                                 onclick="openDeploymentModal(@js($cadet))"
                             >
+
                                 👁 View
+
                             </button>
 
                         </td>
@@ -651,7 +774,7 @@
                     <tr>
 
                         <td
-                            colspan="14"
+                            colspan="15"
                             class="dm-empty"
                         >
 
@@ -985,6 +1108,35 @@
 
                 </div>
 
+
+                {{-- =================================================
+                     DURATION OF SEA SERVICE
+                ================================================== --}}
+
+                <div class="dm-duration-card">
+
+                    <div class="dm-duration-icon">
+                        ⚓
+                    </div>
+
+                    <div class="dm-duration-content">
+
+                        <span class="dm-duration-label">
+                            Duration of Sea Service
+                        </span>
+
+                        <strong id="modalDuration">
+                            —
+                        </strong>
+
+                        <small id="modalDurationStatus">
+                            Based on embarkation and disembarkation dates
+                        </small>
+
+                    </div>
+
+                </div>
+
             </div>
 
 
@@ -1104,6 +1256,7 @@
 
 
 <script>
+
 /* =========================================================
    DEPLOYMENT MONITORING JAVASCRIPT
 ========================================================= */
@@ -1115,7 +1268,9 @@ document.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     document
-        .querySelectorAll(".dm-dropdown-menu input[type='checkbox']")
+        .querySelectorAll(
+            ".dm-dropdown-menu input[type='checkbox']"
+        )
         .forEach(function (checkbox) {
 
             checkbox.addEventListener(
@@ -1131,7 +1286,10 @@ document.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     const searchInput =
-        document.getElementById("searchInput");
+        document.getElementById(
+            "searchInput"
+        );
+
 
     if (searchInput) {
 
@@ -1148,10 +1306,14 @@ document.addEventListener("DOMContentLoaded", function () {
     ===================================================== */
 
     const dateFrom =
-        document.getElementById("dateFrom");
+        document.getElementById(
+            "dateFrom"
+        );
 
     const dateTo =
-        document.getElementById("dateTo");
+        document.getElementById(
+            "dateTo"
+        );
 
 
     if (dateFrom) {
@@ -1237,27 +1399,41 @@ document.addEventListener("DOMContentLoaded", function () {
    DROPDOWN
 ========================================================= */
 
-function toggleDMFilter(button, menuId) {
+function toggleDMFilter(
+    button,
+    menuId
+) {
 
     const dropdown =
-        button.closest(".dm-filter-dropdown");
+        button.closest(
+            ".dm-filter-dropdown"
+        );
+
 
     const isOpen =
-        dropdown.classList.contains("open");
+        dropdown.classList.contains(
+            "open"
+        );
 
 
     document
-        .querySelectorAll(".dm-filter-dropdown")
+        .querySelectorAll(
+            ".dm-filter-dropdown"
+        )
         .forEach(function (item) {
 
-            item.classList.remove("open");
+            item.classList.remove(
+                "open"
+            );
 
         });
 
 
     if (!isOpen) {
 
-        dropdown.classList.add("open");
+        dropdown.classList.add(
+            "open"
+        );
 
     }
 
@@ -1268,13 +1444,18 @@ function toggleDMFilter(button, menuId) {
    GET CHECKED VALUES
 ========================================================= */
 
-function getDMCheckedValues(menuId) {
+function getDMCheckedValues(
+    menuId
+) {
 
     return Array.from(
         document.querySelectorAll(
-            "#" + menuId + " input:checked"
+            "#" +
+            menuId +
+            " input:checked"
         )
-    ).map(function (checkbox) {
+    )
+    .map(function (checkbox) {
 
         return checkbox.value
             .toLowerCase()
@@ -1292,13 +1473,21 @@ function getDMCheckedValues(menuId) {
 function filterDeploymentTable() {
 
     const courses =
-        getDMCheckedValues("courseMenu");
+        getDMCheckedValues(
+            "courseMenu"
+        );
+
 
     const batches =
-        getDMCheckedValues("batchMenu");
+        getDMCheckedValues(
+            "batchMenu"
+        );
+
 
     const statuses =
-        getDMCheckedValues("statusMenu");
+        getDMCheckedValues(
+            "statusMenu"
+        );
 
 
     const search =
@@ -1336,11 +1525,14 @@ function filterDeploymentTable() {
                 ".dm-empty"
             )
         ) {
+
             return;
+
         }
 
 
-        const cells = row.children;
+        const cells =
+            row.children;
 
 
         const course =
@@ -1361,7 +1553,7 @@ function filterDeploymentTable() {
 
         const status =
             (
-                cells[12]?.innerText || ""
+                cells[13]?.innerText || ""
             )
             .toLowerCase()
             .trim();
@@ -1398,7 +1590,9 @@ function filterDeploymentTable() {
             statuses.length === 0 ||
             statuses.some(function (item) {
 
-                return status.includes(item);
+                return status.includes(
+                    item
+                );
 
             });
 
@@ -1407,7 +1601,9 @@ function filterDeploymentTable() {
 
         const matchSearch =
             !search ||
-            rowText.includes(search);
+            rowText.includes(
+                search
+            );
 
 
         /* DATE */
@@ -1426,8 +1622,10 @@ function filterDeploymentTable() {
                 const fromDate =
                     new Date(from);
 
+
                 if (
-                    deploymentDate < fromDate
+                    deploymentDate <
+                    fromDate
                 ) {
 
                     matchDate = false;
@@ -1442,10 +1640,6 @@ function filterDeploymentTable() {
                 const toDate =
                     new Date(to);
 
-                /*
-                 * Include the complete
-                 * selected date.
-                 */
 
                 toDate.setHours(
                     23,
@@ -1456,7 +1650,8 @@ function filterDeploymentTable() {
 
 
                 if (
-                    deploymentDate > toDate
+                    deploymentDate >
+                    toDate
                 ) {
 
                     matchDate = false;
@@ -1487,10 +1682,214 @@ function filterDeploymentTable() {
 
 
 /* =========================================================
+   SEA SERVICE DURATION
+========================================================= */
+
+function calculateSeaServiceDuration(
+    embarkationDate,
+    disembarkationDate = null
+) {
+
+    if (!embarkationDate) {
+
+        return {
+
+            text: "—",
+
+            status:
+                "Embarkation date not available"
+
+        };
+
+    }
+
+
+    const start =
+        new Date(
+            embarkationDate +
+            "T00:00:00"
+        );
+
+
+    const end =
+        disembarkationDate
+            ? new Date(
+                disembarkationDate +
+                "T00:00:00"
+            )
+            : new Date();
+
+
+    if (
+        isNaN(start.getTime()) ||
+        isNaN(end.getTime()) ||
+        end < start
+    ) {
+
+        return {
+
+            text: "—",
+
+            status:
+                "Invalid deployment dates"
+
+        };
+
+    }
+
+
+    /*
+     * Sea service calculation:
+     *
+     * 30 days = 1 month
+     */
+
+    const totalDays =
+        Math.floor(
+            (
+                end - start
+            ) /
+            (
+                1000 *
+                60 *
+                60 *
+                24
+            )
+        );
+
+
+    const months =
+        Math.floor(
+            totalDays / 30
+        );
+
+
+    const days =
+        totalDays % 30;
+
+
+    let text = "";
+
+
+    if (months > 0) {
+
+        text +=
+            months +
+            " Month" +
+            (
+                months !== 1
+                    ? "s"
+                    : ""
+            );
+
+    }
+
+
+    if (days > 0) {
+
+        if (text) {
+
+            text += ", ";
+
+        }
+
+
+        text +=
+            days +
+            " Day" +
+            (
+                days !== 1
+                    ? "s"
+                    : ""
+            );
+
+    }
+
+
+    if (!text) {
+
+        text =
+            "0 Days";
+
+    }
+
+
+    return {
+
+        text: text,
+
+        status:
+            disembarkationDate
+                ? "Completed sea service"
+                : "Current duration — deployment ongoing"
+
+    };
+
+}
+
+
+/* =========================================================
+   UPDATE MODAL DURATION
+========================================================= */
+
+function updateModalDuration() {
+
+    const embarkationDate =
+        document.getElementById(
+            "modalDeployed"
+        )?.value || "";
+
+
+    const disembarkationDate =
+        document.getElementById(
+            "modalDisembarked"
+        )?.value || "";
+
+
+    const result =
+        calculateSeaServiceDuration(
+            embarkationDate,
+            disembarkationDate || null
+        );
+
+
+    const duration =
+        document.getElementById(
+            "modalDuration"
+        );
+
+
+    const status =
+        document.getElementById(
+            "modalDurationStatus"
+        );
+
+
+    if (duration) {
+
+        duration.innerText =
+            result.text;
+
+    }
+
+
+    if (status) {
+
+        status.innerText =
+            result.status;
+
+    }
+
+}
+
+
+/* =========================================================
    OPEN MODAL
 ========================================================= */
 
-function openDeploymentModal(cadet) {
+function openDeploymentModal(
+    cadet
+) {
 
     const modal =
         document.getElementById(
@@ -1498,31 +1897,39 @@ function openDeploymentModal(cadet) {
         );
 
 
-    modal.classList.add("show");
+    modal.classList.add(
+        "show"
+    );
 
 
     document.getElementById(
         "modalId"
-    ).value = cadet.id;
+    ).value =
+        cadet.id;
 
 
     document.getElementById(
         "modalName"
     ).innerText =
-        cadet.full_name || "Unknown Cadet";
+        cadet.full_name ||
+        "Unknown Cadet";
 
 
     document.getElementById(
         "modalTRB"
     ).innerText =
         "TRB: " +
-        (cadet.trb_control_number || "—");
+        (
+            cadet.trb_control_number ||
+            "—"
+        );
 
 
     document.getElementById(
         "modalCourse"
     ).innerText =
-        cadet.course || "—";
+        cadet.course ||
+        "—";
 
 
     document.getElementById(
@@ -1533,7 +1940,9 @@ function openDeploymentModal(cadet) {
             : "/images/default.png";
 
 
-    /* RESET */
+    /* =====================================================
+       RESET
+    ===================================================== */
 
     document.getElementById(
         "modalVessel"
@@ -1547,7 +1956,8 @@ function openDeploymentModal(cadet) {
 
     document.getElementById(
         "modalDeploymentType"
-    ).value = "Domestic";
+    ).value =
+        "Domestic";
 
 
     document.getElementById(
@@ -1572,21 +1982,32 @@ function openDeploymentModal(cadet) {
 
     document.getElementById(
         "modalStatus"
-    ).value = "Not Deployed";
+    ).value =
+        "Not Deployed";
 
 
-    updateModalProgress(0);
+    updateModalProgress(
+        0
+    );
 
 
-    /* LOAD DEPLOYMENT */
+    updateModalDuration();
+
+
+    /* =====================================================
+       LOAD DEPLOYMENT
+    ===================================================== */
 
     fetch(
         `/admin/deployment/${cadet.id}`,
         {
             headers: {
+
                 "Accept":
                     "application/json"
+
             }
+
         }
     )
 
@@ -1600,26 +2021,31 @@ function openDeploymentModal(cadet) {
 
         }
 
+
         return response.json();
 
     })
 
+
     .then(function (data) {
 
         const dep =
-            data.deployment || {};
+            data.deployment ||
+            {};
 
 
         document.getElementById(
             "modalVessel"
         ).value =
-            dep.vessel_name ?? "";
+            dep.vessel_name ??
+            "";
 
 
         document.getElementById(
             "modalCompany"
         ).value =
-            dep.company_name ?? "";
+            dep.company_name ??
+            "";
 
 
         document.getElementById(
@@ -1632,13 +2058,15 @@ function openDeploymentModal(cadet) {
         document.getElementById(
             "modalEmbarkPlace"
         ).value =
-            dep.embarkation_place ?? "";
+            dep.embarkation_place ??
+            "";
 
 
         document.getElementById(
             "modalDisembarkPlace"
         ).value =
-            dep.disembarkation_place ?? "";
+            dep.disembarkation_place ??
+            "";
 
 
         document.getElementById(
@@ -1647,7 +2075,10 @@ function openDeploymentModal(cadet) {
             dep.date_deployed
                 ? String(
                     dep.date_deployed
-                ).substring(0, 10)
+                ).substring(
+                    0,
+                    10
+                )
                 : "";
 
 
@@ -1657,7 +2088,10 @@ function openDeploymentModal(cadet) {
             dep.date_disembarked
                 ? String(
                     dep.date_disembarked
-                ).substring(0, 10)
+                ).substring(
+                    0,
+                    10
+                )
                 : "";
 
 
@@ -1668,11 +2102,16 @@ function openDeploymentModal(cadet) {
             "Not Deployed";
 
 
+        updateModalDuration();
+
+
         updateModalProgress(
-            dep.percentage ?? 0
+            dep.percentage ??
+            0
         );
 
     })
+
 
     .catch(function (error) {
 
@@ -1687,13 +2126,39 @@ function openDeploymentModal(cadet) {
 
 
 /* =========================================================
+   DATE CHANGE EVENTS
+========================================================= */
+
+document.addEventListener(
+    "input",
+    function (event) {
+
+        if (
+            event.target.id ===
+                "modalDeployed" ||
+            event.target.id ===
+                "modalDisembarked"
+        ) {
+
+            updateModalDuration();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
    UPDATE MODAL PROGRESS
 ========================================================= */
 
-function updateModalProgress(percent) {
+function updateModalProgress(
+    percent
+) {
 
     percent =
-        Number(percent) || 0;
+        Number(percent) ||
+        0;
 
 
     percent =
@@ -1709,13 +2174,15 @@ function updateModalProgress(percent) {
     document.getElementById(
         "modalProgress"
     ).style.width =
-        percent + "%";
+        percent +
+        "%";
 
 
     document.getElementById(
         "modalPercent"
     ).innerText =
-        percent + "%";
+        percent +
+        "%";
 
 
     const progress =
@@ -1831,6 +2298,7 @@ function saveDeploymentChanges() {
     fetch(
         `/admin/deployment/${id}`,
         {
+
             method: "PUT",
 
             headers: {
@@ -1848,56 +2316,59 @@ function saveDeploymentChanges() {
 
             },
 
-            body: JSON.stringify({
+            body:
+                JSON.stringify({
 
-                vessel_name:
-                    document.getElementById(
-                        "modalVessel"
-                    ).value,
+                    vessel_name:
+                        document.getElementById(
+                            "modalVessel"
+                        ).value,
 
-                company:
-                    document.getElementById(
-                        "modalCompany"
-                    ).value,
+                    company:
+                        document.getElementById(
+                            "modalCompany"
+                        ).value,
 
-                deployment_type:
-                    document.getElementById(
-                        "modalDeploymentType"
-                    ).value,
+                    deployment_type:
+                        document.getElementById(
+                            "modalDeploymentType"
+                        ).value,
 
-                embarkation_place:
-                    document.getElementById(
-                        "modalEmbarkPlace"
-                    ).value,
+                    embarkation_place:
+                        document.getElementById(
+                            "modalEmbarkPlace"
+                        ).value,
 
-                date_deployed:
-                    document.getElementById(
-                        "modalDeployed"
-                    ).value,
+                    date_deployed:
+                        document.getElementById(
+                            "modalDeployed"
+                        ).value,
 
-                disembarkation_place:
-                    document.getElementById(
-                        "modalDisembarkPlace"
-                    ).value,
+                    disembarkation_place:
+                        document.getElementById(
+                            "modalDisembarkPlace"
+                        ).value,
 
-                date_disembarked:
-                    document.getElementById(
-                        "modalDisembarked"
-                    ).value,
+                    date_disembarked:
+                        document.getElementById(
+                            "modalDisembarked"
+                        ).value,
 
-                deployment_status:
-                    document.getElementById(
-                        "modalStatus"
-                    ).value
+                    deployment_status:
+                        document.getElementById(
+                            "modalStatus"
+                        ).value
 
-            })
+                })
 
         }
     )
 
+
     .then(function (response) {
 
         return response.json()
+
             .then(function (data) {
 
                 if (!response.ok) {
@@ -1909,11 +2380,13 @@ function saveDeploymentChanges() {
 
                 }
 
+
                 return data;
 
             });
 
     })
+
 
     .then(function (data) {
 
@@ -1944,6 +2417,7 @@ function saveDeploymentChanges() {
 
     })
 
+
     .catch(function (error) {
 
         console.error(
@@ -1959,11 +2433,13 @@ function saveDeploymentChanges() {
 
     })
 
+
     .finally(function () {
 
         button.classList.remove(
             "loading"
         );
+
 
         button.innerText =
             "Save Changes";
@@ -2017,7 +2493,9 @@ function showDeploymentToast() {
 
 
     if (!table) {
+
         return;
+
     }
 
 
@@ -2034,9 +2512,11 @@ function showDeploymentToast() {
 
             isDown = true;
 
+
             startX =
                 event.pageX -
                 table.offsetLeft;
+
 
             scrollLeft =
                 table.scrollLeft;
@@ -2070,7 +2550,9 @@ function showDeploymentToast() {
         function (event) {
 
             if (!isDown) {
+
                 return;
+
             }
 
 
@@ -2083,11 +2565,13 @@ function showDeploymentToast() {
 
 
             const walk =
-                (x - startX) * 1.5;
+                (x - startX) *
+                1.5;
 
 
             table.scrollLeft =
-                scrollLeft - walk;
+                scrollLeft -
+                walk;
 
         }
     );
