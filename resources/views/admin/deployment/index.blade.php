@@ -44,91 +44,91 @@
         |
         */
 
-        $calculateDuration = function ($startDate, $endDate = null) {
+$calculateDuration = function ($startDate, $endDate = null) {
+    /*
+    |--------------------------------------------------------------------------
+    | Duration of Sea Service
+    |--------------------------------------------------------------------------
+    | Only calculate sea service when BOTH embarkation and
+    | disembarkation dates exist.
+    |
+    | Ongoing deployment:
+    |     date_deployed exists
+    |     date_disembarked is NULL
+    |     => display "—"
+    |
+    | Completed deployment:
+    |     both dates exist
+    |     => calculate Months + Days
+    |--------------------------------------------------------------------------
+    */
 
-            /*
-             * Do NOT calculate duration if there is no
-             * disembarkation date.
-             */
-            if (!$startDate || !$endDate) {
-                return null;
-            }
+    if (!$startDate || !$endDate) {
+        return null;
+    }
 
-            try {
+    try {
+        $start = \Carbon\Carbon::parse($startDate)->startOfDay();
+        $end   = \Carbon\Carbon::parse($endDate)->startOfDay();
 
-                $start = \Carbon\Carbon::parse($startDate)->startOfDay();
-                $end = \Carbon\Carbon::parse($endDate)->startOfDay();
+        if ($end->lt($start)) {
+            return null;
+        }
 
-                /*
-                 * Invalid date range.
-                 */
-                if ($end->lt($start)) {
-                    return null;
-                }
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate complete calendar months
+        |--------------------------------------------------------------------------
+        */
 
-                /*
-                 * Calculate complete calendar months.
-                 */
-                $months =
-                    ($end->year - $start->year) * 12
-                    + ($end->month - $start->month);
+        $months = $start->diffInMonths($end);
 
-                /*
-                 * Prevent over-counting.
-                 */
-                $monthDate = $start->copy()->addMonthsNoOverflow($months);
+        $monthDate = $start->copy()->addMonthsNoOverflow($months);
 
-                if ($monthDate->gt($end)) {
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent over-counting a month
+        |--------------------------------------------------------------------------
+        */
 
-                    $months--;
+        if ($monthDate->gt($end)) {
+            $months--;
 
-                    $monthDate =
-                        $start
-                            ->copy()
-                            ->addMonthsNoOverflow(
-                                max(0, $months)
-                            );
-                }
+            $monthDate = $start
+                ->copy()
+                ->addMonthsNoOverflow(max(0, $months));
+        }
 
-                /*
-                 * Remaining days after complete months.
-                 */
-                $days = $monthDate->diffInDays($end);
+        /*
+        |--------------------------------------------------------------------------
+        | Remaining days after complete months
+        |--------------------------------------------------------------------------
+        */
 
-                $parts = [];
+        $days = $monthDate->diffInDays($end);
 
-                if ($months > 0) {
+        $parts = [];
 
-                    $parts[] =
-                        $months . ' ' .
-                        ($months === 1
-                            ? 'Month'
-                            : 'Months');
-                }
+        if ($months > 0) {
+            $parts[] =
+                $months . ' ' .
+                ($months === 1 ? 'Month' : 'Months');
+        }
 
-                if ($days > 0) {
+        if ($days > 0) {
+            $parts[] =
+                $days . ' ' .
+                ($days === 1 ? 'Day' : 'Days');
+        }
 
-                    $parts[] =
-                        $days . ' ' .
-                        ($days === 1
-                            ? 'Day'
-                            : 'Days');
-                }
+        return $parts
+            ? implode(', ', $parts)
+            : '0 Days';
 
-                /*
-                 * Same embarkation/disembarkation date.
-                 */
-                if (!$parts) {
-                    return '0 Days';
-                }
-
-                return implode(', ', $parts);
-
-            } catch (\Throwable $e) {
-
-                return null;
-            }
-        };
+    } catch (\Throwable $e) {
+        return null;
+    }
+};
     @endphp
 
 
@@ -2042,306 +2042,217 @@
                SEA SERVICE DURATION
             ====================================================== */
 
-            function calculateSeaServiceDuration(
-                embarkationDate,
-                disembarkationDate
-            ) {
+function calculateSeaServiceDuration(
+    embarkationDate,
+    disembarkationDate = null
+) {
 
-                /*
-                 * NO EMBARKATION DATE
-                 */
-                if (!embarkationDate) {
+    /*
+     * No embarkation date.
+     */
+    if (!embarkationDate) {
 
-                    return {
+        return {
+            text: '—',
+            status: 'Embarkation date not available'
+        };
 
-                        text: '—',
-
-                        status:
-                            'Embarkation date not available'
-
-                    };
-
-                }
+    }
 
 
-                /*
-                 * NO DISEMBARKATION DATE
-                 *
-                 * IMPORTANT:
-                 *
-                 * We do NOT calculate until today.
-                 */
-                if (!disembarkationDate) {
+    /*
+     * IMPORTANT:
+     *
+     * If there is NO disembarkation date,
+     * do NOT calculate duration.
+     *
+     * The deployment is still ongoing.
+     */
+    if (!disembarkationDate) {
 
-                    return {
+        return {
+            text: '—',
+            status: 'Duration available after disembarkation'
+        };
 
-                        text: '—',
-
-                        status:
-                            'Duration will be calculated after disembarkation'
-
-                    };
-
-                }
+    }
 
 
-                const start =
-                    parseDateOnly(
-                        embarkationDate
-                    );
-
-                const end =
-                    parseDateOnly(
-                        disembarkationDate
-                    );
+    const start =
+        parseDate(embarkationDate);
 
 
-                if (!start || !end) {
-
-                    return {
-
-                        text: '—',
-
-                        status:
-                            'Invalid deployment dates'
-
-                    };
-
-                }
+    const end =
+        parseDate(disembarkationDate);
 
 
-                if (end < start) {
+    if (
+        !start ||
+        !end
+    ) {
 
-                    return {
+        return {
+            text: '—',
+            status: 'Invalid deployment dates'
+        };
 
-                        text: '—',
-
-                        status:
-                            'Disembarkation date cannot be before embarkation date'
-
-                    };
-
-                }
-
-
-                /*
-                 * Calculate complete calendar months.
-                 */
-                let months =
-                    (
-                        end.getFullYear() -
-                        start.getFullYear()
-                    ) * 12 +
-                    (
-                        end.getMonth() -
-                        start.getMonth()
-                    );
+    }
 
 
-                /*
-                 * Safely add months.
-                 */
-                let monthDate =
-                    addMonthsSafely(
-                        start,
-                        months
-                    );
+    /*
+     * Disembarkation cannot be before embarkation.
+     */
+    if (end < start) {
+
+        return {
+            text: '—',
+            status: 'Disembarkation date cannot be before embarkation date'
+        };
+
+    }
 
 
-                /*
-                 * Never over-count.
-                 */
-                if (monthDate > end) {
-
-                    months--;
-
-                    monthDate =
-                        addMonthsSafely(
-                            start,
-                            Math.max(
-                                0,
-                                months
-                            )
-                        );
-
-                }
+    /*
+     * Calculate complete calendar months.
+     */
+    let months =
+        calculateFullMonths(
+            start,
+            end
+        );
 
 
-                /*
-                 * Calculate remaining days.
-                 */
-                const days =
-                    Math.floor(
-                        (
-                            end.getTime() -
-                            monthDate.getTime()
-                        ) /
-                        86400000
-                    );
+    let monthDate =
+        addMonthsSafely(
+            start,
+            months
+        );
 
 
-                const parts = [];
+    /*
+     * Prevent month over-counting.
+     */
+    if (monthDate > end) {
+
+        months--;
+
+        monthDate =
+            addMonthsSafely(
+                start,
+                Math.max(0, months)
+            );
+
+    }
 
 
-                if (months > 0) {
-
-                    parts.push(
-                        `${months} ${
-                            months === 1
-                                ? 'Month'
-                                : 'Months'
-                        }`
-                    );
-
-                }
-
-
-                if (days > 0) {
-
-                    parts.push(
-                        `${days} ${
-                            days === 1
-                                ? 'Day'
-                                : 'Days'
-                        }`
-                    );
-
-                }
+    /*
+     * Calculate remaining days.
+     */
+    const days =
+        Math.floor(
+            (
+                end.getTime() -
+                monthDate.getTime()
+            ) /
+            86400000
+        );
 
 
-                return {
+    const parts = [];
 
-                    text:
-                        parts.length
-                            ? parts.join(', ')
-                            : '0 Days',
 
-                    status:
-                        'Completed sea service'
+    if (months > 0) {
 
-                };
+        parts.push(
+            `${months} ${months === 1 ? 'Month' : 'Months'}`
+        );
 
-            }
+    }
+
+
+    if (days > 0) {
+
+        parts.push(
+            `${days} ${days === 1 ? 'Day' : 'Days'}`
+        );
+
+    }
+
+
+    return {
+
+        text:
+            parts.length
+                ? parts.join(', ')
+                : '0 Days',
+
+        status:
+            'Completed sea service'
+
+    };
+
+}
 
 
             /*
              * Parse YYYY-MM-DD WITHOUT timezone conversion.
              */
-            function parseDateOnly(value) {
+function parseDate(value) {
 
-                if (!value) {
-                    return null;
-                }
+    if (!value) {
+        return null;
+    }
 
+    const stringValue =
+        String(value).trim().substring(0, 10);
 
-                const clean =
-                    String(value)
-                        .substring(0, 10);
+    const match =
+        stringValue.match(
+            /^(\d{4})-(\d{2})-(\d{2})$/
+        );
 
+    if (!match) {
+        return null;
+    }
 
-                const match =
-                    clean.match(
-                        /^(\d{4})-(\d{2})-(\d{2})$/
-                    );
+    const year =
+        Number(match[1]);
 
+    const month =
+        Number(match[2]);
 
-                if (!match) {
-                    return null;
-                }
-
-
-                const year =
-                    Number(match[1]);
-
-                const month =
-                    Number(match[2]);
-
-                const day =
-                    Number(match[3]);
+    const day =
+        Number(match[3]);
 
 
-                const date =
-                    new Date(
-                        year,
-                        month - 1,
-                        day
-                    );
+    const date =
+        new Date(
+            year,
+            month - 1,
+            day
+        );
 
 
-                /*
-                 * Validate the date.
-                 */
-                if (
-                    date.getFullYear() !== year ||
-                    date.getMonth() !== month - 1 ||
-                    date.getDate() !== day
-                ) {
-                    return null;
-                }
+    if (
+        date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day
+    ) {
+        return null;
+    }
 
 
-                date.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
+    date.setHours(
+        0,
+        0,
+        0,
+        0
+    );
 
 
-                return date;
+    return date;
 
-            }
-
-
-            function addMonthsSafely(
-                date,
-                months
-            ) {
-
-                const result =
-                    new Date(date);
-
-
-                const originalDay =
-                    result.getDate();
-
-
-                result.setDate(1);
-
-
-                result.setMonth(
-                    result.getMonth() +
-                    months
-                );
-
-
-                const lastDay =
-                    new Date(
-                        result.getFullYear(),
-                        result.getMonth() + 1,
-                        0
-                    ).getDate();
-
-
-                result.setDate(
-                    Math.min(
-                        originalDay,
-                        lastDay
-                    )
-                );
-
-
-                result.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
-
-
-                return result;
-
-            }
+}
 
 
             /* =====================================================
@@ -2688,140 +2599,119 @@
                POPULATE DEPLOYMENT
             ====================================================== */
 
-            function populateDeployment(
-                deployment
-            ) {
+function populateDeployment(deployment) {
 
-                if (!deployment) {
-
-                    updateModalDuration();
-
-                    updateModalProgress(0);
-
-                    return;
-
-                }
+    setValue(
+        elements.modalVessel,
+        deployment.vessel_name || ''
+    );
 
 
-                setValue(
-                    elements.modalVessel,
-                    deployment.vessel_name
-                );
+    setValue(
+        elements.modalCompany,
+        deployment.company_name || ''
+    );
 
 
-                setValue(
-                    elements.modalCompany,
-                    deployment.company_name
-                );
+    setValue(
+        elements.modalDeploymentType,
+        deployment.deployment_type || 'Domestic'
+    );
 
 
-                setValue(
-                    elements.modalDeploymentType,
-                    deployment.deployment_type ||
-                    'Domestic'
-                );
+    setValue(
+        elements.modalEmbarkPlace,
+        deployment.embarkation_place || ''
+    );
 
 
-                setValue(
-                    elements.modalEmbarkPlace,
-                    deployment.embarkation_place
-                );
+    /*
+     * IMPORTANT:
+     * Use the exact database date.
+     * Do not use new Date().
+     */
+    setValue(
+        elements.modalDeployed,
+        formatInputDate(
+            deployment.date_deployed
+        )
+    );
 
 
-                /*
-                 * IMPORTANT:
-                 *
-                 * formatInputDate() ONLY takes the
-                 * YYYY-MM-DD portion.
-                 *
-                 * It does NOT convert timezone.
-                 */
-                setValue(
-                    elements.modalDeployed,
-                    formatInputDate(
-                        deployment.date_deployed
-                    )
-                );
+    setValue(
+        elements.modalDisembarkPlace,
+        deployment.disembarkation_place || ''
+    );
 
 
-                setValue(
-                    elements.modalDisembarkPlace,
-                    deployment.disembarkation_place
-                );
+    /*
+     * IMPORTANT:
+     * Use the exact database date.
+     */
+    setValue(
+        elements.modalDisembarked,
+        formatInputDate(
+            deployment.date_disembarked
+        )
+    );
 
 
-                setValue(
-                    elements.modalDisembarked,
-                    formatInputDate(
-                        deployment.date_disembarked
-                    )
-                );
+    setValue(
+        elements.modalStatus,
+        deployment.status || 'Not Deployed'
+    );
 
 
-                setValue(
-                    elements.modalStatus,
-                    deployment.status ||
-                    'Not Deployed'
-                );
+    /*
+     * Update duration only after both
+     * date fields have been populated.
+     */
+    updateModalDuration();
 
 
-                updateModalDuration();
+    updateModalProgress(
+        deployment.percentage || 0
+    );
 
-
-                updateModalProgress(
-                    deployment.percentage ?? 0
-                );
-
-            }
+}
 
 
             /* =====================================================
                INPUT DATE
             ====================================================== */
 
-            function formatInputDate(value) {
+function formatInputDate(value) {
 
-                if (!value) {
-                    return '';
-                }
+    if (
+        value === null ||
+        value === undefined ||
+        value === ''
+    ) {
+        return '';
+    }
 
+    /*
+     * IMPORTANT:
+     * Do NOT use new Date(value) here.
+     *
+     * We only want the original database date:
+     *
+     * 2001-01-01
+     * 2002-01-01
+     *
+     * No timezone conversion.
+     */
 
-                /*
-                 * Do NOT do:
-                 *
-                 * new Date(value)
-                 *
-                 * because timezone conversion can
-                 * shift the displayed day.
-                 *
-                 * Just use the database's date portion.
-                 */
+    const stringValue = String(value).trim();
 
-                const valueString =
-                    String(value);
+    const match = stringValue.match(
+        /^(\d{4}-\d{2}-\d{2})/
+    );
 
-
-                const dateOnly =
-                    valueString.substring(
-                        0,
-                        10
-                    );
-
-
-                if (
-                    !/^\d{4}-\d{2}-\d{2}$/.test(
-                        dateOnly
-                    )
-                ) {
-
-                    return '';
-
-                }
-
-
-                return dateOnly;
-
-            }
+    return match
+        ? match[1]
+        : '';
+}
 
 
             /* =====================================================
