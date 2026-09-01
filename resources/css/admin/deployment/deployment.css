@@ -1059,23 +1059,26 @@ main {
 
 .dm-modal {
     display: none;
-
     position: fixed;
-
     inset: 0;
+
+    width: 100%;
+    height: 100dvh;
 
     padding: 20px;
 
     background: rgba(2,6,23,.78);
-
     backdrop-filter: blur(5px);
 
+    overflow-x: hidden;
     overflow-y: auto;
 
     z-index: 99999;
 
     align-items: center;
     justify-content: center;
+
+    box-sizing: border-box;
 }
 
 .dm-modal.show {
@@ -1083,15 +1086,19 @@ main {
 }
 
 .dm-modal-card {
-    width: 100%;
+    width: min(680px, 100%);
     max-width: 680px;
 
-    max-height: calc(100vh - 40px);
+    max-height: calc(100dvh - 40px);
+
+    min-width: 0;
 
     display: flex;
     flex-direction: column;
 
     overflow: hidden;
+
+    box-sizing: border-box;
 
     border: 1px solid rgba(255,255,255,.09);
 
@@ -1212,9 +1219,15 @@ main {
 .dm-modal-body {
     padding: 20px;
 
+    min-width: 0;
+    min-height: 0;
+
+    overflow-x: hidden;
     overflow-y: auto;
 
-    min-height: 0;
+    box-sizing: border-box;
+
+    -webkit-overflow-scrolling: touch;
 }
 
 .dm-modal-body::-webkit-scrollbar {
@@ -1333,6 +1346,7 @@ main {
 }
 
 .dm-form-group {
+    width: 100%;
     min-width: 0;
 }
 
@@ -1354,9 +1368,15 @@ main {
 
 .dm-form-input,
 .dm-form-select {
+    display: block;
+
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
 
     height: 45px;
+
+    box-sizing: border-box;
 
     padding: 0 13px;
 
@@ -1610,80 +1630,107 @@ main {
 
 @media (max-width: 680px) {
 
-    .dm-page {
-        padding: 10px;
-    }
-
-    .dm-header {
-        padding: 18px;
-    }
-
-    .dm-header h1 {
-        font-size: 21px;
-    }
-
-    .dm-header-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 21px;
-    }
-
-    .dm-stats {
-        grid-template-columns: 1fr;
-    }
-
-    .dm-filter-panel {
-        padding: 13px;
-    }
-
-    .dm-filter-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .dm-table-header {
-        padding: 14px;
-    }
-
-    .dm-table {
-        min-width: 1800px;
-    }
-
     .dm-modal {
         padding: 8px;
+
+        align-items: flex-start;
+
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .dm-modal-card {
-        max-height: calc(100vh - 16px);
+        width: 100%;
+        max-width: none;
+
+        max-height: calc(100dvh - 16px);
+
+        margin: 8px 0;
+
         border-radius: 14px;
     }
 
+    .dm-modal-header {
+        padding: 14px;
+    }
+
     .dm-modal-body {
-        padding: 15px;
+        padding: 14px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
     }
 
     .dm-form-grid {
         grid-template-columns: 1fr;
+        gap: 11px;
     }
 
+    .dm-form-group,
     .dm-form-group.full {
+        width: 100%;
+        min-width: 0;
         grid-column: auto;
+    }
+
+    .dm-form-input,
+    .dm-form-select {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     .dm-modal-footer {
         flex-direction: column-reverse;
+
+        align-items: stretch;
+
+        gap: 8px;
+
+        padding: 12px 14px;
     }
 
     .dm-cancel-btn,
     .dm-save-btn {
         width: 100%;
+        min-height: 44px;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .dm-modal {
+        padding: 5px;
     }
 
-    .dm-toast {
-        left: 12px;
-        right: 12px;
-        top: 15px;
+    .dm-modal-card {
+        max-height: calc(100dvh - 10px);
+        margin: 5px 0;
+    }
 
-        min-width: 0;
+    .dm-modal-header {
+        padding: 12px;
+    }
+
+    .dm-modal-body {
+        padding: 12px;
+    }
+
+    .dm-profile img {
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px;
+    }
+
+    .dm-form-input,
+    .dm-form-select {
+        height: 43px;
+        font-size: 12px;
+    }
+
+    .dm-modal-footer {
+        padding: 10px 12px;
     }
 }
 
