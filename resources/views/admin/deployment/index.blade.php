@@ -7,7 +7,7 @@
     @php
         /*
         |--------------------------------------------------------------------------
-        | DATE FORMATTER
+        | Deployment Monitoring Helpers
         |--------------------------------------------------------------------------
         */
 
@@ -23,112 +23,113 @@
             }
         };
 
-
         /*
         |--------------------------------------------------------------------------
-        | SEA SERVICE DURATION
+        | Duration of Sea Service
         |--------------------------------------------------------------------------
         |
         | IMPORTANT:
-        | Duration is ONLY calculated when BOTH dates exist.
+        |
+        | Duration is calculated ONLY when both:
+        |
+        | date_deployed
+        | date_disembarked
+        |
+        | exist.
         |
         | Ongoing deployment:
-        | Embarkation date exists
-        | Disembarkation date = NULL
-        | Result = —
+        |     date_deployed exists
+        |     date_disembarked is NULL
+        |     => —
         |
         | Completed deployment:
-        | Embarkation date exists
-        | Disembarkation date exists
-        | Result = X Months, X Days
+        |     both dates exist
+        |     => Months / Days
         |
         */
 
-$calculateDuration = function ($startDate, $endDate = null) {
-    /*
-    |--------------------------------------------------------------------------
-    | Duration of Sea Service
-    |--------------------------------------------------------------------------
-    | Only calculate sea service when BOTH embarkation and
-    | disembarkation dates exist.
-    |
-    | Ongoing deployment:
-    |     date_deployed exists
-    |     date_disembarked is NULL
-    |     => display "—"
-    |
-    | Completed deployment:
-    |     both dates exist
-    |     => calculate Months + Days
-    |--------------------------------------------------------------------------
-    */
+        $calculateDuration = function ($startDate, $endDate = null) {
 
-    if (!$startDate || !$endDate) {
-        return null;
-    }
+            if (!$startDate || !$endDate) {
+                return null;
+            }
 
-    try {
-        $start = \Carbon\Carbon::parse($startDate)->startOfDay();
-        $end   = \Carbon\Carbon::parse($endDate)->startOfDay();
+            try {
 
-        if ($end->lt($start)) {
-            return null;
-        }
+                $start = \Carbon\Carbon::parse($startDate)->startOfDay();
+                $end   = \Carbon\Carbon::parse($endDate)->startOfDay();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Calculate complete calendar months
-        |--------------------------------------------------------------------------
-        */
+                if ($end->lt($start)) {
+                    return null;
+                }
 
-        $months = $start->diffInMonths($end);
+                /*
+                |--------------------------------------------------------------------------
+                | Calculate complete calendar months
+                |--------------------------------------------------------------------------
+                */
 
-        $monthDate = $start->copy()->addMonthsNoOverflow($months);
+                $months = $start->diffInMonths($end);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Prevent over-counting a month
-        |--------------------------------------------------------------------------
-        */
+                $monthDate =
+                    $start->copy()->addMonthsNoOverflow($months);
 
-        if ($monthDate->gt($end)) {
-            $months--;
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent over-counting a month
+                |--------------------------------------------------------------------------
+                */
 
-            $monthDate = $start
-                ->copy()
-                ->addMonthsNoOverflow(max(0, $months));
-        }
+                if ($monthDate->gt($end)) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Remaining days after complete months
-        |--------------------------------------------------------------------------
-        */
+                    $months--;
 
-        $days = $monthDate->diffInDays($end);
+                    $monthDate =
+                        $start
+                            ->copy()
+                            ->addMonthsNoOverflow(
+                                max(0, $months)
+                            );
+                }
 
-        $parts = [];
+                /*
+                |--------------------------------------------------------------------------
+                | Remaining days
+                |--------------------------------------------------------------------------
+                */
 
-        if ($months > 0) {
-            $parts[] =
-                $months . ' ' .
-                ($months === 1 ? 'Month' : 'Months');
-        }
+                $days =
+                    $monthDate->diffInDays($end);
 
-        if ($days > 0) {
-            $parts[] =
-                $days . ' ' .
-                ($days === 1 ? 'Day' : 'Days');
-        }
+                $parts = [];
 
-        return $parts
-            ? implode(', ', $parts)
-            : '0 Days';
+                if ($months > 0) {
 
-    } catch (\Throwable $e) {
-        return null;
-    }
-};
+                    $parts[] =
+                        $months . ' ' .
+                        ($months === 1
+                            ? 'Month'
+                            : 'Months');
+                }
+
+                if ($days > 0) {
+
+                    $parts[] =
+                        $days . ' ' .
+                        ($days === 1
+                            ? 'Day'
+                            : 'Days');
+                }
+
+                return $parts
+                    ? implode(', ', $parts)
+                    : '0 Days';
+
+            } catch (\Throwable $e) {
+
+                return null;
+            }
+        };
     @endphp
 
 
@@ -544,6 +545,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
         <section class="dm-table-card">
 
 
+            {{-- TABLE HEADER --}}
+
             <div class="dm-table-header">
 
                 <div class="dm-table-title">
@@ -565,6 +568,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
             </div>
 
 
+            {{-- TABLE --}}
+
             <div class="dm-table-scroll">
 
                 <table class="dm-table">
@@ -573,21 +578,65 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                         <tr>
 
-                            <th>TRB No.</th>
-                            <th>Name</th>
-                            <th>Course</th>
-                            <th>Batch</th>
-                            <th>Vessel</th>
-                            <th>Company</th>
-                            <th>Deployment Type</th>
-                            <th>Embarkation Place</th>
-                            <th>Embarkation Date</th>
-                            <th>Disembarkation Place</th>
-                            <th>Disembarkation Date</th>
-                            <th>Duration of Sea Service</th>
-                            <th>Progress</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th scope="col">
+                                TRB No.
+                            </th>
+
+                            <th scope="col">
+                                Name
+                            </th>
+
+                            <th scope="col">
+                                Course
+                            </th>
+
+                            <th scope="col">
+                                Batch
+                            </th>
+
+                            <th scope="col">
+                                Vessel
+                            </th>
+
+                            <th scope="col">
+                                Company
+                            </th>
+
+                            <th scope="col">
+                                Deployment Type
+                            </th>
+
+                            <th scope="col">
+                                Embarkation Place
+                            </th>
+
+                            <th scope="col">
+                                Embarkation Date
+                            </th>
+
+                            <th scope="col">
+                                Disembarkation Place
+                            </th>
+
+                            <th scope="col">
+                                Disembarkation Date
+                            </th>
+
+                            <th scope="col">
+                                Duration of Sea Service
+                            </th>
+
+                            <th scope="col">
+                                Progress
+                            </th>
+
+                            <th scope="col">
+                                Status
+                            </th>
+
+                            <th scope="col">
+                                Action
+                            </th>
 
                         </tr>
 
@@ -600,44 +649,49 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                             @php
 
-                                $deployment = $cadet->deployment;
+                                $deployment =
+                                    $cadet->deployment;
 
-                                $status = strtolower(
-                                    trim(
-                                        $deployment?->status ?? 'Not Deployed'
-                                    )
-                                );
+                                $status =
+                                    strtolower(
+                                        trim(
+                                            $deployment?->status
+                                            ?? 'Not Deployed'
+                                        )
+                                    );
 
-                                $percentage = max(
-                                    0,
-                                    min(
-                                        100,
-                                        (int) ($deployment?->percentage ?? 0)
-                                    )
-                                );
+                                $percentage =
+                                    max(
+                                        0,
+                                        min(
+                                            100,
+                                            (int) (
+                                                $deployment?->percentage
+                                                ?? 0
+                                            )
+                                        )
+                                    );
 
-                                $course = strtolower(
-                                    trim(
-                                        $cadet->course ?? ''
-                                    )
-                                );
+                                $course =
+                                    strtolower(
+                                        trim(
+                                            $cadet->course ?? ''
+                                        )
+                                    );
 
-                                $batch = strtolower(
-                                    trim(
-                                        $cadet->batch?->batch_year ?? ''
-                                    )
-                                );
+                                $batch =
+                                    strtolower(
+                                        trim(
+                                            $cadet->batch?->batch_year
+                                            ?? ''
+                                        )
+                                    );
 
-                                /*
-                                 * IMPORTANT:
-                                 *
-                                 * Duration is calculated ONLY if
-                                 * both dates exist.
-                                 */
-                                $duration = $calculateDuration(
-                                    $deployment?->date_deployed,
-                                    $deployment?->date_disembarked
-                                );
+                                $duration =
+                                    $calculateDuration(
+                                        $deployment?->date_deployed,
+                                        $deployment?->date_disembarked
+                                    );
 
                             @endphp
 
@@ -646,7 +700,7 @@ $calculateDuration = function ($startDate, $endDate = null) {
                                 data-course="{{ $course }}"
                                 data-batch="{{ $batch }}"
                                 data-status="{{ $status }}"
-                                data-deployment-date="{{ $deployment?->date_deployed ? \Carbon\Carbon::parse($deployment->date_deployed)->format('Y-m-d') : '' }}"
+                                data-deployment-date="{{ $deployment?->date_deployed ?? '' }}"
                             >
 
 
@@ -738,11 +792,11 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                                 {{-- EMBARKATION DATE --}}
 
-                                <td>
+                                <td
+                                    data-date="{{ $deployment?->date_deployed ?? '' }}"
+                                >
 
-                                    {{ $formatDate(
-                                        $deployment?->date_deployed
-                                    ) }}
+                                    {{ $formatDate($deployment?->date_deployed) }}
 
                                 </td>
 
@@ -756,18 +810,16 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                                 {{-- DISEMBARKATION DATE --}}
 
-                                <td>
+                                <td
+                                    data-date="{{ $deployment?->date_disembarked ?? '' }}"
+                                >
 
-                                    {{ $formatDate(
-                                        $deployment?->date_disembarked
-                                    ) }}
+                                    {{ $formatDate($deployment?->date_disembarked) }}
 
                                 </td>
 
 
-                                {{-- =================================================
-                                     SEA SERVICE DURATION
-                                ================================================== --}}
+                                {{-- SEA SERVICE DURATION --}}
 
                                 <td>
 
@@ -988,13 +1040,18 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
         <div class="dm-modal-card">
 
+
+            {{-- HIDDEN ID --}}
+
             <input
                 type="hidden"
                 id="modalId"
             >
 
 
-            {{-- MODAL HEADER --}}
+            {{-- =================================================
+                 MODAL HEADER
+            ================================================== --}}
 
             <header class="dm-modal-header">
 
@@ -1021,6 +1078,7 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                 </div>
 
+
                 <button
                     type="button"
                     class="dm-modal-close"
@@ -1033,7 +1091,9 @@ $calculateDuration = function ($startDate, $endDate = null) {
             </header>
 
 
-            {{-- MODAL BODY --}}
+            {{-- =================================================
+                 MODAL BODY
+            ================================================== --}}
 
             <div class="dm-modal-body">
 
@@ -1101,6 +1161,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
                     <div class="dm-form-grid">
 
 
+                        {{-- VESSEL --}}
+
                         <div class="dm-form-group">
 
                             <label
@@ -1121,6 +1183,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
                         </div>
 
 
+                        {{-- COMPANY --}}
+
                         <div class="dm-form-group">
 
                             <label
@@ -1140,6 +1204,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                         </div>
 
+
+                        {{-- DEPLOYMENT TYPE --}}
 
                         <div class="dm-form-group full">
 
@@ -1197,6 +1263,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
                     <div class="dm-form-grid">
 
 
+                        {{-- PLACE --}}
+
                         <div class="dm-form-group">
 
                             <label
@@ -1216,6 +1284,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                         </div>
 
+
+                        {{-- DATE --}}
 
                         <div class="dm-form-group">
 
@@ -1264,6 +1334,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
                     <div class="dm-form-grid">
 
 
+                        {{-- PLACE --}}
+
                         <div class="dm-form-group">
 
                             <label
@@ -1283,6 +1355,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                         </div>
 
+
+                        {{-- DATE --}}
 
                         <div class="dm-form-group">
 
@@ -1304,7 +1378,9 @@ $calculateDuration = function ($startDate, $endDate = null) {
                     </div>
 
 
-                    {{-- SEA SERVICE DURATION --}}
+                    {{-- =================================================
+                         SEA SERVICE DURATION
+                    ================================================== --}}
 
                     <div class="dm-duration-card">
 
@@ -1326,7 +1402,7 @@ $calculateDuration = function ($startDate, $endDate = null) {
                             </strong>
 
                             <small id="modalDurationStatus">
-                                Enter a disembarkation date to calculate completed sea service.
+                                Available after disembarkation
                             </small>
 
                         </div>
@@ -1435,7 +1511,9 @@ $calculateDuration = function ($startDate, $endDate = null) {
             </div>
 
 
-            {{-- MODAL FOOTER --}}
+            {{-- =================================================
+                 MODAL FOOTER
+            ================================================== --}}
 
             <footer class="dm-modal-footer">
 
@@ -1479,20 +1557,23 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
             const CONFIG = {
 
-                deploymentUrl: '/admin/deployment',
+                deploymentUrl:
+                    '/admin/deployment',
 
                 defaultPhoto:
                     @json(asset('images/default.png')),
 
-                reloadDelay: 1800,
+                reloadDelay:
+                    1800,
 
-                toastDuration: 1800
+                toastDuration:
+                    1800
 
             };
 
 
             /* =====================================================
-               DOM
+               DOM CACHE
             ====================================================== */
 
             const elements = {
@@ -1638,7 +1719,7 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
 
             /* =====================================================
-               INITIALIZE
+               INITIALIZATION
             ====================================================== */
 
             document.addEventListener(
@@ -1663,7 +1744,7 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
 
             /* =====================================================
-               FILTERS
+               FILTER SETUP
             ====================================================== */
 
             function setupFilters() {
@@ -1702,21 +1783,35 @@ $calculateDuration = function ($startDate, $endDate = null) {
             }
 
 
-            function getCheckedValues(filterType) {
+            /* =====================================================
+               GET CHECKED VALUES
+            ====================================================== */
+
+            function getCheckedValues(
+                filterType
+            ) {
 
                 return Array.from(
+
                     document.querySelectorAll(
                         `.dm-dropdown-menu input[data-filter="${filterType}"]:checked`
                     )
+
                 )
                 .map(input =>
+
                     input.value
                         .toLowerCase()
                         .trim()
+
                 );
 
             }
 
+
+            /* =====================================================
+               TABLE FILTER
+            ====================================================== */
 
             function filterDeploymentTable() {
 
@@ -1730,7 +1825,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
                     getCheckedValues('status');
 
                 const search =
-                    elements.searchInput?.value
+                    elements.searchInput
+                        ?.value
                         ?.toLowerCase()
                         .trim() || '';
 
@@ -1743,9 +1839,12 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
                 const rows =
                     Array.from(
-                        elements.tableBody?.querySelectorAll(
-                            'tr[data-course]'
-                        ) || []
+
+                        elements.tableBody
+                            ?.querySelectorAll(
+                                'tr[data-course]'
+                            ) || []
+
                     );
 
 
@@ -1767,7 +1866,8 @@ $calculateDuration = function ($startDate, $endDate = null) {
                         row.dataset.deploymentDate || '';
 
                     const rowText =
-                        row.innerText.toLowerCase();
+                        row.innerText
+                            .toLowerCase();
 
 
                     const matchesCourse =
@@ -1812,7 +1912,9 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
 
                     row.style.display =
-                        visible ? '' : 'none';
+                        visible
+                            ? ''
+                            : 'none';
 
 
                     if (visible) {
@@ -1831,7 +1933,7 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
 
             /* =====================================================
-               DATE FILTER
+               DATE RANGE
             ====================================================== */
 
             function matchesDateRange(
@@ -1843,6 +1945,7 @@ $calculateDuration = function ($startDate, $endDate = null) {
                 if (!from && !to) {
                     return true;
                 }
+
 
                 if (!deploymentDate) {
                     return false;
@@ -1893,36 +1996,47 @@ $calculateDuration = function ($startDate, $endDate = null) {
                 }
 
 
-                /*
-                 * IMPORTANT:
-                 *
-                 * Do NOT use new Date(value) here.
-                 *
-                 * We compare YYYY-MM-DD strings
-                 * directly to avoid timezone changes.
-                 */
-
-                const normalized =
+                const parts =
                     String(value)
-                        .substring(0, 10);
+                        .substring(0, 10)
+                        .split('-');
+
+
+                if (parts.length !== 3) {
+                    return null;
+                }
+
+
+                const year =
+                    Number(parts[0]);
+
+                const month =
+                    Number(parts[1]);
+
+                const day =
+                    Number(parts[2]);
 
 
                 if (
-                    !/^\d{4}-\d{2}-\d{2}$/.test(
-                        normalized
-                    )
+                    !year ||
+                    !month ||
+                    !day
                 ) {
                     return null;
                 }
 
 
-                return normalized;
+                return Date.UTC(
+                    year,
+                    month - 1,
+                    day
+                );
 
             }
 
 
             /* =====================================================
-               EMPTY STATE
+               FILTERED EMPTY STATE
             ====================================================== */
 
             function updateFilteredEmptyState(
@@ -1930,7 +2044,9 @@ $calculateDuration = function ($startDate, $endDate = null) {
                 visibleRows
             ) {
 
-                if (!elements.filteredEmptyRow) {
+                if (
+                    !elements.filteredEmptyRow
+                ) {
                     return;
                 }
 
@@ -1941,7 +2057,9 @@ $calculateDuration = function ($startDate, $endDate = null) {
 
 
                 elements.filteredEmptyRow.style.display =
-                    show ? '' : 'none';
+                    show
+                        ? ''
+                        : 'none';
 
             }
 
@@ -2042,240 +2160,436 @@ $calculateDuration = function ($startDate, $endDate = null) {
                SEA SERVICE DURATION
             ====================================================== */
 
-function calculateSeaServiceDuration(
-    embarkationDate,
-    disembarkationDate = null
-) {
+            function calculateSeaServiceDuration(
+                embarkationDate,
+                disembarkationDate = null
+            ) {
 
-    /*
-     * No embarkation date.
-     */
-    if (!embarkationDate) {
+                /*
+                |--------------------------------------------------------------------------
+                | No embarkation date
+                |--------------------------------------------------------------------------
+                */
 
-        return {
-            text: '—',
-            status: 'Embarkation date not available'
-        };
+                if (!embarkationDate) {
 
-    }
+                    return {
 
+                        text: '—',
 
-    /*
-     * IMPORTANT:
-     *
-     * If there is NO disembarkation date,
-     * do NOT calculate duration.
-     *
-     * The deployment is still ongoing.
-     */
-    if (!disembarkationDate) {
+                        status:
+                            'Embarkation date not available'
 
-        return {
-            text: '—',
-            status: 'Duration available after disembarkation'
-        };
+                    };
 
-    }
+                }
 
 
-    const start =
-        parseDate(embarkationDate);
+                /*
+                |--------------------------------------------------------------------------
+                | IMPORTANT:
+                |
+                | No disembarkation date means the deployment
+                | is still ongoing.
+                |
+                | Do NOT calculate against today's date.
+                |--------------------------------------------------------------------------
+                */
 
+                if (!disembarkationDate) {
 
-    const end =
-        parseDate(disembarkationDate);
+                    return {
 
+                        text: '—',
 
-    if (
-        !start ||
-        !end
-    ) {
+                        status:
+                            'Duration available after disembarkation'
 
-        return {
-            text: '—',
-            status: 'Invalid deployment dates'
-        };
+                    };
 
-    }
+                }
 
 
-    /*
-     * Disembarkation cannot be before embarkation.
-     */
-    if (end < start) {
+                const start =
+                    parseDate(
+                        embarkationDate
+                    );
 
-        return {
-            text: '—',
-            status: 'Disembarkation date cannot be before embarkation date'
-        };
 
-    }
+                const end =
+                    parseDate(
+                        disembarkationDate
+                    );
 
 
-    /*
-     * Calculate complete calendar months.
-     */
-    let months =
-        calculateFullMonths(
-            start,
-            end
-        );
+                if (
+                    !start ||
+                    !end
+                ) {
 
+                    return {
 
-    let monthDate =
-        addMonthsSafely(
-            start,
-            months
-        );
+                        text: '—',
 
+                        status:
+                            'Invalid deployment dates'
 
-    /*
-     * Prevent month over-counting.
-     */
-    if (monthDate > end) {
+                    };
 
-        months--;
+                }
 
-        monthDate =
-            addMonthsSafely(
-                start,
-                Math.max(0, months)
-            );
 
-    }
+                /*
+                |--------------------------------------------------------------------------
+                | Validate order
+                |--------------------------------------------------------------------------
+                */
 
+                if (end < start) {
 
-    /*
-     * Calculate remaining days.
-     */
-    const days =
-        Math.floor(
-            (
-                end.getTime() -
-                monthDate.getTime()
-            ) /
-            86400000
-        );
+                    return {
 
+                        text: '—',
 
-    const parts = [];
+                        status:
+                            'Disembarkation date cannot be before embarkation date'
 
+                    };
 
-    if (months > 0) {
+                }
 
-        parts.push(
-            `${months} ${months === 1 ? 'Month' : 'Months'}`
-        );
 
-    }
+                /*
+                |--------------------------------------------------------------------------
+                | Calculate complete calendar months
+                |--------------------------------------------------------------------------
+                */
 
+                let months =
+                    calculateFullMonths(
+                        start,
+                        end
+                    );
 
-    if (days > 0) {
 
-        parts.push(
-            `${days} ${days === 1 ? 'Day' : 'Days'}`
-        );
+                let monthDate =
+                    addMonthsSafely(
+                        start,
+                        months
+                    );
 
-    }
 
+                /*
+                |--------------------------------------------------------------------------
+                | Prevent over-counting
+                |--------------------------------------------------------------------------
+                */
 
-    return {
+                if (monthDate > end) {
 
-        text:
-            parts.length
-                ? parts.join(', ')
-                : '0 Days',
+                    months--;
 
-        status:
-            'Completed sea service'
+                    monthDate =
+                        addMonthsSafely(
+                            start,
+                            Math.max(
+                                0,
+                                months
+                            )
+                        );
 
-    };
+                }
 
-}
 
+                /*
+                |--------------------------------------------------------------------------
+                | Remaining days
+                |--------------------------------------------------------------------------
+                */
 
-            /*
-             * Parse YYYY-MM-DD WITHOUT timezone conversion.
-             */
-function parseDate(value) {
+                const days =
+                    Math.floor(
 
-    if (!value) {
-        return null;
-    }
+                        (
+                            end.getTime() -
+                            monthDate.getTime()
+                        ) /
 
-    const stringValue =
-        String(value).trim().substring(0, 10);
+                        86400000
 
-    const match =
-        stringValue.match(
-            /^(\d{4})-(\d{2})-(\d{2})$/
-        );
+                    );
 
-    if (!match) {
-        return null;
-    }
 
-    const year =
-        Number(match[1]);
+                const parts = [];
 
-    const month =
-        Number(match[2]);
 
-    const day =
-        Number(match[3]);
+                if (months > 0) {
 
+                    parts.push(
 
-    const date =
-        new Date(
-            year,
-            month - 1,
-            day
-        );
+                        `${months} ${
+                            months === 1
+                                ? 'Month'
+                                : 'Months'
+                        }`
 
+                    );
 
-    if (
-        date.getFullYear() !== year ||
-        date.getMonth() !== month - 1 ||
-        date.getDate() !== day
-    ) {
-        return null;
-    }
+                }
 
 
-    date.setHours(
-        0,
-        0,
-        0,
-        0
-    );
+                if (days > 0) {
 
+                    parts.push(
 
-    return date;
+                        `${days} ${
+                            days === 1
+                                ? 'Day'
+                                : 'Days'
+                        }`
 
-}
+                    );
+
+                }
+
+
+                return {
+
+                    text:
+                        parts.length
+                            ? parts.join(', ')
+                            : '0 Days',
+
+                    status:
+                        'Completed sea service'
+
+                };
+
+            }
 
 
             /* =====================================================
-               MODAL DURATION
+               EXACT DATE PARSER
+            ====================================================== */
+
+            function parseDate(value) {
+
+                if (!value) {
+                    return null;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | IMPORTANT:
+                |
+                | Do NOT use:
+                |
+                | new Date('2001-01-01')
+                |
+                | because browser timezone handling can cause
+                | unexpected date shifts.
+                |--------------------------------------------------------------------------
+                */
+
+                const stringValue =
+                    String(value)
+                        .trim()
+                        .substring(0, 10);
+
+
+                const match =
+                    stringValue.match(
+                        /^(\d{4})-(\d{2})-(\d{2})$/
+                    );
+
+
+                if (!match) {
+                    return null;
+                }
+
+
+                const year =
+                    Number(match[1]);
+
+                const month =
+                    Number(match[2]);
+
+                const day =
+                    Number(match[3]);
+
+
+                const date =
+                    new Date(
+                        year,
+                        month - 1,
+                        day
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Verify the constructed date
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    date.getFullYear() !== year ||
+                    date.getMonth() !== month - 1 ||
+                    date.getDate() !== day
+                ) {
+
+                    return null;
+
+                }
+
+
+                date.setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+
+                return date;
+
+            }
+
+
+            /* =====================================================
+               FULL MONTH CALCULATION
+            ====================================================== */
+
+            function calculateFullMonths(
+                start,
+                end
+            ) {
+
+                let months =
+
+                    (
+                        end.getFullYear() -
+                        start.getFullYear()
+                    ) * 12 +
+
+                    (
+                        end.getMonth() -
+                        start.getMonth()
+                    );
+
+
+                const candidate =
+                    addMonthsSafely(
+                        start,
+                        months
+                    );
+
+
+                if (
+                    candidate > end
+                ) {
+
+                    months--;
+
+                }
+
+
+                return Math.max(
+                    0,
+                    months
+                );
+
+            }
+
+
+            /* =====================================================
+               SAFE MONTH ADDITION
+            ====================================================== */
+
+            function addMonthsSafely(
+                date,
+                months
+            ) {
+
+                const result =
+                    new Date(date);
+
+
+                const originalDay =
+                    result.getDate();
+
+
+                result.setDate(
+                    1
+                );
+
+
+                result.setMonth(
+                    result.getMonth() +
+                    months
+                );
+
+
+                const lastDay =
+                    new Date(
+
+                        result.getFullYear(),
+
+                        result.getMonth() + 1,
+
+                        0
+
+                    ).getDate();
+
+
+                result.setDate(
+
+                    Math.min(
+                        originalDay,
+                        lastDay
+                    )
+
+                );
+
+
+                result.setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                );
+
+
+                return result;
+
+            }
+
+
+            /* =====================================================
+               UPDATE MODAL DURATION
             ====================================================== */
 
             function updateModalDuration() {
 
-                const embarkation =
+                const embarkationDate =
                     elements.modalDeployed?.value || '';
 
-                const disembarkation =
-                    elements.modalDisembarked?.value || '';
+
+                const disembarkationDate =
+                    elements.modalDisembarked?.value || null;
 
 
                 const result =
                     calculateSeaServiceDuration(
-                        embarkation,
-                        disembarkation
+                        embarkationDate,
+                        disembarkationDate
                     );
 
 
-                if (elements.modalDuration) {
+                if (
+                    elements.modalDuration
+                ) {
 
                     elements.modalDuration.textContent =
                         result.text;
@@ -2283,7 +2597,9 @@ function parseDate(value) {
                 }
 
 
-                if (elements.modalDurationStatus) {
+                if (
+                    elements.modalDurationStatus
+                ) {
 
                     elements.modalDurationStatus.textContent =
                         result.status;
@@ -2299,6 +2615,12 @@ function parseDate(value) {
 
             function setupModalEvents() {
 
+                /*
+                |--------------------------------------------------------------------------
+                | Recalculate duration when dates change.
+                |--------------------------------------------------------------------------
+                */
+
                 elements.modalDeployed?.addEventListener(
                     'change',
                     updateModalDuration
@@ -2311,21 +2633,24 @@ function parseDate(value) {
                 );
 
 
-                elements.modalStatus?.addEventListener(
-                    'change',
-                    updateModalDuration
-                );
-
+                /*
+                |--------------------------------------------------------------------------
+                | Escape key
+                |--------------------------------------------------------------------------
+                */
 
                 document.addEventListener(
                     'keydown',
                     event => {
 
                         if (
+
                             event.key === 'Escape' &&
-                            elements.modal?.classList.contains(
-                                'show'
-                            )
+
+                            elements.modal
+                                ?.classList
+                                .contains('show')
+
                         ) {
 
                             closeDeploymentModal();
@@ -2335,6 +2660,12 @@ function parseDate(value) {
                     }
                 );
 
+
+                /*
+                |--------------------------------------------------------------------------
+                | Click outside modal
+                |--------------------------------------------------------------------------
+                */
 
                 elements.modal?.addEventListener(
                     'click',
@@ -2377,7 +2708,7 @@ function parseDate(value) {
 
 
                     elements.modalId.value =
-                        String(cadet.id);
+                        cadet.id;
 
 
                     elements.modalName.textContent =
@@ -2406,16 +2737,6 @@ function parseDate(value) {
 
 
                     try {
-
-                        /*
-                         * IMPORTANT:
-                         *
-                         * Always fetch the deployment
-                         * directly from the database.
-                         *
-                         * This prevents stale serialized
-                         * relation data from being used.
-                         */
 
                         await loadDeployment(
                             cadet.id
@@ -2450,35 +2771,42 @@ function parseDate(value) {
                     ''
                 );
 
+
                 setValue(
                     elements.modalCompany,
                     ''
                 );
+
 
                 setValue(
                     elements.modalDeploymentType,
                     'Domestic'
                 );
 
+
                 setValue(
                     elements.modalEmbarkPlace,
                     ''
                 );
+
 
                 setValue(
                     elements.modalDeployed,
                     ''
                 );
 
+
                 setValue(
                     elements.modalDisembarkPlace,
                     ''
                 );
 
+
                 setValue(
                     elements.modalDisembarked,
                     ''
                 );
+
 
                 setValue(
                     elements.modalStatus,
@@ -2486,7 +2814,10 @@ function parseDate(value) {
                 );
 
 
-                updateModalProgress(0);
+                updateModalProgress(
+                    0
+                );
+
 
                 updateModalDuration();
 
@@ -2499,22 +2830,29 @@ function parseDate(value) {
             ) {
 
                 if (element) {
+
                     element.value =
                         value ?? '';
+
                 }
 
             }
 
 
             /* =====================================================
-               PHOTO
+               CADET PHOTO
             ====================================================== */
 
-            function setCadetPhoto(photo) {
+            function setCadetPhoto(
+                photo
+            ) {
 
                 if (
+
                     !photo ||
+
                     typeof photo !== 'string'
+
                 ) {
 
                     elements.modalPhoto.src =
@@ -2536,7 +2874,9 @@ function parseDate(value) {
                     normalized.startsWith(
                         'storage/'
                     )
+
                         ? `/${normalized}`
+
                         : `/storage/${normalized}`;
 
 
@@ -2556,21 +2896,26 @@ function parseDate(value) {
 
                 const response =
                     await fetch(
+
                         `${CONFIG.deploymentUrl}/${cadetId}`,
+
                         {
-                            method: 'GET',
+
+                            method:
+                                'GET',
 
                             headers: {
+
                                 Accept:
                                     'application/json'
+
                             },
 
                             credentials:
-                                'same-origin',
+                                'same-origin'
 
-                            cache:
-                                'no-store'
                         }
+
                     );
 
 
@@ -2581,13 +2926,9 @@ function parseDate(value) {
 
 
                 const deployment =
-                    data?.deployment || null;
+                    data.deployment || {};
 
 
-                /*
-                 * Always populate from the actual
-                 * deployment response.
-                 */
                 populateDeployment(
                     deployment
                 );
@@ -2599,119 +2940,151 @@ function parseDate(value) {
                POPULATE DEPLOYMENT
             ====================================================== */
 
-function populateDeployment(deployment) {
+            function populateDeployment(
+                deployment
+            ) {
 
-    setValue(
-        elements.modalVessel,
-        deployment.vessel_name || ''
-    );
-
-
-    setValue(
-        elements.modalCompany,
-        deployment.company_name || ''
-    );
+                setValue(
+                    elements.modalVessel,
+                    deployment.vessel_name || ''
+                );
 
 
-    setValue(
-        elements.modalDeploymentType,
-        deployment.deployment_type || 'Domestic'
-    );
+                setValue(
+                    elements.modalCompany,
+                    deployment.company_name || ''
+                );
 
 
-    setValue(
-        elements.modalEmbarkPlace,
-        deployment.embarkation_place || ''
-    );
+                setValue(
+                    elements.modalDeploymentType,
+                    deployment.deployment_type ||
+                    'Domestic'
+                );
 
 
-    /*
-     * IMPORTANT:
-     * Use the exact database date.
-     * Do not use new Date().
-     */
-    setValue(
-        elements.modalDeployed,
-        formatInputDate(
-            deployment.date_deployed
-        )
-    );
+                setValue(
+                    elements.modalEmbarkPlace,
+                    deployment.embarkation_place || ''
+                );
 
 
-    setValue(
-        elements.modalDisembarkPlace,
-        deployment.disembarkation_place || ''
-    );
+                /*
+                |--------------------------------------------------------------------------
+                | EXACT DATABASE EMBARKATION DATE
+                |--------------------------------------------------------------------------
+                */
+
+                setValue(
+                    elements.modalDeployed,
+                    formatInputDate(
+                        deployment.date_deployed
+                    )
+                );
 
 
-    /*
-     * IMPORTANT:
-     * Use the exact database date.
-     */
-    setValue(
-        elements.modalDisembarked,
-        formatInputDate(
-            deployment.date_disembarked
-        )
-    );
+                setValue(
+                    elements.modalDisembarkPlace,
+                    deployment.disembarkation_place || ''
+                );
 
 
-    setValue(
-        elements.modalStatus,
-        deployment.status || 'Not Deployed'
-    );
+                /*
+                |--------------------------------------------------------------------------
+                | EXACT DATABASE DISEMBARKATION DATE
+                |--------------------------------------------------------------------------
+                */
+
+                setValue(
+                    elements.modalDisembarked,
+                    formatInputDate(
+                        deployment.date_disembarked
+                    )
+                );
 
 
-    /*
-     * Update duration only after both
-     * date fields have been populated.
-     */
-    updateModalDuration();
+                setValue(
+                    elements.modalStatus,
+                    deployment.status ||
+                    'Not Deployed'
+                );
 
 
-    updateModalProgress(
-        deployment.percentage || 0
-    );
+                /*
+                |--------------------------------------------------------------------------
+                | Update duration AFTER both date inputs
+                | have been populated.
+                |--------------------------------------------------------------------------
+                */
 
-}
+                updateModalDuration();
+
+
+                updateModalProgress(
+                    deployment.percentage || 0
+                );
+
+            }
 
 
             /* =====================================================
-               INPUT DATE
+               EXACT DATE FOR HTML DATE INPUT
             ====================================================== */
 
-function formatInputDate(value) {
+            function formatInputDate(
+                value
+            ) {
 
-    if (
-        value === null ||
-        value === undefined ||
-        value === ''
-    ) {
-        return '';
-    }
+                if (
 
-    /*
-     * IMPORTANT:
-     * Do NOT use new Date(value) here.
-     *
-     * We only want the original database date:
-     *
-     * 2001-01-01
-     * 2002-01-01
-     *
-     * No timezone conversion.
-     */
+                    value === null ||
 
-    const stringValue = String(value).trim();
+                    value === undefined ||
 
-    const match = stringValue.match(
-        /^(\d{4}-\d{2}-\d{2})/
-    );
+                    value === ''
 
-    return match
-        ? match[1]
-        : '';
-}
+                ) {
+
+                    return '';
+
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | IMPORTANT:
+                |
+                | Never use new Date(value).
+                |
+                | We only extract:
+                |
+                | YYYY-MM-DD
+                |
+                | directly from the Laravel response.
+                |--------------------------------------------------------------------------
+                */
+
+                const stringValue =
+                    String(value)
+                        .trim();
+
+
+                const match =
+                    stringValue.match(
+                        /^(\d{4}-\d{2}-\d{2})/
+                    );
+
+
+                if (!match) {
+
+                    return '';
+
+                }
+
+
+                return match[1];
+
+            }
 
 
             /* =====================================================
@@ -2723,7 +3096,9 @@ function formatInputDate(value) {
             ) {
 
                 let value =
-                    Number(percentage);
+                    Number(
+                        percentage
+                    );
 
 
                 if (
@@ -2746,10 +3121,14 @@ function formatInputDate(value) {
 
 
                 const rounded =
-                    Math.round(value);
+                    Math.round(
+                        value
+                    );
 
 
-                if (elements.modalProgress) {
+                if (
+                    elements.modalProgress
+                ) {
 
                     elements.modalProgress.style.width =
                         `${rounded}%`;
@@ -2757,13 +3136,17 @@ function formatInputDate(value) {
 
                     elements.modalProgress.style.background =
                         rounded >= 100
+
                             ? 'linear-gradient(90deg, #16a34a, #22c55e)'
+
                             : 'linear-gradient(90deg, #6366f1, #8b5cf6)';
 
                 }
 
 
-                if (elements.modalPercent) {
+                if (
+                    elements.modalPercent
+                ) {
 
                     elements.modalPercent.textContent =
                         `${rounded}%`;
@@ -2785,7 +3168,7 @@ function formatInputDate(value) {
 
 
             /* =====================================================
-               OPEN / CLOSE MODAL
+               MODAL OPEN / CLOSE
             ====================================================== */
 
             function openModal() {
@@ -2800,11 +3183,13 @@ function formatInputDate(value) {
                 );
 
 
-                requestAnimationFrame(() => {
+                requestAnimationFrame(
+                    () => {
 
-                    elements.modalVessel?.focus();
+                        elements.modalVessel?.focus();
 
-                });
+                    }
+                );
 
             }
 
@@ -2825,7 +3210,7 @@ function formatInputDate(value) {
 
 
             /* =====================================================
-               SAVE
+               SAVE DEPLOYMENT
             ====================================================== */
 
             window.saveDeploymentChanges =
@@ -2857,9 +3242,8 @@ function formatInputDate(value) {
 
                     if (
                         elements.saveButton
-                            ?.classList.contains(
-                                'loading'
-                            )
+                            ?.classList
+                            .contains('loading')
                     ) {
 
                         return;
@@ -2867,7 +3251,9 @@ function formatInputDate(value) {
                     }
 
 
-                    setSavingState(true);
+                    setSavingState(
+                        true
+                    );
 
 
                     try {
@@ -2878,9 +3264,13 @@ function formatInputDate(value) {
 
                         const response =
                             await fetch(
+
                                 `${CONFIG.deploymentUrl}/${id}`,
+
                                 {
-                                    method: 'PUT',
+
+                                    method:
+                                        'PUT',
 
                                     headers: {
 
@@ -2904,6 +3294,7 @@ function formatInputDate(value) {
                                         )
 
                                 }
+
                             );
 
 
@@ -2927,18 +3318,21 @@ function formatInputDate(value) {
 
                         closeDeploymentModal();
 
+
                         showDeploymentToast();
 
 
                         setTimeout(
+
                             () => {
 
                                 window.location.reload();
 
                             },
-                            CONFIG.reloadDelay
-                        );
 
+                            CONFIG.reloadDelay
+
+                        );
 
                     } catch (error) {
 
@@ -2953,10 +3347,11 @@ function formatInputDate(value) {
                             'Unable to update deployment.'
                         );
 
-
                     } finally {
 
-                        setSavingState(false);
+                        setSavingState(
+                            false
+                        );
 
                     }
 
@@ -2972,41 +3367,48 @@ function formatInputDate(value) {
                 return {
 
                     vessel_name:
-                        elements.modalVessel?.value
+                        elements.modalVessel
+                            ?.value
                             ?.trim() || '',
 
                     company:
-                        elements.modalCompany?.value
+                        elements.modalCompany
+                            ?.value
                             ?.trim() || '',
 
                     deployment_type:
-                        elements.modalDeploymentType?.value ||
+                        elements.modalDeploymentType
+                            ?.value ||
                         'Domestic',
 
                     embarkation_place:
-                        elements.modalEmbarkPlace?.value
+                        elements.modalEmbarkPlace
+                            ?.value
                             ?.trim() || '',
 
                     /*
-                     * Send the exact date input value.
-                     */
+                    |--------------------------------------------------------------------------
+                    | HTML date input already contains YYYY-MM-DD.
+                    | Send it exactly as entered.
+                    |--------------------------------------------------------------------------
+                    */
+
                     date_deployed:
-                        elements.modalDeployed?.value ||
-                        '',
+                        elements.modalDeployed
+                            ?.value || '',
 
                     disembarkation_place:
-                        elements.modalDisembarkPlace?.value
+                        elements.modalDisembarkPlace
+                            ?.value
                             ?.trim() || '',
 
-                    /*
-                     * Send the exact date input value.
-                     */
                     date_disembarked:
-                        elements.modalDisembarked?.value ||
-                        '',
+                        elements.modalDisembarked
+                            ?.value || '',
 
                     deployment_status:
-                        elements.modalStatus?.value ||
+                        elements.modalStatus
+                            ?.value ||
                         'Not Deployed'
 
                 };
@@ -3021,16 +3423,21 @@ function formatInputDate(value) {
             function validateDeploymentDates() {
 
                 const embarkation =
-                    elements.modalDeployed?.value || '';
+                    elements.modalDeployed
+                        ?.value || '';
+
 
                 const disembarkation =
-                    elements.modalDisembarked?.value || '';
+                    elements.modalDisembarked
+                        ?.value || '';
 
 
                 /*
-                 * It is valid for an ongoing deployment
-                 * to have no disembarkation date.
-                 */
+                |--------------------------------------------------------------------------
+                | If either date is empty, allow it.
+                |--------------------------------------------------------------------------
+                */
+
                 if (
                     !embarkation ||
                     !disembarkation
@@ -3042,17 +3449,21 @@ function formatInputDate(value) {
 
 
                 const start =
-                    parseDateOnly(
+                    parseDate(
                         embarkation
                     );
 
+
                 const end =
-                    parseDateOnly(
+                    parseDate(
                         disembarkation
                     );
 
 
-                if (!start || !end) {
+                if (
+                    !start ||
+                    !end
+                ) {
 
                     showError(
                         'Please enter valid deployment dates.'
@@ -3063,7 +3474,9 @@ function formatInputDate(value) {
                 }
 
 
-                if (end < start) {
+                if (
+                    end < start
+                ) {
 
                     showError(
                         'Disembarkation date cannot be earlier than embarkation date.'
@@ -3080,7 +3493,7 @@ function formatInputDate(value) {
 
 
             /* =====================================================
-               RESPONSE
+               RESPONSE HANDLER
             ====================================================== */
 
             async function parseResponse(
@@ -3104,7 +3517,9 @@ function formatInputDate(value) {
                 }
 
 
-                if (!response.ok) {
+                if (
+                    !response.ok
+                ) {
 
                     throw new Error(
                         data?.message ||
@@ -3120,7 +3535,7 @@ function formatInputDate(value) {
 
 
             /* =====================================================
-               SAVE BUTTON
+               SAVE BUTTON STATE
             ====================================================== */
 
             function setSavingState(
@@ -3148,14 +3563,16 @@ function formatInputDate(value) {
 
                 elements.saveButton.textContent =
                     saving
+
                         ? 'Saving...'
+
                         : 'Save Changes';
 
             }
 
 
             /* =====================================================
-               TOAST
+               SUCCESS TOAST
             ====================================================== */
 
             function showDeploymentToast() {
@@ -3175,6 +3592,7 @@ function formatInputDate(value) {
 
 
                 setTimeout(
+
                     () => {
 
                         elements.successToast.classList.remove(
@@ -3182,7 +3600,9 @@ function formatInputDate(value) {
                         );
 
                     },
+
                     CONFIG.toastDuration
+
                 );
 
             }
@@ -3204,7 +3624,7 @@ function formatInputDate(value) {
 
 
             /* =====================================================
-               DRAG TO SCROLL
+               DRAG-TO-SCROLL TABLE
             ====================================================== */
 
             function setupDragToScroll() {
@@ -3220,11 +3640,14 @@ function formatInputDate(value) {
                 }
 
 
-                let dragging = false;
+                let dragging =
+                    false;
 
-                let startX = 0;
+                let startX =
+                    0;
 
-                let initialScroll = 0;
+                let initialScroll =
+                    0;
 
 
                 container.addEventListener(
@@ -3242,7 +3665,8 @@ function formatInputDate(value) {
                         }
 
 
-                        dragging = true;
+                        dragging =
+                            true;
 
 
                         startX =
@@ -3297,7 +3721,9 @@ function formatInputDate(value) {
                 const stopDragging =
                     () => {
 
-                        dragging = false;
+                        dragging =
+                            false;
+
 
                         container.classList.remove(
                             'is-dragging'
