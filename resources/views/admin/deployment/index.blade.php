@@ -25,57 +25,63 @@
 
         /*
         |--------------------------------------------------------------------------
-        | Duration of Sea Service
+        | SEA SERVICE DURATION
         |--------------------------------------------------------------------------
         |
-        | Counts:
-        | Embarkation Date -> Disembarkation Date
+        | IMPORTANT:
+        | Duration is ONLY calculated when BOTH dates exist.
         |
-        | If no disembarkation date exists:
-        | Embarkation Date -> Today
+        | Ongoing deployment:
+        | Embarkation = Feb 01, 2026
+        | Disembarkation = NULL
+        | Result = —
         |
-        | Examples:
-        | Jan 15 -> Feb 15 = 1 Month
-        | Jan 15 -> Feb 18 = 1 Month, 3 Days
-        | Jan 15 -> Jan 20 = 5 Days
+        | Completed deployment:
+        | Embarkation = Feb 01, 2026
+        | Disembarkation = Mar 04, 2026
+        | Result = 1 Month, 3 Days
         |
         */
 
         $calculateDuration = function ($startDate, $endDate = null) {
-            if (!$startDate) {
+
+            /*
+             * Do NOT calculate ongoing duration.
+             *
+             * Sea service duration is only finalized
+             * after the cadet has a disembarkation date.
+             */
+            if (!$startDate || !$endDate) {
                 return null;
             }
 
             try {
+
                 $start = \Carbon\Carbon::parse($startDate)->startOfDay();
+                $end = \Carbon\Carbon::parse($endDate)->startOfDay();
 
-                $end = $endDate
-                    ? \Carbon\Carbon::parse($endDate)->startOfDay()
-                    : \Carbon\Carbon::today();
-
+                /*
+                 * Invalid date range.
+                 */
                 if ($end->lt($start)) {
                     return null;
                 }
 
                 /*
-                 * Calculate complete calendar months first.
+                 * Calculate complete calendar months.
                  */
                 $months = $start->diffInMonths($end);
 
                 /*
-                 * Recreate the date after adding those months.
-                 * addMonthsNoOverflow prevents dates such as:
-                 *
-                 * Jan 31 + 1 month
-                 * from incorrectly becoming Mar 3.
+                 * Build the date after the calculated months.
                  */
                 $monthDate = $start->copy()->addMonthsNoOverflow($months);
 
                 /*
-                 * Never allow the calculated month date
-                 * to exceed the actual end date.
+                 * Protect against over-counting.
                  */
                 if ($monthDate->gt($end)) {
+
                     $months--;
 
                     $monthDate = $start
@@ -86,29 +92,41 @@
                 }
 
                 /*
-                 * Calculate remaining days after complete months.
+                 * Calculate remaining days.
                  */
                 $days = $monthDate->diffInDays($end);
 
                 $parts = [];
 
                 if ($months > 0) {
+
                     $parts[] =
                         $months . ' ' .
-                        ($months === 1 ? 'Month' : 'Months');
+                        ($months === 1
+                            ? 'Month'
+                            : 'Months');
+
                 }
 
                 if ($days > 0) {
+
                     $parts[] =
                         $days . ' ' .
-                        ($days === 1 ? 'Day' : 'Days');
+                        ($days === 1
+                            ? 'Day'
+                            : 'Days');
+
                 }
 
+                /*
+                 * Same embarkation and disembarkation date.
+                 */
                 return $parts
                     ? implode(', ', $parts)
                     : '0 Days';
 
             } catch (\Throwable $e) {
+
                 return null;
             }
         };
@@ -526,9 +544,6 @@
 
         <section class="dm-table-card">
 
-
-            {{-- TABLE HEADER --}}
-
             <div class="dm-table-header">
 
                 <div class="dm-table-title">
@@ -549,8 +564,6 @@
 
             </div>
 
-
-            {{-- TABLE --}}
 
             <div class="dm-table-scroll">
 
@@ -648,9 +661,7 @@
                                 );
 
                                 $course = strtolower(
-                                    trim(
-                                        $cadet->course ?? ''
-                                    )
+                                    trim($cadet->course ?? '')
                                 );
 
                                 $batch = strtolower(
@@ -660,16 +671,11 @@
                                 );
 
                                 /*
-                                 * Sea Service Duration
+                                 * IMPORTANT:
                                  *
-                                 * Start:
-                                 * date_deployed
-                                 *
-                                 * End:
-                                 * date_disembarked
-                                 *
-                                 * If there is no disembarkation date,
-                                 * today is used.
+                                 * Duration is ONLY calculated when
+                                 * date_deployed AND date_disembarked
+                                 * are both available.
                                  */
                                 $duration = $calculateDuration(
                                     $deployment?->date_deployed,
@@ -778,7 +784,9 @@
                                 <td
                                     data-date="{{ $deployment?->date_deployed ?? '' }}"
                                 >
+
                                     {{ $formatDate($deployment?->date_deployed) }}
+
                                 </td>
 
 
@@ -792,7 +800,9 @@
                                 {{-- DISEMBARKATION DATE --}}
 
                                 <td>
+
                                     {{ $formatDate($deployment?->date_disembarked) }}
+
                                 </td>
 
 
@@ -800,26 +810,14 @@
 
                                 <td>
 
-                                    @if($duration)
+                                    @if(
+                                        $deployment?->date_deployed &&
+                                        $deployment?->date_disembarked &&
+                                        $duration
+                                    )
 
                                         <span class="dm-duration-text">
                                             {{ $duration }}
-
-                                            @if(
-                                                !$deployment?->date_disembarked &&
-                                                $deployment?->date_deployed
-                                            )
-                                                <small
-                                                    style="
-                                                        display:block;
-                                                        font-size:11px;
-                                                        opacity:.7;
-                                                        margin-top:3px;
-                                                    "
-                                                >
-                                                    Ongoing
-                                                </small>
-                                            @endif
                                         </span>
 
                                     @else
@@ -1033,18 +1031,13 @@
 
         <div class="dm-modal-card">
 
-
-            {{-- HIDDEN ID --}}
-
             <input
                 type="hidden"
                 id="modalId"
             >
 
 
-            {{-- =================================================
-                 MODAL HEADER
-            ================================================== --}}
+            {{-- MODAL HEADER --}}
 
             <header class="dm-modal-header">
 
@@ -1084,9 +1077,7 @@
             </header>
 
 
-            {{-- =================================================
-                 MODAL BODY
-            ================================================== --}}
+            {{-- MODAL BODY --}}
 
             <div class="dm-modal-body">
 
@@ -1132,9 +1123,7 @@
                 </div>
 
 
-                {{-- =================================================
-                     SECTION 01
-                ================================================== --}}
+                {{-- SECTION 01 --}}
 
                 <section class="dm-section">
 
@@ -1152,9 +1141,6 @@
 
 
                     <div class="dm-form-grid">
-
-
-                        {{-- VESSEL --}}
 
                         <div class="dm-form-group">
 
@@ -1176,8 +1162,6 @@
                         </div>
 
 
-                        {{-- COMPANY --}}
-
                         <div class="dm-form-group">
 
                             <label
@@ -1197,8 +1181,6 @@
 
                         </div>
 
-
-                        {{-- DEPLOYMENT TYPE --}}
 
                         <div class="dm-form-group full">
 
@@ -1234,9 +1216,7 @@
                 <div class="dm-divider"></div>
 
 
-                {{-- =================================================
-                     SECTION 02
-                ================================================== --}}
+                {{-- SECTION 02 --}}
 
                 <section class="dm-section">
 
@@ -1254,9 +1234,6 @@
 
 
                     <div class="dm-form-grid">
-
-
-                        {{-- PLACE --}}
 
                         <div class="dm-form-group">
 
@@ -1277,8 +1254,6 @@
 
                         </div>
 
-
-                        {{-- DATE --}}
 
                         <div class="dm-form-group">
 
@@ -1305,9 +1280,7 @@
                 <div class="dm-divider"></div>
 
 
-                {{-- =================================================
-                     SECTION 03
-                ================================================== --}}
+                {{-- SECTION 03 --}}
 
                 <section class="dm-section">
 
@@ -1325,9 +1298,6 @@
 
 
                     <div class="dm-form-grid">
-
-
-                        {{-- PLACE --}}
 
                         <div class="dm-form-group">
 
@@ -1349,8 +1319,6 @@
                         </div>
 
 
-                        {{-- DATE --}}
-
                         <div class="dm-form-group">
 
                             <label
@@ -1371,9 +1339,7 @@
                     </div>
 
 
-                    {{-- =================================================
-                         SEA SERVICE DURATION
-                    ================================================== --}}
+                    {{-- SEA SERVICE DURATION --}}
 
                     <div class="dm-duration-card">
 
@@ -1395,7 +1361,7 @@
                             </strong>
 
                             <small id="modalDurationStatus">
-                                Based on embarkation and disembarkation dates
+                                Duration will be calculated after disembarkation
                             </small>
 
                         </div>
@@ -1408,9 +1374,7 @@
                 <div class="dm-divider"></div>
 
 
-                {{-- =================================================
-                     SECTION 04
-                ================================================== --}}
+                {{-- SECTION 04 --}}
 
                 <section class="dm-section">
 
@@ -1504,9 +1468,7 @@
             </div>
 
 
-            {{-- =================================================
-                 MODAL FOOTER
-            ================================================== --}}
+            {{-- MODAL FOOTER --}}
 
             <footer class="dm-modal-footer">
 
@@ -1545,147 +1507,104 @@
 
 
             /* =====================================================
-               CONFIGURATION
+               CONFIG
             ====================================================== */
 
             const CONFIG = {
+
                 deploymentUrl: '/admin/deployment',
-                defaultPhoto: @json(asset('images/default.png')),
+
+                defaultPhoto:
+                    @json(asset('images/default.png')),
+
                 reloadDelay: 1800,
+
                 toastDuration: 1800
+
             };
 
 
             /* =====================================================
-               DOM CACHE
+               DOM
             ====================================================== */
 
             const elements = {
 
                 modal:
-                    document.getElementById(
-                        'deploymentModal'
-                    ),
+                    document.getElementById('deploymentModal'),
 
                 modalId:
-                    document.getElementById(
-                        'modalId'
-                    ),
+                    document.getElementById('modalId'),
 
                 modalPhoto:
-                    document.getElementById(
-                        'modalPhoto'
-                    ),
+                    document.getElementById('modalPhoto'),
 
                 modalName:
-                    document.getElementById(
-                        'modalName'
-                    ),
+                    document.getElementById('modalName'),
 
                 modalTRB:
-                    document.getElementById(
-                        'modalTRB'
-                    ),
+                    document.getElementById('modalTRB'),
 
                 modalCourse:
-                    document.getElementById(
-                        'modalCourse'
-                    ),
+                    document.getElementById('modalCourse'),
 
                 modalVessel:
-                    document.getElementById(
-                        'modalVessel'
-                    ),
+                    document.getElementById('modalVessel'),
 
                 modalCompany:
-                    document.getElementById(
-                        'modalCompany'
-                    ),
+                    document.getElementById('modalCompany'),
 
                 modalDeploymentType:
-                    document.getElementById(
-                        'modalDeploymentType'
-                    ),
+                    document.getElementById('modalDeploymentType'),
 
                 modalEmbarkPlace:
-                    document.getElementById(
-                        'modalEmbarkPlace'
-                    ),
+                    document.getElementById('modalEmbarkPlace'),
 
                 modalDeployed:
-                    document.getElementById(
-                        'modalDeployed'
-                    ),
+                    document.getElementById('modalDeployed'),
 
                 modalDisembarkPlace:
-                    document.getElementById(
-                        'modalDisembarkPlace'
-                    ),
+                    document.getElementById('modalDisembarkPlace'),
 
                 modalDisembarked:
-                    document.getElementById(
-                        'modalDisembarked'
-                    ),
+                    document.getElementById('modalDisembarked'),
 
                 modalDuration:
-                    document.getElementById(
-                        'modalDuration'
-                    ),
+                    document.getElementById('modalDuration'),
 
                 modalDurationStatus:
-                    document.getElementById(
-                        'modalDurationStatus'
-                    ),
+                    document.getElementById('modalDurationStatus'),
 
                 modalStatus:
-                    document.getElementById(
-                        'modalStatus'
-                    ),
+                    document.getElementById('modalStatus'),
 
                 modalPercent:
-                    document.getElementById(
-                        'modalPercent'
-                    ),
+                    document.getElementById('modalPercent'),
 
                 modalProgress:
-                    document.getElementById(
-                        'modalProgress'
-                    ),
+                    document.getElementById('modalProgress'),
 
                 saveButton:
-                    document.getElementById(
-                        'saveDeploymentBtn'
-                    ),
+                    document.getElementById('saveDeploymentBtn'),
 
                 searchInput:
-                    document.getElementById(
-                        'searchInput'
-                    ),
+                    document.getElementById('searchInput'),
 
                 dateFrom:
-                    document.getElementById(
-                        'dateFrom'
-                    ),
+                    document.getElementById('dateFrom'),
 
                 dateTo:
-                    document.getElementById(
-                        'dateTo'
-                    ),
+                    document.getElementById('dateTo'),
 
                 tableBody:
-                    document.getElementById(
-                        'deploymentTableBody'
-                    ),
+                    document.getElementById('deploymentTableBody'),
 
                 filteredEmptyRow:
-                    document.getElementById(
-                        'filteredEmptyRow'
-                    ),
+                    document.getElementById('filteredEmptyRow'),
 
                 successToast:
-                    document.getElementById(
-                        'successToast'
-                    )
+                    document.getElementById('successToast')
+
             };
 
 
@@ -1700,7 +1619,7 @@
 
 
             /* =====================================================
-               INITIALIZATION
+               INITIALIZE
             ====================================================== */
 
             document.addEventListener(
@@ -1725,7 +1644,7 @@
 
 
             /* =====================================================
-               FILTER SETUP
+               FILTERS
             ====================================================== */
 
             function setupFilters() {
@@ -1764,13 +1683,7 @@
             }
 
 
-            /* =====================================================
-               GET CHECKED VALUES
-            ====================================================== */
-
-            function getCheckedValues(
-                filterType
-            ) {
+            function getCheckedValues(filterType) {
 
                 return Array.from(
                     document.querySelectorAll(
@@ -1786,26 +1699,16 @@
             }
 
 
-            /* =====================================================
-               TABLE FILTER
-            ====================================================== */
-
             function filterDeploymentTable() {
 
                 const courses =
-                    getCheckedValues(
-                        'course'
-                    );
+                    getCheckedValues('course');
 
                 const batches =
-                    getCheckedValues(
-                        'batch'
-                    );
+                    getCheckedValues('batch');
 
                 const statuses =
-                    getCheckedValues(
-                        'status'
-                    );
+                    getCheckedValues('status');
 
                 const search =
                     elements.searchInput?.value
@@ -1861,19 +1764,14 @@
 
                     const matchesStatus =
                         !statuses.length ||
-                        statuses.some(
-                            selectedStatus =>
-                                status.includes(
-                                    selectedStatus
-                                )
+                        statuses.some(selectedStatus =>
+                            status.includes(selectedStatus)
                         );
 
 
                     const matchesSearch =
                         !search ||
-                        rowText.includes(
-                            search
-                        );
+                        rowText.includes(search);
 
 
                     const matchesDate =
@@ -1913,10 +1811,6 @@
             }
 
 
-            /* =====================================================
-               DATE RANGE
-            ====================================================== */
-
             function matchesDateRange(
                 deploymentDate,
                 from,
@@ -1927,16 +1821,12 @@
                     return true;
                 }
 
-
                 if (!deploymentDate) {
                     return false;
                 }
 
-
                 const current =
-                    normalizeDate(
-                        deploymentDate
-                    );
+                    normalizeDate(deploymentDate);
 
                 const minimum =
                     from
@@ -1970,38 +1860,60 @@
             }
 
 
-            function normalizeDate(
-                value
-            ) {
+            function normalizeDate(value) {
 
                 if (!value) {
                     return null;
                 }
 
 
-                const date =
-                    new Date(
-                        `${String(value).substring(0, 10)}T00:00:00`
-                    );
+                /*
+                 * Only use YYYY-MM-DD.
+                 *
+                 * This prevents browser timezone
+                 * conversion from changing the date.
+                 */
+                const clean =
+                    String(value)
+                        .substring(0, 10);
+
+
+                const parts =
+                    clean.split('-');
+
+
+                if (parts.length !== 3) {
+                    return null;
+                }
+
+
+                const year =
+                    Number(parts[0]);
+
+                const month =
+                    Number(parts[1]);
+
+                const day =
+                    Number(parts[2]);
 
 
                 if (
-                    Number.isNaN(
-                        date.getTime()
-                    )
+                    !year ||
+                    !month ||
+                    !day
                 ) {
                     return null;
                 }
 
 
-                return date.getTime();
+                return new Date(
+                    year,
+                    month - 1,
+                    day
+                ).getTime();
 
             }
 
-
-            /* =====================================================
-               FILTERED EMPTY STATE
-            ====================================================== */
 
             function updateFilteredEmptyState(
                 totalRows,
@@ -2045,9 +1957,7 @@
 
 
                     const isOpen =
-                        dropdown.classList.contains(
-                            'open'
-                        );
+                        dropdown.classList.contains('open');
 
 
                     closeAllDropdowns();
@@ -2058,6 +1968,7 @@
                         dropdown.classList.add(
                             'open'
                         );
+
 
                         button.setAttribute(
                             'aria-expanded',
@@ -2080,6 +1991,7 @@
                         dropdown.classList.remove(
                             'open'
                         );
+
 
                         dropdown
                             .querySelector(
@@ -2127,16 +2039,24 @@
             ) {
 
                 /*
-                 * No embarkation date.
+                 * IMPORTANT:
+                 *
+                 * Never calculate duration using today.
+                 *
+                 * Sea Service Duration is only available
+                 * after the cadet has disembarked.
                  */
-                if (!embarkationDate) {
+                if (
+                    !embarkationDate ||
+                    !disembarkationDate
+                ) {
 
                     return {
 
                         text: '—',
 
                         status:
-                            'Embarkation date not available'
+                            'Duration will be calculated after disembarkation'
 
                     };
 
@@ -2144,31 +2064,14 @@
 
 
                 const start =
-                    parseDate(
-                        embarkationDate
-                    );
+                    parseDate(embarkationDate);
 
 
-                /*
-                 * If disembarkation date exists,
-                 * use it.
-                 *
-                 * Otherwise use today.
-                 */
                 const end =
-                    disembarkationDate
-                        ? parseDate(
-                            disembarkationDate
-                        )
-                        : start
-                            ? startOfToday()
-                            : null;
+                    parseDate(disembarkationDate);
 
 
-                if (
-                    !start ||
-                    !end
-                ) {
+                if (!start || !end) {
 
                     return {
 
@@ -2182,9 +2085,6 @@
                 }
 
 
-                /*
-                 * Prevent negative duration.
-                 */
                 if (end < start) {
 
                     return {
@@ -2199,9 +2099,6 @@
                 }
 
 
-                /*
-                 * Calculate COMPLETE calendar months.
-                 */
                 let months =
                     calculateFullMonths(
                         start,
@@ -2209,10 +2106,6 @@
                     );
 
 
-                /*
-                 * Calculate the date after adding
-                 * the complete months.
-                 */
                 let monthDate =
                     addMonthsSafely(
                         start,
@@ -2220,9 +2113,6 @@
                     );
 
 
-                /*
-                 * Safety check for month-end dates.
-                 */
                 if (monthDate > end) {
 
                     months--;
@@ -2239,23 +2129,13 @@
                 }
 
 
-                /*
-                 * Remaining days after complete months.
-                 */
-                const millisecondsPerDay =
-                    24 *
-                    60 *
-                    60 *
-                    1000;
-
-
                 const days =
                     Math.floor(
                         (
                             end.getTime() -
                             monthDate.getTime()
                         ) /
-                        millisecondsPerDay
+                        86400000
                     );
 
 
@@ -2288,50 +2168,75 @@
                 }
 
 
-                const text =
-                    parts.length
-                        ? parts.join(', ')
-                        : '0 Days';
-
-
                 return {
 
-                    text,
+                    text:
+                        parts.length
+                            ? parts.join(', ')
+                            : '0 Days',
 
                     status:
-                        disembarkationDate
-                            ? 'Completed sea service'
-                            : 'Current duration — deployment ongoing'
+                        'Completed sea service'
 
                 };
 
             }
 
 
-            /* =====================================================
-               PARSE DATE
-            ====================================================== */
-
-            function parseDate(
-                value
-            ) {
+            function parseDate(value) {
 
                 if (!value) {
                     return null;
                 }
 
 
-                const cleanValue =
+                const clean =
                     String(value)
-                        .substring(
-                            0,
-                            10
-                        );
+                        .substring(0, 10);
 
 
+                const parts =
+                    clean.split('-');
+
+
+                if (parts.length !== 3) {
+                    return null;
+                }
+
+
+                const year =
+                    Number(parts[0]);
+
+                const month =
+                    Number(parts[1]);
+
+                const day =
+                    Number(parts[2]);
+
+
+                if (
+                    !year ||
+                    !month ||
+                    !day
+                ) {
+                    return null;
+                }
+
+
+                /*
+                 * Local date.
+                 *
+                 * Avoid:
+                 * new Date('2026-02-01')
+                 *
+                 * because that can be interpreted as UTC
+                 * and shift the displayed date.
+                 */
                 const date =
                     new Date(
-                        `${cleanValue}T00:00:00`
+                        year,
+                        month - 1,
+                        day
                     );
 
 
@@ -2340,9 +2245,7 @@
                         date.getTime()
                     )
                 ) {
-
                     return null;
-
                 }
 
 
@@ -2350,33 +2253,6 @@
 
             }
 
-
-            /* =====================================================
-               START OF TODAY
-            ====================================================== */
-
-            function startOfToday() {
-
-                const today =
-                    new Date();
-
-
-                today.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                );
-
-
-                return today;
-
-            }
-
-
-            /* =====================================================
-               CALCULATE FULL MONTHS
-            ====================================================== */
 
             function calculateFullMonths(
                 start,
@@ -2401,12 +2277,8 @@
                     );
 
 
-                if (
-                    candidate > end
-                ) {
-
+                if (candidate > end) {
                     months--;
-
                 }
 
 
@@ -2418,32 +2290,20 @@
             }
 
 
-            /* =====================================================
-               ADD MONTHS SAFELY
-            ====================================================== */
-
             function addMonthsSafely(
                 date,
                 months
             ) {
 
                 const result =
-                    new Date(
-                        date
-                    );
+                    new Date(date);
 
 
                 const originalDay =
                     result.getDate();
 
 
-                /*
-                 * Start on day 1 to prevent
-                 * JavaScript month overflow.
-                 */
-                result.setDate(
-                    1
-                );
+                result.setDate(1);
 
 
                 result.setMonth(
@@ -2452,9 +2312,6 @@
                 );
 
 
-                /*
-                 * Find last day of target month.
-                 */
                 const lastDay =
                     new Date(
                         result.getFullYear(),
@@ -2482,24 +2339,26 @@
 
             function updateModalDuration() {
 
-                const embarkationDate =
+                const embarkation =
                     elements.modalDeployed?.value || '';
 
 
-                const disembarkationDate =
-                    elements.modalDisembarked?.value || null;
+                const disembarkation =
+                    elements.modalDisembarked?.value || '';
 
 
+                /*
+                 * No disembarkation date =
+                 * no completed sea-service duration.
+                 */
                 const result =
                     calculateSeaServiceDuration(
-                        embarkationDate,
-                        disembarkationDate
+                        embarkation,
+                        disembarkation || null
                     );
 
 
-                if (
-                    elements.modalDuration
-                ) {
+                if (elements.modalDuration) {
 
                     elements.modalDuration.textContent =
                         result.text;
@@ -2507,9 +2366,7 @@
                 }
 
 
-                if (
-                    elements.modalDurationStatus
-                ) {
+                if (elements.modalDurationStatus) {
 
                     elements.modalDurationStatus.textContent =
                         result.status;
@@ -2526,8 +2383,8 @@
             function setupModalEvents() {
 
                 /*
-                 * Update duration immediately
-                 * whenever embarkation changes.
+                 * Update duration immediately when either
+                 * date changes.
                  */
                 elements.modalDeployed?.addEventListener(
                     'change',
@@ -2535,44 +2392,19 @@
                 );
 
 
-                /*
-                 * Update duration immediately
-                 * whenever disembarkation changes.
-                 */
                 elements.modalDisembarked?.addEventListener(
                     'change',
                     updateModalDuration
                 );
 
 
-                /*
-                 * Also update while typing/changing
-                 * through browser controls.
-                 */
-                elements.modalDeployed?.addEventListener(
-                    'input',
-                    updateModalDuration
-                );
-
-
-                elements.modalDisembarked?.addEventListener(
-                    'input',
-                    updateModalDuration
-                );
-
-
-                /*
-                 * ESC closes modal.
-                 */
                 document.addEventListener(
                     'keydown',
                     event => {
 
                         if (
                             event.key === 'Escape' &&
-                            elements.modal?.classList.contains(
-                                'show'
-                            )
+                            elements.modal?.classList.contains('show')
                         ) {
 
                             closeDeploymentModal();
@@ -2583,16 +2415,12 @@
                 );
 
 
-                /*
-                 * Clicking modal backdrop closes it.
-                 */
                 elements.modal?.addEventListener(
                     'click',
                     event => {
 
                         if (
-                            event.target ===
-                            elements.modal
+                            event.target === elements.modal
                         ) {
 
                             closeDeploymentModal();
@@ -2690,35 +2518,42 @@
                     ''
                 );
 
+
                 setValue(
                     elements.modalCompany,
                     ''
                 );
+
 
                 setValue(
                     elements.modalDeploymentType,
                     'Domestic'
                 );
 
+
                 setValue(
                     elements.modalEmbarkPlace,
                     ''
                 );
+
 
                 setValue(
                     elements.modalDeployed,
                     ''
                 );
 
+
                 setValue(
                     elements.modalDisembarkPlace,
                     ''
                 );
 
+
                 setValue(
                     elements.modalDisembarked,
                     ''
                 );
+
 
                 setValue(
                     elements.modalStatus,
@@ -2726,19 +2561,12 @@
                 );
 
 
-                updateModalProgress(
-                    0
-                );
-
+                updateModalProgress(0);
 
                 updateModalDuration();
 
             }
 
-
-            /* =====================================================
-               SET VALUE
-            ====================================================== */
 
             function setValue(
                 element,
@@ -2746,22 +2574,17 @@
             ) {
 
                 if (element) {
-
-                    element.value =
-                        value;
-
+                    element.value = value;
                 }
 
             }
 
 
             /* =====================================================
-               CADET PHOTO
+               PHOTO
             ====================================================== */
 
-            function setCadetPhoto(
-                photo
-            ) {
+            function setCadetPhoto(photo) {
 
                 if (
                     !photo ||
@@ -2809,20 +2632,15 @@
                     await fetch(
                         `${CONFIG.deploymentUrl}/${cadetId}`,
                         {
-
-                            method:
-                                'GET',
+                            method: 'GET',
 
                             headers: {
-
                                 Accept:
                                     'application/json'
-
                             },
 
                             credentials:
                                 'same-origin'
-
                         }
                     );
 
@@ -2834,8 +2652,7 @@
 
 
                 const deployment =
-                    data.deployment ||
-                    {};
+                    data.deployment || {};
 
 
                 populateDeployment(
@@ -2855,15 +2672,13 @@
 
                 setValue(
                     elements.modalVessel,
-                    deployment.vessel_name ||
-                    ''
+                    deployment.vessel_name || ''
                 );
 
 
                 setValue(
                     elements.modalCompany,
-                    deployment.company_name ||
-                    ''
+                    deployment.company_name || ''
                 );
 
 
@@ -2876,11 +2691,23 @@
 
                 setValue(
                     elements.modalEmbarkPlace,
-                    deployment.embarkation_place ||
-                    ''
+                    deployment.embarkation_place || ''
                 );
 
 
+                /*
+                 * IMPORTANT DATE FIX
+                 *
+                 * Only take the first 10 characters.
+                 *
+                 * Database:
+                 * 2026-02-01
+                 *
+                 * becomes:
+                 * 2026-02-01
+                 *
+                 * No timezone conversion.
+                 */
                 setValue(
                     elements.modalDeployed,
                     formatInputDate(
@@ -2891,8 +2718,7 @@
 
                 setValue(
                     elements.modalDisembarkPlace,
-                    deployment.disembarkation_place ||
-                    ''
+                    deployment.disembarkation_place || ''
                 );
 
 
@@ -2912,39 +2738,62 @@
 
 
                 /*
-                 * IMPORTANT:
-                 * Recalculate duration after
-                 * loading the deployment.
+                 * Duration is recalculated from
+                 * the two actual input dates.
                  */
                 updateModalDuration();
 
 
                 updateModalProgress(
-                    deployment.percentage ||
-                    0
+                    deployment.percentage || 0
                 );
 
             }
 
 
             /* =====================================================
-               FORMAT DATE FOR INPUT
+               INPUT DATE
             ====================================================== */
 
-            function formatInputDate(
-                value
-            ) {
+            function formatInputDate(value) {
 
                 if (!value) {
                     return '';
                 }
 
 
-                return String(value)
-                    .substring(
-                        0,
-                        10
-                    );
+                /*
+                 * If Laravel returns:
+                 *
+                 * 2026-02-01
+                 * 2026-02-01 00:00:00
+                 * 2026-02-01T00:00:00.000000Z
+                 *
+                 * only use:
+                 *
+                 * 2026-02-01
+                 */
+                const clean =
+                    String(value)
+                        .substring(0, 10);
+
+
+                /*
+                 * Make sure it really is
+                 * YYYY-MM-DD.
+                 */
+                if (
+                    !/^\d{4}-\d{2}-\d{2}$/.test(
+                        clean
+                    )
+                ) {
+
+                    return '';
+
+                }
+
+
+                return clean;
 
             }
 
@@ -2958,17 +2807,13 @@
             ) {
 
                 let value =
-                    Number(
-                        percentage
-                    );
+                    Number(percentage);
 
 
                 if (
                     Number.isNaN(value)
                 ) {
-
                     value = 0;
-
                 }
 
 
@@ -2983,14 +2828,10 @@
 
 
                 const rounded =
-                    Math.round(
-                        value
-                    );
+                    Math.round(value);
 
 
-                if (
-                    elements.modalProgress
-                ) {
+                if (elements.modalProgress) {
 
                     elements.modalProgress.style.width =
                         `${rounded}%`;
@@ -3004,9 +2845,7 @@
                 }
 
 
-                if (
-                    elements.modalPercent
-                ) {
+                if (elements.modalPercent) {
 
                     elements.modalPercent.textContent =
                         `${rounded}%`;
@@ -3021,16 +2860,14 @@
 
                 progressTrack?.setAttribute(
                     'aria-valuenow',
-                    String(
-                        rounded
-                    )
+                    String(rounded)
                 );
 
             }
 
 
             /* =====================================================
-               MODAL OPEN
+               OPEN / CLOSE MODAL
             ====================================================== */
 
             function openModal() {
@@ -3045,20 +2882,14 @@
                 );
 
 
-                requestAnimationFrame(
-                    () => {
+                requestAnimationFrame(() => {
 
-                        elements.modalVessel?.focus();
+                    elements.modalVessel?.focus();
 
-                    }
-                );
+                });
 
             }
 
-
-            /* =====================================================
-               MODAL CLOSE
-            ====================================================== */
 
             window.closeDeploymentModal =
                 function() {
@@ -3108,9 +2939,7 @@
 
                     if (
                         elements.saveButton
-                            ?.classList.contains(
-                                'loading'
-                            )
+                            ?.classList.contains('loading')
                     ) {
 
                         return;
@@ -3118,9 +2947,7 @@
                     }
 
 
-                    setSavingState(
-                        true
-                    );
+                    setSavingState(true);
 
 
                     try {
@@ -3133,9 +2960,7 @@
                             await fetch(
                                 `${CONFIG.deploymentUrl}/${id}`,
                                 {
-
-                                    method:
-                                        'PUT',
+                                    method: 'PUT',
 
                                     headers: {
 
@@ -3182,7 +3007,6 @@
 
                         closeDeploymentModal();
 
-
                         showDeploymentToast();
 
 
@@ -3194,6 +3018,7 @@
                             },
                             CONFIG.reloadDelay
                         );
+
 
                     } catch (error) {
 
@@ -3208,11 +3033,10 @@
                             'Unable to update deployment.'
                         );
 
+
                     } finally {
 
-                        setSavingState(
-                            false
-                        );
+                        setSavingState(false);
 
                     }
 
@@ -3279,8 +3103,10 @@
 
 
                 /*
-                 * If either date is empty,
-                 * allow the request.
+                 * Both dates are optional.
+                 *
+                 * Duration will remain —
+                 * if disembarkation is empty.
                  */
                 if (
                     !embarkation ||
@@ -3305,8 +3131,8 @@
 
 
                 if (
-                    !start ||
-                    !end
+                    start === null ||
+                    end === null
                 ) {
 
                     showError(
@@ -3318,9 +3144,7 @@
                 }
 
 
-                if (
-                    end < start
-                ) {
+                if (end < start) {
 
                     showError(
                         'Disembarkation date cannot be earlier than embarkation date.'
@@ -3337,7 +3161,7 @@
 
 
             /* =====================================================
-               RESPONSE HANDLER
+               RESPONSE
             ====================================================== */
 
             async function parseResponse(
@@ -3377,7 +3201,7 @@
 
 
             /* =====================================================
-               SAVE BUTTON STATE
+               SAVE STATE
             ====================================================== */
 
             function setSavingState(
@@ -3387,9 +3211,7 @@
                 if (
                     !elements.saveButton
                 ) {
-
                     return;
-
                 }
 
 
@@ -3412,7 +3234,7 @@
 
 
             /* =====================================================
-               SUCCESS TOAST
+               TOAST
             ====================================================== */
 
             function showDeploymentToast() {
@@ -3420,9 +3242,7 @@
                 if (
                     !elements.successToast
                 ) {
-
                     return;
-
                 }
 
 
@@ -3473,9 +3293,7 @@
 
 
                 if (!container) {
-
                     return;
-
                 }
 
 
@@ -3495,9 +3313,7 @@
                                 'button, input, select, a'
                             )
                         ) {
-
                             return;
-
                         }
 
 
@@ -3526,9 +3342,7 @@
                     event => {
 
                         if (!dragging) {
-
                             return;
-
                         }
 
 
@@ -3555,16 +3369,16 @@
                 );
 
 
-                const stopDragging =
-                    () => {
+                const stopDragging = () => {
 
-                        dragging = false;
+                    dragging = false;
 
-                        container.classList.remove(
-                            'is-dragging'
-                        );
 
-                    };
+                    container.classList.remove(
+                        'is-dragging'
+                    );
+
+                };
 
 
                 container.addEventListener(
