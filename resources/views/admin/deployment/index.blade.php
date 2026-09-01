@@ -401,6 +401,10 @@
                         <th>Embarkation Date</th>
                         <th>Disembarkation Place</th>
                         <th>Disembarkation Date</th>
+
+                        {{-- ADDED --}}
+                        <th>Duration of Sea Service</th>
+
                         <th>Progress</th>
                         <th>Status</th>
                         <th>Action</th>
@@ -440,6 +444,118 @@
                                     $percent
                                 )
                             );
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DURATION OF SEA SERVICE
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $durationOfSeaService = null;
+
+                        $rawEmbarkationDate =
+                            $deployment?->getRawOriginal('date_deployed');
+
+                        $rawDisembarkationDate =
+                            $deployment?->getRawOriginal('date_disembarked');
+
+
+                        if (
+                            $rawEmbarkationDate &&
+                            $rawDisembarkationDate
+                        ) {
+
+                            try {
+
+                                $embarkDate =
+                                    \Carbon\Carbon::createFromFormat(
+                                        'Y-m-d',
+                                        substr(
+                                            (string) $rawEmbarkationDate,
+                                            0,
+                                            10
+                                        )
+                                    );
+
+                                $disembarkDate =
+                                    \Carbon\Carbon::createFromFormat(
+                                        'Y-m-d',
+                                        substr(
+                                            (string) $rawDisembarkationDate,
+                                            0,
+                                            10
+                                        )
+                                    );
+
+
+                                if (
+                                    $disembarkDate->greaterThanOrEqualTo(
+                                        $embarkDate
+                                    )
+                                ) {
+
+                                    $difference =
+                                        $embarkDate->diff(
+                                            $disembarkDate
+                                        );
+
+
+                                    $months =
+                                        ($difference->y * 12)
+                                        + $difference->m;
+
+
+                                    $days =
+                                        $difference->d;
+
+
+                                    $durationParts = [];
+
+
+                                    if ($months > 0) {
+
+                                        $durationParts[] =
+                                            $months . ' ' .
+                                            (
+                                                $months === 1
+                                                    ? 'Month'
+                                                    : 'Months'
+                                            );
+
+                                    }
+
+
+                                    if ($days > 0) {
+
+                                        $durationParts[] =
+                                            $days . ' ' .
+                                            (
+                                                $days === 1
+                                                    ? 'Day'
+                                                    : 'Days'
+                                            );
+
+                                    }
+
+
+                                    $durationOfSeaService =
+                                        !empty($durationParts)
+                                            ? implode(
+                                                ', ',
+                                                $durationParts
+                                            )
+                                            : '0 Days';
+
+                                }
+
+                            } catch (\Throwable $e) {
+
+                                $durationOfSeaService = null;
+
+                            }
+
+                        }
 
                     @endphp
 
@@ -526,20 +642,39 @@
 
                         {{-- EMBARKATION DATE --}}
 
-                    <td
-                        data-date="{{ $deployment?->getRawOriginal('date_deployed') ?? '' }}"
-                    >
-                        @php
-                            $rawEmbarkationDate =
-                                $deployment?->getRawOriginal('date_deployed');
-                        @endphp
+                        <td
+                            data-date="{{ $deployment?->getRawOriginal('date_deployed') ?? '' }}"
+                        >
 
-                        @if($rawEmbarkationDate)
-                            {{ date('M d, Y', strtotime(substr($rawEmbarkationDate, 0, 10))) }}
-                        @else
-                            —
-                        @endif
-                    </td>
+                            @php
+
+                                $rawEmbarkationDate =
+                                    $deployment?->getRawOriginal(
+                                        'date_deployed'
+                                    );
+
+                            @endphp
+
+                            @if($rawEmbarkationDate)
+
+                                {{ date(
+                                    'M d, Y',
+                                    strtotime(
+                                        substr(
+                                            $rawEmbarkationDate,
+                                            0,
+                                            10
+                                        )
+                                    )
+                                ) }}
+
+                            @else
+
+                                —
+
+                            @endif
+
+                        </td>
 
 
                         {{-- DISEMBARKATION PLACE --}}
@@ -552,16 +687,56 @@
                         {{-- DISEMBARKATION DATE --}}
 
                         <td>
+
                             @php
+
                                 $rawDisembarkationDate =
-                                    $deployment?->getRawOriginal('date_disembarked');
+                                    $deployment?->getRawOriginal(
+                                        'date_disembarked'
+                                    );
+
                             @endphp
 
                             @if($rawDisembarkationDate)
-                                {{ date('M d, Y', strtotime(substr($rawDisembarkationDate, 0, 10))) }}
+
+                                {{ date(
+                                    'M d, Y',
+                                    strtotime(
+                                        substr(
+                                            $rawDisembarkationDate,
+                                            0,
+                                            10
+                                        )
+                                    )
+                                ) }}
+
                             @else
+
                                 —
+
                             @endif
+
+                        </td>
+
+
+                        {{-- =================================================
+                             DURATION OF SEA SERVICE
+                        ================================================== --}}
+
+                        <td>
+
+                            @if($durationOfSeaService)
+
+                                <strong class="dm-sea-duration">
+                                    {{ $durationOfSeaService }}
+                                </strong>
+
+                            @else
+
+                                —
+
+                            @endif
+
                         </td>
 
 
@@ -645,7 +820,7 @@
                     <tr>
 
                         <td
-                            colspan="14"
+                            colspan="15"
                             class="dm-empty"
                         >
 
@@ -979,6 +1154,26 @@
 
                 </div>
 
+
+                {{-- =================================================
+                     DURATION OF SEA SERVICE
+                ================================================== --}}
+
+                <div class="dm-form-group full">
+
+                    <label class="dm-form-label">
+                        Duration of Sea Service
+                    </label>
+
+                    <div
+                        id="modalSeaServiceDuration"
+                        class="dm-sea-service-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
             </div>
 
 
@@ -1163,6 +1358,41 @@ document.addEventListener("DOMContentLoaded", function () {
         dateTo.addEventListener(
             "change",
             filterDeploymentTable
+        );
+
+    }
+
+
+    /* =====================================================
+       DURATION OF SEA SERVICE
+    ===================================================== */
+
+    const modalDeployed =
+        document.getElementById(
+            "modalDeployed"
+        );
+
+    const modalDisembarked =
+        document.getElementById(
+            "modalDisembarked"
+        );
+
+
+    if (modalDeployed) {
+
+        modalDeployed.addEventListener(
+            "change",
+            calculateSeaServiceDuration
+        );
+
+    }
+
+
+    if (modalDisembarked) {
+
+        modalDisembarked.addEventListener(
+            "change",
+            calculateSeaServiceDuration
         );
 
     }
@@ -1355,7 +1585,7 @@ function filterDeploymentTable() {
 
         const status =
             (
-                cells[12]?.innerText || ""
+                cells[13]?.innerText || ""
             )
             .toLowerCase()
             .trim();
@@ -1564,6 +1794,17 @@ function openDeploymentModal(cadet) {
     ).value = "";
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | RESET SEA SERVICE DURATION
+    |--------------------------------------------------------------------------
+    */
+
+    document.getElementById(
+        "modalSeaServiceDuration"
+    ).innerText = "—";
+
+
     document.getElementById(
         "modalStatus"
     ).value = "Not Deployed";
@@ -1651,6 +1892,15 @@ function openDeploymentModal(cadet) {
                 : "";
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | CALCULATE SEA SERVICE AFTER DATES ARE LOADED
+        |--------------------------------------------------------------------------
+        */
+
+        calculateSeaServiceDuration();
+
+
         document.getElementById(
             "modalStatus"
         ).value =
@@ -1672,6 +1922,229 @@ function openDeploymentModal(cadet) {
         );
 
     });
+
+}
+
+
+/* =========================================================
+   CALCULATE SEA SERVICE DURATION
+========================================================= */
+
+function calculateSeaServiceDuration() {
+
+    const embarkation =
+        document.getElementById(
+            "modalDeployed"
+        )?.value || "";
+
+
+    const disembarkation =
+        document.getElementById(
+            "modalDisembarked"
+        )?.value || "";
+
+
+    const output =
+        document.getElementById(
+            "modalSeaServiceDuration"
+        );
+
+
+    if (!output) {
+        return;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Only display duration when both dates exist.
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        !embarkation ||
+        !disembarkation
+    ) {
+
+        output.innerText = "—";
+
+        return;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Parse YYYY-MM-DD manually.
+    |
+    | This prevents timezone shifting.
+    |--------------------------------------------------------------------------
+    */
+
+    const embarkParts =
+        embarkation
+            .split("-")
+            .map(Number);
+
+
+    const disembarkParts =
+        disembarkation
+            .split("-")
+            .map(Number);
+
+
+    if (
+        embarkParts.length !== 3 ||
+        disembarkParts.length !== 3
+    ) {
+
+        output.innerText = "—";
+
+        return;
+
+    }
+
+
+    const start =
+        new Date(
+            embarkParts[0],
+            embarkParts[1] - 1,
+            embarkParts[2]
+        );
+
+
+    const end =
+        new Date(
+            disembarkParts[0],
+            disembarkParts[1] - 1,
+            disembarkParts[2]
+        );
+
+
+    if (end < start) {
+
+        output.innerText =
+            "Invalid date range";
+
+        return;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Calculate complete calendar months first.
+    |--------------------------------------------------------------------------
+    */
+
+    let months =
+        (
+            end.getFullYear() -
+            start.getFullYear()
+        ) * 12;
+
+
+    months +=
+        end.getMonth() -
+        start.getMonth();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Find the date after adding the calculated months.
+    |--------------------------------------------------------------------------
+    */
+
+    let anchor =
+        new Date(start);
+
+
+    anchor.setMonth(
+        anchor.getMonth() + months
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | If anchor is after the end date,
+    | subtract one month.
+    |--------------------------------------------------------------------------
+    */
+
+    if (anchor > end) {
+
+        months--;
+
+        anchor =
+            new Date(start);
+
+        anchor.setMonth(
+            anchor.getMonth() + months
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Calculate remaining days.
+    |--------------------------------------------------------------------------
+    */
+
+    const millisecondsPerDay =
+        1000 *
+        60 *
+        60 *
+        24;
+
+
+    const days =
+        Math.round(
+            (
+                end.getTime() -
+                anchor.getTime()
+            ) /
+            millisecondsPerDay
+        );
+
+
+    const parts = [];
+
+
+    if (months > 0) {
+
+        parts.push(
+            months +
+            " " +
+            (
+                months === 1
+                    ? "Month"
+                    : "Months"
+            )
+        );
+
+    }
+
+
+    if (days > 0) {
+
+        parts.push(
+            days +
+            " " +
+            (
+                days === 1
+                    ? "Day"
+                    : "Days"
+            )
+        );
+
+    }
+
+
+    output.innerText =
+        parts.length
+            ? parts.join(", ")
+            : "0 Days";
 
 }
 
