@@ -603,93 +603,101 @@
                         </td>
 
 
-                        {{-- =================================================
-                             DURATION OF SEA SERVICE
-                        ================================================== --}}
+{{-- =================================================
+     DURATION OF SEA SERVICE
+================================================= --}}
 
-                        <td>
+<td>
 
-                            @if($deployment && $deployment->date_deployed)
+    @if($deployment && $deployment->date_deployed)
 
-                                @php
+        @php
 
-                                    $startDate = \Carbon\Carbon::parse(
-                                        $deployment->date_deployed
-                                    );
+            $startDate = \Carbon\Carbon::parse(
+                $deployment->date_deployed
+            )->startOfDay();
 
-                                    $endDate = $deployment->date_disembarked
-                                        ? \Carbon\Carbon::parse(
-                                            $deployment->date_disembarked
-                                        )
-                                        : \Carbon\Carbon::today();
+            $endDate = $deployment->date_disembarked
+                ? \Carbon\Carbon::parse(
+                    $deployment->date_disembarked
+                )->startOfDay()
+                : \Carbon\Carbon::today()->startOfDay();
 
-                                    if ($endDate->greaterThanOrEqualTo($startDate)) {
+            if ($endDate->greaterThanOrEqualTo($startDate)) {
 
-                                        $durationDays =
-                                            $startDate->diffInDays(
-                                                $endDate
-                                            );
+                /*
+                 * Use calendar-based difference.
+                 *
+                 * Example:
+                 * Jan 2, 2001 -> Jan 2, 2002
+                 * = 12 Months
+                 *
+                 * Do NOT use:
+                 * diffInDays() / 30
+                 */
 
-                                        $durationMonths =
-                                            intdiv(
-                                                $durationDays,
-                                                30
-                                            );
+                $difference = $startDate->diff(
+                    $endDate
+                );
 
-                                        $remainingDays =
-                                            $durationDays % 30;
+                $durationYears = $difference->y;
+                $durationMonths = $difference->m;
+                $durationDays = $difference->d;
 
-                                        if (
-                                            $durationMonths > 0 &&
-                                            $remainingDays > 0
-                                        ) {
+                /*
+                 * Convert years to months.
+                 *
+                 * 1 year = 12 months
+                 */
 
-                                            $durationText =
-                                                $durationMonths .
-                                                ' Month' .
-                                                ($durationMonths !== 1 ? 's' : '') .
-                                                ', ' .
-                                                $remainingDays .
-                                                ' Day' .
-                                                ($remainingDays !== 1 ? 's' : '');
+                $totalMonths =
+                    ($durationYears * 12) +
+                    $durationMonths;
 
-                                        } elseif (
-                                            $durationMonths > 0
-                                        ) {
+                $parts = [];
 
-                                            $durationText =
-                                                $durationMonths .
-                                                ' Month' .
-                                                ($durationMonths !== 1 ? 's' : '');
+                if ($totalMonths > 0) {
 
-                                        } else {
+                    $parts[] =
+                        $totalMonths .
+                        ' Month' .
+                        ($totalMonths !== 1 ? 's' : '');
 
-                                            $durationText =
-                                                $remainingDays .
-                                                ' Day' .
-                                                ($remainingDays !== 1 ? 's' : '');
+                }
 
-                                        }
+                if ($durationDays > 0) {
 
-                                    } else {
+                    $parts[] =
+                        $durationDays .
+                        ' Day' .
+                        ($durationDays !== 1 ? 's' : '');
 
-                                        $durationText = '—';
+                }
 
-                                    }
+                $durationText =
+                    !empty($parts)
+                        ? implode(', ', $parts)
+                        : '0 Days';
 
-                                @endphp
+            } else {
 
-                                <span class="dm-duration-text">
-                                    {{ $durationText }}
-                                </span>
+                $durationText = '—';
 
-                            @else
+            }
 
-                                —
+        @endphp
 
-                            @endif
+        <span class="dm-duration-text">
+            {{ $durationText }}
+        </span>
 
-                        </td>
+    @else
+
+        —
+
+    @endif
+
+</td>
 
 
                         {{-- PROGRESS --}}
@@ -1704,6 +1712,10 @@ function calculateSeaServiceDuration(
     }
 
 
+    /*
+     * Create dates using local calendar values.
+     */
+
     const start =
         new Date(
             embarkationDate +
@@ -1739,79 +1751,127 @@ function calculateSeaServiceDuration(
 
 
     /*
-     * Sea service calculation:
+     * -----------------------------------------------------
+     * CALENDAR-BASED SEA SERVICE CALCULATION
+     * -----------------------------------------------------
+     *
+     * We calculate actual calendar months and remaining
+     * days instead of assuming:
      *
      * 30 days = 1 month
+     *
+     * Example:
+     *
+     * Jan 2, 2001 -> Jan 2, 2002
+     * = 12 Months
+     *
+     * Jan 2, 2001 -> Jan 7, 2002
+     * = 12 Months, 5 Days
      */
 
-    const totalDays =
-        Math.floor(
-            (
-                end - start
-            ) /
-            (
-                1000 *
-                60 *
-                60 *
-                24
-            )
-        );
+    let years =
+        end.getFullYear() -
+        start.getFullYear();
 
 
-    const months =
-        Math.floor(
-            totalDays / 30
-        );
+    let months =
+        end.getMonth() -
+        start.getMonth();
 
 
-    const days =
-        totalDays % 30;
+    let days =
+        end.getDate() -
+        start.getDate();
 
 
-    let text = "";
+    /*
+     * If the day difference is negative,
+     * borrow one month.
+     */
+
+    if (days < 0) {
+
+        months--;
+
+        /*
+         * Get the number of days in the month
+         * immediately before the end date.
+         */
+
+        const daysInPreviousMonth =
+            new Date(
+                end.getFullYear(),
+                end.getMonth(),
+                0
+            ).getDate();
 
 
-    if (months > 0) {
+        days +=
+            daysInPreviousMonth;
 
-        text +=
-            months +
+    }
+
+
+    /*
+     * If the month difference is negative,
+     * borrow one year.
+     */
+
+    if (months < 0) {
+
+        years--;
+
+        months += 12;
+
+    }
+
+
+    /*
+     * Convert years to total months.
+     */
+
+    const totalMonths =
+        (years * 12) +
+        months;
+
+
+    const parts = [];
+
+
+    if (totalMonths > 0) {
+
+        parts.push(
+            totalMonths +
             " Month" +
             (
-                months !== 1
+                totalMonths !== 1
                     ? "s"
                     : ""
-            );
+            )
+        );
 
     }
 
 
     if (days > 0) {
 
-        if (text) {
-
-            text += ", ";
-
-        }
-
-
-        text +=
+        parts.push(
             days +
             " Day" +
             (
                 days !== 1
                     ? "s"
                     : ""
-            );
+            )
+        );
 
     }
 
 
-    if (!text) {
-
-        text =
-            "0 Days";
-
-    }
+    const text =
+        parts.length > 0
+            ? parts.join(", ")
+            : "0 Days";
 
 
     return {
