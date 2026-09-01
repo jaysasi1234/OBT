@@ -4,133 +4,87 @@
 
     @vite(['resources/css/admin/deployment/deployment.css'])
 
-    @php
-        /*
-        |--------------------------------------------------------------------------
-        | Deployment Monitoring Helpers
-        |--------------------------------------------------------------------------
-        */
+@php
 
-        $formatDate = function ($date) {
-            if (!$date) {
-                return '—';
-            }
+    $deployment =
+        $cadet->deployment;
 
-            try {
-                return \Carbon\Carbon::parse($date)->format('M d, Y');
-            } catch (\Throwable $e) {
-                return '—';
-            }
-        };
+    /*
+    |--------------------------------------------------------------------------
+    | EXACT DATABASE DATES
+    |--------------------------------------------------------------------------
+    |
+    | Use the original database value.
+    |
+    | This prevents Eloquent/Carbon from changing a calendar date.
+    |
+    */
 
-        /*
-        |--------------------------------------------------------------------------
-        | Duration of Sea Service
-        |--------------------------------------------------------------------------
-        |
-        | IMPORTANT:
-        |
-        | Duration is calculated ONLY when both:
-        |
-        | date_deployed
-        | date_disembarked
-        |
-        | exist.
-        |
-        | Ongoing deployment:
-        |     date_deployed exists
-        |     date_disembarked is NULL
-        |     => —
-        |
-        | Completed deployment:
-        |     both dates exist
-        |     => Months / Days
-        |
-        */
+    $embarkationDate =
+        $deployment
+            ?->getRawOriginal('date_deployed');
 
-        $calculateDuration = function ($startDate, $endDate = null) {
+    $disembarkationDate =
+        $deployment
+            ?->getRawOriginal('date_disembarked');
 
-            if (!$startDate || !$endDate) {
-                return null;
-            }
 
-            try {
+    $status =
+        strtolower(
+            trim(
+                $deployment?->status
+                ?? 'Not Deployed'
+            )
+        );
 
-                $start = \Carbon\Carbon::parse($startDate)->startOfDay();
-                $end   = \Carbon\Carbon::parse($endDate)->startOfDay();
 
-                if ($end->lt($start)) {
-                    return null;
-                }
+    $percentage =
+        max(
+            0,
+            min(
+                100,
+                (int) (
+                    $deployment?->percentage
+                    ?? 0
+                )
+            )
+        );
 
-                /*
-                |--------------------------------------------------------------------------
-                | Calculate complete calendar months
-                |--------------------------------------------------------------------------
-                */
 
-                $months = $start->diffInMonths($end);
+    $course =
+        strtolower(
+            trim(
+                $cadet->course ?? ''
+            )
+        );
 
-                $monthDate =
-                    $start->copy()->addMonthsNoOverflow($months);
 
-                /*
-                |--------------------------------------------------------------------------
-                | Prevent over-counting a month
-                |--------------------------------------------------------------------------
-                */
+    $batch =
+        strtolower(
+            trim(
+                $cadet->batch?->batch_year
+                ?? ''
+            )
+        );
 
-                if ($monthDate->gt($end)) {
 
-                    $months--;
+    /*
+    |--------------------------------------------------------------------------
+    | Duration
+    |--------------------------------------------------------------------------
+    |
+    | Use the EXACT same dates displayed in the table.
+    |
+    */
 
-                    $monthDate =
-                        $start
-                            ->copy()
-                            ->addMonthsNoOverflow(
-                                max(0, $months)
-                            );
-                }
+    $duration =
+        $calculateDuration(
+            $embarkationDate,
+            $disembarkationDate
+        );
 
-                /*
-                |--------------------------------------------------------------------------
-                | Remaining days
-                |--------------------------------------------------------------------------
-                */
+@endphp
 
-                $days =
-                    $monthDate->diffInDays($end);
-
-                $parts = [];
-
-                if ($months > 0) {
-
-                    $parts[] =
-                        $months . ' ' .
-                        ($months === 1
-                            ? 'Month'
-                            : 'Months');
-                }
-
-                if ($days > 0) {
-
-                    $parts[] =
-                        $days . ' ' .
-                        ($days === 1
-                            ? 'Day'
-                            : 'Days');
-                }
-
-                return $parts
-                    ? implode(', ', $parts)
-                    : '0 Days';
-
-            } catch (\Throwable $e) {
-
-                return null;
-            }
-        };
-    @endphp
 
 
     {{-- =========================================================
