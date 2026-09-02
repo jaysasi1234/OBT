@@ -64,1052 +64,849 @@
 
 
     <style>
+/* =========================================================
+   PREMIUM UI ENHANCEMENT
+   SAFE OVERRIDE ONLY
+   Does not modify Blade / routes / JavaScript
+========================================================= */
+
+/* =========================================================
+   GLOBAL VISUAL POLISH
+========================================================= */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(37, 99, 235, 0.08),
+            transparent 30%
+        ),
+        #0f172a;
+}
+
+/* =========================================================
+   SIDEBAR ENHANCEMENT
+========================================================= */
+
+.sidebar {
+    background:
+        linear-gradient(
+            180deg,
+            #18233f 0%,
+            #0b1838 45%,
+            #061331 100%
+        );
+
+    border-right:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+
+    box-shadow:
+        8px 0 35px rgba(0, 0, 0, 0.20);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+/* Subtle sidebar glow */
+.sidebar::before {
+    content: "";
+    position: absolute;
+    top: -100px;
+    left: -100px;
+
+    width: 260px;
+    height: 260px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59, 130, 246, 0.18),
+            transparent 70%
+        );
+
+    pointer-events: none;
+}
+
+/* =========================================================
+   LOGO AREA
+========================================================= */
+
+.logo-section {
+    position: relative;
+
+    padding: 28px 18px 24px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+}
+
+.logo-section img {
+    width: 108px;
+    height: 108px;
+
+    border: 4px solid rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.35);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.logo-section img:hover {
+    transform: scale(1.04);
+
+    box-shadow:
+        0 16px 40px rgba(37, 99, 235, 0.28);
+}
+
+.logo-section h2 {
+    margin-top: 2px;
+
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
 
-        /* =====================================================
-           GLOBAL RESET
-        ===================================================== */
+.logo-section p {
+    margin-top: 7px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   SIDEBAR MENU
+========================================================= */
+
+.sidebar-menu {
+    padding: 18px 14px 18px;
+}
+
+.sidebar a,
+.menu-item {
+    position: relative;
+
+    border:
+        1px solid
+        transparent;
+
+    transition:
+        background .22s ease,
+        border-color .22s ease,
+        transform .22s ease,
+        box-shadow .22s ease,
+        color .22s ease;
+}
+
+.sidebar a:hover,
+.menu-item:hover {
+    background:
+        rgba(255, 255, 255, 0.065);
+
+    border-color:
+        rgba(255, 255, 255, 0.055);
+
+    transform: translateX(3px);
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.10);
+}
+
+.sidebar a i,
+.menu-item > i:first-child {
+    transition:
+        transform .22s ease,
+        color .22s ease;
+}
+
+.sidebar a:hover i,
+.menu-item:hover > i:first-child {
+    transform: scale(1.08);
+}
+
+/* =========================================================
+   ACTIVE MENU
+========================================================= */
+
+.sidebar a.active {
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6 0%,
+            #2563eb 100%
+        );
 
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    border-color:
+        rgba(147, 197, 253, 0.20);
 
-        html {
-            width: 100%;
-            min-height: 100%;
-        }
+    box-shadow:
+        0 8px 25px rgba(37, 99, 235, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.sidebar a.active::before {
+    content: "";
 
-        body {
-            width: 100%;
-            min-height: 100vh;
+    position: absolute;
+
+    left: -14px;
+    top: 8px;
+    bottom: 8px;
+
+    width: 3px;
+
+    border-radius: 0 5px 5px 0;
+
+    background: #60a5fa;
+}
+
+/* =========================================================
+   OBT PARENT MENU
+========================================================= */
+
+.menu-item.active-parent {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(59, 130, 246, 0.15),
+            rgba(59, 130, 246, 0.04)
+        );
+
+    border-color:
+        rgba(59, 130, 246, 0.12);
+}
 
-            font-family: 'Inter', sans-serif;
+.menu-item.active-parent > i:first-child {
+    color: #60a5fa;
+}
 
-            background: #0f172a;
-            color: #ffffff;
+/* =========================================================
+   SUBMENU
+========================================================= */
 
-            overflow-x: hidden;
-        }
+.submenu {
+    margin-top: 4px;
 
+    border-left:
+        2px solid
+        rgba(96, 165, 250, 0.18);
+}
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
+.menu-sub-item {
+    position: relative;
+}
 
-        .sidebar {
-            position: fixed;
+.menu-sub-item.active {
+    background:
+        linear-gradient(
+            90deg,
+            #2563eb,
+            #1d4ed8
+        ) !important;
 
-            top: 0;
-            left: 0;
+    box-shadow:
+        0 6px 18px rgba(37, 99, 235, 0.22);
+}
 
-            width: 260px;
-            height: 100vh;
+.menu-sub-item.active::before {
+    content: "";
 
-            background:
-                linear-gradient(
-                    180deg,
-                    #181f35 0%,
-                    #05144d 100%
-                );
+    position: absolute;
 
-            z-index: 3000;
+    left: -14px;
+    top: 8px;
+    bottom: 8px;
 
-            display: flex;
-            flex-direction: column;
+    width: 2px;
 
-            overflow-x: hidden;
-            overflow-y: auto;
+    background: #60a5fa;
 
-            scrollbar-width: thin;
+    border-radius: 4px;
+}
 
-            scrollbar-color:
-                rgba(255,255,255,.25)
-                transparent;
+/* =========================================================
+   LOGOUT
+========================================================= */
 
-            transition:
-                left .3s ease,
-                transform .3s ease;
-        }
+.logout-form {
+    padding: 12px 14px 18px;
+}
 
+.logout-btn {
+    position: relative;
 
-        .sidebar::-webkit-scrollbar {
-            width: 7px;
-        }
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444 0%,
+            #dc2626 100%
+        );
 
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
 
-        .sidebar::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    box-shadow:
+        0 8px 20px rgba(220, 38, 38, 0.16);
 
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        filter .22s ease;
+}
 
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,.25);
-            border-radius: 10px;
-        }
+.logout-btn:hover {
+    transform: translateY(-2px);
 
+    filter: brightness(1.04);
 
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,.4);
-        }
+    box-shadow:
+        0 12px 28px rgba(220, 38, 38, 0.28);
+}
 
+.logout-btn:active {
+    transform: translateY(0);
+}
 
-        /* =====================================================
-           LOGO
-        ===================================================== */
+/* =========================================================
+   TOPBAR
+========================================================= */
 
-        .logo-section {
-            width: 100%;
+.topbar {
+    height: 76px;
 
-            display: flex;
-            flex-direction: column;
+    background:
+        rgba(15, 23, 42, 0.88);
 
-            align-items: center;
-            justify-content: center;
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.06);
 
-            text-align: center;
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.16);
 
-            padding: 25px 15px;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
 
-            flex-shrink: 0;
-        }
+.system-title {
+    letter-spacing: -0.025em;
 
+    text-shadow:
+        0 2px 10px rgba(0, 0, 0, 0.25);
+}
 
-        .logo-section img {
-            display: block;
+/* =========================================================
+   MOBILE MENU BUTTON
+========================================================= */
 
-            width: 120px;
-            height: 120px;
+.menu-btn {
+    width: 42px;
+    height: 42px;
 
-            object-fit: cover;
+    display: none;
 
-            border-radius: 50%;
+    align-items: center;
+    justify-content: center;
 
-            margin-bottom: 15px;
-        }
+    border-radius: 11px;
 
+    background:
+        rgba(255, 255, 255, 0.06);
 
-        .logo-section h2 {
-            color: #ffffff;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
 
-            font-size: 17px;
-            font-weight: 600;
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
 
-            line-height: 1.3;
-        }
+.menu-btn:hover {
+    background:
+        rgba(59, 130, 246, 0.18);
 
+    transform: translateY(-1px);
+}
 
-        .logo-section p {
-            margin-top: 8px;
+.menu-btn:active {
+    transform: scale(.96);
+}
 
-            color: #ffffff;
+/* =========================================================
+   TOPBAR ICONS
+========================================================= */
 
-            font-size: 16px;
-            font-weight: 500;
+.top-icon {
+    width: 42px;
+    height: 42px;
 
-            line-height: 1.45;
-        }
+    border-radius: 12px;
 
+    background:
+        rgba(255, 255, 255, 0.045);
 
-        /* =====================================================
-           SIDEBAR MENU
-        ===================================================== */
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.055);
 
-        .sidebar-menu {
-            width: 100%;
+    transition:
+        background .22s ease,
+        transform .22s ease,
+        border-color .22s ease;
+}
 
-            padding: 10px 15px 15px;
-        }
+.top-icon:hover {
+    background:
+        rgba(59, 130, 246, 0.13);
 
+    border-color:
+        rgba(96, 165, 250, 0.18);
 
-        .sidebar a {
-            display: flex;
+    transform: translateY(-2px);
+}
 
-            align-items: center;
+.top-icon:active {
+    transform: scale(.95);
+}
 
-            gap: 14px;
+/* =========================================================
+   NOTIFICATION BADGE
+========================================================= */
 
-            width: 100%;
+.badge {
+    top: -3px;
+    right: -3px;
 
-            color: #e2e8f0;
+    min-width: 20px;
+    height: 20px;
 
-            text-decoration: none;
+    border:
+        2px solid
+        #111827;
 
-            padding: 14px 16px;
+    box-shadow:
+        0 3px 10px rgba(239, 68, 68, 0.35);
 
-            margin-bottom: 8px;
+    animation:
+        notificationPulse 2.4s ease-in-out infinite;
+}
 
-            border-radius: 12px;
+@keyframes notificationPulse {
+    0%,
+    100% {
+        box-shadow:
+            0 3px 10px rgba(239, 68, 68, 0.30);
+    }
 
-            font-size: 14px;
-            font-weight: 500;
+    50% {
+        box-shadow:
+            0 3px 16px rgba(239, 68, 68, 0.55);
+    }
+}
 
-            transition:
-                background .25s ease,
-                transform .25s ease,
-                color .25s ease;
-        }
+/* =========================================================
+   NOTIFICATION DROPDOWN
+========================================================= */
 
+.notif-dropdown {
+    background:
+        rgba(15, 23, 42, 0.97);
 
-        .sidebar a i {
-            width: 22px;
-            min-width: 22px;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
 
-            font-size: 18px;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.40);
 
-            text-align: center;
-        }
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 
+    animation:
+        dropdownIn .18s ease;
+}
 
-        .sidebar a:hover {
-            background: rgba(255,255,255,.08);
+@keyframes dropdownIn {
+    from {
+        opacity: 0;
+        transform: translateY(-7px);
+    }
 
-            transform: translateX(4px);
-        }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
+.notif-header {
+    padding: 15px 16px;
 
-        .sidebar a.active {
-            background:
-                linear-gradient(
-                    90deg,
-                    #3b82f6,
-                    #2563eb
-                );
+    background:
+        rgba(255, 255, 255, 0.025);
+}
 
-            color: #ffffff;
+.notif-header span {
+    font-size: 14px;
+    font-weight: 700;
+}
 
-            box-shadow:
-                0 8px 20px
-                rgba(37,99,235,.30);
+.notif-header a {
+    padding: 5px 8px;
 
-            transform: none;
-        }
+    border-radius: 7px;
 
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
 
-        /* =====================================================
-           MENU GROUP
-        ===================================================== */
+.notif-header a:hover {
+    background:
+        rgba(56, 189, 248, 0.10);
+}
 
-        .menu-group {
-            width: 100%;
-            margin-bottom: 8px;
-        }
+.notif-item {
+    padding: 13px 14px;
 
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.055);
+}
 
-        .menu-item {
-            width: 100%;
+.notif-item:last-child {
+    border-bottom: none;
+}
 
-            display: flex;
+.notif-item:hover {
+    background:
+        rgba(255, 255, 255, 0.055);
+}
 
-            align-items: center;
+.notif-icon {
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.06);
 
-            gap: 14px;
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
-            padding: 14px 16px;
+.notif-unread {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(56, 189, 248, 0.10),
+            rgba(56, 189, 248, 0.035)
+        );
 
-            margin-bottom: 4px;
+    border-left:
+        3px solid
+        rgba(56, 189, 248, 0.75);
+}
 
-            border-radius: 12px;
+/* =========================================================
+   PROFILE
+========================================================= */
 
-            color: #e2e8f0;
+.profile-btn {
+    padding: 4px 6px 4px 4px;
 
-            cursor: pointer;
+    border-radius: 14px;
 
-            font-size: 14px;
-            font-weight: 500;
+    transition:
+        background .22s ease;
+}
 
-            transition:
-                background .25s ease,
-                transform .25s ease;
-        }
+.profile-btn:hover {
+    background:
+        rgba(255, 255, 255, 0.055);
+}
 
+.profile-btn img {
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.85);
 
-        .menu-item:hover {
-            background: rgba(255,255,255,.08);
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.22);
 
-            transform: translateX(4px);
-        }
+    transition:
+        border-color .2s ease,
+        transform .2s ease;
+}
 
+.profile-btn:hover img {
+    border-color: #60a5fa;
+    transform: scale(1.03);
+}
 
-        .menu-item.active-parent {
-            background: rgba(59,130,246,.15);
+.arrow {
+    color: #94a3b8;
+
+    transition:
+        transform .2s ease,
+        color .2s ease;
+}
+
+.profile-btn:hover .arrow {
+    color: #ffffff;
+}
+
+/* =========================================================
+   PROFILE DROPDOWN
+========================================================= */
+
+.dropdown-menu {
+    background:
+        rgba(15, 23, 42, 0.98);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.40);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    animation:
+        dropdownIn .18s ease;
+}
+
+.dropdown-user {
+    padding: 17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(59, 130, 246, 0.12),
+            rgba(59, 130, 246, 0.025)
+        );
+
+    font-size: 14px;
+}
+
+.dropdown-menu a {
+    transition:
+        background .2s ease,
+        padding-left .2s ease;
+}
+
+.dropdown-menu a:hover {
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    padding-left: 19px;
+}
+
+.dropdown-menu a i {
+    width: 20px;
+    margin-right: 7px;
+}
+
+.dropdown-menu form button {
+    transition:
+        background .2s ease;
+}
+
+.dropdown-menu form button:hover {
+    background: #b91c1c;
+}
+
+/* =========================================================
+   CONTENT AREA
+========================================================= */
+
+.content {
+    position: relative;
+
+    min-height: calc(100vh - 76px);
+
+    padding: 28px;
+
+    background:
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(37, 99, 235, 0.055),
+            transparent 25%
+        );
+}
+
+/* =========================================================
+   FOCUS ACCESSIBILITY
+========================================================= */
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline:
+        2px solid
+        #60a5fa;
+
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   SCROLLBARS
+========================================================= */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color:
+        rgba(148, 163, 184, 0.35)
+        transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
 
-            color: #ffffff;
-        }
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
 
+*::-webkit-scrollbar-thumb {
+    background:
+        rgba(148, 163, 184, 0.30);
 
-        .menu-item > i:first-child {
-            width: 22px;
-            min-width: 22px;
+    border-radius: 999px;
+}
 
-            font-size: 18px;
-        }
+*::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(148, 163, 184, 0.48);
+}
 
+/* =========================================================
+   MOBILE ENHANCEMENTS
+========================================================= */
 
-        .menu-item span {
-            flex: 1;
-            min-width: 0;
-        }
+@media (max-width: 992px) {
 
+    .sidebar {
+        box-shadow:
+            15px 0 45px rgba(0, 0, 0, 0.45);
+    }
 
-        .menu-arrow {
-            width: auto !important;
-            min-width: auto !important;
+    .topbar {
+        height: 70px;
+    }
 
-            font-size: 12px !important;
+    .menu-btn {
+        display: flex;
+    }
 
-            opacity: .8;
+    .content {
+        min-height: calc(100vh - 70px);
+        padding: 22px;
+    }
+}
 
-            transition:
-                transform .25s ease;
-        }
+@media (max-width: 600px) {
 
+    .topbar {
+        height: 64px;
 
-        .menu-arrow.rotate {
-            transform: rotate(180deg);
-        }
+        padding:
+            0 12px;
+    }
 
+    .left-topbar {
+        gap: 9px;
+    }
 
-        /* =====================================================
-           SUBMENU
-        ===================================================== */
+    .system-title {
+        max-width: 170px;
 
-        .submenu {
-            display: none;
+        font-size: 14px;
+        font-weight: 700;
+    }
 
-            margin: 2px 0 8px 12px;
+    .user-box {
+        gap: 7px;
+    }
 
-            padding-left: 12px;
+    .top-icon {
+        width: 38px;
+        height: 38px;
 
-            border-left:
-                2px solid
-                rgba(255,255,255,.12);
-        }
+        font-size: 20px;
+    }
 
+    .profile-btn {
+        padding: 2px;
+    }
 
-        .submenu.show {
-            display: block;
-        }
+    .profile-btn img {
+        width: 38px;
+        height: 38px;
+    }
 
+    .profile-btn .arrow {
+        display: none;
+    }
 
-        .menu-sub-item {
-            display: flex !important;
+    .content {
+        min-height: calc(100vh - 64px);
 
-            align-items: center;
+        padding:
+            15px 12px 24px;
+    }
 
-            gap: 12px;
+    .notif-dropdown {
+        top: 69px;
 
-            padding: 11px 13px !important;
+        left: 10px;
+        right: 10px;
 
-            margin-bottom: 4px !important;
+        width: auto;
 
-            border-radius: 10px !important;
+        border-radius: 15px;
+    }
 
-            color: #cbd5e1 !important;
+    .dropdown-menu {
+        right: -5px;
 
-            font-size: 13px !important;
+        width: min(
+            220px,
+            calc(100vw - 24px)
+        );
+    }
+}
 
-            font-weight: 500 !important;
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
 
-            transform: none !important;
-        }
+@media (prefers-reduced-motion: reduce) {
 
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
 
-        .menu-sub-item i {
-            width: 20px !important;
-            min-width: 20px !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
 
-            font-size: 15px !important;
-
-            text-align: center;
-        }
-
-
-        .menu-sub-item:hover {
-            background:
-                rgba(255,255,255,.08) !important;
-
-            color: #ffffff !important;
-
-            transform:
-                translateX(4px) !important;
-        }
-
-
-        .menu-sub-item.active {
-            background:
-                linear-gradient(
-                    90deg,
-                    #3b82f6,
-                    #2563eb
-                ) !important;
-
-            color: #ffffff !important;
-
-            box-shadow:
-                0 6px 15px
-                rgba(37,99,235,.25);
-
-            transform: none !important;
-        }
-
-
-        /* =====================================================
-           LOGOUT
-        ===================================================== */
-
-        .logout-form {
-            width: 100%;
-
-            padding: 10px 15px 20px;
-
-            margin-top: auto;
-
-            flex-shrink: 0;
-        }
-
-
-        .logout-btn {
-            width: 100%;
-
-            border: none;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #ef4444,
-                    #dc2626
-                );
-
-            color: #ffffff;
-
-            padding: 14px;
-
-            border-radius: 12px;
-
-            cursor: pointer;
-
-            font-family: inherit;
-
-            font-size: 14px;
-            font-weight: 600;
-
-            transition:
-                transform .25s ease,
-                box-shadow .25s ease;
-        }
-
-
-        .logout-btn:hover {
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 10px 20px
-                rgba(220,38,38,.30);
-        }
-
-
-        /* =====================================================
-           SIDEBAR CLOSE
-        ===================================================== */
-
-        .sidebar-close {
-            display: none;
-
-            position: absolute;
-
-            top: 18px;
-            right: 18px;
-
-            width: 40px;
-            height: 40px;
-
-            border: none;
-
-            border-radius: 50%;
-
-            background:
-                rgba(255,255,255,.12);
-
-            color: #ffffff;
-
-            cursor: pointer;
-
-            font-size: 18px;
-
-            align-items: center;
-            justify-content: center;
-
-            z-index: 10;
-        }
-
-
-        .sidebar-close:hover {
-            background: #ef4444;
-        }
-
-
-        /* =====================================================
-           MAIN
-        ===================================================== */
-
-        .main {
-            margin-left: 260px;
-
-            width: calc(100% - 260px);
-
-            min-height: 100vh;
-
-            position: relative;
-
-            z-index: auto;
-
-            overflow-x: clip;
-
-            transition:
-                margin-left .3s ease,
-                width .3s ease;
-        }
-
-
-        /* =====================================================
-           TOPBAR
-        ===================================================== */
-
-        .topbar {
-            height: 75px;
-
-            width: 100%;
-
-            background: #111827;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding: 0 25px;
-
-            box-shadow:
-                0 2px 15px
-                rgba(0,0,0,.30);
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 2000;
-        }
-
-
-        .left-topbar {
-            display: flex;
-
-            align-items: center;
-
-            gap: 15px;
-
-            min-width: 0;
-        }
-
-
-        .system-title {
-            color: #ffffff;
-
-            font-size: 22px;
-            font-weight: 700;
-
-            white-space: nowrap;
-
-            overflow: hidden;
-
-            text-overflow: ellipsis;
-        }
-
-
-        .menu-btn {
-            display: none;
-
-            border: none;
-
-            background: transparent;
-
-            color: #ffffff;
-
-            font-size: 28px;
-
-            cursor: pointer;
-        }
-
-
-        /* =====================================================
-           USER AREA
-        ===================================================== */
-
-        .user-box {
-            display: flex;
-
-            align-items: center;
-
-            gap: 15px;
-
-            flex-shrink: 0;
-        }
-
-
-        .top-icon {
-            position: relative;
-
-            display: inline-flex;
-
-            align-items: center;
-            justify-content: center;
-
-            width: 40px;
-            height: 40px;
-
-            border: none;
-
-            background: transparent;
-
-            color: #ffffff;
-
-            text-decoration: none;
-
-            font-size: 26px;
-
-            cursor: pointer;
-
-            transition:
-                transform .25s ease;
-        }
-
-
-        .top-icon:hover {
-            transform: translateY(-2px);
-        }
-
-
-        /* =====================================================
-           NOTIFICATION BADGE
-        ===================================================== */
-
-        .badge {
-            position: absolute;
-
-            top: -4px;
-            right: -5px;
-
-            min-width: 19px;
-            height: 19px;
-
-            padding: 0 5px;
-
-            border-radius: 999px;
-
-            background: #ef4444;
-
-            color: #ffffff;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            font-size: 11px;
-            font-weight: 700;
-
-            line-height: 1;
-        }
-
-
-        /* =====================================================
-           NOTIFICATION DROPDOWN
-        ===================================================== */
-
-        .notification-wrapper {
-            position: relative;
-        }
-
-
-        .notif-dropdown {
-            position: absolute;
-
-            top: 55px;
-            right: 0;
-
-            width: 340px;
-
-            max-width:
-                calc(100vw - 30px);
-
-            background: #1e293b;
-
-            border-radius: 14px;
-
-            box-shadow:
-                0 10px 30px
-                rgba(0,0,0,.40);
-
-            display: none;
-
-            overflow: hidden;
-
-            z-index: 4000;
-        }
-
-
-        .notif-dropdown.show {
-            display: block;
-        }
-
-
-        .notif-header {
-            padding: 12px 15px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            border-bottom:
-                1px solid
-                #334155;
-
-            font-weight: 600;
-        }
-
-
-        .notif-header a {
-            color: #38bdf8;
-
-            text-decoration: none;
-
-            font-size: 12px;
-        }
-
-
-        .notif-list {
-            max-height: 320px;
-
-            overflow-y: auto;
-        }
-
-
-        .notif-item {
-            display: flex;
-
-            gap: 10px;
-
-            padding: 12px;
-
-            border-bottom:
-                1px solid
-                #334155;
-
-            color: #ffffff;
-
-            text-decoration: none;
-
-            transition:
-                background .2s ease;
-        }
-
-
-        .notif-item:hover {
-            background: #334155;
-        }
-
-
-        .notif-icon {
-            width: 36px;
-            height: 36px;
-
-            min-width: 36px;
-
-            background: #0f172a;
-
-            border-radius: 10px;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-        }
-
-
-        .notif-text {
-            font-size: 13px;
-            font-weight: 600;
-
-            line-height: 1.4;
-        }
-
-
-        .notif-time {
-            margin-top: 3px;
-
-            font-size: 11px;
-
-            color: #94a3b8;
-        }
-
-
-        .notif-unread {
-            background:
-                rgba(56,189,248,.10);
-        }
-
-
-        /* =====================================================
-           PROFILE
-        ===================================================== */
-
-        .profile-dropdown {
-            position: relative;
-        }
-
-
-        .profile-btn {
-            display: flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-            background: transparent;
-
-            border: none;
-
-            color: #ffffff;
-
-            cursor: pointer;
-        }
-
-
-        .profile-btn img {
-            width: 45px;
-            height: 45px;
-
-            border-radius: 50%;
-
-            object-fit: cover;
-
-            border:
-                2px solid
-                #ffffff;
-        }
-
-
-        .arrow {
-            font-size: 12px;
-        }
-
-
-        .dropdown-menu {
-            position: absolute;
-
-            top: 58px;
-            right: 0;
-
-            width: 220px;
-
-            background: #1e293b;
-
-            border-radius: 12px;
-
-            overflow: hidden;
-
-            display: none;
-
-            box-shadow:
-                0 10px 25px
-                rgba(0,0,0,.40);
-
-            z-index: 4000;
-        }
-
-
-        .dropdown-menu.show {
-            display: block;
-        }
-
-
-        .dropdown-user {
-            padding: 15px;
-
-            color: #ffffff;
-
-            font-weight: 600;
-        }
-
-
-        .dropdown-menu hr {
-            border: none;
-
-            border-top:
-                1px solid
-                #334155;
-        }
-
-
-        .dropdown-menu a {
-            display: block;
-
-            width: 100%;
-
-            padding: 12px 15px;
-
-            color: #ffffff;
-
-            text-decoration: none;
-        }
-
-
-        .dropdown-menu a:hover {
-            background: #334155;
-        }
-
-
-        .dropdown-menu form button {
-            width: 100%;
-
-            border: none;
-
-            background: #dc2626;
-
-            color: #ffffff;
-
-            padding: 12px;
-
-            cursor: pointer;
-
-            font-family: inherit;
-        }
-
-
-        .dropdown-menu form button:hover {
-            background: #b91c1c;
-        }
-
-
-        /* =====================================================
-           CONTENT
-        ===================================================== */
-
-        .content {
-            width: 100%;
-
-            min-width: 0;
-
-            padding: 25px;
-
-            overflow: visible;
-        }
-
-
-        /* =====================================================
-           MOBILE
-        ===================================================== */
-
-        @media (max-width: 992px) {
-
-            .sidebar {
-                left: -260px;
-
-                box-shadow:
-                    10px 0 30px
-                    rgba(0,0,0,.35);
-            }
-
-
-            .sidebar.show {
-                left: 0;
-            }
-
-
-            .sidebar-close {
-                display: flex;
-            }
-
-
-            .main {
-                margin-left: 0;
-
-                width: 100%;
-            }
-
-
-            .menu-btn {
-                display: block;
-            }
-
-
-            .system-title {
-                font-size: 18px;
-            }
-
-
-            .content {
-                padding: 20px;
-            }
-
-        }
-
-
-        @media (max-width: 600px) {
-
-            .topbar {
-                height: 65px;
-
-                padding: 0 15px;
-            }
-
-
-            .system-title {
-                font-size: 16px;
-            }
-
-
-            .user-box {
-                gap: 10px;
-            }
-
-
-            .top-icon {
-                font-size: 22px;
-            }
-
-
-            .profile-btn img {
-                width: 40px;
-                height: 40px;
-            }
-
-
-            .content {
-                padding: 15px;
-            }
-
-
-            .notif-dropdown {
-                position: fixed;
-
-                top: 70px;
-
-                left: 15px;
-                right: 15px;
-
-                width: auto;
-
-                max-width: none;
-            }
-
-        }
+        transition-duration: 0.01ms !important;
+    }
+}
 
     </style>
 
