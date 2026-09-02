@@ -5,27 +5,39 @@
 <style>
 
 /* ==========================================================================
-   VARIABLES
+   CADET MANAGEMENT UI ENHANCEMENT
+   CSS ONLY — EXISTING PHP / BLADE / JS REMAIN UNCHANGED
    ========================================================================== */
 
 :root {
-    --cadet-bg: #0b0b2d;
-    --cadet-panel: #111c44;
-    --cadet-panel-light: #16265a;
+    --cadet-bg: #080f24;
+    --cadet-bg-secondary: #0b1530;
+
+    --cadet-panel: #101d3d;
+    --cadet-panel-light: #162751;
+    --cadet-panel-hover: #1a2d5c;
 
     --cadet-text: #ffffff;
-    --cadet-muted: rgba(255, 255, 255, 0.7);
+    --cadet-muted: rgba(255, 255, 255, 0.68);
 
     --cadet-primary: #3b82f6;
     --cadet-primary-dark: #2563eb;
+    --cadet-primary-light: #60a5fa;
 
     --cadet-success: #22c55e;
     --cadet-warning: #f59e0b;
     --cadet-danger: #ef4444;
 
     --cadet-border: rgba(255, 255, 255, 0.08);
+    --cadet-border-light: rgba(255, 255, 255, 0.12);
 
-    --cadet-radius: 12px;
+    --cadet-radius: 14px;
+
+    --cadet-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.25);
+
+    --cadet-shadow-hover:
+        0 20px 45px rgba(0, 0, 0, 0.34);
 }
 
 
@@ -35,7 +47,23 @@
 
 .cadet-page {
     width: 100%;
+    min-height: 100vh;
+
     color: var(--cadet-text);
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(59, 130, 246, 0.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(37, 99, 235, 0.06),
+            transparent 28%
+        );
+
+    box-sizing: border-box;
 }
 
 
@@ -45,12 +73,26 @@
 
 .cadet-sticky-controls {
     position: sticky;
+
     top: 75px;
+
     z-index: 900;
 
-    background: var(--cadet-bg);
+    padding:
+        12px
+        0
+        18px;
 
-    padding: 5px 0 15px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8, 15, 36, 0.98) 0%,
+            rgba(8, 15, 36, 0.94) 75%,
+            rgba(8, 15, 36, 0) 100%
+        );
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 
@@ -59,24 +101,59 @@
    ========================================================================== */
 
 .cadet-header {
-    margin-bottom: 15px;
+    position: relative;
+
+    margin-bottom: 18px;
+
+    padding-left: 4px;
+}
+
+.cadet-header::before {
+    content: "";
+
+    position: absolute;
+
+    left: -4px;
+    top: 3px;
+
+    width: 4px;
+    height: 46px;
+
+    border-radius: 999px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--cadet-primary-light),
+            var(--cadet-primary)
+        );
+
+    box-shadow:
+        0 0 18px rgba(59, 130, 246, 0.35);
 }
 
 .cadet-header h1 {
     margin: 0;
 
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 29px;
 
-    line-height: 1.3;
+    font-weight: 800;
+
+    line-height: 1.25;
+
+    letter-spacing: -0.5px;
+
+    color: #ffffff;
 }
 
 .cadet-header p {
-    margin: 5px 0 0;
+    margin: 6px 0 0;
 
     color: var(--cadet-muted);
 
     font-size: 14px;
+
+    line-height: 1.5;
 }
 
 
@@ -90,36 +167,75 @@
     grid-template-columns:
         repeat(5, minmax(0, 1fr));
 
-    gap: 10px;
+    gap: 11px;
 
-    background: var(--cadet-panel);
-
-    padding: 15px;
-
-    border-radius: var(--cadet-radius);
+    padding: 16px;
 
     margin-bottom: 15px;
 
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 29, 61, 0.98),
+            rgba(13, 25, 54, 0.98)
+        );
+
+    border:
+        1px solid var(--cadet-border);
+
+    border-radius: var(--cadet-radius);
+
     box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.20);
+        var(--cadet-shadow);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.cadet-filters::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(96, 165, 250, 0.45),
+            transparent
+        );
 }
 
 .cadet-filters input,
 .cadet-filters select {
     width: 100%;
-    height: 42px;
 
-    padding: 0 12px;
+    height: 44px;
 
-    border: 1px solid transparent;
+    padding:
+        0
+        13px;
 
-    border-radius: 8px;
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
 
-    background: var(--cadet-panel-light);
+    border-radius: 9px;
+
+    background:
+        rgba(22, 39, 81, 0.88);
 
     color: var(--cadet-text);
 
     outline: none;
+
+    font-family: inherit;
 
     font-size: 13px;
 
@@ -127,19 +243,38 @@
 
     transition:
         border-color 0.2s ease,
-        box-shadow 0.2s ease;
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
 }
 
-.cadet-filters input::placeholder {
-    color: rgba(255, 255, 255, 0.55);
+.cadet-filters input:hover,
+.cadet-filters select:hover {
+    background:
+        rgba(27, 47, 94, 0.95);
+
+    border-color:
+        rgba(255, 255, 255, 0.13);
 }
 
 .cadet-filters input:focus,
 .cadet-filters select:focus {
-    border-color: var(--cadet-primary);
+    border-color:
+        var(--cadet-primary);
+
+    background:
+        rgba(25, 45, 92, 0.98);
 
     box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.18);
+        0 0 0 3px rgba(59, 130, 246, 0.16),
+        0 5px 15px rgba(0, 0, 0, 0.15);
+
+    transform: translateY(-1px);
+}
+
+.cadet-filters input::placeholder {
+    color:
+        rgba(255, 255, 255, 0.48);
 }
 
 .cadet-filters select {
@@ -147,9 +282,11 @@
 }
 
 .cadet-filters option {
-    background: var(--cadet-panel);
+    background:
+        var(--cadet-panel);
 
-    color: var(--cadet-text);
+    color:
+        var(--cadet-text);
 }
 
 
@@ -163,65 +300,193 @@
     grid-template-columns:
         repeat(4, minmax(0, 1fr));
 
-    gap: 10px;
+    gap: 12px;
 
     margin-bottom: 0;
 }
 
 .cadet-stat {
-    padding: 18px;
+    position: relative;
 
-    border-radius: var(--cadet-radius);
+    min-height: 88px;
 
-    text-align: center;
+    padding: 17px 18px;
 
-    font-size: 14px;
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius:
+        var(--cadet-radius);
+
+    text-align: left;
+
+    font-size: 13px;
 
     font-weight: 700;
 
-    line-height: 1.6;
+    line-height: 1.5;
 
     box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.18);
+        0 12px 30px rgba(0, 0, 0, 0.22);
+
+    overflow: hidden;
 
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        border-color 0.22s ease;
+}
+
+.cadet-stat::before {
+    content: "";
+
+    position: absolute;
+
+    top: -35px;
+    right: -25px;
+
+    width: 100px;
+    height: 100px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+}
+
+.cadet-stat::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 3px;
+
+    background:
+        rgba(255, 255, 255, 0.25);
 }
 
 .cadet-stat:hover {
-    transform: translateY(-3px);
+    transform:
+        translateY(-4px);
 
     box-shadow:
-        0 12px 25px rgba(0, 0, 0, 0.25);
+        var(--cadet-shadow-hover);
+
+    border-color:
+        rgba(255, 255, 255, 0.16);
 }
 
 .cadet-stat-value {
     display: block;
 
-    margin-top: 3px;
+    margin-top: 7px;
 
-    font-size: 24px;
+    font-size: 27px;
+
+    font-weight: 800;
 
     line-height: 1;
+
+    letter-spacing: -0.5px;
 }
 
 .cadet-stat-blue {
-    background: var(--cadet-primary);
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #2563eb
+        );
 }
 
 .cadet-stat-green {
-    background: var(--cadet-success);
+    background:
+        linear-gradient(
+            135deg,
+            #22c55e,
+            #16a34a
+        );
 }
 
 .cadet-stat-yellow {
-    background: var(--cadet-warning);
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #d97706
+        );
 
-    color: #000;
+    color: #ffffff;
 }
 
 .cadet-stat-red {
-    background: var(--cadet-danger);
+    background:
+        linear-gradient(
+            135deg,
+            #ef4444,
+            #dc2626
+        );
+}
+
+
+/* ==========================================================================
+   TABLE CONTAINER
+   ========================================================================== */
+
+.cadet-table-wrapper {
+    width: 100%;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 29, 61, 0.98),
+            rgba(11, 22, 47, 0.98)
+        );
+
+    border:
+        1px solid var(--cadet-border);
+
+    border-radius:
+        var(--cadet-radius);
+
+    padding: 8px;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+    box-shadow:
+        var(--cadet-shadow);
+
+    box-sizing: border-box;
+
+    position: relative;
+}
+
+.cadet-table-wrapper::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 15%;
+    right: 15%;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(96, 165, 250, 0.35),
+            transparent
+        );
+
+    pointer-events: none;
 }
 
 
@@ -229,83 +494,114 @@
    TABLE
    ========================================================================== */
 
-.cadet-table-wrapper {
-    width: 100%;
-
-    background: var(--cadet-panel);
-
-    border-radius: var(--cadet-radius);
-
-    padding: 15px;
-
-    overflow-x: auto;
-
-    -webkit-overflow-scrolling: touch;
-
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.20);
-
-    box-sizing: border-box;
-}
-
 .cadet-table {
     width: 100%;
 
     min-width: 900px;
 
-    border-collapse: collapse;
+    border-collapse: separate;
 
-    color: var(--cadet-text);
+    border-spacing: 0;
+
+    color:
+        var(--cadet-text);
 }
 
 .cadet-table thead {
-    background: var(--cadet-panel-light);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(27, 47, 94, 0.98),
+            rgba(22, 39, 81, 0.98)
+        );
 }
 
 .cadet-table th {
-    padding: 13px 12px;
+    padding:
+        14px
+        13px;
 
-    color: #fff;
+    color:
+        rgba(255, 255, 255, 0.92);
 
-    font-size: 13px;
+    font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 800;
 
     text-align: left;
 
+    text-transform: uppercase;
+
+    letter-spacing: 0.55px;
+
     white-space: nowrap;
 
     border-bottom:
-        1px solid var(--cadet-border);
+        1px solid var(--cadet-border-light);
+}
+
+.cadet-table th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.cadet-table th:last-child {
+    border-top-right-radius: 8px;
 }
 
 .cadet-table td {
-    padding: 13px 12px;
+    padding:
+        14px
+        13px;
+
+    color:
+        rgba(255, 255, 255, 0.88);
 
     font-size: 13px;
 
     white-space: nowrap;
 
     border-bottom:
-        1px solid var(--cadet-border);
+        1px solid rgba(255, 255, 255, 0.055);
+
+    transition:
+        color 0.18s ease,
+        background 0.18s ease;
 }
 
 .cadet-table tbody tr {
     transition:
-        background 0.2s ease;
+        transform 0.18s ease,
+        background 0.18s ease;
 }
 
 .cadet-table tbody tr:hover {
     background:
-        rgba(59, 130, 246, 0.12);
+        rgba(59, 130, 246, 0.075);
+}
+
+.cadet-table tbody tr:hover td {
+    color:
+        #ffffff;
+
+    background:
+        rgba(59, 130, 246, 0.045);
+}
+
+.cadet-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .cadet-table-empty {
     text-align: center;
 
-    padding: 30px !important;
+    padding:
+        45px
+        30px !important;
 
-    color: var(--cadet-muted);
+    color:
+        var(--cadet-muted);
+
+    font-size: 14px !important;
 }
 
 
@@ -319,53 +615,116 @@
     align-items: center;
     justify-content: center;
 
-    padding: 5px 10px;
+    gap: 6px;
 
-    border-radius: 20px;
+    padding:
+        6px
+        11px;
 
-    font-size: 12px;
+    border-radius:
+        999px;
 
-    font-weight: 700;
+    font-size: 11px;
+
+    font-weight: 800;
 
     line-height: 1;
 
     white-space: nowrap;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.cadet-status::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        currentColor;
+
+    opacity: 0.9;
 }
 
 
 /* VERIFICATION */
 
 .cadet-status-verified {
-    background: var(--cadet-success);
-    color: #fff;
+    background:
+        rgba(34, 197, 94, 0.18);
+
+    color:
+        #4ade80;
+
+    border-color:
+        rgba(34, 197, 94, 0.25);
 }
 
 .cadet-status-pending {
-    background: var(--cadet-warning);
-    color: #000;
+    background:
+        rgba(245, 158, 11, 0.18);
+
+    color:
+        #fbbf24;
+
+    border-color:
+        rgba(245, 158, 11, 0.25);
 }
 
 .cadet-status-deficiency {
-    background: var(--cadet-danger);
-    color: #fff;
+    background:
+        rgba(239, 68, 68, 0.18);
+
+    color:
+        #f87171;
+
+    border-color:
+        rgba(239, 68, 68, 0.25);
 }
 
 
 /* DEPLOYMENT */
 
 .cadet-status-not-deployed {
-    background: var(--cadet-warning);
-    color: #000;
+    background:
+        rgba(245, 158, 11, 0.18);
+
+    color:
+        #fbbf24;
+
+    border-color:
+        rgba(245, 158, 11, 0.25);
 }
 
 .cadet-status-ongoing {
-    background: var(--cadet-primary);
-    color: #fff;
+    background:
+        rgba(59, 130, 246, 0.18);
+
+    color:
+        #60a5fa;
+
+    border-color:
+        rgba(59, 130, 246, 0.25);
 }
 
 .cadet-status-completed {
-    background: var(--cadet-success);
-    color: #fff;
+    background:
+        rgba(34, 197, 94, 0.18);
+
+    color:
+        #4ade80;
+
+    border-color:
+        rgba(34, 197, 94, 0.25);
 }
 
 
@@ -379,31 +738,61 @@
     align-items: center;
     justify-content: center;
 
-    padding: 7px 12px;
+    min-width: 65px;
 
-    border: none;
+    padding:
+        8px
+        13px;
 
-    border-radius: 7px;
+    border:
+        1px solid rgba(96, 165, 250, 0.2);
 
-    background: var(--cadet-primary);
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #2563eb
+        );
 
     color: #fff;
 
-    font-size: 13px;
+    font-family: inherit;
 
-    font-weight: 600;
+    font-size: 12px;
+
+    font-weight: 700;
 
     cursor: pointer;
 
+    box-shadow:
+        0 5px 14px rgba(37, 99, 235, 0.22);
+
     transition:
         background 0.2s ease,
-        transform 0.2s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .cadet-view-btn:hover {
-    background: var(--cadet-primary-dark);
+    background:
+        linear-gradient(
+            135deg,
+            #60a5fa,
+            #2563eb
+        );
 
-    transform: translateY(-1px);
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(37, 99, 235, 0.32);
+}
+
+.cadet-view-btn:active {
+    transform:
+        translateY(0);
 }
 
 
@@ -424,15 +813,34 @@
     padding: 20px;
 
     background:
-        rgba(0, 0, 0, 0.78);
+        rgba(2, 6, 23, 0.82);
 
-    backdrop-filter: blur(5px);
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
 
     z-index: 9999;
+
+    box-sizing: border-box;
 }
 
 .cadet-modal-overlay.show {
     display: flex;
+
+    animation:
+        cadetOverlayIn 0.2s ease;
+}
+
+@keyframes cadetOverlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 
@@ -449,30 +857,63 @@
 
     overflow-y: auto;
 
-    background: var(--cadet-panel);
+    background:
+        linear-gradient(
+            145deg,
+            #111f42,
+            #0d1935
+        );
 
     color: #fff;
 
     border:
-        1px solid rgba(255,255,255,0.08);
+        1px solid rgba(255, 255, 255, 0.10);
 
-    border-radius: 18px;
+    border-radius:
+        20px;
 
     box-shadow:
-        0 25px 70px rgba(0,0,0,0.55);
+        0 30px 90px rgba(0, 0, 0, 0.60),
+        0 0 0 1px rgba(59, 130, 246, 0.04);
 
     animation:
-        cadetModalOpen 0.2s ease;
+        cadetModalOpen 0.22s ease;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(96, 165, 250, 0.45)
+        transparent;
+}
+
+.cadet-modal::-webkit-scrollbar {
+    width: 7px;
+}
+
+.cadet-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cadet-modal::-webkit-scrollbar-thumb {
+    background:
+        rgba(96, 165, 250, 0.4);
+
+    border-radius:
+        999px;
+}
+
+.cadet-modal::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(96, 165, 250, 0.65);
 }
 
 @keyframes cadetModalOpen {
-
     from {
         opacity: 0;
 
         transform:
-            translateY(15px)
-            scale(0.97);
+            translateY(18px)
+            scale(0.96);
     }
 
     to {
@@ -497,12 +938,25 @@
 
     gap: 15px;
 
-    padding: 20px 24px;
+    padding:
+        19px
+        22px;
 
     border-bottom:
-        1px solid rgba(255,255,255,0.08);
+        1px solid rgba(255, 255, 255, 0.075);
 
-    background: var(--cadet-panel-light);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(22, 39, 81, 0.98),
+            rgba(17, 32, 66, 0.98)
+        );
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 5;
 }
 
 .cadet-modal-title {
@@ -511,11 +965,13 @@
     align-items: center;
 
     gap: 12px;
+
+    min-width: 0;
 }
 
 .cadet-modal-title-icon {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
 
     display: flex;
 
@@ -524,11 +980,23 @@
 
     flex-shrink: 0;
 
-    border-radius: 12px;
+    border-radius: 13px;
 
-    background: var(--cadet-primary);
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #2563eb
+        );
 
-    font-size: 20px;
+    font-size: 19px;
+
+    box-shadow:
+        0 7px 18px rgba(37, 99, 235, 0.25);
+}
+
+.cadet-modal-title-text {
+    min-width: 0;
 }
 
 .cadet-modal-title-text h2 {
@@ -536,21 +1004,25 @@
 
     font-size: 20px;
 
-    font-weight: 700;
+    font-weight: 800;
+
+    line-height: 1.25;
 }
 
 .cadet-modal-title-text p {
-    margin: 3px 0 0;
+    margin: 4px 0 0;
 
     color:
-        rgba(255,255,255,0.6);
+        rgba(255, 255, 255, 0.55);
 
-    font-size: 12px;
+    font-size: 11px;
+
+    line-height: 1.4;
 }
 
 .cadet-modal-close {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
 
     display: flex;
 
@@ -559,24 +1031,37 @@
 
     flex-shrink: 0;
 
-    border: none;
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
 
     border-radius: 10px;
 
     background:
-        rgba(255,255,255,0.08);
+        rgba(255, 255, 255, 0.07);
 
     color: #fff;
 
-    font-size: 20px;
+    font-size: 21px;
+
+    line-height: 1;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .cadet-modal-close:hover {
-    background: var(--cadet-danger);
+    background:
+        rgba(239, 68, 68, 0.9);
+
+    border-color:
+        rgba(239, 68, 68, 0.9);
+
+    transform:
+        rotate(3deg) scale(1.04);
 }
 
 
@@ -591,30 +1076,52 @@
 
     gap: 20px;
 
-    padding: 24px;
+    padding:
+        25px;
 
     border-bottom:
-        1px solid rgba(255,255,255,0.08);
+        1px solid rgba(255, 255, 255, 0.075);
+
+    background:
+        radial-gradient(
+            circle at 0% 50%,
+            rgba(59, 130, 246, 0.08),
+            transparent 45%
+        );
 }
 
 .cadet-modal-photo {
-    width: 120px;
-    height: 120px;
+    width: 118px;
+    height: 118px;
 
     flex-shrink: 0;
 
     object-fit: cover;
 
-    border-radius: 16px;
+    border-radius: 18px;
 
     border:
-        3px solid var(--cadet-primary);
+        3px solid rgba(96, 165, 250, 0.9);
 
     background:
         var(--cadet-panel-light);
 
     box-shadow:
-        0 8px 25px rgba(0,0,0,0.3);
+        0 12px 30px rgba(0, 0, 0, 0.35),
+        0 0 0 5px rgba(59, 130, 246, 0.07);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.cadet-modal-photo:hover {
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 16px 35px rgba(0, 0, 0, 0.40),
+        0 0 0 6px rgba(59, 130, 246, 0.10);
 }
 
 .cadet-profile-info {
@@ -622,11 +1129,14 @@
 }
 
 .cadet-profile-name {
-    margin: 0 0 8px;
+    margin:
+        0 0 9px;
 
-    font-size: 23px;
+    font-size: 24px;
 
-    font-weight: 700;
+    font-weight: 800;
+
+    line-height: 1.25;
 
     word-break: break-word;
 }
@@ -636,18 +1146,27 @@
 
     align-items: center;
 
-    padding: 6px 11px;
+    padding:
+        7px
+        12px;
 
-    border-radius: 20px;
+    border:
+        1px solid rgba(96, 165, 250, 0.18);
+
+    border-radius:
+        999px;
 
     background:
-        rgba(59,130,246,0.18);
+        rgba(59, 130, 246, 0.13);
 
-    color: #60a5fa;
+    color:
+        #60a5fa;
 
-    font-size: 12px;
+    font-size: 11px;
 
-    font-weight: 700;
+    font-weight: 800;
+
+    letter-spacing: 0.25px;
 }
 
 
@@ -656,17 +1175,39 @@
    ========================================================================== */
 
 .cadet-details-section {
-    padding: 24px;
+    padding:
+        24px;
 }
 
 .cadet-details-title {
-    margin: 0 0 15px;
+    display: flex;
 
-    font-size: 15px;
+    align-items: center;
 
-    font-weight: 700;
+    gap: 9px;
 
-    color: #fff;
+    margin:
+        0 0 15px;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    color:
+        #ffffff;
+}
+
+.cadet-details-title::before {
+    content: "";
+
+    width: 4px;
+    height: 18px;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--cadet-primary);
 }
 
 .cadet-details-grid {
@@ -675,56 +1216,100 @@
     grid-template-columns:
         repeat(2, minmax(0, 1fr));
 
-    gap: 12px;
+    gap: 11px;
 }
 
 .cadet-detail-card {
-    padding: 14px;
+    position: relative;
 
-    border-radius: 12px;
+    min-width: 0;
+
+    padding:
+        15px;
+
+    border-radius:
+        12px;
 
     background:
-        var(--cadet-panel-light);
+        linear-gradient(
+            145deg,
+            rgba(22, 39, 81, 0.92),
+            rgba(18, 34, 70, 0.92)
+        );
 
     border:
-        1px solid rgba(255,255,255,0.06);
+        1px solid rgba(255, 255, 255, 0.06);
 
-    transition: 0.2s;
+    transition:
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.cadet-detail-card::after {
+    content: "";
+
+    position: absolute;
+
+    top: 12px;
+    right: 12px;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(96, 165, 250, 0.45);
 }
 
 .cadet-detail-card:hover {
     border-color:
-        rgba(59,130,246,0.4);
+        rgba(59, 130, 246, 0.38);
 
     background:
-        #192d68;
+        linear-gradient(
+            145deg,
+            rgba(26, 48, 96, 0.96),
+            rgba(20, 40, 82, 0.96)
+        );
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.16);
 }
 
 .cadet-detail-label {
     display: block;
 
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 
     color:
-        rgba(255,255,255,0.55);
+        rgba(255, 255, 255, 0.48);
 
-    font-size: 11px;
+    font-size: 10px;
 
-    font-weight: 600;
+    font-weight: 800;
 
     text-transform: uppercase;
 
-    letter-spacing: 0.5px;
+    letter-spacing: 0.65px;
 }
 
 .cadet-detail-value {
     display: block;
 
-    color: #fff;
+    color:
+        #ffffff;
 
-    font-size: 14px;
+    font-size: 13px;
 
-    font-weight: 600;
+    font-weight: 650;
+
+    line-height: 1.45;
 
     word-break: break-word;
 }
@@ -739,43 +1324,123 @@
 
     justify-content: flex-end;
 
-    padding: 15px 24px;
+    padding:
+        14px
+        24px;
 
     border-top:
-        1px solid rgba(255,255,255,0.08);
+        1px solid rgba(255, 255, 255, 0.075);
 
     background:
-        rgba(0,0,0,0.12);
+        rgba(5, 12, 28, 0.28);
+
+    position: sticky;
+
+    bottom: 0;
+
+    z-index: 5;
 }
 
 .cadet-modal-close-btn {
-    padding: 9px 18px;
+    min-width: 90px;
 
-    border: none;
+    padding:
+        9px
+        18px;
 
-    border-radius: 8px;
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
+    border-radius: 9px;
 
     background:
-        var(--cadet-panel-light);
+        rgba(255, 255, 255, 0.07);
 
     color: #fff;
 
-    font-size: 13px;
+    font-family: inherit;
 
-    font-weight: 600;
+    font-size: 12px;
+
+    font-weight: 700;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease;
 }
 
 .cadet-modal-close-btn:hover {
-    background: var(--cadet-danger);
+    background:
+        rgba(239, 68, 68, 0.9);
+
+    border-color:
+        rgba(239, 68, 68, 0.9);
+
+    transform:
+        translateY(-1px);
 }
 
 
 /* ==========================================================================
-   RESPONSIVE
+   TABLE SCROLLBAR
+   ========================================================================== */
+
+.cadet-table-wrapper {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(96, 165, 250, 0.35)
+        transparent;
+}
+
+.cadet-table-wrapper::-webkit-scrollbar {
+    height: 7px;
+}
+
+.cadet-table-wrapper::-webkit-scrollbar-track {
+    background:
+        rgba(255, 255, 255, 0.025);
+
+    border-radius:
+        999px;
+}
+
+.cadet-table-wrapper::-webkit-scrollbar-thumb {
+    background:
+        rgba(96, 165, 250, 0.35);
+
+    border-radius:
+        999px;
+}
+
+.cadet-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(96, 165, 250, 0.55);
+}
+
+
+/* ==========================================================================
+   FOCUS ACCESSIBILITY
+   ========================================================================== */
+
+.cadet-view-btn:focus-visible,
+.cadet-modal-close:focus-visible,
+.cadet-modal-close-btn:focus-visible,
+.cadet-filters input:focus-visible,
+.cadet-filters select:focus-visible {
+    outline:
+        2px solid #60a5fa;
+
+    outline-offset:
+        2px;
+}
+
+
+/* ==========================================================================
+   RESPONSIVE — LARGE TABLET
    ========================================================================== */
 
 @media (max-width: 1200px) {
@@ -787,6 +1452,10 @@
 
 }
 
+
+/* ==========================================================================
+   RESPONSIVE — TABLET
+   ========================================================================== */
 
 @media (max-width: 992px) {
 
@@ -807,30 +1476,64 @@
 }
 
 
+/* ==========================================================================
+   RESPONSIVE — MOBILE
+   ========================================================================== */
+
 @media (max-width: 768px) {
+
+    .cadet-sticky-controls {
+        top: 75px;
+
+        padding:
+            10px
+            0
+            12px;
+    }
+
+    .cadet-header {
+        margin-bottom: 14px;
+    }
 
     .cadet-header h1 {
         font-size: 24px;
     }
 
-    .cadet-sticky-controls {
-        top: 75px;
-
-        padding-bottom: 10px;
-    }
-
-    .cadet-stats {
-        grid-template-columns: 1fr;
+    .cadet-header p {
+        font-size: 13px;
     }
 
     .cadet-filters {
         grid-template-columns: 1fr;
 
+        gap: 9px;
+
         padding: 12px;
     }
 
+    .cadet-stats {
+        grid-template-columns: 1fr;
+
+        gap: 9px;
+    }
+
+    .cadet-stat {
+        min-height: 76px;
+
+        padding:
+            14px
+            16px;
+    }
+
+    .cadet-stat-value {
+        font-size: 24px;
+    }
+
     .cadet-table-wrapper {
-        padding: 10px;
+        padding: 7px;
+
+        border-radius:
+            12px;
     }
 
     .cadet-table {
@@ -838,17 +1541,39 @@
     }
 
     .cadet-modal-overlay {
-        padding: 15px;
+        align-items: center;
+
+        padding:
+            12px;
     }
 
     .cadet-modal {
-        max-height: 95vh;
+        width: 100%;
 
-        border-radius: 14px;
+        max-height:
+            calc(100vh - 24px);
+
+        border-radius:
+            16px;
     }
 
     .cadet-modal-header {
-        padding: 16px;
+        padding:
+            15px;
+    }
+
+    .cadet-modal-title-icon {
+        width: 40px;
+        height: 40px;
+
+        border-radius:
+            11px;
+
+        font-size: 17px;
+    }
+
+    .cadet-modal-title-text h2 {
+        font-size: 17px;
     }
 
     .cadet-profile-section {
@@ -856,12 +1581,14 @@
 
         text-align: center;
 
-        padding: 20px;
+        padding:
+            21px
+            16px;
     }
 
     .cadet-modal-photo {
-        width: 110px;
-        height: 110px;
+        width: 105px;
+        height: 105px;
     }
 
     .cadet-profile-name {
@@ -869,15 +1596,20 @@
     }
 
     .cadet-details-section {
-        padding: 18px;
+        padding:
+            18px
+            15px;
     }
 
     .cadet-details-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
     }
 
     .cadet-modal-footer {
-        padding: 12px 18px;
+        padding:
+            11px
+            15px;
     }
 
     .cadet-modal-close-btn {
@@ -887,7 +1619,19 @@
 }
 
 
+/* ==========================================================================
+   RESPONSIVE — SMALL MOBILE
+   ========================================================================== */
+
 @media (max-width: 480px) {
+
+    .cadet-header {
+        padding-left: 3px;
+    }
+
+    .cadet-header::before {
+        height: 39px;
+    }
 
     .cadet-header h1 {
         font-size: 21px;
@@ -897,24 +1641,80 @@
         font-size: 12px;
     }
 
+    .cadet-filters {
+        border-radius:
+            12px;
+    }
+
+    .cadet-filters input,
+    .cadet-filters select {
+        height: 42px;
+    }
+
     .cadet-stat {
-        padding: 15px;
+        border-radius:
+            12px;
     }
 
     .cadet-stat-value {
         font-size: 22px;
     }
 
+    .cadet-modal-title {
+        gap: 9px;
+    }
+
+    .cadet-modal-title-icon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 15px;
+    }
+
     .cadet-modal-title-text h2 {
-        font-size: 17px;
+        font-size: 16px;
     }
 
     .cadet-modal-title-text p {
         display: none;
     }
 
+    .cadet-modal-close {
+        width: 34px;
+        height: 34px;
+
+        font-size: 18px;
+    }
+
     .cadet-profile-name {
         font-size: 19px;
+    }
+
+    .cadet-details-title {
+        font-size: 13px;
+    }
+
+}
+
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cadet-stat,
+    .cadet-view-btn,
+    .cadet-modal,
+    .cadet-modal-photo,
+    .cadet-detail-card,
+    .cadet-modal-close,
+    .cadet-modal-close-btn,
+    .cadet-filters input,
+    .cadet-filters select {
+        transition: none !important;
+
+        animation: none !important;
     }
 
 }
