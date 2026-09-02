@@ -3,894 +3,939 @@
 @section('content')
 
 <style>
-
 /* =========================================================
-   PAGE
-========================================================= */
+   VERIFICATION MONITORING
+   UI STYLE MATCHED TO DEPLOYMENT MONITORING
+   ========================================================= */
 
 .verification-page {
     width: 100%;
     min-width: 0;
+    color: #ffffff;
 }
-
 
 /* =========================================================
    PAGE HEADER
-========================================================= */
+   ========================================================= */
 
 .page-header {
+    position: relative;
+    overflow: hidden;
     margin-bottom: 20px;
+    padding: 28px 34px;
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            135deg,
+            #3159c9 0%,
+            #294aa8 55%,
+            #243f91 100%
+        );
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.22);
+}
+
+/* Decorative circles */
+
+.page-header::before {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    right: -45px;
+    top: -80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.page-header::after {
+    content: "";
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    left: -45px;
+    bottom: -65px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.page-header-content {
+    position: relative;
+    z-index: 2;
 }
 
 .page-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     margin: 0;
-
     color: #ffffff;
-
-    font-size: 22px;
-    font-weight: 600;
+    font-size: 27px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
 }
 
+.page-header-icon {
+    font-size: 28px;
+}
+
+.page-header p {
+    margin: 7px 0 0;
+    color: #dbeafe;
+    font-size: 15px;
+    line-height: 1.5;
+}
 
 /* =========================================================
    STICKY CONTROLS
-========================================================= */
+   ========================================================= */
 
 .sticky-controls {
-
-    /*
-     * The topbar is 75px.
-     *
-     * Therefore the sticky section starts BELOW
-     * the topbar instead of covering it.
-     */
     position: sticky;
-
     top: 75px;
-
-    /*
-     * Lower than the topbar and sidebar.
-     */
     z-index: 100;
-
     width: 100%;
-
-    background: #0f172a;
-
-    padding-bottom: 10px;
+    padding-bottom: 12px;
+    background: #0b1a42;
 }
-
 
 /* =========================================================
    STATISTICS
-========================================================= */
+   ========================================================= */
 
 .stats-grid {
-
     display: grid;
-
-    grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 20px;
-
     width: 100%;
-
-    margin:
-        0
-        0
-        20px;
+    margin: 0 0 20px;
 }
-
 
 .stat-card {
-
+    position: relative;
     min-width: 0;
-
-    background: #1f1b6b;
-
-    border-radius: 15px;
-
-    padding: 20px;
-
+    min-height: 150px;
+    overflow: hidden;
+    padding: 25px 28px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    border-radius: 19px;
     color: #ffffff;
-
     box-shadow:
-        0 8px 20px
-        rgba(0,0,0,.25);
-
+        0 10px 25px rgba(0, 0, 0, 0.22);
     transition:
-        transform .25s ease;
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
+/* Decorative circle */
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    width: 145px;
+    height: 145px;
+    right: -48px;
+    top: -45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+/* Smaller decorative circle */
+
+.stat-card::before {
+    content: "";
+    position: absolute;
+    width: 85px;
+    height: 85px;
+    left: -42px;
+    bottom: -48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+}
 
 .stat-card:hover {
-    transform:
-        translateY(-3px);
+    transform: translateY(-3px);
+    box-shadow:
+        0 15px 30px rgba(0, 0, 0, 0.28);
 }
 
+.stat-card-content {
+    position: relative;
+    z-index: 2;
+}
 
 .stat-title {
-
-    color: #cbd5e1;
-
-    font-size: 14px;
-    font-weight: 500;
-
+    max-width: 80%;
+    margin-bottom: 13px;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 13px;
+    font-weight: 700;
     line-height: 1.4;
-
-    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
 }
 
-
 .stat-value {
-
     color: #ffffff;
-
-    font-size: 32px;
-    font-weight: 700;
-
+    font-size: 38px;
+    font-weight: 800;
     line-height: 1;
 }
 
+/* Statistic icons */
+
+.stat-icon {
+    position: absolute;
+    z-index: 3;
+    top: 27px;
+    right: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 63px;
+    height: 63px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.13);
+    backdrop-filter: blur(4px);
+    font-size: 28px;
+}
+
+/* Individual cards */
 
 .stat-card.total {
-    border-left:
-        5px solid
-        #3b82f6;
+    background:
+        linear-gradient(
+            135deg,
+            #3164e6 0%,
+            #2852c4 100%
+        );
 }
-
 
 .stat-card.complete {
-    border-left:
-        5px solid
-        #22c55e;
+    background:
+        linear-gradient(
+            135deg,
+            #18a957 0%,
+            #0d8f43 100%
+        );
 }
-
 
 .stat-card.incomplete {
-    border-left:
-        5px solid
-        #ef4444;
+    background:
+        linear-gradient(
+            135deg,
+            #e34b55 0%,
+            #c92e3d 100%
+        );
 }
-
 
 .stat-card.qualified {
-    border-left:
-        5px solid
-        #10b981;
+    background:
+        linear-gradient(
+            135deg,
+            #08a7c5 0%,
+            #0789ad 100%
+        );
 }
-
 
 .stat-card.not-qualified {
-    border-left:
-        5px solid
-        #f97316;
+    background:
+        linear-gradient(
+            135deg,
+            #475569 0%,
+            #344158 100%
+        );
 }
 
-
 /* =========================================================
-   FILTER
-========================================================= */
+   FILTER CONTAINER
+   ========================================================= */
 
 .filter-container {
-
     width: 100%;
-
-    background: #1f1b6b;
-
-    padding: 20px;
-
-    border-radius: 15px;
-
     margin-bottom: 20px;
-
-    box-shadow:
-        0 8px 20px
-        rgba(0,0,0,.25);
-}
-
-
-.filter-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-
-    gap: 15px;
-
-    width: 100%;
-}
-
-
-.filter-grid input,
-.filter-grid select {
-
-    width: 100%;
-    min-width: 0;
-
-    height: 46px;
-
-    padding:
-        0
-        15px;
-
-    border-radius: 10px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.08);
-
-    background: #111827;
-
-    color: #ffffff;
-
-    font-family: inherit;
-
-    font-size: 14px;
-
-    transition:
-        border-color .25s ease,
-        box-shadow .25s ease;
-}
-
-
-.filter-grid input::placeholder {
-    color: #94a3b8;
-}
-
-
-.filter-grid input:focus,
-.filter-grid select:focus {
-
-    outline: none;
-
-    border-color:
-        #6366f1;
-
-    box-shadow:
-        0 0 0 3px
-        rgba(99,102,241,.25);
-}
-
-
-.filter-grid select {
-    cursor: pointer;
-}
-
-
-/* =========================================================
-   TABLE CARD
-========================================================= */
-
-.card-box {
-
-    width: 100%;
-    min-width: 0;
-
-    background: #1f1b6b;
-
-    border-radius: 15px;
-
-    padding: 20px;
-
-    box-shadow:
-        0 8px 20px
-        rgba(0,0,0,.25);
-}
-
-
-/* =========================================================
-   TABLE RESPONSIVE
-========================================================= */
-
-.table-responsive {
-
-    width: 100%;
-
-    min-width: 0;
-
-    overflow-x: auto;
-
-    overflow-y: visible;
-
-    -webkit-overflow-scrolling: touch;
-
-    scrollbar-width: thin;
-}
-
-
-.table-responsive::-webkit-scrollbar {
-    height: 8px;
-}
-
-
-.table-responsive::-webkit-scrollbar-track {
+    padding: 25px 28px 28px;
+    border: 1px solid rgba(96, 165, 250, 0.16);
+    border-radius: 19px;
     background:
-        rgba(255,255,255,.05);
-
-    border-radius: 10px;
+        linear-gradient(
+            145deg,
+            #101f49 0%,
+            #0d1b3e 100%
+        );
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.20);
 }
 
-
-.table-responsive::-webkit-scrollbar-thumb {
-    background:
-        rgba(255,255,255,.20);
-
-    border-radius: 10px;
-}
-
-
-/* =========================================================
-   TABLE
-========================================================= */
-
-.table-custom {
-
-    width: 100%;
-
-    min-width: 950px;
-
-    border-collapse: collapse;
-
-    table-layout: auto;
-}
-
-
-.table-custom th {
-
-    background: #4f46e5;
-
-    color: #ffffff;
-
-    padding:
-        14px;
-
-    text-align: left;
-
-    white-space: nowrap;
-
-    font-size: 14px;
-
+.filter-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: #f8fafc;
+    font-size: 16px;
     font-weight: 700;
 }
 
+.filter-title-icon {
+    color: #cbd5e1;
+    font-size: 16px;
+}
 
-.table-custom td {
+.filter-grid {
+    display: grid;
+    grid-template-columns: 1.35fr repeat(4, 1fr);
+    gap: 15px;
+    width: 100%;
+}
 
-    padding:
-        14px;
+.filter-field {
+    min-width: 0;
+}
 
+.filter-grid input,
+.filter-grid select {
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+    padding: 0 16px;
+    border: 1px solid rgba(96, 165, 250, 0.18);
+    border-radius: 11px;
+    outline: none;
+    background: #172955;
     color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
 
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.08);
+.filter-grid input:hover,
+.filter-grid select:hover {
+    border-color: rgba(96, 165, 250, 0.35);
+    background: #1a2e5e;
+}
 
-    white-space: nowrap;
+.filter-grid input:focus,
+.filter-grid select:focus {
+    border-color: #4f7df3;
+    background: #172955;
+    box-shadow:
+        0 0 0 3px rgba(79, 125, 243, 0.16);
+}
 
+.filter-grid input::placeholder {
+    color: #9fb0cf;
+}
+
+.filter-grid select {
+    cursor: pointer;
+}
+
+.filter-grid select option {
+    background: #172955;
+    color: #ffffff;
+}
+
+/* =========================================================
+   TABLE CARD
+   ========================================================= */
+
+.card-box {
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0;
+    border: 1px solid rgba(96, 165, 250, 0.13);
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            145deg,
+            #101f49 0%,
+            #0d1b3e 100%
+        );
+    box-shadow:
+        0 10px 28px rgba(0, 0, 0, 0.22);
+}
+
+/* =========================================================
+   TABLE HEADER AREA
+   ========================================================= */
+
+.table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 28px 28px 25px;
+}
+
+.table-card-title h3 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.table-card-title p {
+    margin: 7px 0 0;
+    color: #8fa4ca;
     font-size: 14px;
 }
 
+.table-scroll-hint {
+    flex-shrink: 0;
+    color: #8297bd;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   TABLE RESPONSIVE
+   ========================================================= */
+
+.table-responsive {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #3e61b8 rgba(255, 255, 255, 0.05);
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 9px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #3e61b8;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #5277d5;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-custom {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.table-custom thead th {
+    padding: 15px 18px;
+    border: none;
+    background:
+        linear-gradient(
+            90deg,
+            #315fe0 0%,
+            #294fc2 100%
+        );
+    color: #ffffff;
+    text-align: left;
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15px;
+}
+
+.table-custom tbody {
+    background: #1b2d62;
+}
+
+.table-custom td {
+    padding: 17px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    color: #edf4ff;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+}
 
 .table-custom tbody tr {
     transition:
-        background .2s ease;
+        background 0.2s ease;
 }
-
 
 .table-custom tbody tr:hover {
-
-    background:
-        rgba(255,255,255,.04);
+    background: rgba(255, 255, 255, 0.045);
 }
 
+.table-custom tbody tr:last-child td {
+    border-bottom: none;
+}
 
 /* =========================================================
-   VIEW BUTTON
-========================================================= */
+   REQUIREMENT COUNT
+   ========================================================= */
 
-.btn-view {
-
+.requirement-count {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
-    min-width: 58px;
-
-    background: #0ea5e9;
-
-    color: #ffffff;
-
-    border: none;
-
-    text-decoration: none;
-
-    padding:
-        8px
-        14px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-family: inherit;
-
-    font-size: 14px;
-    font-weight: 500;
-
-    transition:
-        background .2s ease,
-        transform .2s ease;
+    min-width: 60px;
+    padding: 7px 12px;
+    border: 1px solid rgba(96, 165, 250, 0.20);
+    border-radius: 20px;
+    background: rgba(96, 165, 250, 0.10);
+    color: #dbeafe;
+    font-size: 13px;
+    font-weight: 700;
 }
-
-
-.btn-view:hover {
-
-    background:
-        #0284c7;
-
-    transform:
-        translateY(-1px);
-}
-
 
 /* =========================================================
-   STATUS
-========================================================= */
+   STATUS BADGES
+   ========================================================= */
 
 .status {
-
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
-    padding:
-        6px
-        12px;
-
+    min-width: 90px;
+    padding: 7px 13px;
     border-radius: 20px;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
+    font-size: 12px;
+    font-weight: 700;
     white-space: nowrap;
 }
 
-
 .status.verified {
-
-    background:
-        #16a34a;
-
-    color:
-        #ffffff;
+    border: 1px solid rgba(52, 211, 153, 0.30);
+    background: rgba(16, 185, 129, 0.13);
+    color: #6ee7b7;
 }
-
 
 .status.danger {
-
-    background:
-        #dc2626;
-
-    color:
-        #ffffff;
+    border: 1px solid rgba(248, 113, 113, 0.28);
+    background: rgba(239, 68, 68, 0.13);
+    color: #fca5a5;
 }
 
+/* =========================================================
+   VIEW BUTTON
+   ========================================================= */
+
+.btn-view {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 68px;
+    padding: 9px 16px;
+    border: 1px solid rgba(125, 211, 252, 0.18);
+    border-radius: 9px;
+    outline: none;
+    background:
+        linear-gradient(
+            135deg,
+            #159ed5 0%,
+            #087fb8 100%
+        );
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow:
+        0 5px 12px rgba(0, 0, 0, 0.15);
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-view:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #20abe2 0%,
+            #0a8ac5 100%
+        );
+    transform: translateY(-1px);
+    box-shadow:
+        0 7px 15px rgba(0, 0, 0, 0.22);
+}
 
 /* =========================================================
    MODAL
-========================================================= */
+   ========================================================= */
 
 .custom-modal {
-
     display: none;
-
     position: fixed;
-
     inset: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background:
-        rgba(0,0,0,.75);
-
     z-index: 5000;
-
     align-items: center;
     justify-content: center;
-
+    width: 100%;
+    height: 100%;
     padding: 20px;
+    background: rgba(3, 10, 28, 0.82);
+    backdrop-filter: blur(5px);
 }
-
 
 .custom-modal.show {
     display: flex;
 }
 
-
 .custom-modal-content {
-
     width: 100%;
-
-    max-width: 700px;
-
+    max-width: 720px;
     max-height: 90vh;
-
     overflow-y: auto;
-
+    border: 1px solid rgba(96, 165, 250, 0.18);
+    border-radius: 18px;
     background:
-        #1f1b6b;
-
+        linear-gradient(
+            145deg,
+            #142652 0%,
+            #0e1c3f 100%
+        );
     color: #ffffff;
-
-    border-radius: 15px;
-
     box-shadow:
-        0 10px 30px
-        rgba(0,0,0,.50);
-
-    animation:
-        modalPop .2s ease;
+        0 25px 70px rgba(0, 0, 0, 0.55);
+    animation: modalPop 0.22s ease;
 }
 
-
 @keyframes modalPop {
-
     from {
-
         opacity: 0;
-
-        transform:
-            scale(.95);
-
+        transform: translateY(10px) scale(0.97);
     }
 
     to {
-
         opacity: 1;
-
-        transform:
-            scale(1);
-
+        transform: translateY(0) scale(1);
     }
-
 }
-
 
 /* =========================================================
    MODAL HEADER
-========================================================= */
+   ========================================================= */
 
 .custom-modal-header {
-
-    padding:
-        15px
-        20px;
-
-    background:
-        #4f46e5;
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
     gap: 15px;
+    padding: 18px 22px;
+    background:
+        linear-gradient(
+            135deg,
+            #315fe0 0%,
+            #294bb1 100%
+        );
 }
-
 
 .custom-modal-header h3 {
-
     margin: 0;
-
     color: #ffffff;
-
     font-size: 18px;
-
-    font-weight: 600;
+    font-weight: 700;
 }
-
 
 .close-modal {
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
-    width: 35px;
-    height: 35px;
-
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.10);
     color: #ffffff;
-
     cursor: pointer;
-
-    font-size: 28px;
-
+    font-size: 26px;
     line-height: 1;
-
-    border-radius: 8px;
-
     transition:
-        background .2s ease;
+        background 0.2s ease,
+        transform 0.2s ease;
 }
-
 
 .close-modal:hover {
-
-    background:
-        rgba(255,255,255,.15);
+    background: rgba(255, 255, 255, 0.18);
+    transform: rotate(3deg);
 }
-
 
 /* =========================================================
    MODAL PHOTO
-========================================================= */
+   ========================================================= */
 
 .cadet-photo-section {
-
-    width: 100%;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
+    width: 100%;
+    padding: 28px 20px 20px;
     text-align: center;
-
-    padding:
-        25px
-        20px
-        15px;
 }
-
 
 .cadet-photo-section img {
-
     display: block;
-
-    width: 130px;
-    height: 130px;
-
-    max-width: 130px;
-    max-height: 130px;
-
+    width: 125px;
+    height: 125px;
+    max-width: 125px;
+    max-height: 125px;
+    border: 4px solid #4f72df;
     border-radius: 50%;
-
+    outline: 6px solid rgba(79, 114, 223, 0.12);
+    background: #263b78;
     object-fit: cover;
-
-    border:
-        4px solid
-        #4f46e5;
-
-    background:
-        #312e81;
-
     box-shadow:
-        0 0 0 6px
-        rgba(79,70,229,.15),
-
-        0 8px 20px
-        rgba(0,0,0,.35);
+        0 10px 25px rgba(0, 0, 0, 0.35);
 }
-
 
 /* =========================================================
    MODAL BODY
-========================================================= */
+   ========================================================= */
 
 .custom-modal-body {
-
-    padding: 20px;
-
     display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 15px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 20px 22px 25px;
 }
-
 
 .detail-item {
-
     min-width: 0;
-
-    background:
-        rgba(255,255,255,.05);
-
-    padding: 12px;
-
-    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid rgba(96, 165, 250, 0.10);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.045);
 }
-
 
 .detail-item strong {
-
     display: block;
-
-    color: #cbd5e1;
-
-    font-size: 13px;
-
-    margin-bottom: 5px;
+    margin-bottom: 7px;
+    color: #94a9cc;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
-
 
 .detail-item div {
-
-    color: #ffffff;
-
-    font-weight: 500;
-
     overflow-wrap: anywhere;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
 }
 
+/* =========================================================
+   EMPTY TABLE
+   ========================================================= */
+
+.empty-state {
+    padding: 45px 20px !important;
+    color: #91a4c5 !important;
+    text-align: center !important;
+}
 
 /* =========================================================
    LARGE DESKTOP
-========================================================= */
+   ========================================================= */
 
-@media (max-width: 1250px) {
-
+@media (max-width: 1400px) {
     .stats-grid {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-
 
     .filter-grid {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
-
 }
-
 
 /* =========================================================
    TABLET
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 992px) {
-
     .sticky-controls {
-
-        /*
-         * Mobile/tablet topbar height.
-         */
         top: 75px;
     }
 
-
     .stats-grid {
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
 
     .filter-grid {
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-}
+    .page-header {
+        padding: 24px 26px;
+    }
 
+    .page-header h2 {
+        font-size: 24px;
+    }
+}
 
 /* =========================================================
    MOBILE
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 768px) {
-
-    .page-header h2 {
-        font-size: 20px;
-    }
-
-
     .sticky-controls {
         top: 65px;
     }
 
+    .page-header {
+        padding: 22px 20px;
+        border-radius: 16px;
+    }
+
+    .page-header h2 {
+        font-size: 21px;
+    }
+
+    .page-header p {
+        font-size: 13px;
+    }
 
     .stats-grid {
         grid-template-columns: 1fr;
-
         gap: 15px;
     }
 
+    .stat-card {
+        min-height: 135px;
+        padding: 22px;
+    }
+
+    .stat-value {
+        font-size: 34px;
+    }
+
+    .stat-icon {
+        top: 22px;
+        right: 22px;
+        width: 56px;
+        height: 56px;
+        font-size: 24px;
+    }
+
+    .filter-container {
+        padding: 20px;
+        border-radius: 16px;
+    }
 
     .filter-grid {
         grid-template-columns: 1fr;
     }
 
-
-    .filter-container {
-        padding: 15px;
+    .table-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 22px 20px;
     }
 
+    .table-scroll-hint {
+        white-space: normal;
+    }
 
     .card-box {
-        padding: 15px;
+        border-radius: 16px;
     }
-
 
     .custom-modal {
-        padding: 15px;
+        padding: 12px;
     }
-
 
     .custom-modal-content {
-        width: 100%;
-
-        max-height: 95vh;
+        max-height: 94vh;
+        border-radius: 15px;
     }
-
 
     .custom-modal-body {
         grid-template-columns: 1fr;
+        padding: 18px;
     }
-
 }
-
 
 /* =========================================================
    SMALL MOBILE
-========================================================= */
+   ========================================================= */
 
 @media (max-width: 480px) {
+    .page-header {
+        margin-bottom: 15px;
+        padding: 20px 17px;
+    }
+
+    .page-header h2 {
+        font-size: 19px;
+    }
+
+    .page-header p {
+        font-size: 12px;
+    }
 
     .stat-card {
-        padding: 15px;
+        padding: 20px;
     }
 
+    .stat-title {
+        font-size: 12px;
+    }
 
     .stat-value {
-        font-size: 26px;
+        font-size: 30px;
     }
 
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
+    }
+
+    .filter-container {
+        padding: 17px;
+    }
+
+    .filter-title {
+        font-size: 15px;
+    }
 
     .table-custom {
-        min-width: 900px;
+        min-width: 1050px;
     }
-
-
-    .cadet-photo-section img {
-
-        width: 110px;
-        height: 110px;
-
-        max-width: 110px;
-        max-height: 110px;
-    }
-
 
     .custom-modal-header {
-        padding:
-            12px
-            15px;
+        padding: 15px 17px;
     }
-
 
     .custom-modal-header h3 {
         font-size: 16px;
     }
 
+    .cadet-photo-section img {
+        width: 110px;
+        height: 110px;
+        max-width: 110px;
+        max-height: 110px;
+    }
 }
-
 </style>
 
 
 <div class="verification-page">
-
 
     {{-- =====================================================
          PAGE HEADER
@@ -898,9 +943,19 @@
 
     <div class="page-header">
 
-        <h2>
-            Verification Monitoring
-        </h2>
+        <div class="page-header-content">
+
+            <h2>
+                <span class="page-header-icon">📋</span>
+                Verification Monitoring
+            </h2>
+
+            <p>
+                Monitor cadet requirements, document verification,
+                qualification status, and training readiness.
+            </p>
+
+        </div>
 
     </div>
 
@@ -911,24 +966,30 @@
 
     <div class="sticky-controls">
 
-
         {{-- =================================================
              STATISTICS
         ================================================== --}}
 
         <div class="stats-grid">
 
-
             {{-- TOTAL --}}
 
             <div class="stat-card total">
 
-                <div class="stat-title">
-                    Total Cadet Verification
+                <div class="stat-card-content">
+
+                    <div class="stat-title">
+                        Total Cadet Verification
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $verificationTotal }}
+                    </div>
+
                 </div>
 
-                <div class="stat-value">
-                    {{ $verificationTotal }}
+                <div class="stat-icon">
+                    📋
                 </div>
 
             </div>
@@ -938,12 +999,20 @@
 
             <div class="stat-card complete">
 
-                <div class="stat-title">
-                    Completed Requirements/Documents
+                <div class="stat-card-content">
+
+                    <div class="stat-title">
+                        Completed Requirements
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $completed }}
+                    </div>
+
                 </div>
 
-                <div class="stat-value">
-                    {{ $completed }}
+                <div class="stat-icon">
+                    ✓
                 </div>
 
             </div>
@@ -953,12 +1022,20 @@
 
             <div class="stat-card incomplete">
 
-                <div class="stat-title">
-                    Incomplete Requirements/Documents
+                <div class="stat-card-content">
+
+                    <div class="stat-title">
+                        Incomplete Requirements
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $incomplete }}
+                    </div>
+
                 </div>
 
-                <div class="stat-value">
-                    {{ $incomplete }}
+                <div class="stat-icon">
+                    !
                 </div>
 
             </div>
@@ -968,12 +1045,20 @@
 
             <div class="stat-card qualified">
 
-                <div class="stat-title">
-                    Qualified
+                <div class="stat-card-content">
+
+                    <div class="stat-title">
+                        Qualified
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $qualified }}
+                    </div>
+
                 </div>
 
-                <div class="stat-value">
-                    {{ $qualified }}
+                <div class="stat-icon">
+                    ✓
                 </div>
 
             </div>
@@ -983,16 +1068,23 @@
 
             <div class="stat-card not-qualified">
 
-                <div class="stat-title">
-                    Not Qualified
+                <div class="stat-card-content">
+
+                    <div class="stat-title">
+                        Not Qualified
+                    </div>
+
+                    <div class="stat-value">
+                        {{ $notQualified }}
+                    </div>
+
                 </div>
 
-                <div class="stat-value">
-                    {{ $notQualified }}
+                <div class="stat-icon">
+                    ⚠
                 </div>
 
             </div>
-
 
         </div>
 
@@ -1003,6 +1095,17 @@
 
         <div class="filter-container">
 
+            <div class="filter-title">
+
+                <span class="filter-title-icon">
+                    ⚙
+                </span>
+
+                Filters
+
+            </div>
+
+
             <form
                 method="GET"
                 id="filterForm"
@@ -1010,135 +1113,129 @@
 
                 <div class="filter-grid">
 
-
                     {{-- SEARCH --}}
 
-                    <input
-                        type="text"
-                        name="search"
-                        placeholder="Search Cadet Name"
-                        value="{{ request('search') }}"
-                        autocomplete="off"
-                    >
+                    <div class="filter-field">
+
+                        <input
+                            type="text"
+                            name="search"
+                            placeholder="Search Cadet Name"
+                            value="{{ request('search') }}"
+                            autocomplete="off"
+                        >
+
+                    </div>
 
 
                     {{-- COURSE --}}
 
-                    <select name="course">
+                    <div class="filter-field">
 
-                        <option value="">
-                            All Courses
-                        </option>
+                        <select name="course">
 
-
-                        @foreach($courses as $course)
-
-                            <option
-                                value="{{ $course->course }}"
-                                {{ request('course') == $course->course
-                                    ? 'selected'
-                                    : ''
-                                }}
-                            >
-                                {{ $course->course }}
+                            <option value="">
+                                All Courses
                             </option>
 
-                        @endforeach
+                            @foreach($courses as $course)
 
-                    </select>
+                                <option
+                                    value="{{ $course->course }}"
+                                    {{ request('course') == $course->course ? 'selected' : '' }}
+                                >
+                                    {{ $course->course }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
 
 
                     {{-- BATCH --}}
 
-                    <select name="batch">
+                    <div class="filter-field">
 
-                        <option value="">
-                            All Batches
-                        </option>
+                        <select name="batch">
 
-
-                        @foreach($batches as $batch)
-
-                            <option
-                                value="{{ $batch->id }}"
-                                {{ request('batch') == $batch->id
-                                    ? 'selected'
-                                    : ''
-                                }}
-                            >
-                                {{ $batch->batch_year }}
+                            <option value="">
+                                All Batches
                             </option>
 
-                        @endforeach
+                            @foreach($batches as $batch)
 
-                    </select>
+                                <option
+                                    value="{{ $batch->id }}"
+                                    {{ request('batch') == $batch->id ? 'selected' : '' }}
+                                >
+                                    {{ $batch->batch_year }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
 
 
                     {{-- VERIFICATION STATUS --}}
 
-                    <select name="verification_status">
+                    <div class="filter-field">
 
-                        <option value="">
-                            Verification Status
-                        </option>
+                        <select name="verification_status">
 
+                            <option value="">
+                                Verification Status
+                            </option>
 
-                        <option
-                            value="Verified"
-                            {{ request('verification_status') == 'Verified'
-                                ? 'selected'
-                                : ''
-                            }}
-                        >
-                            Verified
-                        </option>
+                            <option
+                                value="Verified"
+                                {{ request('verification_status') == 'Verified' ? 'selected' : '' }}
+                            >
+                                Verified
+                            </option>
 
+                            <option
+                                value="Pending"
+                                {{ request('verification_status') == 'Pending' ? 'selected' : '' }}
+                            >
+                                Pending
+                            </option>
 
-                        <option
-                            value="Pending"
-                            {{ request('verification_status') == 'Pending'
-                                ? 'selected'
-                                : ''
-                            }}
-                        >
-                            Pending
-                        </option>
+                        </select>
 
-                    </select>
+                    </div>
 
 
                     {{-- BS STATUS --}}
 
-                    <select name="bs_status">
+                    <div class="filter-field">
 
-                        <option value="">
-                            BS Status
-                        </option>
+                        <select name="bs_status">
 
+                            <option value="">
+                                BS Status
+                            </option>
 
-                        <option
-                            value="Qualified"
-                            {{ request('bs_status') == 'Qualified'
-                                ? 'selected'
-                                : ''
-                            }}
-                        >
-                            Qualified
-                        </option>
+                            <option
+                                value="Qualified"
+                                {{ request('bs_status') == 'Qualified' ? 'selected' : '' }}
+                            >
+                                Qualified
+                            </option>
 
+                            <option
+                                value="Not Qualified"
+                                {{ request('bs_status') == 'Not Qualified' ? 'selected' : '' }}
+                            >
+                                Not Qualified
+                            </option>
 
-                        <option
-                            value="Not Qualified"
-                            {{ request('bs_status') == 'Not Qualified'
-                                ? 'selected'
-                                : ''
-                            }}
-                        >
-                            Not Qualified
-                        </option>
+                        </select>
 
-                    </select>
-
+                    </div>
 
                 </div>
 
@@ -1146,20 +1243,43 @@
 
         </div>
 
-
     </div>
 
 
     {{-- =====================================================
-         TABLE
+         TABLE CARD
     ====================================================== --}}
 
     <div class="card-box">
 
+        {{-- TABLE HEADER --}}
+
+        <div class="table-card-header">
+
+            <div class="table-card-title">
+
+                <h3>
+                    Cadet Verification Records
+                </h3>
+
+                <p>
+                    Review requirements, verification, and qualification status
+                </p>
+
+            </div>
+
+            <div class="table-scroll-hint">
+                ↔ Scroll horizontally to view all columns
+            </div>
+
+        </div>
+
+
+        {{-- TABLE --}}
+
         <div class="table-responsive">
 
             <table class="table-custom">
-
 
                 <thead>
 
@@ -1188,17 +1308,14 @@
 
                 <tbody>
 
-
                     @forelse($cadets as $cadet)
-
 
                         @php
 
-
                             /*
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             | APPROVED DOCUMENTS
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             */
 
                             $approvedDocuments =
@@ -1211,9 +1328,9 @@
 
 
                             /*
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             | TOTAL REQUIRED DOCUMENTS
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             */
 
                             $totalDocuments =
@@ -1222,9 +1339,9 @@
 
 
                             /*
-                            |=================================================
-                            | PHOTO
-                            |=================================================
+                            |--------------------------------------------------------------------------
+                            | CADET NAME
+                            |--------------------------------------------------------------------------
                             */
 
                             $cadetName =
@@ -1232,27 +1349,28 @@
                                 ?? 'Unknown Cadet';
 
 
+                            /*
+                            |--------------------------------------------------------------------------
+                            | PHOTO
+                            |--------------------------------------------------------------------------
+                            */
+
                             $photoUrl =
                                 $cadet->photo
-
                                     ? asset(
-                                        'storage/' .
-                                        $cadet->photo
+                                        'storage/' . $cadet->photo
                                     )
-
                                     : 'https://ui-avatars.com/api/?name=' .
-                                        urlencode(
-                                            $cadetName
-                                        ) .
-                                        '&background=4f46e5' .
+                                        urlencode($cadetName) .
+                                        '&background=315fe0' .
                                         '&color=fff' .
                                         '&size=300';
 
 
                             /*
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             | BATCH
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             */
 
                             $batchYear =
@@ -1263,9 +1381,9 @@
 
 
                             /*
-                            |=================================================
-                            | VERIFICATION
-                            |=================================================
+                            |--------------------------------------------------------------------------
+                            | VERIFICATION STATUS
+                            |--------------------------------------------------------------------------
                             */
 
                             $verificationStatus =
@@ -1274,9 +1392,9 @@
 
 
                             /*
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             | BS STATUS
-                            |=================================================
+                            |--------------------------------------------------------------------------
                             */
 
                             $bsStatus =
@@ -1288,46 +1406,31 @@
 
                         <tr>
 
-
                             {{-- TRB --}}
 
                             <td>
-
-                                {{
-                                    $cadet->trb_control_number
-                                    ?? '-'
-                                }}
-
+                                {{ $cadet->trb_control_number ?? '-' }}
                             </td>
 
 
                             {{-- NAME --}}
 
                             <td>
-
                                 {{ $cadetName }}
-
                             </td>
 
 
                             {{-- COURSE --}}
 
                             <td>
-
-                                {{
-                                    $cadet->course
-                                    ?? '-'
-                                }}
-
+                                {{ $cadet->course ?? '-' }}
                             </td>
 
 
                             {{-- BATCH --}}
 
                             <td>
-
                                 {{ $batchYear }}
-
                             </td>
 
 
@@ -1335,9 +1438,13 @@
 
                             <td>
 
-                                {{ $approvedDocuments }}
-                                /
-                                {{ $totalDocuments }}
+                                <span class="requirement-count">
+
+                                    {{ $approvedDocuments }}
+                                    /
+                                    {{ $totalDocuments }}
+
+                                </span>
 
                             </td>
 
@@ -1346,28 +1453,15 @@
 
                             <td>
 
-                                @if(
-                                    $verificationStatus
-                                    === 'Verified'
-                                )
+                                @if($verificationStatus === 'Verified')
 
-                                    <span
-                                        class="
-                                            status
-                                            verified
-                                        "
-                                    >
+                                    <span class="status verified">
                                         Verified
                                     </span>
 
                                 @else
 
-                                    <span
-                                        class="
-                                            status
-                                            danger
-                                        "
-                                    >
+                                    <span class="status danger">
                                         Pending
                                     </span>
 
@@ -1380,28 +1474,15 @@
 
                             <td>
 
-                                @if(
-                                    $bsStatus
-                                    === 'Qualified'
-                                )
+                                @if($bsStatus === 'Qualified')
 
-                                    <span
-                                        class="
-                                            status
-                                            verified
-                                        "
-                                    >
+                                    <span class="status verified">
                                         Qualified
                                     </span>
 
                                 @else
 
-                                    <span
-                                        class="
-                                            status
-                                            danger
-                                        "
-                                    >
+                                    <span class="status danger">
                                         Not Qualified
                                     </span>
 
@@ -1416,74 +1497,46 @@
 
                                 <button
                                     type="button"
-
-                                    class="
-                                        btn-view
-                                        viewVerificationBtn
-                                    "
-
+                                    class="btn-view viewVerificationBtn"
                                     data-name="{{ $cadetName }}"
-
-                                    data-course="{{
-                                        $cadet->course
-                                        ?? 'N/A'
-                                    }}"
-
+                                    data-course="{{ $cadet->course ?? 'N/A' }}"
                                     data-batch="{{ $batchYear }}"
-
                                     data-photo="{{ $photoUrl }}"
-
                                     data-verification="{{ $verificationStatus }}"
-
                                     data-bs="{{ $bsStatus }}"
-
                                     data-approved="{{ $approvedDocuments }}"
-
                                     data-total="{{ $totalDocuments }}"
                                 >
-
                                     View
-
                                 </button>
 
                             </td>
-
 
                         </tr>
 
 
                     @empty
 
-
                         <tr>
 
                             <td
                                 colspan="8"
-                                style="
-                                    text-align:center;
-                                    padding:30px;
-                                "
+                                class="empty-state"
                             >
-
                                 No verification records found.
-
                             </td>
 
                         </tr>
 
-
                     @endforelse
 
-
                 </tbody>
-
 
             </table>
 
         </div>
 
     </div>
-
 
 </div>
 
@@ -1498,9 +1551,7 @@
     aria-hidden="true"
 >
 
-
     <div class="custom-modal-content">
-
 
         {{-- HEADER --}}
 
@@ -1509,7 +1560,6 @@
             <h3>
                 Cadet Verification Details
             </h3>
-
 
             <button
                 type="button"
@@ -1539,7 +1589,6 @@
         {{-- BODY --}}
 
         <div class="custom-modal-body">
-
 
             {{-- NAME --}}
 
@@ -1616,7 +1665,7 @@
             </div>
 
 
-            {{-- BS --}}
+            {{-- BS STATUS --}}
 
             <div class="detail-item">
 
@@ -1630,7 +1679,6 @@
 
             </div>
 
-
         </div>
 
     </div>
@@ -1639,358 +1687,241 @@
 
 
 <script>
+document.addEventListener('DOMContentLoaded', function () {
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
+    /* =====================================================
+       MODAL ELEMENTS
+    ===================================================== */
 
+    const modal =
+        document.getElementById('verificationModal');
 
-        /* =====================================================
-           MODAL ELEMENTS
-        ===================================================== */
+    const closeBtn =
+        document.getElementById('closeVerificationModal');
 
-        const modal =
-            document.getElementById(
-                'verificationModal'
-            );
+    const modalPhoto =
+        document.getElementById('modal_photo');
 
+    const modalName =
+        document.getElementById('modal_name');
 
-        const closeBtn =
-            document.getElementById(
-                'closeVerificationModal'
-            );
+    const modalCourse =
+        document.getElementById('modal_course');
 
+    const modalBatch =
+        document.getElementById('modal_batch');
 
-        const modalPhoto =
-            document.getElementById(
-                'modal_photo'
-            );
+    const modalRequirements =
+        document.getElementById('modal_requirements');
 
+    const modalVerification =
+        document.getElementById('modal_verification');
 
-        const modalName =
-            document.getElementById(
-                'modal_name'
-            );
+    const modalBS =
+        document.getElementById('modal_bs');
 
 
-        const modalCourse =
-            document.getElementById(
-                'modal_course'
-            );
+    /* =====================================================
+       DEFAULT AVATAR
+    ===================================================== */
 
+    function getDefaultAvatar(name) {
 
-        const modalBatch =
-            document.getElementById(
-                'modal_batch'
-            );
+        return (
+            'https://ui-avatars.com/api/?name=' +
+            encodeURIComponent(name) +
+            '&background=315fe0' +
+            '&color=fff' +
+            '&size=300'
+        );
 
+    }
 
-        const modalRequirements =
-            document.getElementById(
-                'modal_requirements'
-            );
 
+    /* =====================================================
+       OPEN MODAL
+    ===================================================== */
 
-        const modalVerification =
-            document.getElementById(
-                'modal_verification'
-            );
+    document
+        .querySelectorAll('.viewVerificationBtn')
+        .forEach(function (button) {
 
+            button.addEventListener('click', function () {
 
-        const modalBS =
-            document.getElementById(
-                'modal_bs'
-            );
+                const name =
+                    this.dataset.name ||
+                    'Unknown Cadet';
 
+                const course =
+                    this.dataset.course ||
+                    'N/A';
 
-        /* =====================================================
-           OPEN MODAL
-        ===================================================== */
+                const batch =
+                    this.dataset.batch ||
+                    'No Batch';
 
-        document
-            .querySelectorAll(
-                '.viewVerificationBtn'
-            )
-            .forEach(
-                function (button) {
+                const approved =
+                    this.dataset.approved ||
+                    '0';
 
+                const total =
+                    this.dataset.total ||
+                    '0';
 
-                    button.addEventListener(
-                        'click',
-                        function () {
+                const verification =
+                    this.dataset.verification ||
+                    'Pending';
 
+                const bs =
+                    this.dataset.bs ||
+                    'Not Qualified';
 
-                            const name =
-                                this.dataset.name
-                                || 'Unknown Cadet';
+                const photo =
+                    this.dataset.photo ||
+                    getDefaultAvatar(name);
 
 
-                            const course =
-                                this.dataset.course
-                                || 'N/A';
+                /* =================================================
+                   TEXT
+                ================================================= */
 
+                modalName.textContent = name;
 
-                            const batch =
-                                this.dataset.batch
-                                || 'No Batch';
+                modalCourse.textContent = course;
 
+                modalBatch.textContent = batch;
 
-                            const approved =
-                                this.dataset.approved
-                                || '0';
+                modalRequirements.textContent =
+                    `${approved} / ${total}`;
 
 
-                            const total =
-                                this.dataset.total
-                                || '0';
+                /* =================================================
+                   VERIFICATION STATUS
+                ================================================= */
 
+                if (verification === 'Verified') {
 
-                            const verification =
-                                this.dataset.verification
-                                || 'Pending';
+                    modalVerification.innerHTML = `
+                        <span class="status verified">
+                            Verified
+                        </span>
+                    `;
 
+                } else {
 
-                            const bs =
-                                this.dataset.bs
-                                || 'Not Qualified';
-
-
-                            const photo =
-                                this.dataset.photo;
-
-
-                            /* =========================
-                               TEXT
-                            ========================== */
-
-                            modalName.textContent =
-                                name;
-
-
-                            modalCourse.textContent =
-                                course;
-
-
-                            modalBatch.textContent =
-                                batch;
-
-
-                            modalRequirements.textContent =
-                                `${approved} / ${total}`;
-
-
-                            /* =========================
-                               VERIFICATION
-                            ========================== */
-
-                            if (
-                                verification ===
-                                'Verified'
-                            ) {
-
-                                modalVerification.innerHTML =
-                                    `
-                                    <span
-                                        class="status verified"
-                                    >
-                                        Verified
-                                    </span>
-                                    `;
-
-                            }
-                            else {
-
-                                modalVerification.innerHTML =
-                                    `
-                                    <span
-                                        class="status danger"
-                                    >
-                                        Pending
-                                    </span>
-                                    `;
-
-                            }
-
-
-                            /* =========================
-                               BS STATUS
-                            ========================== */
-
-                            if (
-                                bs ===
-                                'Qualified'
-                            ) {
-
-                                modalBS.innerHTML =
-                                    `
-                                    <span
-                                        class="status verified"
-                                    >
-                                        Qualified
-                                    </span>
-                                    `;
-
-                            }
-                            else {
-
-                                modalBS.innerHTML =
-                                    `
-                                    <span
-                                        class="status danger"
-                                    >
-                                        Not Qualified
-                                    </span>
-                                    `;
-
-                            }
-
-
-                            /* =========================
-                               PHOTO
-                            ========================== */
-
-                            modalPhoto.onerror =
-                                function () {
-
-                                    this.onerror =
-                                        null;
-
-                                    this.src =
-                                        'https://ui-avatars.com/api/?name='
-                                        +
-                                        encodeURIComponent(
-                                            name
-                                        )
-                                        +
-                                        '&background=4f46e5'
-                                        +
-                                        '&color=fff'
-                                        +
-                                        '&size=300';
-
-                                };
-
-
-                            modalPhoto.src =
-                                photo
-                                || 'https://ui-avatars.com/api/?name='
-                                +
-                                encodeURIComponent(
-                                    name
-                                )
-                                +
-                                '&background=4f46e5'
-                                +
-                                '&color=fff'
-                                +
-                                '&size=300';
-
-
-                            /* =========================
-                               SHOW
-                            ========================== */
-
-                            modal.classList.add(
-                                'show'
-                            );
-
-
-                            modal.setAttribute(
-                                'aria-hidden',
-                                'false'
-                            );
-
-
-                            document.body.style
-                                .overflow = 'hidden';
-
-                        }
-                    );
+                    modalVerification.innerHTML = `
+                        <span class="status danger">
+                            Pending
+                        </span>
+                    `;
 
                 }
-            );
 
 
-        /* =====================================================
-           CLOSE MODAL
-        ===================================================== */
+                /* =================================================
+                   BS STATUS
+                ================================================= */
 
-        function closeModal()
-        {
+                if (bs === 'Qualified') {
 
-            if (!modal) {
-                return;
-            }
+                    modalBS.innerHTML = `
+                        <span class="status verified">
+                            Qualified
+                        </span>
+                    `;
 
+                } else {
 
-            modal.classList.remove(
-                'show'
-            );
-
-
-            modal.setAttribute(
-                'aria-hidden',
-                'true'
-            );
-
-
-            document.body.style
-                .overflow = '';
-
-        }
-
-
-        /* =====================================================
-           CLOSE BUTTON
-        ===================================================== */
-
-        if (closeBtn) {
-
-            closeBtn.addEventListener(
-                'click',
-                closeModal
-            );
-
-        }
-
-
-        /* =====================================================
-           CLICK OUTSIDE
-        ===================================================== */
-
-        if (modal) {
-
-            modal.addEventListener(
-                'click',
-                function (event) {
-
-                    if (
-                        event.target ===
-                        modal
-                    ) {
-
-                        closeModal();
-
-                    }
+                    modalBS.innerHTML = `
+                        <span class="status danger">
+                            Not Qualified
+                        </span>
+                    `;
 
                 }
-            );
 
+
+                /* =================================================
+                   PHOTO
+                ================================================= */
+
+                modalPhoto.onerror = function () {
+
+                    this.onerror = null;
+
+                    this.src =
+                        getDefaultAvatar(name);
+
+                };
+
+                modalPhoto.src = photo;
+
+
+                /* =================================================
+                   SHOW MODAL
+                ================================================= */
+
+                modal.classList.add('show');
+
+                modal.setAttribute(
+                    'aria-hidden',
+                    'false'
+                );
+
+                document.body.style.overflow = 'hidden';
+
+            });
+
+        });
+
+
+    /* =====================================================
+       CLOSE MODAL
+    ===================================================== */
+
+    function closeModal() {
+
+        if (!modal) {
+            return;
         }
 
+        modal.classList.remove('show');
 
-        /* =====================================================
-           ESCAPE
-        ===================================================== */
+        modal.setAttribute(
+            'aria-hidden',
+            'true'
+        );
 
-        document.addEventListener(
-            'keydown',
+        document.body.style.overflow = '';
+
+    }
+
+
+    /* =====================================================
+       CLOSE BUTTON
+    ===================================================== */
+
+    if (closeBtn) {
+
+        closeBtn.addEventListener(
+            'click',
+            closeModal
+        );
+
+    }
+
+
+    /* =====================================================
+       CLICK OUTSIDE MODAL
+    ===================================================== */
+
+    if (modal) {
+
+        modal.addEventListener(
+            'click',
             function (event) {
 
-                if (
-                    event.key ===
-                    'Escape'
-                ) {
+                if (event.target === modal) {
 
                     closeModal();
 
@@ -1999,91 +1930,93 @@ document.addEventListener(
             }
         );
 
-
-        /* =====================================================
-           FILTER FORM
-        ===================================================== */
-
-        const form =
-            document.getElementById(
-                'filterForm'
-            );
+    }
 
 
-        if (!form) {
-            return;
+    /* =====================================================
+       ESCAPE KEY
+    ===================================================== */
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (event.key === 'Escape') {
+
+                closeModal();
+
+            }
+
         }
+    );
 
 
-        /* =====================================================
-           SELECT FILTERS
-        ===================================================== */
+    /* =====================================================
+       FILTER FORM
+    ===================================================== */
 
-        form
-            .querySelectorAll(
-                'select'
-            )
-            .forEach(
-                function (select) {
+    const form =
+        document.getElementById('filterForm');
 
-                    select.addEventListener(
-                        'change',
-                        function () {
+    if (!form) {
+        return;
+    }
 
-                            form.submit();
 
-                        }
-                    );
+    /* =====================================================
+       SELECT FILTERS
+    ===================================================== */
+
+    form
+        .querySelectorAll('select')
+        .forEach(function (select) {
+
+            select.addEventListener(
+                'change',
+                function () {
+
+                    form.submit();
 
                 }
             );
 
-
-        /* =====================================================
-           SEARCH
-        ===================================================== */
-
-        const searchInput =
-            form.querySelector(
-                'input[name="search"]'
-            );
+        });
 
 
-        if (!searchInput) {
-            return;
-        }
+    /* =====================================================
+       SEARCH
+    ===================================================== */
 
-
-        let searchTimer;
-
-
-        searchInput.addEventListener(
-            'input',
-            function () {
-
-
-                clearTimeout(
-                    searchTimer
-                );
-
-
-                searchTimer =
-                    setTimeout(
-                        function () {
-
-                            form.submit();
-
-                        },
-                        500
-                    );
-
-            }
+    const searchInput =
+        form.querySelector(
+            'input[name="search"]'
         );
 
+    if (!searchInput) {
+        return;
     }
-);
 
+    let searchTimer;
+
+    searchInput.addEventListener(
+        'input',
+        function () {
+
+            clearTimeout(searchTimer);
+
+            searchTimer = setTimeout(
+                function () {
+
+                    form.submit();
+
+                },
+                500
+            );
+
+        }
+    );
+
+});
 </script>
-
 
 @endsection
