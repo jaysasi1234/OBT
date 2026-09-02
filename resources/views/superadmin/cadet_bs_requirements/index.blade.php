@@ -6,36 +6,37 @@
 
 <style>
 /* =========================================================
-   DARK NAVY / PURPLE-BLUE THEME
+   PAGE / THEME
 ========================================================= */
 
 .bs-page {
-    --bs-bg: #07152f;
-    --bs-bg-deep: #061126;
+    --bs-bg: #0b1a42;
+    --bs-bg-deep: #0d1b3e;
+    --bs-card: #101f49;
+    --bs-card-light: #172955;
+    --bs-card-hover: #1b2f63;
 
-    --bs-card: #2d2a67;
-    --bs-card-hover: #35327a;
-    --bs-card-deep: #242252;
+    --bs-blue: #3164e6;
+    --bs-blue-light: #60a5fa;
+    --bs-blue-hover: #4075df;
 
-    --bs-border: #45438a;
-    --bs-border-soft: #39376f;
+    --bs-green: #18a957;
+    --bs-orange: #f59e0b;
+    --bs-purple: #7c5ce6;
+    --bs-red: #dc3f4d;
 
-    --bs-input: #081832;
-    --bs-input-hover: #0b1d3d;
+    --bs-border: rgba(96, 165, 250, .18);
+    --bs-border-strong: rgba(96, 165, 250, .28);
 
     --bs-text: #ffffff;
-    --bs-text-light: #dbe5ff;
-    --bs-text-muted: #aeb9d6;
-    --bs-text-soft: #8f9bc0;
-
-    --bs-blue: #4f8cff;
-    --bs-blue-hover: #6a9eff;
-    --bs-blue-dark: #315fc2;
+    --bs-text-light: #dbeafe;
+    --bs-text-muted: #9fb1d3;
+    --bs-text-soft: #8297bd;
 
     width: 100%;
+    min-width: 0;
     min-height: 100vh;
-    padding: 28px;
-    background: var(--bs-bg);
+    padding: 20px;
     color: var(--bs-text);
 }
 
@@ -45,40 +46,93 @@
     box-sizing: border-box;
 }
 
+
 /* =========================================================
-   HEADER
+   PAGE HEADER
 ========================================================= */
 
 .bs-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+
+    margin-bottom: 20px;
+    padding: 28px 34px;
+
+    border: 1px solid rgba(96, 165, 250, .25);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3159c9 0%,
+            #294aa8 55%,
+            #243f91 100%
+        );
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .22);
+}
+
+.bs-header::before {
+    content: "";
+    position: absolute;
+
+    width: 210px;
+    height: 210px;
+
+    top: -125px;
+    right: 80px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, .06);
+}
+
+.bs-header::after {
+    content: "";
+    position: absolute;
+
+    width: 160px;
+    height: 160px;
+
+    right: -65px;
+    bottom: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, .05);
+}
+
+.bs-header-content {
+    position: relative;
+    z-index: 2;
 }
 
 .bs-header-content h2 {
     display: flex;
     align-items: center;
     gap: 11px;
+
     margin: 0;
-    color: var(--bs-text);
-    font-size: 28px;
-    font-weight: 800;
+
+    color: #ffffff;
+    font-size: 27px;
+    font-weight: 700;
     line-height: 1.2;
 }
 
 .bs-header-content h2 i {
-    color: var(--bs-blue);
+    color: #dbeafe;
     font-size: 25px;
 }
 
 .bs-header-content p {
     margin: 8px 0 0;
-    color: var(--bs-text-muted);
-    font-size: 14px;
+
+    color: #dbeafe;
+    font-size: 15px;
     line-height: 1.5;
 }
+
 
 /* =========================================================
    STATISTICS
@@ -87,85 +141,150 @@
 .bs-stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 24px;
+    gap: 20px;
+
+    margin-bottom: 20px;
 }
 
 .bs-stat {
+    position: relative;
+    overflow: hidden;
+
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
+
     min-width: 0;
-    min-height: 120px;
-    padding: 20px;
-    background: var(--bs-card);
-    border: 1px solid var(--bs-border);
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, .20);
+    min-height: 145px;
+
+    padding: 25px 28px;
+
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 19px;
+
+    color: #ffffff;
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .22);
+
     transition:
         transform .2s ease,
-        box-shadow .2s ease,
-        border-color .2s ease;
+        box-shadow .2s ease;
+}
+
+.bs-stat::after {
+    content: "";
+
+    position: absolute;
+
+    width: 115px;
+    height: 115px;
+
+    right: -35px;
+    bottom: -60px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, .06);
 }
 
 .bs-stat:hover {
     transform: translateY(-3px);
-    background: var(--bs-card-hover);
-    border-color: #5754a3;
-    box-shadow: 0 14px 35px rgba(0, 0, 0, .28);
+    box-shadow: 0 16px 35px rgba(0, 0, 0, .28);
 }
 
+
+/* STAT COLORS */
+
+.bs-stat-blue {
+    background: linear-gradient(
+        135deg,
+        #3164e6,
+        #2852c4
+    );
+}
+
+.bs-stat-green {
+    background: linear-gradient(
+        135deg,
+        #18a957,
+        #0d8f43
+    );
+}
+
+.bs-stat-orange {
+    background: linear-gradient(
+        135deg,
+        #e69a16,
+        #c87905
+    );
+}
+
+.bs-stat-purple {
+    background: linear-gradient(
+        135deg,
+        #7c5ce6,
+        #6241c4
+    );
+}
+
+
+/* STAT ICON */
+
 .bs-stat-icon {
-    flex: 0 0 58px;
-    width: 58px;
-    height: 58px;
+    position: relative;
+    z-index: 2;
+
+    flex: 0 0 63px;
+
+    width: 63px;
+    height: 63px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 14px;
-    color: #fff;
-    font-size: 22px;
-    box-shadow: 0 7px 18px rgba(0, 0, 0, .25);
-}
 
-/* Keep the different statistic identities,
-   but make them fit the dark theme. */
+    border-radius: 16px;
 
-.bs-stat-blue .bs-stat-icon {
-    background: linear-gradient(135deg, #315fc2, #4f8cff);
-}
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .12);
 
-.bs-stat-green .bs-stat-icon {
-    background: linear-gradient(135deg, #15803d, #22c55e);
-}
+    color: #ffffff;
+    font-size: 24px;
 
-.bs-stat-orange .bs-stat-icon {
-    background: linear-gradient(135deg, #b45309, #f59e0b);
-}
-
-.bs-stat-purple .bs-stat-icon {
-    background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
 }
 
 .bs-stat-content {
+    position: relative;
+    z-index: 2;
+
     min-width: 0;
 }
 
 .bs-stat-label {
     margin: 0;
-    color: var(--bs-text-muted);
+
+    color: rgba(255, 255, 255, .82);
+
     font-size: 13px;
     font-weight: 700;
+
     line-height: 1.4;
+    text-transform: uppercase;
+    letter-spacing: .25px;
 }
 
 .bs-stat-value {
-    margin: 6px 0 0;
-    color: var(--bs-text);
-    font-size: 30px;
+    margin: 7px 0 0;
+
+    color: #ffffff;
+
+    font-size: 38px;
     font-weight: 800;
+
     line-height: 1;
 }
+
 
 /* =========================================================
    FILTER CARD
@@ -173,40 +292,53 @@
 
 .bs-filter-card {
     margin-bottom: 20px;
-    padding: 20px;
-    background: var(--bs-bg-deep);
+    padding: 25px 28px 28px;
+
     border: 1px solid var(--bs-border);
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, .20);
+    border-radius: 19px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #101f49,
+            #0d1b3e
+        );
+
+    box-shadow: 0 10px 28px rgba(0, 0, 0, .20);
 }
 
 .bs-filter-title {
     display: flex;
     align-items: center;
     gap: 9px;
+
     margin-bottom: 18px;
 }
 
 .bs-filter-title i {
-    color: var(--bs-blue);
+    color: var(--bs-blue-light);
     font-size: 15px;
 }
 
 .bs-filter-title h3 {
     margin: 0;
-    color: var(--bs-text);
-    font-size: 17px;
-    font-weight: 800;
+
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .bs-filter-row {
     display: grid;
+
     grid-template-columns:
-        minmax(220px, 1.4fr)
-        minmax(180px, 1fr)
-        minmax(180px, 1fr)
+        1.35fr
+        1fr
+        1fr
         auto;
-    gap: 14px;
+
+    gap: 15px;
     align-items: end;
 }
 
@@ -216,21 +348,31 @@
 
 .bs-filter-group label {
     display: block;
+
     margin-bottom: 7px;
+
     color: var(--bs-text-muted);
+
     font-size: 12px;
     font-weight: 700;
 }
 
 .bs-filter-control {
     width: 100%;
-    height: 44px;
-    padding: 0 13px;
-    background: var(--bs-input);
-    border: 1px solid var(--bs-border-soft);
-    border-radius: 9px;
-    color: var(--bs-text);
+    height: 48px;
+
+    padding: 0 14px;
+
+    border: 1px solid rgba(96, 165, 250, .18);
+    border-radius: 11px;
+
+    outline: none;
+
+    background: #172955;
+    color: #ffffff;
+
     font-size: 14px;
+
     transition:
         border-color .2s ease,
         box-shadow .2s ease,
@@ -238,25 +380,24 @@
 }
 
 .bs-filter-control:hover {
-    background: var(--bs-input-hover);
-    border-color: var(--bs-border);
+    background: #1a2e5d;
+    border-color: rgba(96, 165, 250, .28);
 }
 
 .bs-filter-control:focus {
-    outline: none;
-    background: var(--bs-input);
-    border-color: var(--bs-blue);
-    box-shadow: 0 0 0 3px rgba(79, 140, 255, .15);
+    background: #172955;
+    border-color: var(--bs-blue-light);
+
+    box-shadow:
+        0 0 0 3px rgba(96, 165, 250, .12);
 }
 
 .bs-filter-control::placeholder {
-    color: #7180a5;
+    color: #7185ab;
 }
 
-/* Select dropdown */
-
 .bs-filter-control option {
-    background: #081832;
+    background: #172955;
     color: #ffffff;
 }
 
@@ -264,6 +405,7 @@
     display: flex;
     gap: 8px;
 }
+
 
 /* =========================================================
    BUTTONS
@@ -274,43 +416,43 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
-    min-height: 44px;
-    padding: 0 16px;
-    border: 0;
-    border-radius: 9px;
+
+    min-height: 48px;
+
+    padding: 0 17px;
+
+    border-radius: 10px;
+
     font-size: 13px;
     font-weight: 700;
+
     text-decoration: none;
+
     cursor: pointer;
+
     transition:
         background .2s ease,
+        border-color .2s ease,
         transform .2s ease,
         box-shadow .2s ease;
 }
 
-.bs-btn-primary {
-    background: var(--bs-blue);
-    color: #fff;
-}
-
-.bs-btn-primary:hover {
-    background: var(--bs-blue-hover);
-    color: #fff;
-    transform: translateY(-1px);
-}
-
 .bs-btn-reset {
-    background: #1b2850;
-    border: 1px solid var(--bs-border);
-    color: var(--bs-text-light);
+    background: #172955;
+    border: 1px solid rgba(96, 165, 250, .18);
+
+    color: #dbeafe;
 }
 
 .bs-btn-reset:hover {
-    background: #273565;
-    border-color: #5754a3;
-    color: #fff;
+    background: #223765;
+    border-color: rgba(96, 165, 250, .35);
+
+    color: #ffffff;
+
     transform: translateY(-1px);
 }
+
 
 /* =========================================================
    TABLE CARD
@@ -319,18 +461,85 @@
 .bs-table-card {
     width: 100%;
     overflow: hidden;
-    background: var(--bs-card);
+
     border: 1px solid var(--bs-border);
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, .22);
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #101f49,
+            #0d1b3e
+        );
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .22);
 }
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.bs-table-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 26px 28px 23px;
+
+    border-bottom: 1px solid rgba(96, 165, 250, .14);
+}
+
+.bs-table-card-title {
+    min-width: 0;
+}
+
+.bs-table-card-title h3 {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.bs-table-card-title h3 i {
+    color: var(--bs-blue-light);
+}
+
+.bs-table-card-title p {
+    margin: 6px 0 0;
+
+    color: var(--bs-text-soft);
+
+    font-size: 13px;
+}
+
+.bs-scroll-hint {
+    flex: 0 0 auto;
+
+    color: #8297bd;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
 
 .bs-table-wrapper {
     width: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
 }
-
-/* Custom scrollbar */
 
 .bs-table-wrapper::-webkit-scrollbar,
 .bs-modal-body::-webkit-scrollbar,
@@ -342,77 +551,101 @@
 .bs-table-wrapper::-webkit-scrollbar-track,
 .bs-modal-body::-webkit-scrollbar-track,
 .bs-modal-table-wrapper::-webkit-scrollbar-track {
-    background: #171945;
+    background: #0a1735;
 }
 
 .bs-table-wrapper::-webkit-scrollbar-thumb,
 .bs-modal-body::-webkit-scrollbar-thumb,
 .bs-modal-table-wrapper::-webkit-scrollbar-thumb {
-    background: #45438a;
+    background: #31528f;
     border-radius: 999px;
 }
 
 .bs-table-wrapper::-webkit-scrollbar-thumb:hover,
 .bs-modal-body::-webkit-scrollbar-thumb:hover,
 .bs-modal-table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #5a57a5;
+    background: #4268ad;
 }
+
+
+/* =========================================================
+   MAIN TABLE
+========================================================= */
 
 .bs-table {
     width: 100%;
-    min-width: 950px;
+    min-width: 1000px;
+
     border-collapse: collapse;
 }
 
 .bs-table thead {
-    background: #191847;
-    color: #fff;
+    background:
+        linear-gradient(
+            135deg,
+            #315fe0,
+            #294fc2
+        );
 }
 
 .bs-table th {
-    padding: 15px 14px;
-    border-bottom: 1px solid var(--bs-border);
-    font-size: 11px;
+    padding: 15px 18px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+
+    color: #ffffff;
+
+    font-size: 12px;
     font-weight: 800;
+
     letter-spacing: .45px;
+
     text-align: center;
     text-transform: uppercase;
+
     white-space: nowrap;
 }
 
 .bs-table th i {
     margin-right: 5px;
-    color: #91b8ff;
+
+    color: #dbeafe;
 }
 
 .bs-table td {
-    padding: 15px 14px;
-    border-bottom: 1px solid var(--bs-border-soft);
-    color: var(--bs-text-light);
+    padding: 17px 18px;
+
+    border-bottom: 1px solid rgba(96, 165, 250, .10);
+
+    color: #dbeafe;
+
     font-size: 14px;
+
     text-align: center;
     vertical-align: middle;
 }
 
 .bs-table td strong {
     color: #ffffff;
-    font-weight: 750;
+    font-weight: 700;
 }
 
 .bs-table tbody tr {
-    background: var(--bs-card);
+    background: #1b2d62;
+
     transition:
         background .2s ease,
         box-shadow .2s ease;
 }
 
 .bs-table tbody tr:hover {
-    background: var(--bs-card-hover);
+    background: #20366f;
 }
 
 .bs-table tbody tr:last-child td {
     border-bottom: 0;
 }
+
 
 /* =========================================================
    EMPTY STATE
@@ -420,21 +653,31 @@
 
 .bs-empty {
     padding: 55px 20px !important;
-    background: var(--bs-card) !important;
+
+    background: #1b2d62 !important;
+
     color: var(--bs-text-muted) !important;
+
+    text-align: center !important;
 }
 
 .bs-empty i {
     display: block;
+
     margin-bottom: 12px;
-    color: #7379b5;
+
+    color: #6f86b7;
+
     font-size: 36px;
 }
 
 .bs-empty strong {
     display: block;
-    margin-bottom: 4px;
+
+    margin-bottom: 5px;
+
     color: #ffffff;
+
     font-size: 15px;
 }
 
@@ -442,6 +685,7 @@
     color: var(--bs-text-soft);
     font-size: 13px;
 }
+
 
 /* =========================================================
    PROGRESS
@@ -455,28 +699,44 @@
 .bs-progress-track {
     width: 100%;
     height: 9px;
+
     overflow: hidden;
-    background: #171b43;
-    border: 1px solid #38376f;
+
+    background: #0c1938;
+
+    border: 1px solid rgba(96, 165, 250, .14);
     border-radius: 999px;
 }
 
 .bs-progress-fill {
     height: 100%;
-    min-width: 0;
-    background: linear-gradient(90deg, #3e76e8, #6ea3ff);
+
+    background:
+        linear-gradient(
+            90deg,
+            #3e76e8,
+            #6ea3ff
+        );
+
     border-radius: 999px;
+
+    box-shadow:
+        0 0 8px rgba(79, 140, 255, .35);
+
     transition: width .3s ease;
-    box-shadow: 0 0 8px rgba(79, 140, 255, .35);
 }
 
 .bs-progress-text {
     display: block;
+
     margin-top: 7px;
-    color: var(--bs-text-muted);
+
+    color: #9fb1d3;
+
     font-size: 11px;
     font-weight: 700;
 }
+
 
 /* =========================================================
    BADGES
@@ -487,12 +747,17 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    padding: 6px 11px;
+
+    padding: 7px 11px;
+
     border: 1px solid transparent;
     border-radius: 999px;
+
     font-size: 11px;
     font-weight: 800;
+
     line-height: 1;
+
     white-space: nowrap;
 }
 
@@ -526,6 +791,7 @@
     color: #6ee7a0;
 }
 
+
 /* =========================================================
    VIEW BUTTON
 ========================================================= */
@@ -535,15 +801,29 @@
     align-items: center;
     justify-content: center;
     gap: 7px;
+
+    min-width: 72px;
     min-height: 38px;
-    padding: 0 13px;
-    border: 1px solid rgba(79, 140, 255, .35);
-    border-radius: 8px;
-    background: #315fc2;
-    color: #fff;
+
+    padding: 0 14px;
+
+    border: 1px solid rgba(96, 165, 250, .25);
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3164e6,
+            #2852c4
+        );
+
+    color: #ffffff;
+
     font-size: 13px;
     font-weight: 700;
+
     cursor: pointer;
+
     transition:
         background .2s ease,
         transform .2s ease,
@@ -551,11 +831,21 @@
 }
 
 .bs-view-btn:hover {
-    background: #4075df;
-    color: #fff;
+    background:
+        linear-gradient(
+            135deg,
+            #4075df,
+            #315fc2
+        );
+
+    color: #ffffff;
+
     transform: translateY(-1px);
-    box-shadow: 0 5px 15px rgba(49, 95, 194, .30);
+
+    box-shadow:
+        0 6px 16px rgba(49, 95, 194, .30);
 }
+
 
 /* =========================================================
    HIDDEN MODAL DATA
@@ -565,6 +855,7 @@
     display: none;
 }
 
+
 /* =========================================================
    MODAL BACKDROP
 ========================================================= */
@@ -572,12 +863,17 @@
 .bs-modal {
     position: fixed;
     inset: 0;
+
     z-index: 9999;
+
     display: none;
     align-items: center;
     justify-content: center;
+
     padding: 20px;
-    background: rgba(2, 8, 23, .82);
+
+    background: rgba(3, 10, 28, .82);
+
     backdrop-filter: blur(6px);
 }
 
@@ -585,18 +881,30 @@
     display: flex;
 }
 
+
 /* =========================================================
    MODAL CONTENT
 ========================================================= */
 
 .bs-modal-content {
-    width: min(1100px, 100%);
+    width: min(1150px, 100%);
     max-height: 90vh;
+
     overflow: hidden;
-    background: var(--bs-card);
-    border: 1px solid var(--bs-border);
-    border-radius: 15px;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, .55);
+
+    border: 1px solid rgba(96, 165, 250, .20);
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #101f49,
+            #0d1b3e
+        );
+
+    box-shadow:
+        0 25px 70px rgba(0, 0, 0, .55);
+
     animation: bsModalIn .2s ease;
 }
 
@@ -612,6 +920,7 @@
     }
 }
 
+
 /* =========================================================
    MODAL HEADER
 ========================================================= */
@@ -620,11 +929,21 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 15px;
-    padding: 17px 22px;
-    background: #191847;
-    border-bottom: 1px solid var(--bs-border);
-    color: #fff;
+
+    padding: 18px 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315fe0,
+            #294fc2
+        );
+
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+
+    color: #ffffff;
 }
 
 .bs-modal-title {
@@ -633,34 +952,59 @@
 
 .bs-modal-title h3 {
     overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
     margin: 0;
-    color: #fff;
+
+    color: #ffffff;
+
     font-size: 20px;
     font-weight: 800;
+
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+.bs-modal-title h3 i {
+    color: #dbeafe;
+}
+
 .bs-modal-close {
     flex: 0 0 auto;
+
     width: 38px;
     height: 38px;
+
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(255,255,255,.10);
+
+    border: 1px solid rgba(255, 255, 255, .12);
     border-radius: 9px;
-    background: rgba(255,255,255,.06);
-    color: #fff;
+
+    background: rgba(255, 255, 255, .08);
+
+    color: #ffffff;
+
     font-size: 24px;
+
     cursor: pointer;
-    transition: .2s ease;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
 }
 
 .bs-modal-close:hover {
     background: #dc2626;
     border-color: #ef4444;
+    transform: rotate(2deg);
 }
+
 
 /* =========================================================
    MODAL BODY
@@ -668,10 +1012,19 @@
 
 .bs-modal-body {
     max-height: calc(90vh - 75px);
+
     overflow: auto;
-    padding: 22px;
-    background: var(--bs-card);
+
+    padding: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #101f49,
+            #0d1b3e
+        );
 }
+
 
 /* =========================================================
    MODAL SUMMARY
@@ -685,24 +1038,40 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
+
     margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--bs-border);
+    padding-bottom: 16px;
+
+    border-bottom: 1px solid rgba(96, 165, 250, .14);
+}
+
+.bs-summary-name {
+    min-width: 0;
 }
 
 .bs-summary-name h4 {
+    overflow: hidden;
+
     margin: 0 0 5px;
+
     color: #ffffff;
+
     font-size: 21px;
     font-weight: 800;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .bs-summary-name small {
     color: var(--bs-text-muted);
+
     font-size: 13px;
     font-weight: 600;
 }
+
 
 /* =========================================================
    ATTACHMENT
@@ -712,39 +1081,54 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 250px;
+
+    min-width: 270px;
+
     padding: 9px 11px;
-    background: #171945;
-    border: 1px solid var(--bs-border-soft);
+
+    background: #172955;
+
+    border: 1px solid rgba(96, 165, 250, .15);
     border-radius: 10px;
 }
 
 .bs-attachment-icon {
     flex: 0 0 40px;
+
     width: 40px;
     height: 40px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     border-radius: 9px;
+
     background: rgba(239, 68, 68, .14);
     border: 1px solid rgba(239, 68, 68, .20);
+
     color: #ff8f8f;
+
     font-size: 18px;
 }
 
 .bs-attachment-info {
     min-width: 0;
     flex: 1;
+
     text-align: left;
 }
 
 .bs-attachment-name {
     display: block;
+
     overflow: hidden;
+
     color: #ffffff;
+
     font-size: 13px;
     font-weight: 700;
+
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -762,13 +1146,24 @@
 .bs-file-btn {
     width: 35px;
     height: 35px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     border-radius: 8px;
-    color: #fff;
+
+    color: #ffffff;
     text-decoration: none;
-    transition: .2s ease;
+
+    transition:
+        transform .2s ease,
+        background .2s ease;
+}
+
+.bs-file-btn:hover {
+    color: #ffffff;
+    transform: translateY(-1px);
 }
 
 .bs-file-view {
@@ -777,7 +1172,6 @@
 
 .bs-file-view:hover {
     background: #4075df;
-    color: #fff;
 }
 
 .bs-file-download {
@@ -786,17 +1180,19 @@
 
 .bs-file-download:hover {
     background: #16a34a;
-    color: #fff;
 }
 
 .bs-no-file {
     display: inline-flex;
     align-items: center;
     gap: 7px;
+
     color: var(--bs-text-soft);
+
     font-size: 13px;
     font-weight: 700;
 }
+
 
 /* =========================================================
    MODAL TABLE
@@ -804,50 +1200,71 @@
 
 .bs-modal-table-wrapper {
     width: 100%;
+
     overflow-x: auto;
-    border: 1px solid var(--bs-border);
+
+    border: 1px solid rgba(96, 165, 250, .16);
     border-radius: 12px;
-    background: #29265e;
+
+    background: #1b2d62;
 }
 
 .bs-modal-table {
     width: 100%;
-    min-width: 850px;
+    min-width: 900px;
+
     border-collapse: collapse;
 }
 
 .bs-modal-table th {
-    padding: 12px;
-    background: #191847;
-    border-bottom: 1px solid var(--bs-border);
-    color: var(--bs-text-muted);
+    padding: 13px 12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #315fe0,
+            #294fc2
+        );
+
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+
+    color: #ffffff;
+
     font-size: 11px;
     font-weight: 800;
+
     text-align: center;
     text-transform: uppercase;
+
     white-space: nowrap;
 }
 
 .bs-modal-table td {
-    padding: 13px 12px;
-    border-bottom: 1px solid var(--bs-border-soft);
+    padding: 14px 12px;
+
+    border-bottom: 1px solid rgba(96, 165, 250, .10);
+
     color: var(--bs-text-light);
+
     font-size: 13px;
+
     text-align: center;
     vertical-align: middle;
 }
 
 .bs-modal-table td strong {
     color: #ffffff;
+    font-weight: 700;
 }
 
 .bs-modal-table tbody tr {
-    background: #2d2a67;
+    background: #1b2d62;
+
     transition: background .2s ease;
 }
 
 .bs-modal-table tbody tr:hover {
-    background: #35327a;
+    background: #20366f;
 }
 
 .bs-modal-table tbody tr:last-child td {
@@ -856,10 +1273,16 @@
 
 .bs-remarks {
     max-width: 220px;
+
     margin: 0 auto;
+
     overflow-wrap: anywhere;
+
     color: var(--bs-text-muted);
+
+    line-height: 1.45;
 }
+
 
 /* =========================================================
    MODAL EMPTY
@@ -867,47 +1290,63 @@
 
 .bs-modal-empty {
     padding: 45px 20px !important;
-    background: #2d2a67 !important;
+
+    background: #1b2d62 !important;
+
     color: var(--bs-text-muted) !important;
+
+    text-align: center !important;
 }
 
 .bs-modal-empty i {
     display: block;
+
     margin-bottom: 10px;
-    color: #7379b5;
+
+    color: #6f86b7;
+
     font-size: 32px;
 }
 
 .bs-modal-empty div {
     color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .bs-legacy {
     display: inline-flex;
     align-items: center;
     gap: 6px;
+
     margin-top: 10px;
-    padding: 6px 11px;
+    padding: 7px 11px;
+
     border-radius: 999px;
+
     background: rgba(34, 197, 94, .13);
     border: 1px solid rgba(34, 197, 94, .25);
+
     color: #6ee7a0;
+
     font-size: 11px;
     font-weight: 800;
 }
 
+
 /* =========================================================
-   MOBILE / TABLET
+   RESPONSIVE
 ========================================================= */
 
-@media (max-width: 1100px) {
+@media (max-width: 1400px) {
 
     .bs-stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .bs-filter-row {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
     .bs-filter-actions {
@@ -915,14 +1354,46 @@
     }
 }
 
-@media (max-width: 700px) {
+
+@media (max-width: 992px) {
+
+    .bs-page {
+        padding: 18px;
+    }
+
+    .bs-header {
+        padding: 25px 28px;
+    }
+
+    .bs-stat {
+        min-height: 135px;
+    }
+
+    .bs-table-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .bs-scroll-hint {
+        width: 100%;
+    }
+}
+
+
+@media (max-width: 768px) {
 
     .bs-page {
         padding: 15px;
     }
 
+    .bs-header {
+        padding: 22px;
+        border-radius: 17px;
+    }
+
     .bs-header-content h2 {
-        font-size: 22px;
+        font-size: 23px;
     }
 
     .bs-header-content p {
@@ -931,27 +1402,20 @@
 
     .bs-stats {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 14px;
     }
 
     .bs-stat {
-        min-height: 100px;
-        padding: 17px;
-    }
-
-    .bs-stat-icon {
-        flex-basis: 52px;
-        width: 52px;
-        height: 52px;
-        font-size: 20px;
+        min-height: 115px;
+        padding: 20px;
     }
 
     .bs-stat-value {
-        font-size: 26px;
+        font-size: 32px;
     }
 
     .bs-filter-card {
-        padding: 16px;
+        padding: 20px;
     }
 
     .bs-filter-row {
@@ -967,17 +1431,33 @@
         width: 100%;
     }
 
+    .bs-table-card {
+        border-radius: 17px;
+    }
+
+    .bs-table-card-header {
+        padding: 22px 20px;
+    }
+
+    .bs-table-card-title h3 {
+        font-size: 17px;
+    }
+
+    .bs-table-card-title p {
+        font-size: 12px;
+    }
+
     .bs-modal {
         padding: 10px;
     }
 
     .bs-modal-content {
         max-height: 95vh;
-        border-radius: 13px;
+        border-radius: 15px;
     }
 
     .bs-modal-header {
-        padding: 14px 16px;
+        padding: 15px 17px;
     }
 
     .bs-modal-title h3 {
@@ -995,52 +1475,92 @@
         gap: 12px;
     }
 
+    .bs-summary-name h4 {
+        font-size: 18px;
+        white-space: normal;
+    }
+
     .bs-attachment {
         width: 100%;
         min-width: 0;
     }
 
     .bs-progress {
-        width: 150px;
+        width: 160px;
     }
 }
 
-/* =========================================================
-   SMALL MOBILE
-========================================================= */
 
-@media (max-width: 450px) {
+@media (max-width: 480px) {
 
     .bs-page {
         padding: 12px;
+    }
+
+    .bs-header {
+        padding: 20px 18px;
     }
 
     .bs-header-content h2 {
         font-size: 20px;
     }
 
+    .bs-header-content h2 i {
+        font-size: 19px;
+    }
+
+    .bs-header-content p {
+        font-size: 12px;
+    }
+
     .bs-stat {
-        padding: 15px;
+        min-height: 105px;
+        padding: 17px;
     }
 
     .bs-stat-icon {
-        flex-basis: 48px;
-        width: 48px;
-        height: 48px;
-        font-size: 18px;
+        flex-basis: 52px;
+
+        width: 52px;
+        height: 52px;
+
+        font-size: 20px;
+    }
+
+    .bs-stat-label {
+        font-size: 11px;
     }
 
     .bs-stat-value {
-        font-size: 24px;
+        font-size: 28px;
+    }
+
+    .bs-filter-card {
+        padding: 17px;
+    }
+
+    .bs-table-card-header {
+        padding: 20px 17px;
     }
 
     .bs-table th,
     .bs-table td {
-        padding: 12px 10px;
+        padding: 13px 11px;
     }
 
     .bs-modal-body {
         padding: 12px;
+    }
+
+    .bs-attachment {
+        padding: 8px;
+    }
+
+    .bs-attachment-icon {
+        flex-basis: 36px;
+
+        width: 36px;
+        height: 36px;
     }
 }
 </style>
@@ -1049,7 +1569,7 @@
 <div class="bs-page">
 
     {{-- =====================================================
-         HEADER
+         PAGE HEADER
     ====================================================== --}}
 
     <div class="bs-header">
@@ -1058,6 +1578,7 @@
 
             <h2>
                 <i class="fa-solid fa-graduation-cap"></i>
+
                 Cadet BS Requirements
             </h2>
 
@@ -1097,7 +1618,7 @@
 
     <div class="bs-stats">
 
-        {{-- TOTAL --}}
+        {{-- TOTAL CADETS --}}
 
         <div class="bs-stat bs-stat-blue">
 
@@ -1192,7 +1713,7 @@
 
 
     {{-- =====================================================
-         FILTER
+         FILTER CARD
     ====================================================== --}}
 
     <div class="bs-filter-card">
@@ -1313,11 +1834,9 @@
                         href="{{ route('superadmin.cadet-bs-requirements.index') }}"
                         class="bs-btn bs-btn-reset"
                     >
-
                         <i class="fa-solid fa-rotate-right"></i>
 
                         Reset
-
                     </a>
 
                 </div>
@@ -1334,6 +1853,33 @@
     ====================================================== --}}
 
     <div class="bs-table-card">
+
+        {{-- TABLE HEADER --}}
+
+        <div class="bs-table-card-header">
+
+            <div class="bs-table-card-title">
+
+                <h3>
+                    <i class="fa-solid fa-graduation-cap"></i>
+
+                    Cadet BS Requirement Records
+                </h3>
+
+                <p>
+                    Review BS completion requirements and submission status.
+                </p>
+
+            </div>
+
+            <div class="bs-scroll-hint">
+                ↔ Scroll horizontally to view all columns
+            </div>
+
+        </div>
+
+
+        {{-- TABLE --}}
 
         <div class="bs-table-wrapper">
 
@@ -1388,16 +1934,18 @@
 
                         @php
 
-                            $submitted = $cadet->bsRequirements->count();
+                            $submitted =
+                                $cadet->bsRequirements->count();
 
-                            $percentage = $totalRequirements > 0
-                                ? min(
-                                    100,
-                                    round(
-                                        ($submitted / $totalRequirements) * 100
+                            $percentage =
+                                $totalRequirements > 0
+                                    ? min(
+                                        100,
+                                        round(
+                                            ($submitted / $totalRequirements) * 100
+                                        )
                                     )
-                                )
-                                : 0;
+                                    : 0;
 
                         @endphp
 
@@ -1461,11 +2009,8 @@
                                     <span class="bs-progress-text">
 
                                         {{ $submitted }}
-
                                         /
-
                                         {{ $totalRequirements }}
-
                                         Requirements
 
                                         ({{ $percentage }}%)
@@ -1573,11 +2118,8 @@
                     <i class="fa-solid fa-file-circle-check"></i>
 
                     {{ $cadet->bsRequirements->count() }}
-
                     /
-
                     {{ $totalRequirements }}
-
                     Submitted
 
                 </span>
@@ -1889,7 +2431,7 @@
 
 
 {{-- =========================================================
-     MODAL
+     BS REQUIREMENT MODAL
 ========================================================= --}}
 
 <div
@@ -1910,7 +2452,11 @@
             <div class="bs-modal-title">
 
                 <h3 id="bsModalTitle">
+
+                    <i class="fa-solid fa-graduation-cap"></i>
+
                     Cadet Requirements
+
                 </h3>
 
             </div>
@@ -1947,16 +2493,26 @@
 
     'use strict';
 
-    const modal = document.getElementById('bsModal');
-    const modalBody = document.getElementById('bsModalBody');
-    const modalTitle = document.getElementById('bsModalTitle');
+    const modal =
+        document.getElementById('bsModal');
 
+    const modalBody =
+        document.getElementById('bsModalBody');
+
+    const modalTitle =
+        document.getElementById('bsModalTitle');
+
+
+    /*
+     * Open modal.
+     */
 
     window.openBsModal = function (id, name) {
 
-        const source = document.getElementById(
-            'bs-cadet-' + id
-        );
+        const source =
+            document.getElementById(
+                'bs-cadet-' + id
+            );
 
 
         if (!source) {
@@ -1970,8 +2526,10 @@
         }
 
 
-        modalTitle.textContent =
-            name || 'Cadet Requirements';
+        modalTitle.innerHTML = `
+            <i class="fa-solid fa-graduation-cap"></i>
+            ${escapeHtml(name || 'Cadet Requirements')}
+        `;
 
 
         modalBody.innerHTML =
@@ -1987,9 +2545,12 @@
 
 
         document.body.style.overflow = 'hidden';
-
     };
 
+
+    /*
+     * Close modal.
+     */
 
     window.closeBsModal = function () {
 
@@ -2000,14 +2561,16 @@
             'true'
         );
 
+
         modalBody.innerHTML = '';
 
         document.body.style.overflow = '';
-
     };
 
 
-    /* Close when clicking backdrop */
+    /*
+     * Close when clicking backdrop.
+     */
 
     modal.addEventListener(
         'click',
@@ -2023,7 +2586,9 @@
     );
 
 
-    /* Close with ESC */
+    /*
+     * Close with ESC.
+     */
 
     document.addEventListener(
         'keydown',
@@ -2041,6 +2606,21 @@
         }
     );
 
+
+    /*
+     * Prevent HTML injection in modal title.
+     */
+
+    function escapeHtml(value) {
+
+        const div =
+            document.createElement('div');
+
+        div.textContent = value;
+
+        return div.innerHTML;
+    }
+
 })();
 
 
@@ -2053,7 +2633,9 @@ document.addEventListener(
     function () {
 
         const form =
-            document.getElementById('filterForm');
+            document.getElementById(
+                'filterForm'
+            );
 
 
         if (!form) {
@@ -2086,17 +2668,20 @@ document.addEventListener(
                 'input',
                 function () {
 
-                    clearTimeout(searchTimer);
-
-
-                    searchTimer = setTimeout(
-                        function () {
-
-                            form.submit();
-
-                        },
-                        500
+                    clearTimeout(
+                        searchTimer
                     );
+
+
+                    searchTimer =
+                        setTimeout(
+                            function () {
+
+                                form.submit();
+
+                            },
+                            500
+                        );
 
                 }
             );
@@ -2106,7 +2691,7 @@ document.addEventListener(
 
         /*
          * Submit immediately when
-         * course/batch changes.
+         * course or batch changes.
          */
 
         selects.forEach(
