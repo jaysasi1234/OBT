@@ -5,6 +5,12 @@
 <style>
 
 /* ==========================================================================
+   FONT AWESOME ICON FONT
+   ========================================================================== */
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css');
+
+/* ==========================================================================
    SUPER ADMIN CADET MANAGEMENT
    DEPLOYMENT MONITORING STYLE
    UI / CSS ONLY
@@ -1747,6 +1753,366 @@
         rgba(79, 124, 255, 0.20);
 }
 
+/* ==========================================================================
+   CADet MANAGEMENT ICONS
+   CSS-ONLY — NO HTML / JS CHANGES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   FILTER PANEL ICON
+   -------------------------------------------------------------------------- */
+
+.cadet-filters::before {
+    content: "\f013  Filters";
+
+    font-family:
+        "Font Awesome 6 Free",
+        sans-serif;
+
+    font-weight: 900;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+
+/* --------------------------------------------------------------------------
+   VIEW BUTTON — EYE ICON
+   -------------------------------------------------------------------------- */
+
+.cadet-view-btn::before {
+    content: "\f06e";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    font-size: 10px;
+
+    line-height: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   MODAL PROFILE ICON
+   -------------------------------------------------------------------------- */
+
+.cadet-modal-title-icon {
+    font-size: 0;
+}
+
+.cadet-modal-title-icon::before {
+    content: "\f2bd";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    font-size: 18px;
+
+    line-height: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   MODAL CLOSE ICON
+   -------------------------------------------------------------------------- */
+
+.cadet-modal-close {
+    font-size: 0;
+}
+
+.cadet-modal-close::before {
+    content: "\f00d";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    font-size: 16px;
+
+    line-height: 1;
+}
+
+
+/* --------------------------------------------------------------------------
+   MODAL FOOTER CLOSE BUTTON
+   -------------------------------------------------------------------------- */
+
+.cadet-modal-close-btn::before {
+    content: "\f00d";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    font-size: 10px;
+
+    line-height: 1;
+}
+
+
+/* ==========================================================================
+   DETAIL CARD ICONS
+   ========================================================================== */
+
+/*
+ * The existing HTML has no separate icon element inside each detail card.
+ * These icons are therefore generated through the existing label element.
+ */
+
+.cadet-detail-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+
+/* COURSE */
+
+.cadet-detail-card:nth-child(1) .cadet-detail-label::before {
+    content: "\f19d";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    color: #72a0ff;
+
+    font-size: 10px;
+}
+
+
+/* BATCH */
+
+.cadet-detail-card:nth-child(2) .cadet-detail-label::before {
+    content: "\f073";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    color: #72a0ff;
+
+    font-size: 10px;
+}
+
+
+/* RANK */
+
+.cadet-detail-card:nth-child(3) .cadet-detail-label::before {
+    content: "\f559";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    color: #72a0ff;
+
+    font-size: 10px;
+}
+
+
+/* CONTACT */
+
+.cadet-detail-card:nth-child(4) .cadet-detail-label::before {
+    content: "\f095";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    color: #72a0ff;
+
+    font-size: 10px;
+}
+
+
+/* BIRTH DATE */
+
+.cadet-detail-card:nth-child(5) .cadet-detail-label::before {
+    content: "\f1fd";
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    color: #72a0ff;
+
+    font-size: 10px;
+}
+
+
+/* ==========================================================================
+   STAT CARD ICON-LIKE ACCENT
+   ========================================================================== */
+
+.cadet-stat {
+    position: relative;
+}
+
+.cadet-stat::before {
+    position: absolute;
+
+    top: 22px;
+    right: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.14);
+
+    border-radius: 11px;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    color:
+        rgba(255, 255, 255, 0.92);
+
+    font-family:
+        "Font Awesome 6 Free";
+
+    font-weight: 900;
+
+    font-size: 15px;
+
+    z-index: 2;
+}
+
+
+/* Total */
+
+.cadet-stat-blue::before {
+    content: "\f0c0";
+}
+
+
+/* Verified */
+
+.cadet-stat-green::before {
+    content: "\f058";
+}
+
+
+/* Pending */
+
+.cadet-stat-yellow::before {
+    content: "\f017";
+}
+
+
+/* Deficiency */
+
+.cadet-stat-red::before {
+    content: "\f071";
+}
+
+
+/* ==========================================================================
+   STATUS BADGE ICONS
+   ========================================================================== */
+
+.cadet-status::before {
+    content: "";
+
+    width: 6px;
+    height: 6px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        currentColor;
+
+    box-shadow:
+        0 0 8px currentColor;
+}
+
+
+/* ==========================================================================
+   FILTER SELECT ARROW
+   ========================================================================== */
+
+.cadet-filters select {
+    appearance: none;
+    -webkit-appearance: none;
+
+    padding-right: 42px;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #8fb1ff 50%),
+        linear-gradient(135deg, #8fb1ff 50%, transparent 50%),
+        linear-gradient(
+            135deg,
+            #16265a,
+            #111f4d
+        );
+
+    background-position:
+        calc(100% - 18px) 24px,
+        calc(100% - 13px) 24px,
+        0 0;
+
+    background-size:
+        5px 5px,
+        5px 5px,
+        100% 100%;
+
+    background-repeat:
+        no-repeat;
+}
+
+
+/* ==========================================================================
+   ICON HOVER EFFECTS
+   ========================================================================== */
+
+.cadet-view-btn:hover::before {
+    transform:
+        scale(1.08);
+}
+
+.cadet-modal-title-icon::before {
+    transition:
+        transform 0.2s ease;
+}
+
+.cadet-modal-title-icon:hover::before {
+    transform:
+        scale(1.08);
+}
+
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cadet-modal-title-icon::before,
+    .cadet-view-btn::before {
+        transition: none;
+    }
+
+}
 
 /* ==========================================================================
    LARGE TABLET
