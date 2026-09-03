@@ -5,11 +5,48 @@
 <style>
 
 /* =========================================================
-   FONT
+   SUPER ADMIN DASHBOARD
+   MODERN ENTERPRISE UI
+   UI / CSS ONLY
 ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
+/* =========================================================
+   ROOT
+========================================================= */
+
+:root {
+    --dash-bg: #07152f;
+    --dash-bg-2: #0b1b43;
+
+    --panel: rgba(16, 29, 66, 0.90);
+    --panel-2: #101d42;
+
+    --text: #f8fafc;
+    --text-soft: #cbd5e1;
+    --text-muted: #94a3b8;
+
+    --blue: #3b82f6;
+    --blue-dark: #2563eb;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+
+    --border: rgba(255,255,255,.08);
+
+    --radius-xl: 24px;
+    --radius-lg: 20px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+
+    --shadow:
+        0 18px 45px rgba(0,0,0,.25);
+
+    --shadow-hover:
+        0 25px 55px rgba(0,0,0,.35);
+}
 
 /* =========================================================
    GLOBAL
@@ -18,14 +55,25 @@
 .dashboard-container {
 
     width: 100%;
-
     max-width: 1600px;
 
     margin: 0 auto;
 
+    padding: 5px 0 30px;
+
     font-family: 'Inter', sans-serif;
+
+    color: var(--text);
+
+    box-sizing: border-box;
 }
 
+.dashboard-container *,
+.dashboard-container *::before,
+.dashboard-container *::after {
+
+    box-sizing: border-box;
+}
 
 /* =========================================================
    HERO
@@ -37,24 +85,38 @@
 
     overflow: hidden;
 
-    padding: 35px;
+    padding: 34px 36px;
 
-    border-radius: 22px;
+    border-radius: var(--radius-xl);
 
     background:
+        radial-gradient(
+            circle at 85% 15%,
+            rgba(56,189,248,.25),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 10% 90%,
+            rgba(37,99,235,.25),
+            transparent 35%
+        ),
         linear-gradient(
             135deg,
-            #1D4ED8,
-            #2563EB,
-            #0EA5E9
+            #0f2f78 0%,
+            #174ea6 48%,
+            #075985 100%
         );
 
+    border:
+        1px solid rgba(147,197,253,.16);
+
     box-shadow:
-        0 20px 45px rgba(0,0,0,.35);
+        0 22px 55px rgba(0,0,0,.30);
 
-    margin-bottom: 30px;
+    margin-bottom: 26px;
+
+    isolation: isolate;
 }
-
 
 .hero::before {
 
@@ -63,20 +125,18 @@
     position: absolute;
 
     width: 450px;
-
     height: 450px;
 
-    background: rgba(255,255,255,.06);
+    background:
+        rgba(255,255,255,.055);
 
     border-radius: 50%;
 
-    top: -220px;
-
-    right: -120px;
+    top: -260px;
+    right: -110px;
 
     pointer-events: none;
 }
-
 
 .hero::after {
 
@@ -84,21 +144,19 @@
 
     position: absolute;
 
-    width: 300px;
+    width: 280px;
+    height: 280px;
 
-    height: 300px;
-
-    background: rgba(255,255,255,.04);
+    background:
+        rgba(255,255,255,.035);
 
     border-radius: 50%;
 
-    bottom: -170px;
-
-    left: -80px;
+    bottom: -180px;
+    left: -90px;
 
     pointer-events: none;
 }
-
 
 .hero-content {
 
@@ -108,65 +166,49 @@
 
     align-items: center;
 
-    gap: 40px;
+    gap: 35px;
 
     position: relative;
 
     z-index: 2;
 }
 
-
 .hero-content > div:first-child {
 
     flex: 1;
+
+    min-width: 0;
 }
 
+/* =========================================================
+   HERO TEXT
+========================================================= */
 
 .hero h2 {
 
-    font-size: 34px;
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: clamp(25px, 2.3vw, 35px);
+
+    line-height: 1.2;
 
     font-weight: 800;
 
-    color: white;
+    letter-spacing: -.8px;
 }
-
 
 .hero p {
 
-    margin-top: 8px;
+    margin: 9px 0 0;
 
     color: #dbeafe;
-
-    font-size: 15px;
-}
-
-
-.hero-right {
-
-    min-width: 220px;
-
-    text-align: right;
-}
-
-
-.hero-right h4 {
 
     font-size: 14px;
 
-    color: #dbeafe;
+    line-height: 1.6;
 }
-
-
-.hero-right h1 {
-
-    font-size: 38px;
-
-    font-weight: 800;
-
-    color: white;
-}
-
 
 /* =========================================================
    HERO BUTTONS
@@ -174,15 +216,14 @@
 
 .hero-buttons {
 
-    margin-top: 18px;
-
     display: flex;
 
-    gap: 12px;
-
     flex-wrap: wrap;
-}
 
+    gap: 10px;
+
+    margin-top: 22px;
+}
 
 .hero-btn {
 
@@ -190,37 +231,117 @@
 
     align-items: center;
 
-    gap: 10px;
+    justify-content: center;
 
-    padding: 12px 20px;
+    gap: 9px;
 
-    border-radius: 12px;
+    min-height: 42px;
+
+    padding: 10px 16px;
+
+    border-radius: 11px;
 
     text-decoration: none;
 
-    color: white;
+    color: #ffffff;
 
-    background: rgba(255,255,255,.15);
+    background:
+        rgba(255,255,255,.11);
 
-    border: 1px solid rgba(255,255,255,.2);
+    border:
+        1px solid rgba(255,255,255,.17);
 
-    transition: .35s;
+    backdrop-filter: blur(8px);
 
-    position: relative;
+    font-size: 13px;
 
-    z-index: 3;
+    font-weight: 600;
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        color .25s ease,
+        box-shadow .25s ease;
 }
 
+.hero-btn i {
+
+    font-size: 14px;
+}
 
 .hero-btn:hover {
 
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 
-    background: white;
+    background: #ffffff;
 
-    color: #2563EB;
+    color: #1d4ed8;
+
+    border-color: #ffffff;
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.18);
 }
 
+/* =========================================================
+   HERO RIGHT
+========================================================= */
+
+.hero-right {
+
+    min-width: 245px;
+
+    padding: 20px 22px;
+
+    text-align: right;
+
+    border-radius: 17px;
+
+    background:
+        rgba(4,15,38,.20);
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    backdrop-filter: blur(10px);
+}
+
+.hero-right h4 {
+
+    margin: 0;
+
+    color: #bfdbfe;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    letter-spacing: .4px;
+}
+
+.hero-right h1 {
+
+    margin: 8px 0 0;
+
+    color: #ffffff;
+
+    font-size: 42px;
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    letter-spacing: -1px;
+}
+
+.hero-right p {
+
+    margin-top: 8px;
+
+    color: #dbeafe;
+
+    font-size: 12px;
+}
 
 /* =========================================================
    KPI CARDS
@@ -231,13 +352,12 @@
     display: grid;
 
     grid-template-columns:
-        repeat(5, 1fr);
+        repeat(5, minmax(0,1fr));
 
-    gap: 20px;
+    gap: 16px;
 
-    margin-bottom: 30px;
+    margin-bottom: 26px;
 }
-
 
 .card {
 
@@ -245,11 +365,9 @@
 
     overflow: hidden;
 
-    min-height: 160px;
+    min-height: 165px;
 
-    padding: 22px;
-
-    border-radius: 18px;
+    padding: 20px;
 
     display: flex;
 
@@ -257,27 +375,23 @@
 
     justify-content: space-between;
 
-    color: white;
+    color: #ffffff;
 
     text-decoration: none;
 
-    border: 1px solid rgba(255,255,255,.06);
+    border-radius: var(--radius-lg);
+
+    border:
+        1px solid rgba(255,255,255,.09);
 
     box-shadow:
-        0 12px 25px rgba(0,0,0,.25);
+        0 12px 30px rgba(0,0,0,.20);
 
-    transition: .35s;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
 }
-
-
-.card:hover {
-
-    transform: translateY(-8px);
-
-    box-shadow:
-        0 25px 40px rgba(37,99,235,.30);
-}
-
 
 .card::before {
 
@@ -285,19 +399,57 @@
 
     position: absolute;
 
-    width: 140px;
+    width: 150px;
+    height: 150px;
 
-    height: 140px;
+    right: -45px;
+    top: -65px;
 
     border-radius: 50%;
 
-    right: -40px;
-
-    top: -40px;
-
-    background: rgba(255,255,255,.05);
+    background:
+        rgba(255,255,255,.075);
 }
 
+.card::after {
+
+    content: '';
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    left: -30px;
+    bottom: -55px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.035);
+}
+
+.card:hover {
+
+    transform: translateY(-5px);
+
+    box-shadow:
+        var(--shadow-hover);
+
+    border-color:
+        rgba(255,255,255,.18);
+}
+
+.card > * {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+/* =========================================================
+   CARD TOP
+========================================================= */
 
 .card-top {
 
@@ -305,19 +457,48 @@
 
     justify-content: space-between;
 
-    align-items: center;
+    align-items: flex-start;
 
-    margin-bottom: 18px;
+    gap: 12px;
 }
 
+.card-title {
+
+    margin-bottom: 8px;
+
+    color:
+        rgba(255,255,255,.86);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+
+    letter-spacing: .55px;
+}
+
+.card-number {
+
+    font-size: 35px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    letter-spacing: -1px;
+}
+
+/* =========================================================
+   CARD ICON
+========================================================= */
 
 .card-icon {
 
-    width: 58px;
+    width: 48px;
+    height: 48px;
 
-    height: 58px;
-
-    border-radius: 16px;
+    flex: 0 0 48px;
 
     display: flex;
 
@@ -325,35 +506,28 @@
 
     justify-content: center;
 
-    font-size: 26px;
+    border-radius: 14px;
 
-    background: rgba(255,255,255,.08);
+    background:
+        rgba(255,255,255,.12);
+
+    border:
+        1px solid rgba(255,255,255,.12);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.08);
 }
 
+.card-icon i {
 
-.card-number {
-
-    font-size: 36px;
-
-    font-weight: 800;
+    font-size: 19px;
 }
 
-
-.card-title {
-
-    font-size: 15px;
-
-    font-weight: 600;
-
-    color: #eef4ff;
-
-    letter-spacing: .3px;
-}
-
+/* =========================================================
+   CARD FOOTER
+========================================================= */
 
 .card-footer {
-
-    margin-top: 18px;
 
     display: flex;
 
@@ -361,78 +535,84 @@
 
     align-items: center;
 
-    font-size: 14px;
+    gap: 10px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid rgba(255,255,255,.10);
+
+    color:
+        rgba(255,255,255,.82);
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
+
+.card-footer span:last-child {
+
+    color: #ffffff;
 
     font-weight: 700;
-
-    color: white;
-
-    text-shadow:
-        0 1px 2px rgba(0,0,0,.4);
-
-    opacity: .95;
 }
-
-
-/* CARD COLORS */
-
-.blue {
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563EB,
-            #1D4ED8
-        );
-}
-
-
-.green {
-
-    background:
-        linear-gradient(
-            135deg,
-            #10B981,
-            #059669
-        );
-}
-
-
-.orange {
-
-    background:
-        linear-gradient(
-            135deg,
-            #F59E0B,
-            #D97706
-        );
-}
-
-
-.red {
-
-    background:
-        linear-gradient(
-            135deg,
-            #EF4444,
-            #DC2626
-        );
-}
-
-
-.cyan {
-
-    background:
-        linear-gradient(
-            135deg,
-            #06B6D4,
-            #0891B2
-        );
-}
-
 
 /* =========================================================
-   CHART GRID
+   CARD COLORS
+========================================================= */
+
+.card.blue {
+
+    background:
+        linear-gradient(
+            145deg,
+            #2563eb,
+            #1d4ed8
+        );
+}
+
+.card.green {
+
+    background:
+        linear-gradient(
+            145deg,
+            #10b981,
+            #047857
+        );
+}
+
+.card.orange {
+
+    background:
+        linear-gradient(
+            145deg,
+            #f59e0b,
+            #d97706
+        );
+}
+
+.card.red {
+
+    background:
+        linear-gradient(
+            145deg,
+            #ef4444,
+            #dc2626
+        );
+}
+
+.card.cyan {
+
+    background:
+        linear-gradient(
+            145deg,
+            #0891b2,
+            #0e7490
+        );
+}
+
+/* =========================================================
+   MAIN CHART GRID
 ========================================================= */
 
 .grid {
@@ -440,15 +620,15 @@
     display: grid;
 
     grid-template-columns:
-        2.2fr 1fr;
+        minmax(0,2.1fr)
+        minmax(320px,1fr);
 
-    gap: 22px;
+    gap: 18px;
 
     align-items: stretch;
 
-    margin-bottom: 25px;
+    margin-bottom: 18px;
 }
-
 
 /* =========================================================
    BOX
@@ -456,13 +636,11 @@
 
 .box {
 
-    background:
-        rgba(16,27,72,.82);
+    position: relative;
 
-    backdrop-filter:
-        blur(12px);
+    min-width: 0;
 
-    padding: 25px;
+    padding: 22px;
 
     display: flex;
 
@@ -470,26 +648,40 @@
 
     height: 100%;
 
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(17,32,72,.94),
+            rgba(11,24,57,.94)
+        );
 
     border:
-        1px solid rgba(255,255,255,.08);
+        1px solid var(--border);
 
     box-shadow:
-        0 12px 25px rgba(0,0,0,.25);
+        var(--shadow);
 
-    transition: .35s;
+    backdrop-filter:
+        blur(14px);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
 }
-
 
 .box:hover {
 
-    transform: translateY(-6px);
+    transform: translateY(-2px);
 
     box-shadow:
-        0 20px 45px rgba(0,0,0,.35);
-}
+        var(--shadow-hover);
 
+    border-color:
+        rgba(59,130,246,.18);
+}
 
 /* =========================================================
    CHART HEADER
@@ -503,49 +695,82 @@
 
     align-items: center;
 
-    margin-bottom: 20px;
-}
+    gap: 15px;
 
+    margin-bottom: 18px;
+}
 
 .chart-header h3 {
 
-    font-size: 20px;
+    margin: 0;
 
-    margin-bottom: 5px;
+    color: #ffffff;
+
+    font-size: 17px;
 
     font-weight: 700;
 
-    color: white;
+    letter-spacing: -.2px;
 }
-
 
 .chart-header small {
 
-    color: #94a3b8;
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--text-muted);
+
+    font-size: 11px;
 }
 
+/* =========================================================
+   BADGES
+========================================================= */
 
 .badge-chart {
 
-    background: #2563eb;
+    display: inline-flex;
 
-    padding: 8px 14px;
+    align-items: center;
 
-    border-radius: 20px;
+    justify-content: center;
 
-    font-size: 12px;
+    flex-shrink: 0;
 
-    font-weight: 600;
+    min-height: 28px;
 
-    color: white;
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    color: #93c5fd;
+
+    background:
+        rgba(59,130,246,.14);
+
+    border:
+        1px solid rgba(59,130,246,.20);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .5px;
 }
-
 
 .badge-chart.green {
 
-    background: #10b981;
-}
+    color: #6ee7b7;
 
+    background:
+        rgba(16,185,129,.12);
+
+    border-color:
+        rgba(16,185,129,.20);
+}
 
 /* =========================================================
    CHART CONTAINER
@@ -557,11 +782,12 @@
 
     width: 100%;
 
-    height: 320px;
+    height: 310px;
 
-    min-height: 320px;
+    min-height: 310px;
+
+    flex: 1;
 }
-
 
 .chart-container canvas {
 
@@ -572,29 +798,31 @@
     height: 100% !important;
 }
 
-
 /* =========================================================
    ANALYTICS
 ========================================================= */
 
 .analytics-box {
 
-    margin-bottom: 25px;
+    margin-bottom: 18px;
 }
-
 
 .analytics-grid {
 
     display: grid;
 
     grid-template-columns:
-        2fr 1fr;
+        minmax(0,2fr)
+        minmax(320px,1fr);
 
-    gap: 22px;
+    gap: 18px;
 
     align-items: start;
 }
 
+/* =========================================================
+   SECTION TITLE
+========================================================= */
 
 .section-title {
 
@@ -604,66 +832,129 @@
 
     align-items: center;
 
+    gap: 15px;
+
     margin-bottom: 18px;
 }
 
-
 .section-title h3 {
 
-    color: white;
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 700;
 }
 
+.section-title h3 i,
+.analytics-box > h3 i {
+
+    margin-right: 8px;
+
+    color: #60a5fa;
+}
 
 .section-title span {
 
-    font-size: 28px;
+    display: inline-flex;
 
-    font-weight: 700;
+    align-items: center;
 
-    color: #3b82f6;
+    justify-content: center;
+
+    min-width: 58px;
+
+    padding: 7px 11px;
+
+    border-radius: 10px;
+
+    color: #93c5fd;
+
+    background:
+        rgba(59,130,246,.10);
+
+    border:
+        1px solid rgba(59,130,246,.15);
+
+    font-size: 18px;
+
+    font-weight: 800;
 }
 
+/* =========================================================
+   ANALYTICS TITLES
+========================================================= */
+
+.analytics-box > h3 {
+
+    margin: 0 0 18px;
+
+    color: #ffffff;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
 
 /* =========================================================
-   PROGRESS
+   OVERALL PROGRESS
 ========================================================= */
 
 .overall-progress {
 
-    height: 18px;
+    height: 12px;
 
-    background: #1e293b;
+    margin-bottom: 24px;
 
-    border-radius: 30px;
+    padding: 2px;
 
     overflow: hidden;
 
-    margin-bottom: 25px;
-}
+    border-radius: 999px;
 
+    background:
+        #17264d;
+
+    box-shadow:
+        inset 0 1px 3px rgba(0,0,0,.25);
+}
 
 .overall-fill {
 
     height: 100%;
 
+    border-radius: inherit;
+
     background:
         linear-gradient(
             90deg,
             #2563eb,
+            #38bdf8,
             #06b6d4
         );
 
-    border-radius: 30px;
+    box-shadow:
+        0 0 14px rgba(56,189,248,.25);
 
-    transition: width .5s ease;
+    transition:
+        width .6s ease;
 }
 
+/* =========================================================
+   COURSE PROGRESS
+========================================================= */
 
 .course-progress {
 
     margin-bottom: 20px;
 }
 
+.course-progress:last-child {
+
+    margin-bottom: 0;
+}
 
 .course-header {
 
@@ -671,31 +962,43 @@
 
     justify-content: space-between;
 
+    align-items: center;
+
+    gap: 15px;
+
     margin-bottom: 8px;
 
-    font-size: 14px;
+    color: #dbeafe;
 
-    color: white;
+    font-size: 12px;
 }
 
+.course-header strong {
+
+    color: #ffffff;
+
+    font-size: 12px;
+}
 
 .progress {
 
     width: 100%;
 
-    height: 10px;
-
-    background: #23315d;
-
-    border-radius: 20px;
+    height: 8px;
 
     overflow: hidden;
-}
 
+    border-radius: 999px;
+
+    background:
+        #1c2a52;
+}
 
 .progress-bar {
 
     height: 100%;
+
+    border-radius: inherit;
 
     background:
         linear-gradient(
@@ -704,17 +1007,16 @@
             #38bdf8
         );
 
-    border-radius: 20px;
+    box-shadow:
+        0 0 12px rgba(37,99,235,.18);
 
-    transition: width .5s ease;
+    transition:
+        width .6s ease;
 
-    color: white;
+    color: transparent;
 
-    font-size: 10px;
-
-    text-align: center;
+    font-size: 0;
 }
-
 
 /* =========================================================
    MINI CARDS
@@ -725,43 +1027,114 @@
     display: grid;
 
     grid-template-columns:
-        repeat(3,1fr);
+        repeat(3,minmax(0,1fr));
 
-    gap: 15px;
+    gap: 12px;
 
-    margin-top: 20px;
+    margin-top: 4px;
 }
-
 
 .mini-card {
 
-    padding: 20px;
+    position: relative;
 
-    border-radius: 16px;
+    overflow: hidden;
+
+    padding: 20px 15px;
 
     text-align: center;
 
-    color: white;
+    border-radius: 15px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.16);
 }
 
+.mini-card::after {
+
+    content: '';
+
+    position: absolute;
+
+    width: 80px;
+    height: 80px;
+
+    top: -45px;
+    right: -30px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255,255,255,.06);
+}
 
 .mini-card h1 {
 
-    font-size: 34px;
+    position: relative;
 
-    margin-bottom: 5px;
+    z-index: 2;
+
+    margin: 0 0 5px;
+
+    font-size: 31px;
+
+    line-height: 1;
+
+    font-weight: 800;
 }
-
 
 .mini-card small {
 
-    opacity: .9;
-}
+    position: relative;
 
+    z-index: 2;
+
+    color:
+        rgba(255,255,255,.82);
+
+    font-size: 11px;
+
+    font-weight: 600;
+}
 
 /* =========================================================
    REQUIREMENTS
 ========================================================= */
+
+.requirements-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    max-height: 370px;
+
+    overflow-y: auto;
+
+    padding-right: 3px;
+}
+
+.requirements-list::-webkit-scrollbar {
+
+    width: 5px;
+}
+
+.requirements-list::-webkit-scrollbar-track {
+
+    background: transparent;
+}
+
+.requirements-list::-webkit-scrollbar-thumb {
+
+    border-radius: 20px;
+
+    background: #33466f;
+}
 
 .requirement-card {
 
@@ -771,57 +1144,81 @@
 
     align-items: center;
 
-    padding: 16px;
+    gap: 15px;
 
-    margin-bottom: 12px;
+    padding: 13px 14px;
 
-    background: #18234d;
+    margin: 0;
 
-    border-radius: 14px;
+    border-radius: 13px;
 
-    transition: .3s;
+    background:
+        rgba(24,35,77,.72);
 
-    color: white;
+    border:
+        1px solid rgba(255,255,255,.05);
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease;
 }
-
 
 .requirement-card:hover {
 
-    transform: translateX(6px);
+    transform: translateX(3px);
 
-    background: #21305f;
+    background:
+        rgba(33,48,95,.85);
+
+    border-color:
+        rgba(59,130,246,.15);
 }
-
 
 .requirement-card strong {
 
     display: block;
 
-    font-size: 15px;
-}
+    margin-bottom: 4px;
 
+    color: #f8fafc;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
 
 .requirement-card small {
 
     color: #94a3b8;
-}
 
+    font-size: 10px;
+}
 
 .badge-warning {
 
-    background: #f59e0b;
+    flex-shrink: 0;
 
-    padding: 6px 12px;
+    padding: 5px 9px;
 
-    border-radius: 20px;
+    border-radius: 999px;
 
-    font-size: 12px;
+    color: #fef3c7;
 
-    font-weight: 600;
+    background:
+        rgba(245,158,11,.12);
 
-    color: white;
+    border:
+        1px solid rgba(245,158,11,.18);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .4px;
 }
-
 
 /* =========================================================
    SUMMARY
@@ -833,30 +1230,67 @@
 
     justify-content: space-between;
 
-    padding: 14px 0;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 13px 0;
+
+    color: #cbd5e1;
 
     border-bottom:
-        1px solid rgba(255,255,255,.08);
+        1px solid rgba(255,255,255,.06);
 
-    color: white;
+    font-size: 12px;
 }
 
+.summary-row:first-child {
+
+    padding-top: 3px;
+}
 
 .summary-row:last-child {
 
     border-bottom: none;
+
+    padding-bottom: 2px;
 }
 
+.summary-row strong {
+
+    min-width: 35px;
+
+    text-align: right;
+
+    color: #ffffff;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
 
 .empty-box {
 
-    padding: 40px;
+    padding: 35px 20px;
 
     text-align: center;
 
     color: #94a3b8;
-}
 
+    font-size: 12px;
+
+    border-radius: 14px;
+
+    background:
+        rgba(255,255,255,.025);
+
+    border:
+        1px dashed rgba(148,163,184,.12);
+}
 
 /* =========================================================
    FOOTER
@@ -864,116 +1298,236 @@
 
 .dashboard-footer {
 
-    margin-top: 25px;
+    display: flex;
 
-    text-align: center;
+    justify-content: center;
 
-    color: #94a3b8;
+    align-items: center;
 
-    font-size: 13px;
+    gap: 5px;
+
+    margin-top: 20px;
+
+    padding-top: 16px;
+
+    color: #64748b;
+
+    border-top:
+        1px solid rgba(255,255,255,.05);
+
+    font-size: 10px;
+
+    letter-spacing: .2px;
 }
-
 
 /* =========================================================
    RESPONSIVE
 ========================================================= */
 
-@media(max-width:1300px) {
+@media (max-width: 1400px) {
 
     .cards {
 
         grid-template-columns:
-            repeat(3,1fr);
+            repeat(3,minmax(0,1fr));
     }
 }
 
+@media (max-width: 1150px) {
 
-@media(max-width:1100px) {
-
-    .grid {
-
-        grid-template-columns: 1fr;
-    }
-
-
+    .grid,
     .analytics-grid {
 
         grid-template-columns: 1fr;
     }
 
-
     .hero-content {
 
-        flex-direction: column;
-
-        align-items: flex-start;
+        align-items: stretch;
     }
-
 
     .hero-right {
 
-        text-align: left;
+        min-width: 210px;
     }
 }
 
-
-@media(max-width:900px) {
+@media (max-width: 900px) {
 
     .cards {
 
         grid-template-columns:
-            repeat(2,1fr);
+            repeat(2,minmax(0,1fr));
     }
 
+    .hero-content {
+
+        flex-direction: column;
+    }
+
+    .hero-right {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+        text-align: left;
+    }
 
     .stats-row {
 
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            repeat(3,minmax(0,1fr));
     }
 }
 
+@media (max-width: 650px) {
 
-@media(max-width:600px) {
+    .dashboard-container {
+
+        padding: 0 0 25px;
+    }
+
+    .hero {
+
+        padding: 25px 20px;
+
+        border-radius: 18px;
+    }
+
+    .hero h2 {
+
+        font-size: 25px;
+    }
+
+    .hero-buttons {
+
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        width: 100%;
+    }
+
+    .hero-btn {
+
+        width: 100%;
+    }
+
+    .hero-right {
+
+        padding: 18px;
+    }
+
+    .hero-right h1 {
+
+        font-size: 35px;
+    }
 
     .cards {
 
         grid-template-columns: 1fr;
     }
 
+    .box {
 
-    .hero {
+        padding: 18px;
 
-        padding: 25px;
+        border-radius: 16px;
     }
-
-
-    .hero h2 {
-
-        font-size: 26px;
-    }
-
-
-    .hero-right h1 {
-
-        font-size: 32px;
-    }
-
 
     .chart-header {
 
         align-items: flex-start;
 
-        gap: 10px;
-
         flex-direction: column;
     }
 
+    .badge-chart {
+
+        align-self: flex-start;
+    }
 
     .chart-container {
 
-        height: 280px;
+        height: 275px;
 
-        min-height: 280px;
+        min-height: 275px;
+    }
+
+    .stats-row {
+
+        grid-template-columns: 1fr;
+    }
+
+    .mini-card {
+
+        padding: 18px;
+    }
+
+    .requirement-card {
+
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .hero {
+
+        padding: 22px 17px;
+    }
+
+    .hero h2 {
+
+        font-size: 22px;
+    }
+
+    .hero p {
+
+        font-size: 12px;
+    }
+
+    .card {
+
+        min-height: 150px;
+    }
+
+    .card-number {
+
+        font-size: 32px;
+    }
+
+    .chart-container {
+
+        height: 250px;
+
+        min-height: 250px;
+    }
+
+    .section-title {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        transition-duration: .01ms !important;
+
+        animation-duration: .01ms !important;
+
+        animation-iteration-count: 1 !important;
     }
 }
 
@@ -1354,6 +1908,7 @@
             <div>
 
                 <h3>
+                    <i class="fas fa-chart-column"></i>
                     Deployment Analytics
                 </h3>
 
@@ -1391,6 +1946,7 @@
             <div>
 
                 <h3>
+                    <i class="fas fa-circle-check"></i>
                     Verification Overview
                 </h3>
 
@@ -1430,7 +1986,8 @@
         <div>
 
             <h3>
-                📈 Batch Deployment Graphical Summary
+                <i class="fas fa-chart-line"></i>
+                Batch Deployment Graphical Summary
             </h3>
 
             <small>
@@ -1477,7 +2034,8 @@
             <div class="section-title">
 
                 <h3>
-                    📈 Deployment Progress
+                    <i class="fas fa-chart-line"></i>
+                    Deployment Progress
                 </h3>
 
 
@@ -1549,7 +2107,8 @@
         <div class="box analytics-box">
 
             <h3>
-                📋 Concern Analytics
+                <i class="fas fa-clipboard-list"></i>
+                Concern Analytics
             </h3>
 
 
@@ -1613,7 +2172,8 @@
         <div class="box analytics-box">
 
             <h3>
-                ⚠ Incomplete Requirements
+                <i class="fas fa-triangle-exclamation"></i>
+                Incomplete Requirements
             </h3>
 
 
@@ -1662,7 +2222,8 @@
         <div class="box analytics-box">
 
             <h3>
-                ⚓ System Summary
+                <i class="fas fa-anchor"></i>
+                System Summary
             </h3>
 
 
@@ -2340,7 +2901,7 @@ document.addEventListener(
                                     batchTotals,
 
                                 backgroundColor:
-                                    '#94a3b8',
+                                    '#64748b',
 
                                 borderRadius: 8
 
