@@ -2100,6 +2100,44 @@
         scale(1.08);
 }
 
+/* ==========================================================================
+   CADET MANAGEMENT HEADER ICON
+   ========================================================================== */
+
+.cadet-header h1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cadet-header h1::before {
+    content: "\f508";
+
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+
+    color: #ffffff;
+
+    font-size: 19px;
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.14);
+}
+
 
 /* ==========================================================================
    REDUCED MOTION
