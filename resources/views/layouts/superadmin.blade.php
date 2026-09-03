@@ -95,65 +95,268 @@
         }
 
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
+/* =====================================================
+   SIDEBAR
+===================================================== */
 
-        .sidebar {
-            position: fixed;
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
 
-            top: 0;
-            left: 0;
+    width: 260px;
+    height: 100vh;
 
-            width: 260px;
-            height: 100vh;
+    background:
+        linear-gradient(
+            180deg,
+            #18233f 0%,
+            #0b1838 45%,
+            #061331 100%
+        );
 
-            background:
-                linear-gradient(
-                    180deg,
-                    #181f35 0%,
-                    #05144d 100%
-                );
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
 
-            z-index: 3000;
+    z-index: 3000;
 
-            display: flex;
-            flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
-            overflow-x: hidden;
-            overflow-y: auto;
+    /*
+    IMPORTANT:
+    The sidebar itself must NOT scroll.
+    */
+    overflow: hidden;
 
-            scrollbar-width: thin;
+    box-shadow:
+        8px 0 35px rgba(0, 0, 0, 0.20);
 
-            scrollbar-color:
-                rgba(255,255,255,.25)
-                transparent;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 
-            transition:
-                left .3s ease,
-                transform .3s ease;
-        }
-
-
-        .sidebar::-webkit-scrollbar {
-            width: 7px;
-        }
-
-
-        .sidebar::-webkit-scrollbar-track {
-            background: transparent;
-        }
+    transition:
+        left .3s ease,
+        transform .3s ease;
+}
 
 
-        .sidebar::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,.25);
-            border-radius: 10px;
-        }
+/* =====================================================
+   SIDEBAR DECORATION
+===================================================== */
+
+.sidebar::before {
+    content: "";
+
+    position: absolute;
+
+    top: -100px;
+    left: -100px;
+
+    width: 260px;
+    height: 260px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(59, 130, 246, 0.18),
+            transparent 70%
+        );
+
+    pointer-events: none;
+
+    z-index: 0;
+}
 
 
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,.4);
-        }
+/* =====================================================
+   LOGO
+   FIXED / NON-SCROLLING
+===================================================== */
+
+.logo-section {
+    position: relative;
+
+    width: 100%;
+
+    flex: 0 0 auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    padding: 28px 18px 24px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+
+    z-index: 5;
+
+    /*
+    Prevent logo area from shrinking.
+    */
+    flex-shrink: 0;
+
+    /*
+    Keep logo area visually fixed.
+    */
+    background:
+        linear-gradient(
+            180deg,
+            rgba(24, 35, 63, 0.98),
+            rgba(11, 24, 56, 0.98)
+        );
+}
+
+
+/* =====================================================
+   LOGO IMAGE
+===================================================== */
+
+.logo-section img {
+    display: block;
+
+    width: 108px;
+    height: 108px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border:
+        4px solid
+        rgba(255, 255, 255, 0.10);
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 0, 0, 0.35);
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+.logo-section img:hover {
+    transform: scale(1.04);
+
+    box-shadow:
+        0 16px 40px
+        rgba(37, 99, 235, 0.28);
+}
+
+
+/* =====================================================
+   LOGO TEXT
+===================================================== */
+
+.logo-section h2 {
+    margin-top: 2px;
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    letter-spacing: -0.02em;
+
+    line-height: 1.3;
+}
+
+.logo-section p {
+    margin-top: 7px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   SIDEBAR MENU
+   ONLY THIS AREA SCROLLS
+===================================================== */
+
+.sidebar-menu {
+    width: 100%;
+
+    /*
+    Takes the remaining sidebar height.
+    */
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    padding: 18px 14px 18px;
+
+    /*
+    THIS is now the scrolling area.
+    */
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(148, 163, 184, 0.35)
+        transparent;
+}
+
+
+/* Chrome / Edge / Safari */
+
+.sidebar-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background:
+        rgba(148, 163, 184, 0.28);
+
+    border-radius: 999px;
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(148, 163, 184, 0.45);
+}
+
+
+/* =====================================================
+   LOGOUT
+   ALSO STAYS AT BOTTOM
+===================================================== */
+
+.logout-form {
+    width: 100%;
+
+    flex: 0 0 auto;
+    flex-shrink: 0;
+
+    padding: 12px 14px 18px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(6, 19, 49, 0.80),
+            rgba(6, 19, 49, 1)
+        );
+
+    border-top:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+
+    z-index: 5;
+}
 
 
         /* =====================================================
