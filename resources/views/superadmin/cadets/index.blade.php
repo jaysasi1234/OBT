@@ -1,53 +1,61 @@
 @extends('layouts.superadmin')
 
-@section('header-title', 'Cadet Management')
-
 @section('content')
 
 <style>
-/* =========================================================
-   CADET MANAGEMENT
-   Deployment Monitoring-inspired UI
-   ========================================================= */
+
+/* ==========================================================================
+   SUPER ADMIN CADET MANAGEMENT
+   DEPLOYMENT MONITORING STYLE
+   UI / CSS ONLY
+   ========================================================================== */
 
 :root {
-    --cm-bg: #07152f;
-    --cm-bg-2: #0b1b43;
+    --cadet-bg: #07152f;
+    --cadet-bg-2: #0b1b43;
 
-    --cm-panel: #0d1940;
-    --cm-panel-2: #111f4d;
-    --cm-panel-3: #16265a;
+    --cadet-panel: #0d1940;
+    --cadet-panel-2: #111f4d;
+    --cadet-panel-3: #16265a;
 
-    --cm-blue: #2f5df5;
-    --cm-blue-dark: #2447bd;
-    --cm-blue-light: #4f7cff;
+    --cadet-primary: #2f5df5;
+    --cadet-primary-dark: #2447bd;
+    --cadet-primary-light: #4f7cff;
 
-    --cm-cyan: #0d8db5;
-    --cm-green: #159447;
-    --cm-green-light: #20b85a;
+    --cadet-cyan: #0d8db5;
 
-    --cm-orange: #d97706;
-    --cm-red: #dc3545;
+    --cadet-success: #159447;
+    --cadet-success-light: #20b85a;
 
-    --cm-text: #ffffff;
-    --cm-muted: #a9b8d8;
-    --cm-muted-2: #8293b9;
+    --cadet-warning: #d98a08;
+    --cadet-warning-light: #f5b72f;
 
-    --cm-border: rgba(255, 255, 255, 0.08);
+    --cadet-danger: #c93636;
+    --cadet-danger-light: #f05a5a;
 
-    --cm-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.28);
+    --cadet-text: #ffffff;
+    --cadet-text-soft: #e2e8f0;
+    --cadet-muted: #a9b8d8;
+    --cadet-muted-2: #8293b9;
 
-    --cm-shadow-soft:
-        0 10px 30px rgba(0, 0, 0, 0.20);
+    --cadet-border: rgba(255, 255, 255, 0.08);
+
+    --cadet-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.30);
+
+    --cadet-transition:
+        0.22s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --cadet-radius: 18px;
 }
 
 
-/* =========================================================
+/* ==========================================================================
    PAGE
-   ========================================================= */
+   ========================================================================== */
 
 .cadet-page {
+    position: relative;
     width: 100%;
     min-width: 0;
     min-height: 100vh;
@@ -55,213 +63,139 @@
 
     padding: 28px;
 
-    color: var(--cm-text);
+    color: var(--cadet-text);
 
     background:
         radial-gradient(
-            circle at 10% 10%,
+            circle at 8% 0%,
             rgba(47, 93, 245, 0.13),
             transparent 28%
         ),
         radial-gradient(
-            circle at 90% 15%,
-            rgba(13, 141, 181, 0.10),
+            circle at 92% 4%,
+            rgba(13, 141, 181, 0.09),
             transparent 25%
         ),
         linear-gradient(
-            135deg,
-            var(--cm-bg),
-            var(--cm-bg-2)
+            145deg,
+            #07152f 0%,
+            #081738 45%,
+            #06132f 100%
         );
 }
 
 
-/* =========================================================
-   PAGE HEADER
-   ========================================================= */
+/* ==========================================================================
+   BACKGROUND GRID
+   ========================================================================== */
 
-.cadet-page .page-header {
+.cadet-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    opacity: 0.28;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(79, 124, 255, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            rgba(79, 124, 255, 0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 32px 32px;
+}
+
+
+/* ==========================================================================
+   STICKY CONTROLS
+   ========================================================================== */
+
+.cadet-sticky-controls {
+    position: sticky;
+    top: 75px;
+    z-index: 900;
+
+    padding: 6px 0 22px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(7, 21, 47, 0.98),
+            rgba(7, 21, 47, 0.94),
+            rgba(7, 21, 47, 0)
+        );
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+
+/* ==========================================================================
+   PAGE HEADER
+   ========================================================================== */
+
+.cadet-header {
     position: relative;
 
     display: flex;
     align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
 
     min-height: 136px;
 
-    margin-bottom: 28px;
+    margin-bottom: 22px;
     padding: 28px 30px;
 
     overflow: hidden;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.10);
     border-radius: 19px;
 
     background:
         linear-gradient(
             135deg,
-            #2f5df5 0%,
-            #2447bd 55%,
-            #1d3da8 100%
+            #2f66e8 0%,
+            #2554d8 48%,
+            #214ac5 100%
         );
 
-    box-shadow: var(--cm-shadow);
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 
 /* Header decorative circles */
 
-.cadet-page .page-header::before {
+.cadet-header::before {
     content: "";
 
     position: absolute;
 
-    width: 230px;
-    height: 230px;
+    width: 210px;
+    height: 210px;
 
-    top: -125px;
-    right: -65px;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.07);
-}
-
-
-.cadet-page .page-header::after {
-    content: "";
-
-    position: absolute;
-
-    width: 150px;
-    height: 150px;
-
-    bottom: -100px;
-    right: 190px;
+    right: -70px;
+    top: -95px;
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.05);
-}
-
-
-.cadet-page .page-header-content {
-    position: relative;
-    z-index: 2;
-}
-
-
-.cadet-page .page-header h2 {
-    margin: 0;
-
-    color: #ffffff;
-
-    font-size: 30px;
-    font-weight: 800;
-    line-height: 1.2;
-}
-
-
-.cadet-page .page-header p {
-    margin: 8px 0 0;
-
-    color: rgba(255, 255, 255, 0.78);
-
-    font-size: 15px;
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   STATISTICS
-   ========================================================= */
-
-.cadet-page .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-
-    gap: 22px;
-
-    margin-bottom: 28px;
-}
-
-
-.cadet-page .stat-card {
-    position: relative;
-
-    min-height: 164px;
-
-    padding: 25px;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
-
-    box-shadow: var(--cm-shadow-soft);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.cadet-page .stat-card:hover {
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 20px 40px rgba(0, 0, 0, 0.28);
-}
-
-
-/* Stat card backgrounds */
-
-.cadet-page .stat-card:nth-child(1) {
     background:
-        linear-gradient(
-            135deg,
-            #2f66e8,
-            #2252d6,
-            #1e4bc7
-        );
+        rgba(255, 255, 255, 0.08);
+
+    pointer-events: none;
 }
 
-
-.cadet-page .stat-card:nth-child(2) {
-    background:
-        linear-gradient(
-            135deg,
-            #1497b7,
-            #087ea8,
-            #08739b
-        );
-}
-
-
-.cadet-page .stat-card:nth-child(3) {
-    background:
-        linear-gradient(
-            135deg,
-            #19a34d,
-            #128d42,
-            #0d7c39
-        );
-}
-
-
-.cadet-page .stat-card:nth-child(4) {
-    background:
-        linear-gradient(
-            135deg,
-            #40506a,
-            #334158,
-            #26354d
-        );
-}
-
-
-/* Decorative circle */
-
-.cadet-page .stat-card::after {
+.cadet-header::after {
     content: "";
 
     position: absolute;
@@ -269,470 +203,648 @@
     width: 125px;
     height: 125px;
 
-    right: -45px;
-    bottom: -60px;
+    right: 100px;
+    bottom: -75px;
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.07);
+    background:
+        rgba(255, 255, 255, 0.055);
+
+    pointer-events: none;
 }
 
 
-.cadet-page .stat-card::before {
-    content: "";
-
-    position: absolute;
-
-    width: 70px;
-    height: 70px;
-
-    right: 30px;
-    top: -35px;
-
-    border-radius: 50%;
-
-    background: rgba(255, 255, 255, 0.05);
-}
-
-
-.cadet-page .stat-card-content {
+.cadet-header h1 {
     position: relative;
-    z-index: 2;
-}
+    z-index: 1;
 
-
-.cadet-page .stat-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 56px;
-    height: 56px;
-
-    border-radius: 16px;
-
-    background: rgba(255, 255, 255, 0.14);
+    margin: 0;
 
     color: #ffffff;
 
-    font-size: 22px;
-}
-
-
-.cadet-page .stat-info h5 {
-    margin: 17px 0 0;
-
-    color: rgba(255, 255, 255, 0.80);
-
-    font-size: 14px;
-    font-weight: 700;
-
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-
-.cadet-page .stat-info h2 {
-    margin: 6px 0 0;
-
-    color: #ffffff;
-
-    font-size: 46px;
+    font-size: 30px;
     font-weight: 800;
 
-    line-height: 1;
+    line-height: 1.2;
+
+    letter-spacing: -0.7px;
 }
 
 
-/* =========================================================
-   FILTER PANEL
-   ========================================================= */
+/* Remove old dot and replace with clean heading */
 
-.cadet-page .filter-container {
+.cadet-header h1::before {
+    content: none;
+}
+
+
+.cadet-header p {
+    position: relative;
+    z-index: 1;
+
+    margin: 8px 0 0;
+
+    color: rgba(255, 255, 255, 0.78);
+
+    font-size: 14px;
+    font-weight: 500;
+
+    line-height: 1.5;
+}
+
+
+/* ==========================================================================
+   FILTER PANEL
+   ========================================================================== */
+
+.cadet-filters {
     position: relative;
 
-    margin-bottom: 28px;
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 14px;
+
     padding: 25px;
 
-    overflow: hidden;
+    margin-bottom: 22px;
 
-    border: 1px solid var(--cm-border);
+    border: 1px solid var(--cadet-border);
     border-radius: 18px;
 
     background:
         linear-gradient(
-            145deg,
-            var(--cm-panel-2),
-            var(--cm-panel)
+            135deg,
+            rgba(13, 25, 64, 0.98),
+            rgba(17, 31, 77, 0.96)
         );
 
-    box-shadow: var(--cm-shadow-soft);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.24);
 }
 
 
-.cadet-page .filter-container::before {
+/* Filter heading */
+
+.cadet-filters::before {
     content: "⚙ Filters";
 
-    display: block;
+    position: absolute;
 
-    margin-bottom: 18px;
+    top: -13px;
+    left: 22px;
 
-    color: #ffffff;
+    display: flex;
+    align-items: center;
 
-    font-size: 14px;
-    font-weight: 800;
+    height: 26px;
 
-    letter-spacing: 0.02em;
-}
+    padding: 0 12px;
 
+    border: 1px solid rgba(79, 124, 255, 0.18);
+    border-radius: 8px;
 
-.cadet-page .filter-grid {
-    display: grid;
+    background: #0d1940;
 
-    grid-template-columns:
-        repeat(5, minmax(0, 1fr));
-
-    gap: 14px;
-}
-
-
-.cadet-page .filter-group {
-    min-width: 0;
-}
-
-
-.cadet-page .filter-label {
-    display: block;
-
-    margin-bottom: 7px;
-
-    color: var(--cm-muted);
+    color: #8fb1ff;
 
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
 
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.4px;
 }
 
 
-.cadet-page .filter-control {
+/* ==========================================================================
+   FILTER INPUTS
+   ========================================================================== */
+
+.cadet-filters input,
+.cadet-filters select {
     width: 100%;
-    min-height: 57px;
+    min-width: 0;
+    height: 57px;
 
-    padding: 0 15px;
+    padding: 0 16px;
 
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    box-sizing: border-box;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+
     border-radius: 13px;
 
     outline: none;
 
     background:
         linear-gradient(
-            145deg,
-            #142653,
-            #0e1c42
+            135deg,
+            #16265a,
+            #111f4d
         );
 
-    color: #ffffff;
+    color: #f8fafc;
 
-    font-family: inherit;
     font-size: 13px;
+    font-weight: 600;
 
     transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+        border-color var(--cadet-transition),
+        background var(--cadet-transition),
+        box-shadow var(--cadet-transition),
+        transform var(--cadet-transition);
 }
 
 
-.cadet-page .filter-control:hover {
-    border-color: rgba(79, 124, 255, 0.35);
+.cadet-filters input:hover,
+.cadet-filters select:hover {
+    border-color:
+        rgba(79, 124, 255, 0.35);
+
+    background:
+        linear-gradient(
+            135deg,
+            #1a2d67,
+            #152657
+        );
 }
 
 
-.cadet-page .filter-control:focus {
-    border-color: var(--cm-blue-light);
+.cadet-filters input:focus,
+.cadet-filters select:focus {
+    border-color:
+        rgba(79, 124, 255, 0.85);
+
+    background:
+        linear-gradient(
+            135deg,
+            #192d68,
+            #152657
+        );
 
     box-shadow:
-        0 0 0 3px rgba(79, 124, 255, 0.12),
-        0 0 20px rgba(47, 93, 245, 0.12);
+        0 0 0 3px
+        rgba(47, 93, 245, 0.14),
+
+        0 8px 20px
+        rgba(0, 0, 0, 0.16);
+
+    transform:
+        translateY(-1px);
 }
 
 
-.cadet-page .filter-control::placeholder {
-    color: var(--cm-muted-2);
+.cadet-filters input::placeholder {
+    color: #8293b9;
 }
 
 
-.cadet-page select.filter-control {
-    cursor: pointer;
-}
-
-
-.cadet-page select.filter-control option {
+.cadet-filters option {
     background: #0d1940;
     color: #ffffff;
 }
 
 
-/* =========================================================
-   TABLE HEADER
-   ========================================================= */
-
-.cadet-page .table-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 20px;
-
-    padding: 24px 24px 21px;
-
-    border-top:
-        1px solid rgba(255, 255, 255, 0.08);
-
-    border-left:
-        1px solid rgba(255, 255, 255, 0.08);
-
-    border-right:
-        1px solid rgba(255, 255, 255, 0.08);
-
-    border-radius: 18px 18px 0 0;
-
-    background:
-        linear-gradient(
-            145deg,
-            #111f4d,
-            #0d1940
-        );
-
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.16);
+.cadet-filters select {
+    cursor: pointer;
 }
 
 
-.cadet-page .table-title {
+/* ==========================================================================
+   STATISTICS
+   ========================================================================== */
+
+.cadet-stats {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 22px;
+
+    margin-bottom: 0;
+}
+
+
+.cadet-stat {
+    position: relative;
+
     min-width: 0;
-}
+    min-height: 155px;
 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-.cadet-page .table-title strong {
-    display: block;
+    padding: 25px;
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+    border-radius: 18px;
 
     color: #ffffff;
 
-    font-size: 17px;
+    font-size: 12px;
     font-weight: 800;
+
+    letter-spacing: 0.7px;
+
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.25);
+
+    transition:
+        transform var(--cadet-transition),
+        box-shadow var(--cadet-transition),
+        border-color var(--cadet-transition);
 }
 
 
-.cadet-page .table-title span {
+/* Decorative circle */
+
+.cadet-stat::after {
+    content: "";
+
+    position: absolute;
+
+    width: 125px;
+    height: 125px;
+
+    right: -42px;
+    bottom: -52px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.10);
+
+    pointer-events: none;
+}
+
+
+.cadet-stat:hover {
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.32);
+
+    border-color:
+        rgba(255, 255, 255, 0.15);
+}
+
+
+.cadet-stat-value {
     display: block;
 
-    margin-top: 4px;
+    margin-top: 10px;
 
-    color: var(--cm-muted);
+    color: #ffffff;
 
-    font-size: 13px;
+    font-size: 34px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: -1px;
 }
 
 
-.cadet-page .table-hint {
-    color: var(--cm-muted-2);
+/* Total */
 
-    font-size: 12px;
-
-    white-space: nowrap;
+.cadet-stat-blue {
+    background:
+        linear-gradient(
+            135deg,
+            #2f66e8 0%,
+            #2252d6 55%,
+            #1e4bc7 100%
+        );
 }
 
 
-/* =========================================================
-   TABLE
-   ========================================================= */
+/* Verified */
 
-.cadet-page .table-responsive {
+.cadet-stat-green {
+    background:
+        linear-gradient(
+            135deg,
+            #19a34d 0%,
+            #128d42 55%,
+            #0d7c39 100%
+        );
+}
+
+
+/* Pending */
+
+.cadet-stat-yellow {
+    background:
+        linear-gradient(
+            135deg,
+            #e9a313 0%,
+            #d88708 55%,
+            #c57405 100%
+        );
+
+    color: #ffffff;
+}
+
+
+/* Deficiency */
+
+.cadet-stat-red {
+    background:
+        linear-gradient(
+            135deg,
+            #dc4646 0%,
+            #c93636 55%,
+            #ad2929 100%
+        );
+}
+
+
+/* ==========================================================================
+   TABLE CONTAINER
+   ========================================================================== */
+
+.cadet-table-wrapper {
+    position: relative;
+
     width: 100%;
+
+    margin-top: 28px;
+
+    padding: 0;
 
     overflow-x: auto;
-    overflow-y: hidden;
 
-    border-radius: 0 0 18px 18px;
+    -webkit-overflow-scrolling: touch;
 
-    background: #0b1738;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
 
-    box-shadow: var(--cm-shadow);
-
-    scrollbar-width: thin;
-    scrollbar-color: #30477e #0a1533;
-}
-
-
-.cadet-page .table-responsive::-webkit-scrollbar {
-    height: 8px;
-}
-
-
-.cadet-page .table-responsive::-webkit-scrollbar-track {
-    background: #0a1533;
-}
-
-
-.cadet-page .table-responsive::-webkit-scrollbar-thumb {
-    border-radius: 20px;
-
-    background: #30477e;
-}
-
-
-.cadet-page .cadet-table {
-    width: 100%;
-    min-width: 1250px;
-
-    border-collapse: separate;
-    border-spacing: 0;
-
-    background: #0b1738;
-}
-
-
-.cadet-page .cadet-table th {
-    position: sticky;
-    top: 0;
-    z-index: 5;
-
-    padding: 15px 20px;
-
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
 
     background:
         linear-gradient(
             135deg,
-            #2f5df5,
-            #2447bd
+            rgba(13, 25, 64, 0.98),
+            rgba(9, 21, 50, 0.98)
         );
+
+    box-shadow:
+        var(--cadet-shadow);
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #334d78
+        transparent;
+}
+
+
+.cadet-table-wrapper::-webkit-scrollbar {
+    height: 7px;
+}
+
+
+.cadet-table-wrapper::-webkit-scrollbar-track {
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+
+.cadet-table-wrapper::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+
+    background:
+        #334d78;
+}
+
+
+/* ==========================================================================
+   TABLE
+   ========================================================================== */
+
+.cadet-table {
+    width: 100%;
+
+    min-width: 1200px;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    color: var(--cadet-text);
+}
+
+
+.cadet-table thead {
+    background:
+        linear-gradient(
+            135deg,
+            #244fca,
+            #1f46b8
+        );
+}
+
+
+.cadet-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    padding:
+        15px 20px;
 
     color: #ffffff;
 
-    font-size: 12px;
+    background:
+        linear-gradient(
+            135deg,
+            #2d5ddd,
+            #244fc7
+        );
+
+    font-size: 11px;
     font-weight: 800;
 
     text-align: left;
+
     text-transform: uppercase;
 
+    letter-spacing: 0.75px;
+
     white-space: nowrap;
-}
-
-
-.cadet-page .cadet-table td {
-    padding: 16px 20px;
 
     border-bottom:
-        1px solid rgba(255, 255, 255, 0.055);
+        1px solid
+        rgba(255, 255, 255, 0.10);
+}
 
-    background: #0d1a3d;
 
-    color: #edf3ff;
+.cadet-table th:first-child {
+    border-top-left-radius: 18px;
+}
+
+
+.cadet-table th:last-child {
+    border-top-right-radius: 18px;
+}
+
+
+.cadet-table td {
+    padding:
+        16px 20px;
+
+    color:
+        #dbe4f3;
 
     font-size: 13px;
+    font-weight: 500;
 
     white-space: nowrap;
 
-    vertical-align: middle;
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.055);
+
+    background:
+        rgba(8, 20, 49, 0.55);
+
+    transition:
+        background var(--cadet-transition),
+        color var(--cadet-transition);
 }
 
 
-.cadet-page .cadet-table tbody tr:nth-child(even) td {
-    background: #101f47;
+.cadet-table tbody tr {
+    background:
+        transparent;
+
+    transition:
+        background var(--cadet-transition);
 }
 
 
-.cadet-page .cadet-table tbody tr {
-    transition: background 0.18s ease;
+.cadet-table tbody tr:nth-child(even) td {
+    background:
+        rgba(15, 31, 70, 0.42);
 }
 
 
-.cadet-page .cadet-table tbody tr:hover td {
-    background: #16265a;
+.cadet-table tbody tr:hover td {
+    background:
+        rgba(47, 93, 245, 0.10);
+
+    color:
+        #ffffff;
 }
 
 
-.cadet-page .cadet-table td:first-child {
+.cadet-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* ==========================================================================
+   FIRST COLUMN / TRB
+   ========================================================================== */
+
+.cadet-table td:first-child {
+    color:
+        #8fb1ff;
+
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+
+/* ==========================================================================
+   NAME
+   ========================================================================== */
+
+.cadet-table td:nth-child(2) {
+    color:
+        #ffffff;
+
     font-weight: 700;
 }
 
 
-/* =========================================================
-   CADET PROFILE CELL
-   ========================================================= */
+/* ==========================================================================
+   COURSE
+   ========================================================================== */
 
-.cadet-page .cadet-name-cell {
-    display: flex;
-    align-items: center;
+.cadet-table td:nth-child(3) {
+    color:
+        #cbd5e1;
 
-    gap: 12px;
+    font-weight: 600;
 }
 
 
-.cadet-page .cadet-mini-photo {
-    flex: 0 0 auto;
+/* ==========================================================================
+   EMPTY STATE
+   ========================================================================== */
 
-    width: 42px;
-    height: 42px;
+.cadet-table-empty {
+    padding:
+        70px 25px !important;
 
-    overflow: hidden;
+    color:
+        #8293b9 !important;
 
-    border: 2px solid rgba(255, 255, 255, 0.10);
-    border-radius: 50%;
+    text-align: center !important;
 
-    background: #17285d;
+    font-size: 13px !important;
+
+    border-bottom: none !important;
+
+    background:
+        transparent !important;
 }
 
 
-.cadet-page .cadet-mini-photo img {
-    width: 100%;
-    height: 100%;
-
-    object-fit: cover;
-}
-
-
-.cadet-page .cadet-name-info strong {
-    display: block;
-
-    color: #ffffff;
-
-    font-size: 13px;
-    font-weight: 700;
-}
-
-
-.cadet-page .cadet-name-info span {
-    display: block;
-
-    margin-top: 3px;
-
-    color: var(--cm-muted-2);
-
-    font-size: 11px;
-}
-
-
-/* =========================================================
+/* ==========================================================================
    STATUS BADGES
-   ========================================================= */
+   ========================================================================== */
 
-.cadet-page .dm-badge {
+.cadet-status {
+    position: relative;
+
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
+    gap: 7px;
+
     min-height: 28px;
 
-    padding: 5px 12px;
+    padding:
+        6px 12px;
 
-    border-radius: 999px;
+    border:
+        1px solid transparent;
+
+    border-radius: 20px;
 
     font-size: 11px;
     font-weight: 800;
@@ -740,1205 +852,1501 @@
     line-height: 1;
 
     white-space: nowrap;
+
+    letter-spacing: 0.2px;
 }
 
 
-.cadet-page .badge-green {
-    border: 1px solid rgba(32, 184, 90, 0.20);
+.cadet-status::before {
+    content: "";
 
-    background: rgba(32, 184, 90, 0.14);
+    width: 6px;
+    height: 6px;
 
-    color: #5ee58c;
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background:
+        currentColor;
+
+    box-shadow:
+        0 0 8px currentColor;
 }
 
 
-.cadet-page .badge-blue {
-    border: 1px solid rgba(79, 124, 255, 0.20);
+/* ==========================================================================
+   VERIFICATION STATUS
+   ========================================================================== */
 
-    background: rgba(79, 124, 255, 0.14);
+.cadet-status-verified {
+    background:
+        rgba(32, 184, 90, 0.13);
 
-    color: #9ab2ff;
+    border-color:
+        rgba(32, 184, 90, 0.22);
+
+    color:
+        #4ade80;
 }
 
 
-.cadet-page .badge-gray {
-    border: 1px solid rgba(148, 163, 184, 0.18);
+.cadet-status-pending {
+    background:
+        rgba(245, 183, 47, 0.13);
 
-    background: rgba(148, 163, 184, 0.12);
+    border-color:
+        rgba(245, 183, 47, 0.22);
 
-    color: #c4cede;
+    color:
+        #fbbf24;
 }
 
 
-.cadet-page .badge-orange {
-    border: 1px solid rgba(245, 158, 11, 0.20);
+.cadet-status-deficiency {
+    background:
+        rgba(240, 90, 90, 0.13);
 
-    background: rgba(245, 158, 11, 0.14);
+    border-color:
+        rgba(240, 90, 90, 0.22);
 
-    color: #ffc45e;
+    color:
+        #f87171;
 }
 
 
-.cadet-page .badge-red {
-    border: 1px solid rgba(239, 68, 68, 0.20);
+/* ==========================================================================
+   DEPLOYMENT STATUS
+   ========================================================================== */
 
-    background: rgba(239, 68, 68, 0.14);
+.cadet-status-not-deployed {
+    background:
+        rgba(148, 163, 184, 0.12);
 
-    color: #ff8585;
+    border-color:
+        rgba(148, 163, 184, 0.18);
+
+    color:
+        #cbd5e1;
 }
 
 
-/* =========================================================
+.cadet-status-ongoing {
+    background:
+        rgba(79, 124, 255, 0.13);
+
+    border-color:
+        rgba(79, 124, 255, 0.22);
+
+    color:
+        #72a0ff;
+}
+
+
+.cadet-status-completed {
+    background:
+        rgba(32, 184, 90, 0.12);
+
+    border-color:
+        rgba(32, 184, 90, 0.20);
+
+    color:
+        #4ade80;
+}
+
+
+/* ==========================================================================
    VIEW BUTTON
-   ========================================================= */
+   ========================================================================== */
 
-.cadet-page .btn-view {
+.cadet-view-btn {
+    height: 36px;
+
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
     gap: 7px;
 
-    min-height: 36px;
+    padding:
+        0 14px;
 
-    padding: 8px 14px;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
 
-    border: 0;
     border-radius: 9px;
 
     background:
         linear-gradient(
             135deg,
-            var(--cm-blue-light),
-            var(--cm-blue-dark)
+            #2f66e8,
+            #244fc7
         );
 
-    color: #ffffff;
+    color:
+        #ffffff;
 
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
-
-    text-decoration: none;
 
     cursor: pointer;
 
     box-shadow:
-        0 7px 18px rgba(36, 71, 189, 0.20);
+        0 7px 17px
+        rgba(37, 82, 214, 0.24);
 
     transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease;
+        transform var(--cadet-transition),
+        background var(--cadet-transition),
+        box-shadow var(--cadet-transition);
 }
 
 
-.cadet-page .btn-view:hover {
-    transform: translateY(-1px);
+.cadet-view-btn::before {
+    content: "\f06e";
 
-    color: #ffffff;
+    font-family:
+        "Font Awesome 6 Free";
 
-    box-shadow:
-        0 10px 22px rgba(36, 71, 189, 0.30);
+    font-weight: 900;
+
+    font-size: 10px;
 }
 
 
-.cadet-page .btn-view:active {
-    transform: translateY(0);
-}
-
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
-
-.cadet-page .empty-state {
-    padding: 65px 20px;
-
-    color: var(--cm-muted);
-
-    text-align: center;
-}
-
-
-.cadet-page .empty-state-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 70px;
-    height: 70px;
-
-    margin: 0 auto 16px;
-
-    border-radius: 20px;
-
+.cadet-view-btn:hover {
     background:
         linear-gradient(
-            145deg,
-            #17285d,
-            #101d45
+            135deg,
+            #4f7cff,
+            #2f5df5
         );
 
-    color: var(--cm-muted);
+    transform:
+        translateY(-2px);
 
-    font-size: 27px;
+    box-shadow:
+        0 10px 24px
+        rgba(47, 93, 245, 0.36);
 }
 
 
-.cadet-page .empty-state h4 {
-    margin: 0;
-
-    color: #ffffff;
-
-    font-size: 17px;
+.cadet-view-btn:active {
+    transform:
+        translateY(0);
 }
 
 
-.cadet-page .empty-state p {
-    margin: 7px 0 0;
+.cadet-view-btn:focus-visible {
+    outline: none;
 
-    color: var(--cm-muted);
+    box-shadow:
+        0 0 0 3px
+        rgba(79, 124, 255, 0.20),
 
-    font-size: 13px;
+        0 9px 22px
+        rgba(47, 93, 245, 0.30);
 }
 
 
-/* =========================================================
-   PAGINATION
-   ========================================================= */
-
-.cadet-page .pagination {
-    display: flex;
-    align-items: center;
-
-    gap: 6px;
-
-    margin-top: 20px;
-}
-
-
-.cadet-page .pagination .page-link {
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    border-radius: 9px;
-
-    background: #111f4d;
-
-    color: #b8c6e1;
-
-    font-size: 12px;
-}
-
-
-.cadet-page .pagination .page-item.active .page-link {
-    border-color: var(--cm-blue);
-
-    background: var(--cm-blue);
-
-    color: #ffffff;
-}
-
-
-.cadet-page .pagination .page-link:hover {
-    border-color: var(--cm-blue-light);
-
-    background: #17285d;
-
-    color: #ffffff;
-}
-
-
-/* =========================================================
+/* ==========================================================================
    MODAL OVERLAY
-   ========================================================= */
+   ========================================================================== */
 
-.cadet-page .custom-modal-overlay {
+.cadet-modal-overlay {
     position: fixed;
+
     inset: 0;
 
-    z-index: 9999;
+    z-index: 100000;
 
     display: none;
+
     align-items: center;
     justify-content: center;
+
+    width: 100%;
+    height: 100%;
 
     padding: 22px;
 
-    background:
-        rgba(2, 8, 24, 0.80);
+    overflow: hidden;
 
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    box-sizing: border-box;
+
+    background:
+        rgba(2, 6, 23, 0.86);
+
+    backdrop-filter:
+        blur(9px);
+
+    -webkit-backdrop-filter:
+        blur(9px);
 }
 
 
-.cadet-page .custom-modal-overlay.show {
+.cadet-modal-overlay.show {
     display: flex;
-}
-
-
-/* =========================================================
-   MODAL BOX
-   ========================================================= */
-
-.cadet-page .custom-modal-box {
-    width: 100%;
-    max-width: 760px;
-
-    max-height: 91vh;
-    max-height: 91dvh;
-
-    overflow-y: auto;
-
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    border-radius: 20px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #111f4d,
-            #0b1738
-        );
-
-    box-shadow:
-        0 30px 90px rgba(0, 0, 0, 0.50);
 
     animation:
-        modalPop 0.22s ease-out;
+        cadetModalFadeIn 0.2s ease;
 }
 
 
-@keyframes modalPop {
+@keyframes cadetModalFadeIn {
     from {
         opacity: 0;
-        transform: scale(0.96) translateY(10px);
     }
 
     to {
         opacity: 1;
-        transform: scale(1) translateY(0);
     }
 }
 
 
-/* =========================================================
-   MODAL HEADER
-   ========================================================= */
+/* ==========================================================================
+   MODAL
+   ========================================================================== */
 
-.cadet-page .custom-modal-header {
-    position: sticky;
-    top: 0;
-
-    z-index: 10;
+.cadet-modal {
+    position: relative;
 
     display: flex;
+    flex-direction: column;
+
+    width:
+        min(800px, 100%);
+
+    max-width: 800px;
+
+    max-height:
+        calc(100dvh - 44px);
+
+    overflow: hidden;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.09);
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #0d1940,
+            #091633
+        );
+
+    color:
+        #ffffff;
+
+    box-shadow:
+        0 35px 90px
+        rgba(0, 0, 0, 0.58);
+
+    animation:
+        cadetModalOpen 0.22s
+        cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+@keyframes cadetModalOpen {
+    from {
+        opacity: 0;
+
+        transform:
+            translateY(14px)
+            scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* ==========================================================================
+   MODAL HEADER
+   ========================================================================== */
+
+.cadet-modal-header {
+    position: relative;
+
+    display: flex;
+
     align-items: center;
     justify-content: space-between;
 
     gap: 15px;
 
-    padding: 18px 22px;
+    flex: 0 0 auto;
+
+    min-height: 76px;
+
+    padding:
+        18px 22px;
 
     border-bottom:
-        1px solid rgba(255, 255, 255, 0.08);
+        1px solid
+        rgba(255, 255, 255, 0.07);
 
     background:
         linear-gradient(
             135deg,
-            #2f5df5,
-            #2447bd
+            #2d5ddd,
+            #244fc7
         );
-}
-
-
-.cadet-page .custom-modal-header h3 {
-    margin: 0;
-
-    color: #ffffff;
-
-    font-size: 18px;
-    font-weight: 800;
-}
-
-
-.cadet-page .modal-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 38px;
-    height: 38px;
-
-    flex: 0 0 auto;
-
-    border: 0;
-    border-radius: 10px;
-
-    background: rgba(255, 255, 255, 0.12);
-
-    color: #ffffff;
-
-    font-size: 18px;
-
-    cursor: pointer;
-
-    transition:
-        background 0.18s ease,
-        transform 0.18s ease;
-}
-
-
-.cadet-page .modal-close:hover {
-    background: rgba(255, 255, 255, 0.20);
-
-    transform: rotate(3deg);
-}
-
-
-/* =========================================================
-   MODAL BODY
-   ========================================================= */
-
-.cadet-page .custom-modal-body {
-    padding: 27px;
-}
-
-
-/* =========================================================
-   PROFILE SECTION
-   ========================================================= */
-
-.cadet-page .profile-section {
-    position: relative;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    gap: 20px;
-
-    padding: 24px;
 
     overflow: hidden;
-
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 17px;
-
-    background:
-        linear-gradient(
-            145deg,
-            #16265a,
-            #0f1d43
-        );
 }
 
 
-.cadet-page .profile-section::after {
+.cadet-modal-header::before {
     content: "";
 
     position: absolute;
 
-    width: 160px;
-    height: 160px;
+    left: 0;
+    top: 0;
 
-    right: -70px;
-    top: -80px;
-
-    border-radius: 50%;
-
-    background: rgba(47, 93, 245, 0.08);
-}
-
-
-.cadet-page .cadet-profile {
-    position: relative;
-    z-index: 2;
-
-    width: 122px;
-    height: 122px;
-
-    flex: 0 0 auto;
-
-    overflow: hidden;
-
-    border: 4px solid rgba(79, 124, 255, 0.65);
-    border-radius: 50%;
-
-    background: #0b1738;
-
-    box-shadow:
-        0 0 0 6px rgba(79, 124, 255, 0.08),
-        0 12px 30px rgba(0, 0, 0, 0.25);
-}
-
-
-.cadet-page .cadet-profile img {
     width: 100%;
-    height: 100%;
+    height: 2px;
 
-    object-fit: cover;
+    background:
+        linear-gradient(
+            90deg,
+            #4f7cff,
+            #72a0ff,
+            #35c6e8
+        );
 }
 
 
-.cadet-page .profile-info {
-    position: relative;
-    z-index: 2;
+.cadet-modal-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
 
     min-width: 0;
 }
 
 
-.cadet-page .profile-info h3 {
+.cadet-modal-title-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.20);
+
+    border-radius: 11px;
+
+    background:
+        rgba(255, 255, 255, 0.12);
+
+    color:
+        #ffffff;
+
+    font-size: 18px;
+
+    box-shadow:
+        inset 0 0 20px
+        rgba(255, 255, 255, 0.05);
+}
+
+
+.cadet-modal-title-text {
+    min-width: 0;
+}
+
+
+.cadet-modal-title-text h2 {
     margin: 0;
 
-    color: #ffffff;
+    color:
+        #ffffff;
 
-    font-size: 21px;
+    font-size: 18px;
     font-weight: 800;
+
+    line-height: 1.25;
 }
 
 
-.cadet-page .profile-info p {
-    margin: 6px 0 0;
+.cadet-modal-title-text p {
+    margin:
+        3px 0 0;
 
-    color: var(--cm-muted);
+    color:
+        rgba(255, 255, 255, 0.70);
 
-    font-size: 13px;
+    font-size: 10px;
+
+    line-height: 1.4;
 }
 
 
-.cadet-page .profile-info .trb-number {
-    display: inline-flex;
+.cadet-modal-close {
+    width: 38px;
+    height: 38px;
 
-    margin-top: 11px;
+    display: flex;
 
-    padding: 6px 11px;
+    align-items: center;
+    justify-content: center;
 
-    border: 1px solid rgba(79, 124, 255, 0.16);
-    border-radius: 999px;
+    flex-shrink: 0;
 
-    background: rgba(79, 124, 255, 0.10);
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.13);
 
-    color: #a9bcff;
+    border-radius: 10px;
 
-    font-size: 11px;
-    font-weight: 800;
+    background:
+        rgba(255, 255, 255, 0.09);
+
+    color:
+        #ffffff;
+
+    font-size: 20px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        var(--cadet-transition);
 }
 
 
-/* =========================================================
-   DETAIL SECTION
-   ========================================================= */
+.cadet-modal-close:hover {
+    border-color:
+        rgba(255, 255, 255, 0.24);
 
-.cadet-page .detail-section {
-    margin-top: 22px;
+    background:
+        rgba(255, 255, 255, 0.17);
 
-    padding: 17px 20px;
+    color:
+        #ffffff;
 
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 15px;
+    transform:
+        rotate(2deg);
+}
+
+
+/* ==========================================================================
+   PROFILE SECTION
+   ========================================================================== */
+
+.cadet-profile-section {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 22px;
+
+    flex: 0 0 auto;
+
+    padding:
+        27px 25px;
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.06);
 
     background:
         linear-gradient(
-            145deg,
-            #111f4d,
-            #0e1a3e
+            135deg,
+            #101f4d,
+            #0c193c
         );
 }
 
 
-.cadet-page .detail-section-title {
-    position: relative;
-
-    margin-bottom: 7px;
-    padding-left: 12px;
-
-    color: #6f92ff;
-
-    font-size: 12px;
-    font-weight: 800;
-
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-
-.cadet-page .detail-section-title::before {
+.cadet-profile-section::before {
     content: "";
 
     position: absolute;
 
-    top: 1px;
-    left: 0;
+    width: 180px;
+    height: 180px;
 
-    width: 3px;
-    height: 14px;
+    right: -80px;
+    top: -95px;
 
-    border-radius: 5px;
+    border-radius: 50%;
 
-    background: var(--cm-blue-light);
+    background:
+        rgba(47, 93, 245, 0.07);
+
+    pointer-events: none;
 }
 
 
-.cadet-page .detail-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.cadet-modal-photo {
+    width: 122px;
+    height: 122px;
 
-    gap: 20px;
+    flex-shrink: 0;
 
-    min-height: 49px;
+    object-fit: cover;
 
-    padding: 10px 0;
+    border:
+        2px solid
+        rgba(79, 124, 255, 0.65);
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.055);
+    border-radius: 50%;
+
+    background:
+        #16265a;
+
+    box-shadow:
+        0 14px 32px
+        rgba(0, 0, 0, 0.34),
+
+        0 0 0 6px
+        rgba(47, 93, 245, 0.07),
+
+        0 0 25px
+        rgba(47, 93, 245, 0.14);
 }
 
 
-.cadet-page .detail-row:last-child {
-    border-bottom: 0;
+.cadet-profile-info {
+    min-width: 0;
 }
 
 
-.cadet-page .detail-label {
-    color: var(--cm-muted);
+.cadet-profile-name {
+    margin:
+        0 0 10px;
 
-    font-size: 12px;
-    font-weight: 600;
+    color:
+        #ffffff;
+
+    font-size: 24px;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    word-break: break-word;
 }
 
 
-.cadet-page .detail-value {
-    color: #ffffff;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    text-align: right;
-}
-
-
-/* =========================================================
-   MODAL STATUS
-   ========================================================= */
-
-.cadet-page .modal-status {
+.cadet-profile-trb {
     display: inline-flex;
+
     align-items: center;
-    justify-content: center;
 
     min-height: 28px;
 
-    padding: 5px 12px;
+    padding:
+        6px 12px;
 
-    border-radius: 999px;
+    border:
+        1px solid
+        rgba(79, 124, 255, 0.20);
+
+    border-radius: 20px;
+
+    background:
+        rgba(47, 93, 245, 0.12);
+
+    color:
+        #9ab8ff;
+
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
 
     font-size: 11px;
     font-weight: 800;
 }
 
 
-.cadet-page .modal-status.completed {
-    background: rgba(32, 184, 90, 0.14);
-    color: #5ee58c;
+/* ==========================================================================
+   DETAILS SECTION
+   ========================================================================== */
+
+.cadet-details-section {
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    padding:
+        24px 25px;
+
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #334d78
+        transparent;
 }
 
 
-.cadet-page .modal-status.ongoing {
-    background: rgba(79, 124, 255, 0.14);
-    color: #9ab2ff;
+.cadet-details-section::-webkit-scrollbar {
+    width: 6px;
 }
 
 
-.cadet-page .modal-status.not-deployed {
-    background: rgba(148, 163, 184, 0.12);
-    color: #c4cede;
+.cadet-details-section::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+
+    background:
+        #334d78;
 }
 
 
-/* =========================================================
-   MODAL FOOTER
-   ========================================================= */
-
-.cadet-page .modal-footer {
+.cadet-details-title {
     display: flex;
-    justify-content: flex-end;
 
-    margin-top: 22px;
+    align-items: center;
+
+    gap: 8px;
+
+    margin:
+        0 0 15px;
+
+    color:
+        #ffffff;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    text-transform: none;
 }
 
 
-.cadet-page .modal-footer-btn {
-    min-height: 40px;
+.cadet-details-title::before {
+    content: "";
 
-    padding: 9px 18px;
+    width: 4px;
+    height: 18px;
 
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+
     border-radius: 10px;
 
     background:
+        #4f7cff;
+
+    box-shadow:
+        0 0 12px
+        rgba(79, 124, 255, 0.65);
+}
+
+
+.cadet-details-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+.cadet-detail-card {
+    position: relative;
+
+    min-width: 0;
+
+    padding:
+        16px 17px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.065);
+
+    border-radius: 13px;
+
+    background:
         linear-gradient(
-            145deg,
-            #26385f,
-            #1a2a4e
+            135deg,
+            #111f4d,
+            #0e1a40
         );
 
-    color: #ffffff;
+    transition:
+        border-color var(--cadet-transition),
+        background var(--cadet-transition),
+        transform var(--cadet-transition),
+        box-shadow var(--cadet-transition);
+}
 
-    font-size: 12px;
+
+.cadet-detail-card:hover {
+    border-color:
+        rgba(79, 124, 255, 0.28);
+
+    background:
+        linear-gradient(
+            135deg,
+            #16265a,
+            #12204b
+        );
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 22px
+        rgba(0, 0, 0, 0.18);
+}
+
+
+.cadet-detail-label {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color:
+        #8293b9;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    line-height: 1.3;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.75px;
+}
+
+
+.cadet-detail-value {
+    display: block;
+
+    color:
+        #edf3ff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    word-break: break-word;
+}
+
+
+/* ==========================================================================
+   MODAL FOOTER
+   ========================================================================== */
+
+.cadet-modal-footer {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    flex: 0 0 auto;
+
+    min-width: 0;
+
+    padding:
+        15px 22px;
+
+    border-top:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+
+    background:
+        #091633;
+}
+
+
+.cadet-modal-close-btn {
+    min-height: 40px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding:
+        0 18px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #40506a,
+            #334158
+        );
+
+    color:
+        #ffffff;
+
+    font-size: 11px;
     font-weight: 800;
 
     cursor: pointer;
 
     transition:
-        background 0.18s ease,
-        transform 0.18s ease;
+        var(--cadet-transition);
 }
 
 
-.cadet-page .modal-footer-btn:hover {
-    transform: translateY(-1px);
-
+.cadet-modal-close-btn:hover {
     background:
         linear-gradient(
-            145deg,
-            #30456f,
-            #203354
+            135deg,
+            #52627b,
+            #40506a
         );
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 8px 18px
+        rgba(0, 0, 0, 0.20);
 }
 
 
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
+.cadet-modal-close-btn:focus-visible,
+.cadet-modal-close:focus-visible {
+    outline: none;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(79, 124, 255, 0.20);
+}
+
+
+/* ==========================================================================
+   LARGE TABLET
+   ========================================================================== */
 
 @media (max-width: 1200px) {
 
-    .cadet-page .stats-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .cadet-filters {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
     }
 
-    .cadet-page .filter-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .cadet-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 }
 
+
+/* ==========================================================================
+   TABLET
+   ========================================================================== */
 
 @media (max-width: 992px) {
 
     .cadet-page {
+        padding: 20px;
+    }
+
+    .cadet-sticky-controls {
+        top: 75px;
+    }
+
+    .cadet-header {
+        min-height: 125px;
+        padding: 25px;
+    }
+
+    .cadet-header h1 {
+        font-size: 27px;
+    }
+
+    .cadet-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
         padding: 22px;
     }
 
-    .cadet-page .table-hint {
-        display: none;
+    .cadet-modal {
+        width:
+            min(800px, 100%);
+
+        max-width: 800px;
+
+        max-height:
+            calc(100dvh - 32px);
     }
 }
 
+
+/* ==========================================================================
+   MOBILE TABLET
+   ========================================================================== */
 
 @media (max-width: 768px) {
 
     .cadet-page {
-        padding: 18px;
+        padding: 16px;
     }
 
-    .cadet-page .page-header {
+    .cadet-header {
+        align-items: flex-start;
+
         min-height: auto;
 
-        padding: 24px;
-    }
-
-    .cadet-page .page-header h2 {
-        font-size: 25px;
-    }
-
-    .cadet-page .page-header p {
-        font-size: 13px;
-    }
-
-    .cadet-page .filter-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cadet-page .stats-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .cadet-page .stat-card {
-        min-height: 145px;
-    }
-
-    .cadet-page .stat-info h2 {
-        font-size: 40px;
-    }
-
-    .cadet-page .table-header {
-        padding: 20px;
-    }
-
-    .cadet-page .custom-modal-overlay {
-        padding: 12px;
-    }
-
-    .cadet-page .custom-modal-box {
-        max-height: 94vh;
-        max-height: 94dvh;
+        padding: 23px 20px;
 
         border-radius: 17px;
     }
 
-    .cadet-page .custom-modal-body {
+    .cadet-header h1 {
+        font-size: 24px;
+    }
+
+    .cadet-header p {
+        font-size: 12px;
+    }
+
+    .cadet-filters {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+
         padding: 20px;
     }
 
-    .cadet-page .profile-section {
-        flex-direction: column;
-
-        text-align: center;
+    .cadet-filters input,
+    .cadet-filters select {
+        height: 52px;
     }
 
-    .cadet-page .detail-row {
-        align-items: flex-start;
-        flex-direction: column;
+    .cadet-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-        gap: 5px;
+        gap: 12px;
     }
 
-    .cadet-page .detail-value {
-        text-align: left;
+    .cadet-stat {
+        min-height: 130px;
+
+        padding: 20px;
+    }
+
+    .cadet-stat-value {
+        font-size: 29px;
+    }
+
+    .cadet-table-wrapper {
+        margin-top: 22px;
+
+        border-radius: 16px;
+    }
+
+    .cadet-table {
+        min-width: 1100px;
+    }
+
+    .cadet-table th {
+        padding:
+            14px 17px;
+    }
+
+    .cadet-table td {
+        padding:
+            14px 17px;
+    }
+
+    .cadet-modal-overlay {
+        padding: 12px;
+    }
+
+    .cadet-modal {
+        width: 100%;
+        max-width: 100%;
+
+        max-height:
+            calc(100dvh - 24px);
+
+        border-radius: 17px;
+    }
+
+    .cadet-modal-header {
+        padding:
+            15px 16px;
+    }
+
+    .cadet-modal-title {
+        gap: 10px;
+    }
+
+    .cadet-modal-title-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .cadet-modal-title-text h2 {
+        font-size: 17px;
+    }
+
+    .cadet-profile-section {
+        padding:
+            22px 18px;
+
+        gap: 17px;
+    }
+
+    .cadet-modal-photo {
+        width: 108px;
+        height: 108px;
+    }
+
+    .cadet-profile-name {
+        font-size: 20px;
+    }
+
+    .cadet-details-section {
+        padding:
+            20px 18px;
+    }
+
+    .cadet-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cadet-modal-footer {
+        padding:
+            12px 16px;
     }
 }
 
 
-@media (max-width: 480px) {
+/* ==========================================================================
+   MOBILE
+   ========================================================================== */
+
+@media (max-width: 600px) {
 
     .cadet-page {
         padding: 12px;
     }
 
-    .cadet-page .page-header {
-        margin-bottom: 18px;
-        padding: 21px 18px;
+    .cadet-sticky-controls {
+        top: 65px;
+    }
+
+    .cadet-header {
+        padding: 20px 17px;
 
         border-radius: 15px;
     }
 
-    .cadet-page .page-header h2 {
-        font-size: 22px;
+    .cadet-header h1 {
+        font-size: 21px;
     }
 
-    .cadet-page .page-header p {
-        font-size: 12px;
-    }
-
-    .cadet-page .filter-container {
-        padding: 18px;
-
-        border-radius: 15px;
-    }
-
-    .cadet-page .filter-control {
-        min-height: 52px;
-    }
-
-    .cadet-page .stat-card {
-        padding: 20px;
-
-        border-radius: 15px;
-    }
-
-    .cadet-page .stat-icon {
-        width: 50px;
-        height: 50px;
-
-        border-radius: 14px;
-    }
-
-    .cadet-page .stat-info h5 {
-        font-size: 12px;
-    }
-
-    .cadet-page .stat-info h2 {
-        font-size: 36px;
-    }
-
-    .cadet-page .table-header {
-        padding: 18px;
-    }
-
-    .cadet-page .table-title strong {
-        font-size: 15px;
-    }
-
-    .cadet-page .table-title span {
+    .cadet-header p {
         font-size: 11px;
     }
 
-    .cadet-page .custom-modal-overlay {
+    .cadet-filters {
+        padding: 18px;
+    }
+
+    .cadet-stats {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+    }
+
+    .cadet-stat {
+        min-height: 105px;
+
+        padding: 19px;
+    }
+
+    .cadet-stat-value {
+        font-size: 27px;
+    }
+
+    .cadet-modal-overlay {
         padding: 8px;
     }
 
-    .cadet-page .custom-modal-box {
-        max-height: 96vh;
-        max-height: 96dvh;
+    .cadet-modal {
+        height:
+            calc(100dvh - 16px);
+
+        max-height:
+            calc(100dvh - 16px);
 
         border-radius: 15px;
     }
 
-    .cadet-page .custom-modal-header {
-        padding: 15px 17px;
+    .cadet-modal-header {
+        min-height: 68px;
+
+        padding:
+            12px 13px;
     }
 
-    .cadet-page .custom-modal-header h3 {
-        font-size: 16px;
+    .cadet-modal-title-text p {
+        display: none;
     }
 
-    .cadet-page .custom-modal-body {
-        padding: 15px;
+    .cadet-modal-close {
+        width: 34px;
+        height: 34px;
     }
 
-    .cadet-page .profile-section {
-        padding: 20px 15px;
+    .cadet-profile-section {
+        flex-direction: column;
+
+        justify-content: center;
+
+        text-align: center;
+
+        padding:
+            22px 15px;
     }
 
-    .cadet-page .cadet-profile {
+    .cadet-modal-photo {
         width: 105px;
         height: 105px;
     }
 
-    .cadet-page .profile-info h3 {
-        font-size: 18px;
+    .cadet-profile-name {
+        font-size: 19px;
     }
 
-    .cadet-page .detail-section {
-        padding: 15px;
+    .cadet-details-section {
+        padding:
+            17px 15px;
     }
 
-    .cadet-page .modal-footer-btn {
+    .cadet-detail-card {
+        padding:
+            14px;
+    }
+
+    .cadet-modal-footer {
+        padding:
+            10px 12px;
+    }
+
+    .cadet-modal-close-btn {
         width: 100%;
-    }
-
-    .cadet-page .modal-footer {
-        display: block;
     }
 }
 
 
-/* =========================================================
-   REDUCED MOTION
-   ========================================================= */
+/* ==========================================================================
+   SMALL MOBILE
+   ========================================================================== */
+
+@media (max-width: 420px) {
+
+    .cadet-header h1 {
+        font-size: 19px;
+    }
+
+    .cadet-header p {
+        font-size: 10px;
+    }
+
+    .cadet-filters {
+        padding: 16px;
+    }
+
+    .cadet-stat {
+        padding: 16px;
+    }
+
+    .cadet-stat-value {
+        font-size: 24px;
+    }
+
+    .cadet-table {
+        min-width: 1050px;
+    }
+
+    .cadet-modal-title-text h2 {
+        font-size: 16px;
+    }
+}
+
+
+/* ==========================================================================
+   ACCESSIBILITY / REDUCED MOTION
+   ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
-    .cadet-page *,
-    .cadet-page *::before,
-    .cadet-page *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
+    .cadet-stat,
+    .cadet-view-btn,
+    .cadet-detail-card,
+    .cadet-modal-close,
+    .cadet-modal-close-btn,
+    .cadet-filters input,
+    .cadet-filters select {
 
-        scroll-behavior: auto !important;
+        transition: none !important;
+    }
 
-        transition-duration: 0.01ms !important;
+    .cadet-modal-overlay.show,
+    .cadet-modal {
+
+        animation: none !important;
     }
 }
-</style>
 
+
+/* ==========================================================================
+   CUSTOM SCROLLBAR
+   ========================================================================== */
+
+.cadet-page * {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        #334d78
+        transparent;
+}
+
+
+.cadet-page *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+
+.cadet-page *::-webkit-scrollbar-track {
+    background:
+        transparent;
+}
+
+
+.cadet-page *::-webkit-scrollbar-thumb {
+    border-radius: 20px;
+
+    background:
+        #334d78;
+}
+
+</style>
 
 <div class="cadet-page">
 
-    {{-- =====================================================
-         PAGE HEADER
-         ===================================================== --}}
+    {{-- ======================================================================
+         STICKY HEADER + FILTERS + STATISTICS
+         ====================================================================== --}}
 
-    <div class="page-header">
+    <div class="cadet-sticky-controls">
 
-        <div class="page-header-content">
 
-            <h2>Cadet Management</h2>
+        {{-- PAGE HEADER --}}
+
+        <div class="cadet-header">
+
+            <h1>
+                Cadet Management
+            </h1>
 
             <p>
-                Manage, monitor, and review registered cadet records.
+                Monitor and manage cadet records efficiently
             </p>
 
         </div>
 
-    </div>
+
+        {{-- FILTERS --}}
+
+        <div class="cadet-filters">
 
 
-    {{-- =====================================================
-         STATISTICS
-         ===================================================== --}}
+            {{-- COURSE --}}
 
-    <div class="stats-grid">
+            <select id="courseFilter">
 
-        {{-- Total --}}
+                <option value="">
+                    All Courses
+                </option>
 
-        <div class="stat-card">
+                @foreach($courses as $course)
 
-            <div class="stat-card-content">
-
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-
-                <div class="stat-info">
-
-                    <h5>Total Cadets</h5>
-
-                    <h2 id="totalCount">
-                        {{ $totalCadets }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- Verified --}}
-
-        <div class="stat-card">
-
-            <div class="stat-card-content">
-
-                <div class="stat-icon">
-                    <i class="fas fa-user-check"></i>
-                </div>
-
-                <div class="stat-info">
-
-                    <h5>Verified</h5>
-
-                    <h2 id="verifiedCount">
-                        {{ $verifiedCadets }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- Pending --}}
-
-        <div class="stat-card">
-
-            <div class="stat-card-content">
-
-                <div class="stat-icon">
-                    <i class="fas fa-user-clock"></i>
-                </div>
-
-                <div class="stat-info">
-
-                    <h5>Pending</h5>
-
-                    <h2 id="pendingCount">
-                        {{ $pendingCadets }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- Deficiency --}}
-
-        <div class="stat-card">
-
-            <div class="stat-card-content">
-
-                <div class="stat-icon">
-                    <i class="fas fa-user-xmark"></i>
-                </div>
-
-                <div class="stat-info">
-
-                    <h5>Deficiency</h5>
-
-                    <h2 id="deficiencyCount">
-                        {{ $deficiencyCadets }}
-                    </h2>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {{-- =====================================================
-         FILTERS
-         ===================================================== --}}
-
-    <div class="filter-container">
-
-        <div class="filter-grid">
-
-            {{-- Course --}}
-
-            <div class="filter-group">
-
-                <label
-                    for="courseFilter"
-                    class="filter-label"
-                >
-                    Course
-                </label>
-
-                <select
-                    id="courseFilter"
-                    class="filter-control"
-                >
-
-                    <option value="">
-                        All Courses
+                    <option value="{{ strtolower($course->course) }}">
+                        {{ $course->course }}
                     </option>
 
-                    @foreach ($courses as $course)
+                @endforeach
 
-                        <option value="{{ $course->course_code }}">
-                            {{ $course->course_code }}
-                        </option>
-
-                    @endforeach
-
-                </select>
-
-            </div>
+            </select>
 
 
-            {{-- Batch --}}
+            {{-- BATCH --}}
 
-            <div class="filter-group">
+            <select id="batchFilter">
 
-                <label
-                    for="batchFilter"
-                    class="filter-label"
-                >
-                    Batch
-                </label>
+                <option value="">
+                    All Batches
+                </option>
 
-                <select
-                    id="batchFilter"
-                    class="filter-control"
-                >
+                @foreach($batches as $batch)
 
-                    <option value="">
-                        All Batches
+                    <option value="{{ strtolower($batch->batch_year) }}">
+                        {{ $batch->batch_year }}
                     </option>
 
-                    @foreach ($batches as $batch)
+                @endforeach
 
-                        <option value="{{ $batch->batch_year }}">
-                            {{ $batch->batch_year }}
-                        </option>
-
-                    @endforeach
-
-                </select>
-
-            </div>
+            </select>
 
 
-            {{-- Deployment --}}
+            {{-- DEPLOYMENT --}}
 
-            <div class="filter-group">
+            <select id="deploymentFilter">
 
-                <label
-                    for="deploymentFilter"
-                    class="filter-label"
-                >
+                <option value="">
                     Deployment
-                </label>
+                </option>
 
-                <select
-                    id="deploymentFilter"
-                    class="filter-control"
-                >
+                <option value="not_deployed">
+                    Not Deployed
+                </option>
 
-                    <option value="">
-                        All Deployment Status
-                    </option>
+                <option value="ongoing">
+                    Ongoing
+                </option>
 
-                    <option value="not deployed">
-                        Not Deployed
-                    </option>
+                <option value="completed">
+                    Completed
+                </option>
 
-                    <option value="ongoing">
-                        Ongoing
-                    </option>
-
-                    <option value="completed">
-                        Completed
-                    </option>
-
-                </select>
-
-            </div>
+            </select>
 
 
-            {{-- Verification --}}
+            {{-- VERIFICATION --}}
 
-            <div class="filter-group">
+            <select id="verificationFilter">
 
-                <label
-                    for="verificationFilter"
-                    class="filter-label"
-                >
+                <option value="">
                     Verification
-                </label>
+                </option>
 
-                <select
-                    id="verificationFilter"
-                    class="filter-control"
+                <option value="verified">
+                    Verified
+                </option>
+
+                <option value="pending">
+                    Pending
+                </option>
+
+                <option value="deficiency">
+                    Deficiency
+                </option>
+
+            </select>
+
+
+            {{-- SEARCH --}}
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search cadet..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        {{-- ==================================================================
+             STATISTICS
+             ================================================================== --}}
+
+        <div class="cadet-stats">
+
+            <div class="cadet-stat cadet-stat-blue">
+
+                Total
+
+                <span
+                    class="cadet-stat-value"
+                    id="totalCadetsCount"
                 >
-
-                    <option value="">
-                        All Verification Status
-                    </option>
-
-                    <option value="verified">
-                        Verified
-                    </option>
-
-                    <option value="pending">
-                        Pending
-                    </option>
-
-                    <option value="deficiency">
-                        Deficiency
-                    </option>
-
-                </select>
+                    {{ $totalCadets }}
+                </span>
 
             </div>
 
 
-            {{-- Search --}}
+            <div class="cadet-stat cadet-stat-green">
 
-            <div class="filter-group">
+                Verified
 
-                <label
-                    for="searchFilter"
-                    class="filter-label"
+                <span
+                    class="cadet-stat-value"
+                    id="verifiedCadetsCount"
                 >
-                    Search
-                </label>
+                    {{ $verifiedCadets }}
+                </span>
 
-                <input
-                    type="text"
-                    id="searchFilter"
-                    class="filter-control"
-                    placeholder="Search cadet..."
-                    autocomplete="off"
+            </div>
+
+
+            <div class="cadet-stat cadet-stat-yellow">
+
+                Pending
+
+                <span
+                    class="cadet-stat-value"
+                    id="pendingCadetsCount"
                 >
+                    {{ $pendingCadets }}
+                </span>
+
+            </div>
+
+
+            <div class="cadet-stat cadet-stat-red">
+
+                Deficiency
+
+                <span
+                    class="cadet-stat-value"
+                    id="deficiencyCadetsCount"
+                >
+                    {{ $deficiencyCadets }}
+                </span>
 
             </div>
 
@@ -1947,36 +2355,11 @@
     </div>
 
 
-    {{-- =====================================================
-         TABLE HEADER
-         ===================================================== --}}
-
-    <div class="table-header">
-
-        <div class="table-title">
-
-            <strong>
-                Cadet Records
-            </strong>
-
-            <span>
-                View and monitor registered cadet information.
-            </span>
-
-        </div>
-
-        <div class="table-hint">
-            Scroll horizontally to view all columns
-        </div>
-
-    </div>
-
-
-    {{-- =====================================================
+    {{-- ======================================================================
          TABLE
-         ===================================================== --}}
+         ====================================================================== --}}
 
-    <div class="table-responsive">
+    <div class="cadet-table-wrapper">
 
         <table class="cadet-table">
 
@@ -1984,50 +2367,71 @@
 
                 <tr>
 
-                    <th>TRB No.</th>
-
-                    <th>Cadet</th>
-
+                    <th>TRB</th>
+                    <th>Name</th>
                     <th>Course</th>
-
                     <th>Batch</th>
-
                     <th>Rank</th>
-
                     <th>Verification</th>
-
                     <th>Deployment</th>
-
                     <th>Action</th>
 
                 </tr>
 
             </thead>
 
+
             <tbody id="cadetTableBody">
 
-                @forelse ($cadets as $cadet)
+                @forelse($cadets as $cadet)
 
                     @php
 
                         /*
                         |--------------------------------------------------------------------------
-                        | Deployment Status
+                        | NORMALIZE DEPLOYMENT STATUS
                         |--------------------------------------------------------------------------
                         */
 
-                        $deploymentStatus =
-                            optional($cadet->deployment)->status;
+                        $rawDeploymentStatus =
+                            strtolower(
+                                trim(
+                                    $cadet->deployment->status
+                                    ?? ''
+                                )
+                            );
 
-                        $deploymentStatus =
-                            $deploymentStatus
-                                ? strtolower(trim($deploymentStatus))
-                                : 'not deployed';
+                        if (
+                            $rawDeploymentStatus === '' ||
+                            $rawDeploymentStatus === 'not started' ||
+                            $rawDeploymentStatus === 'not_deployed' ||
+                            $rawDeploymentStatus === 'not-deployed'
+                        ) {
+
+                            $deploymentStatus = 'not_deployed';
+
+                        } elseif (
+                            $rawDeploymentStatus === 'ongoing'
+                        ) {
+
+                            $deploymentStatus = 'ongoing';
+
+                        } elseif (
+                            $rawDeploymentStatus === 'completed'
+                        ) {
+
+                            $deploymentStatus = 'completed';
+
+                        } else {
+
+                            $deploymentStatus = 'not_deployed';
+
+                        }
 
 
                         /*
                         |--------------------------------------------------------------------------
-                        | Verification Status
+                        | VERIFICATION STATUS
                         |--------------------------------------------------------------------------
                         */
 
@@ -2042,243 +2446,175 @@
 
                         /*
                         |--------------------------------------------------------------------------
-                        | Batch
+                        | VERIFICATION LABEL
                         |--------------------------------------------------------------------------
                         */
 
-                        $batchYear =
-                            optional($cadet->batch)->batch_year;
+                        $verificationLabel = match ($verificationStatus) {
+                            'verified' => 'Verified',
+                            'pending' => 'Pending',
+                            'deficiency' => 'Deficiency',
+                            default => ucfirst($verificationStatus),
+                        };
 
 
                         /*
                         |--------------------------------------------------------------------------
-                        | Photo
+                        | BATCH
                         |--------------------------------------------------------------------------
                         */
 
-                        $photoUrl = $cadet->photo
-                            ? asset('storage/' . $cadet->photo)
-                            : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+                        $batchYear =
+                            optional($cadet->batch)->batch_year
+                            ?? 'No Batch';
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | PHOTO
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $photoUrl =
+                            $cadet->photo
+                                ? asset(
+                                    'storage/' . $cadet->photo
+                                )
+                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DEPLOYMENT LABEL
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $deploymentLabel = match ($deploymentStatus) {
+
+                            'not_deployed' => 'Not Deployed',
+
+                            'ongoing' => 'Ongoing',
+
+                            'completed' => 'Completed',
+
+                            default => 'Not Deployed',
+
+                        };
 
                     @endphp
 
 
                     <tr
-                        class="cadet-row"
-
-                        data-course="{{ strtolower(
-                            optional($cadet->course)->course_code
-                            ?? $cadet->course
-                            ?? ''
-                        ) }}"
-
-                        data-batch="{{ strtolower(
-                            $batchYear ?? ''
-                        ) }}"
-
-                        data-deployment="{{ strtolower(
-                            $deploymentStatus
-                        ) }}"
-
-                        data-verification="{{ strtolower(
-                            $verificationStatus
-                        ) }}"
+                        data-course="{{ strtolower($cadet->course ?? '') }}"
+                        data-batch="{{ strtolower($batchYear) }}"
+                        data-deployment="{{ $deploymentStatus }}"
+                        data-verification="{{ $verificationStatus }}"
                     >
+
 
                         {{-- TRB --}}
 
                         <td>
-                            {{ $cadet->trb_no ?? '—' }}
+                            {{ $cadet->trb_control_number ?? '-' }}
                         </td>
 
 
-                        {{-- Cadet --}}
+                        {{-- NAME --}}
+
+                        <td>
+                            {{ $cadet->full_name ?? '-' }}
+                        </td>
+
+
+                        {{-- COURSE --}}
+
+                        <td>
+                            {{ strtoupper($cadet->course ?? '-') }}
+                        </td>
+
+
+                        {{-- BATCH --}}
+
+                        <td>
+                            {{ $batchYear }}
+                        </td>
+
+
+                        {{-- RANK --}}
+
+                        <td>
+                            {{ $cadet->rank ?? '-' }}
+                        </td>
+
+
+                        {{-- VERIFICATION --}}
 
                         <td>
 
-                            <div class="cadet-name-cell">
-
-                                <div class="cadet-mini-photo">
-
-                                    <img
-                                        src="{{ $photoUrl }}"
-                                        alt="{{ $cadet->name }}"
-                                        loading="lazy"
-                                        onerror="
-                                            this.onerror=null;
-                                            this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
-                                        "
-                                    >
-
-                                </div>
-
-                                <div class="cadet-name-info">
-
-                                    <strong>
-                                        {{ $cadet->name }}
-                                    </strong>
-
-                                    <span>
-                                        {{ $cadet->email ?? 'No email available' }}
-                                    </span>
-
-                                </div>
-
-                            </div>
+                            <span
+                                class="
+                                    cadet-status
+                                    cadet-status-{{ $verificationStatus }}
+                                "
+                                data-status="{{ $verificationStatus }}"
+                            >
+                                {{ $verificationLabel }}
+                            </span>
 
                         </td>
 
 
-                        {{-- Course --}}
+                        {{-- DEPLOYMENT --}}
 
                         <td>
 
-                            {{ optional($cadet->course)->course_code
-                                ?? $cadet->course
-                                ?? '—'
-                            }}
+                            <span
+                                class="
+                                    cadet-status
+                                    cadet-status-{{ str_replace('_', '-', $deploymentStatus) }}
+                                "
+                                data-deployment="{{ $deploymentStatus }}"
+                            >
+                                {{ $deploymentLabel }}
+                            </span>
 
                         </td>
 
 
-                        {{-- Batch --}}
-
-                        <td>
-                            {{ $batchYear ?? '—' }}
-                        </td>
-
-
-                        {{-- Rank --}}
-
-                        <td>
-                            {{ $cadet->rank ?? '—' }}
-                        </td>
-
-
-                        {{-- Verification --}}
-
-                        <td>
-
-                            @if ($verificationStatus === 'verified')
-
-                                <span class="dm-badge badge-green">
-                                    Verified
-                                </span>
-
-                            @elseif ($verificationStatus === 'deficiency')
-
-                                <span class="dm-badge badge-orange">
-                                    Deficiency
-                                </span>
-
-                            @else
-
-                                <span class="dm-badge badge-blue">
-                                    Pending
-                                </span>
-
-                            @endif
-
-                        </td>
-
-
-                        {{-- Deployment --}}
-
-                        <td>
-
-                            @if ($deploymentStatus === 'completed')
-
-                                <span class="dm-badge badge-green">
-                                    Completed
-                                </span>
-
-                            @elseif ($deploymentStatus === 'ongoing')
-
-                                <span class="dm-badge badge-blue">
-                                    Ongoing
-                                </span>
-
-                            @else
-
-                                <span class="dm-badge badge-gray">
-                                    Not Deployed
-                                </span>
-
-                            @endif
-
-                        </td>
-
-
-                        {{-- Action --}}
+                        {{-- ACTION --}}
 
                         <td>
 
                             <button
                                 type="button"
-                                class="btn-view cadet-view-profile"
+                                class="cadet-view-btn cadet-view-profile"
 
-                                data-name="{{ $cadet->name }}"
-                                data-trb="{{ $cadet->trb_no ?? '—' }}"
-
-                                data-course="{{ optional($cadet->course)->course_code
-                                    ?? $cadet->course
-                                    ?? '—'
-                                }}"
-
-                                data-batch="{{ $batchYear ?? '—' }}"
-
-                                data-rank="{{ $cadet->rank ?? '—' }}"
-
-                                data-contact="{{ $cadet->contact ?? '—' }}"
-
-                                data-birth="{{ $cadet->birth_date
-                                    ?? $cadet->date_of_birth
-                                    ?? '—'
-                                }}"
-
-                                data-email="{{ $cadet->email ?? '—' }}"
-
-                                data-verification="{{ $verificationStatus }}"
-
-                                data-deployment="{{ $deploymentStatus }}"
-
+                                data-name="{{ $cadet->full_name ?? '-' }}"
+                                data-trb="{{ $cadet->trb_control_number ?? '-' }}"
+                                data-course="{{ $cadet->course ?? '-' }}"
+                                data-batch="{{ $batchYear }}"
+                                data-rank="{{ $cadet->rank ?? '-' }}"
+                                data-contact="{{ $cadet->contact_number ?? '-' }}"
+                                data-birth="{{ $cadet->date_of_birth ?? 'N/A' }}"
                                 data-photo="{{ $photoUrl }}"
                             >
-
-                                <i class="fas fa-eye"></i>
-
                                 View
-
                             </button>
 
                         </td>
 
                     </tr>
 
+
                 @empty
 
                     <tr>
 
-                        <td colspan="8">
-
-                            <div class="empty-state">
-
-                                <div class="empty-state-icon">
-
-                                    <i class="fas fa-users-slash"></i>
-
-                                </div>
-
-                                <h4>
-                                    No Cadets Found
-                                </h4>
-
-                                <p>
-                                    There are currently no cadet records available.
-                                </p>
-
-                            </div>
-
+                        <td
+                            colspan="8"
+                            class="cadet-table-empty"
+                        >
+                            No cadets found.
                         </td>
 
                     </tr>
@@ -2291,307 +2627,220 @@
 
     </div>
 
-
-    {{-- =====================================================
-         PAGINATION
-         ===================================================== --}}
-
-    @if (method_exists($cadets, 'links'))
-
-        <div>
-            {{ $cadets->links() }}
-        </div>
-
-    @endif
-
-
 </div>
 
 
-{{-- =========================================================
+{{-- ========================================================================
      CADET PROFILE MODAL
-     ========================================================= --}}
+     ======================================================================== --}}
 
 <div
-    id="cadetProfileModal"
-    class="custom-modal-overlay"
+    class="cadet-modal-overlay"
+    id="cadetModal"
     aria-hidden="true"
 >
 
     <div
-        class="custom-modal-box"
+        class="cadet-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cadetModalTitle"
     >
 
-        {{-- Modal Header --}}
 
-        <div class="custom-modal-header">
+        {{-- MODAL HEADER --}}
 
-            <h3 id="cadetModalTitle">
-                Cadet Profile
-            </h3>
+        <div class="cadet-modal-header">
+
+            <div class="cadet-modal-title">
+
+                <div class="cadet-modal-title-icon">
+                    👤
+                </div>
+
+                <div class="cadet-modal-title-text">
+
+                    <h2 id="cadetModalTitle">
+                        Cadet Profile
+                    </h2>
+
+                    <p>
+                        Cadet information and personal details
+                    </p>
+
+                </div>
+
+            </div>
+
 
             <button
                 type="button"
-                class="modal-close"
+                class="cadet-modal-close"
                 id="closeCadetModal"
                 aria-label="Close"
             >
-                <i class="fas fa-times"></i>
+                &times;
             </button>
 
         </div>
 
 
-        {{-- Modal Body --}}
+        {{-- PROFILE --}}
 
-        <div class="custom-modal-body">
+        <div class="cadet-profile-section">
 
-            {{-- Profile --}}
-
-            <div class="profile-section">
-
-                <div class="cadet-profile">
-
-                    <img
-                        id="modalCadetPhoto"
-                        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                        alt="Cadet Profile"
-                    >
-
-                </div>
+            <img
+                id="modalPhoto"
+                class="cadet-modal-photo"
+                src=""
+                alt="Cadet Photo"
+            >
 
 
-                <div class="profile-info">
+            <div class="cadet-profile-info">
 
-                    <h3 id="modalCadetName">
-                        —
-                    </h3>
+                <h3
+                    class="cadet-profile-name"
+                    id="modalName"
+                >
+                    -
+                </h3>
 
-                    <p id="modalCadetCourse">
-                        —
-                    </p>
 
-                    <span
-                        class="trb-number"
-                        id="modalCadetTrb"
-                    >
-                        TRB: —
+                <span class="cadet-profile-trb">
+
+                    TRB:
+                    &nbsp;
+
+                    <span id="modalTrb">
+                        -
                     </span>
 
-                </div>
+                </span>
 
             </div>
 
-
-            {{-- Personal Information --}}
-
-            <div class="detail-section">
-
-                <div class="detail-section-title">
-                    Personal Information
-                </div>
+        </div>
 
 
-                <div class="detail-row">
+        {{-- DETAILS --}}
 
-                    <span class="detail-label">
-                        Full Name
-                    </span>
+        <div class="cadet-details-section">
 
-                    <span
-                        class="detail-value"
-                        id="detailName"
-                    >
-                        —
-                    </span>
-
-                </div>
+            <h3 class="cadet-details-title">
+                Cadet Information
+            </h3>
 
 
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        TRB Number
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="detailTrb"
-                    >
-                        —
-                    </span>
-
-                </div>
+            <div class="cadet-details-grid">
 
 
-                <div class="detail-row">
+                {{-- COURSE --}}
 
-                    <span class="detail-label">
-                        Email
-                    </span>
+                <div class="cadet-detail-card">
 
-                    <span
-                        class="detail-value"
-                        id="detailEmail"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        Contact
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="detailContact"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        Birth Date
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="detailBirth"
-                    >
-                        —
-                    </span>
-
-                </div>
-
-            </div>
-
-
-            {{-- Academic Information --}}
-
-            <div class="detail-section">
-
-                <div class="detail-section-title">
-                    Academic Information
-                </div>
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
+                    <span class="cadet-detail-label">
                         Course
                     </span>
 
                     <span
-                        class="detail-value"
-                        id="detailCourse"
+                        class="cadet-detail-value"
+                        id="modalCourse"
                     >
-                        —
+                        -
                     </span>
 
                 </div>
 
 
-                <div class="detail-row">
+                {{-- BATCH --}}
 
-                    <span class="detail-label">
+                <div class="cadet-detail-card">
+
+                    <span class="cadet-detail-label">
                         Batch
                     </span>
 
                     <span
-                        class="detail-value"
-                        id="detailBatch"
+                        class="cadet-detail-value"
+                        id="modalBatch"
                     >
-                        —
+                        -
                     </span>
 
                 </div>
 
 
-                <div class="detail-row">
+                {{-- RANK --}}
 
-                    <span class="detail-label">
+                <div class="cadet-detail-card">
+
+                    <span class="cadet-detail-label">
                         Rank
                     </span>
 
                     <span
-                        class="detail-value"
-                        id="detailRank"
+                        class="cadet-detail-value"
+                        id="modalRank"
                     >
-                        —
+                        -
                     </span>
 
                 </div>
 
-            </div>
 
+                {{-- CONTACT --}}
 
-            {{-- Status Information --}}
+                <div class="cadet-detail-card">
 
-            <div class="detail-section">
-
-                <div class="detail-section-title">
-                    Status Information
-                </div>
-
-
-                <div class="detail-row">
-
-                    <span class="detail-label">
-                        Verification
+                    <span class="cadet-detail-label">
+                        Contact Number
                     </span>
 
                     <span
-                        class="detail-value"
-                        id="detailVerification"
+                        class="cadet-detail-value"
+                        id="modalContact"
                     >
-                        —
+                        -
                     </span>
 
                 </div>
 
 
-                <div class="detail-row">
+                {{-- BIRTH DATE --}}
 
-                    <span class="detail-label">
-                        Deployment
+                <div class="cadet-detail-card">
+
+                    <span class="cadet-detail-label">
+                        Birth Date
                     </span>
 
                     <span
-                        class="detail-value"
-                        id="detailDeployment"
+                        class="cadet-detail-value"
+                        id="modalBirth"
                     >
-                        —
+                        -
                     </span>
 
                 </div>
 
-            </div>
-
-
-            {{-- Footer --}}
-
-            <div class="modal-footer">
-
-                <button
-                    type="button"
-                    class="modal-footer-btn"
-                    id="closeCadetModalFooter"
-                >
-                    Close
-                </button>
 
             </div>
+
+        </div>
+
+
+        {{-- FOOTER --}}
+
+        <div class="cadet-modal-footer">
+
+            <button
+                type="button"
+                class="cadet-modal-close-btn"
+                id="closeCadetModalFooter"
+            >
+                Close
+            </button>
 
         </div>
 
@@ -2601,14 +2850,15 @@
 
 
 <script>
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* =====================================================
+    /* ======================================================================
        ELEMENTS
-       ===================================================== */
+       ====================================================================== */
 
     const modal =
-        document.getElementById('cadetProfileModal');
+        document.getElementById('cadetModal');
 
     const closeModalButton =
         document.getElementById('closeCadetModal');
@@ -2616,12 +2866,34 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeModalFooter =
         document.getElementById('closeCadetModalFooter');
 
-    const viewButtons =
-        document.querySelectorAll('.cadet-view-profile');
+    const modalPhoto =
+        document.getElementById('modalPhoto');
 
-    const rows =
-        document.querySelectorAll('.cadet-row');
+    const modalName =
+        document.getElementById('modalName');
 
+    const modalTrb =
+        document.getElementById('modalTrb');
+
+    const modalCourse =
+        document.getElementById('modalCourse');
+
+    const modalBatch =
+        document.getElementById('modalBatch');
+
+    const modalRank =
+        document.getElementById('modalRank');
+
+    const modalContact =
+        document.getElementById('modalContact');
+
+    const modalBirth =
+        document.getElementById('modalBirth');
+
+
+    /* ======================================================================
+       FILTER ELEMENTS
+       ====================================================================== */
 
     const courseFilter =
         document.getElementById('courseFilter');
@@ -2635,327 +2907,110 @@ document.addEventListener('DOMContentLoaded', function () {
     const verificationFilter =
         document.getElementById('verificationFilter');
 
-    const searchFilter =
-        document.getElementById('searchFilter');
+    const searchInput =
+        document.getElementById('searchInput');
+
+    const tableBody =
+        document.getElementById('cadetTableBody');
+
+    const tableRows =
+        tableBody
+            ? tableBody.querySelectorAll('tr')
+            : [];
 
 
-    const totalCount =
-        document.getElementById('totalCount');
-
-    const verifiedCount =
-        document.getElementById('verifiedCount');
-
-    const pendingCount =
-        document.getElementById('pendingCount');
-
-    const deficiencyCount =
-        document.getElementById('deficiencyCount');
-
-
-    /* =====================================================
+    /* ======================================================================
        DEFAULT PHOTO
-       ===================================================== */
+       ====================================================================== */
 
     const defaultPhoto =
         'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
 
-    /* =====================================================
-       HELPER
-       ===================================================== */
+    /* ======================================================================
+       OPEN PROFILE MODAL
+       ====================================================================== */
 
-    function safeValue(value) {
+    document
+        .querySelectorAll('.cadet-view-profile')
+        .forEach(function (button) {
 
-        if (
-            value === undefined ||
-            value === null ||
-            value === '' ||
-            value === 'null' ||
-            value === 'undefined'
-        ) {
-            return '—';
-        }
+            button.addEventListener(
+                'click',
+                function () {
 
-        return value;
-    }
+                    /* ------------------------------------------------------
+                       GET DATA
+                       ------------------------------------------------------ */
 
+                    modalName.textContent =
+                        this.dataset.name || '-';
 
-    /* =====================================================
-       OPEN MODAL
-       ===================================================== */
+                    modalTrb.textContent =
+                        this.dataset.trb || '-';
 
-    function openModal(button) {
+                    modalCourse.textContent =
+                        this.dataset.course || '-';
 
-        if (!modal || !button) {
-            return;
-        }
+                    modalBatch.textContent =
+                        this.dataset.batch || '-';
 
+                    modalRank.textContent =
+                        this.dataset.rank || '-';
 
-        const name =
-            safeValue(button.dataset.name);
+                    modalContact.textContent =
+                        this.dataset.contact || '-';
 
-        const trb =
-            safeValue(button.dataset.trb);
-
-        const course =
-            safeValue(button.dataset.course);
-
-        const batch =
-            safeValue(button.dataset.batch);
-
-        const rank =
-            safeValue(button.dataset.rank);
-
-        const contact =
-            safeValue(button.dataset.contact);
-
-        const birth =
-            safeValue(button.dataset.birth);
-
-        const email =
-            safeValue(button.dataset.email);
-
-        const verification =
-            safeValue(button.dataset.verification);
-
-        const deployment =
-            safeValue(button.dataset.deployment);
-
-        const photo =
-            safeValue(button.dataset.photo);
+                    modalBirth.textContent =
+                        this.dataset.birth || '-';
 
 
-        /* -------------------------------------------------
-           Profile
-           ------------------------------------------------- */
+                    /* ------------------------------------------------------
+                       PHOTO
+                       ------------------------------------------------------ */
 
-        document.getElementById(
-            'modalCadetName'
-        ).textContent = name;
+                    const photo =
+                        this.dataset.photo || defaultPhoto;
 
+                    modalPhoto.onerror =
+                        function () {
 
-        document.getElementById(
-            'modalCadetCourse'
-        ).textContent = course;
+                            this.onerror = null;
 
+                            this.src =
+                                defaultPhoto;
 
-        document.getElementById(
-            'modalCadetTrb'
-        ).textContent = 'TRB: ' + trb;
+                        };
 
-
-        const modalPhoto =
-            document.getElementById('modalCadetPhoto');
+                    modalPhoto.src =
+                        photo;
 
 
-        modalPhoto.src =
-            photo !== '—'
-                ? photo
-                : defaultPhoto;
+                    /* ------------------------------------------------------
+                       SHOW MODAL
+                       ------------------------------------------------------ */
 
+                    modal.classList.add('show');
 
-        modalPhoto.onerror = function () {
+                    modal.setAttribute(
+                        'aria-hidden',
+                        'false'
+                    );
 
-            this.onerror = null;
+                    document.body.style.overflow =
+                        'hidden';
 
-            this.src = defaultPhoto;
-
-        };
-
-
-        /* -------------------------------------------------
-           Personal Information
-           ------------------------------------------------- */
-
-        document.getElementById(
-            'detailName'
-        ).textContent = name;
-
-
-        document.getElementById(
-            'detailTrb'
-        ).textContent = trb;
-
-
-        document.getElementById(
-            'detailEmail'
-        ).textContent = email;
-
-
-        document.getElementById(
-            'detailContact'
-        ).textContent = contact;
-
-
-        document.getElementById(
-            'detailBirth'
-        ).textContent = birth;
-
-
-        /* -------------------------------------------------
-           Academic Information
-           ------------------------------------------------- */
-
-        document.getElementById(
-            'detailCourse'
-        ).textContent = course;
-
-
-        document.getElementById(
-            'detailBatch'
-        ).textContent = batch;
-
-
-        document.getElementById(
-            'detailRank'
-        ).textContent = rank;
-
-
-        /* -------------------------------------------------
-           Verification
-           ------------------------------------------------- */
-
-        const verificationElement =
-            document.getElementById(
-                'detailVerification'
+                }
             );
 
-
-        verificationElement.innerHTML = '';
-
-
-        const verificationBadge =
-            document.createElement('span');
+        });
 
 
-        verificationBadge.classList.add(
-            'modal-status'
-        );
-
-
-        if (verification === 'verified') {
-
-            verificationBadge.classList.add(
-                'completed'
-            );
-
-            verificationBadge.textContent =
-                'Verified';
-
-        } else if (
-            verification === 'deficiency'
-        ) {
-
-            verificationBadge.classList.add(
-                'ongoing'
-            );
-
-            verificationBadge.textContent =
-                'Deficiency';
-
-        } else {
-
-            verificationBadge.classList.add(
-                'not-deployed'
-            );
-
-            verificationBadge.textContent =
-                'Pending';
-
-        }
-
-
-        verificationElement.appendChild(
-            verificationBadge
-        );
-
-
-        /* -------------------------------------------------
-           Deployment
-           ------------------------------------------------- */
-
-        const deploymentElement =
-            document.getElementById(
-                'detailDeployment'
-            );
-
-
-        deploymentElement.innerHTML = '';
-
-
-        const deploymentBadge =
-            document.createElement('span');
-
-
-        deploymentBadge.classList.add(
-            'modal-status'
-        );
-
-
-        if (deployment === 'completed') {
-
-            deploymentBadge.classList.add(
-                'completed'
-            );
-
-            deploymentBadge.textContent =
-                'Completed';
-
-        } else if (
-            deployment === 'ongoing'
-        ) {
-
-            deploymentBadge.classList.add(
-                'ongoing'
-            );
-
-            deploymentBadge.textContent =
-                'Ongoing';
-
-        } else {
-
-            deploymentBadge.classList.add(
-                'not-deployed'
-            );
-
-            deploymentBadge.textContent =
-                'Not Deployed';
-
-        }
-
-
-        deploymentElement.appendChild(
-            deploymentBadge
-        );
-
-
-        /* -------------------------------------------------
-           Show
-           ------------------------------------------------- */
-
-        modal.classList.add('show');
-
-        modal.setAttribute(
-            'aria-hidden',
-            'false'
-        );
-
-        document.body.style.overflow =
-            'hidden';
-
-    }
-
-
-    /* =====================================================
+    /* ======================================================================
        CLOSE MODAL
-       ===================================================== */
+       ====================================================================== */
 
-    function closeModal() {
-
-        if (!modal) {
-            return;
-        }
-
+    function closeCadetModal() {
 
         modal.classList.remove('show');
 
@@ -2964,90 +3019,45 @@ document.addEventListener('DOMContentLoaded', function () {
             'true'
         );
 
-        document.body.style.overflow = '';
+        document.body.style.overflow =
+            '';
 
     }
 
 
-    /* =====================================================
-       VIEW BUTTON EVENTS
-       ===================================================== */
+    /* ======================================================================
+       CLOSE BUTTON
+       ====================================================================== */
 
-    viewButtons.forEach(function (button) {
-
-        button.addEventListener(
-            'click',
-            function () {
-
-                openModal(this);
-
-            }
-        );
-
-    });
+    closeModalButton.addEventListener(
+        'click',
+        closeCadetModal
+    );
 
 
-    /* =====================================================
-       CLOSE BUTTON EVENTS
-       ===================================================== */
+    /* ======================================================================
+       FOOTER CLOSE BUTTON
+       ====================================================================== */
 
-    if (closeModalButton) {
-
-        closeModalButton.addEventListener(
-            'click',
-            closeModal
-        );
-
-    }
+    closeModalFooter.addEventListener(
+        'click',
+        closeCadetModal
+    );
 
 
-    if (closeModalFooter) {
+    /* ======================================================================
+       CLICK OUTSIDE MODAL
+       ====================================================================== */
 
-        closeModalFooter.addEventListener(
-            'click',
-            closeModal
-        );
-
-    }
-
-
-    /* =====================================================
-       CLOSE WHEN CLICKING BACKDROP
-       ===================================================== */
-
-    if (modal) {
-
-        modal.addEventListener(
-            'click',
-            function (event) {
-
-                if (event.target === modal) {
-
-                    closeModal();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       ESCAPE KEY
-       ===================================================== */
-
-    document.addEventListener(
-        'keydown',
+    modal.addEventListener(
+        'click',
         function (event) {
 
             if (
-                event.key === 'Escape' &&
-                modal &&
-                modal.classList.contains('show')
+                event.target === modal
             ) {
 
-                closeModal();
+                closeCadetModal();
 
             }
 
@@ -3055,101 +3065,178 @@ document.addEventListener('DOMContentLoaded', function () {
     );
 
 
-    /* =====================================================
-       TABLE FILTER
-       ===================================================== */
+    /* ======================================================================
+       ESCAPE KEY
+       ====================================================================== */
+
+    document.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key === 'Escape' &&
+                modal.classList.contains('show')
+            ) {
+
+                closeCadetModal();
+
+            }
+
+        }
+    );
+
+
+    /* ======================================================================
+       FILTER TABLE
+       ====================================================================== */
 
     function filterTable() {
 
-        const selectedCourse =
-            (courseFilter?.value || '')
-                .toLowerCase()
-                .trim();
+        const course =
+            courseFilter.value
+                .trim()
+                .toLowerCase();
+
+        const batch =
+            batchFilter.value
+                .trim()
+                .toLowerCase();
+
+        const deployment =
+            deploymentFilter.value
+                .trim()
+                .toLowerCase();
+
+        const verification =
+            verificationFilter.value
+                .trim()
+                .toLowerCase();
+
+        const search =
+            searchInput.value
+                .trim()
+                .toLowerCase();
 
 
-        const selectedBatch =
-            (batchFilter?.value || '')
-                .toLowerCase()
-                .trim();
+        /* ==============================================================
+           COUNTERS
+           ============================================================== */
+
+        let total = 0;
+
+        let verified = 0;
+
+        let pending = 0;
+
+        let deficiency = 0;
 
 
-        const selectedDeployment =
-            (deploymentFilter?.value || '')
-                .toLowerCase()
-                .trim();
+        /* ==============================================================
+           LOOP THROUGH ROWS
+           ============================================================== */
+
+        tableRows.forEach(function (row) {
+
+            /* ----------------------------------------------------------
+               SKIP EMPTY ROW
+               ---------------------------------------------------------- */
+
+            if (
+                row.classList.contains('cadet-table-empty')
+            ) {
+                return;
+            }
 
 
-        const selectedVerification =
-            (verificationFilter?.value || '')
-                .toLowerCase()
-                .trim();
+            if (
+                row.querySelector('.cadet-table-empty')
+            ) {
+                return;
+            }
 
 
-        const searchTerm =
-            (searchFilter?.value || '')
-                .toLowerCase()
-                .trim();
-
-
-        let visibleTotal = 0;
-        let visibleVerified = 0;
-        let visiblePending = 0;
-        let visibleDeficiency = 0;
-
-
-        rows.forEach(function (row) {
+            /* ----------------------------------------------------------
+               GET ROW DATA
+               ---------------------------------------------------------- */
 
             const rowCourse =
-                (row.dataset.course || '')
-                    .toLowerCase();
-
+                (
+                    row.dataset.course || ''
+                ).toLowerCase();
 
             const rowBatch =
-                (row.dataset.batch || '')
-                    .toLowerCase();
-
+                (
+                    row.dataset.batch || ''
+                ).toLowerCase();
 
             const rowDeployment =
-                (row.dataset.deployment || '')
-                    .toLowerCase();
-
+                (
+                    row.dataset.deployment || ''
+                ).toLowerCase();
 
             const rowVerification =
-                (row.dataset.verification || '')
-                    .toLowerCase();
-
+                (
+                    row.dataset.verification || ''
+                ).toLowerCase();
 
             const rowText =
-                row.textContent
-                    .toLowerCase();
+                (
+                    row.textContent || ''
+                )
+                .trim()
+                .toLowerCase();
 
+
+            /* ----------------------------------------------------------
+               MATCH COURSE
+               ---------------------------------------------------------- */
 
             const matchesCourse =
-                !selectedCourse ||
-                rowCourse === selectedCourse;
+                !course ||
+                rowCourse.includes(course);
 
+
+            /* ----------------------------------------------------------
+               MATCH BATCH
+               ---------------------------------------------------------- */
 
             const matchesBatch =
-                !selectedBatch ||
-                rowBatch === selectedBatch;
+                !batch ||
+                rowBatch.includes(batch);
 
+
+            /* ----------------------------------------------------------
+               MATCH DEPLOYMENT
+               ---------------------------------------------------------- */
 
             const matchesDeployment =
-                !selectedDeployment ||
-                rowDeployment === selectedDeployment;
+                !deployment ||
+                rowDeployment === deployment;
 
+
+            /* ----------------------------------------------------------
+               MATCH VERIFICATION
+               ---------------------------------------------------------- */
 
             const matchesVerification =
-                !selectedVerification ||
-                rowVerification === selectedVerification;
+                !verification ||
+                rowVerification === verification;
 
+
+            /* ----------------------------------------------------------
+               MATCH SEARCH
+               ---------------------------------------------------------- */
 
             const matchesSearch =
-                !searchTerm ||
-                rowText.includes(searchTerm);
+                !search ||
+                rowText.includes(search);
 
 
-            const shouldShow =
+            /* ----------------------------------------------------------
+               FINAL MATCH
+               ---------------------------------------------------------- */
+
+            const matches =
                 matchesCourse &&
                 matchesBatch &&
                 matchesDeployment &&
@@ -3157,43 +3244,48 @@ document.addEventListener('DOMContentLoaded', function () {
                 matchesSearch;
 
 
+            /* ----------------------------------------------------------
+               SHOW / HIDE
+               ---------------------------------------------------------- */
+
             row.style.display =
-                shouldShow
+                matches
                     ? ''
                     : 'none';
 
 
-            if (shouldShow) {
+            /* ----------------------------------------------------------
+               UPDATE COUNTERS
+               ---------------------------------------------------------- */
 
-                visibleTotal++;
+            if (matches) {
+
+                total++;
 
 
                 if (
-                    rowVerification ===
-                    'verified'
+                    rowVerification === 'verified'
                 ) {
 
-                    visibleVerified++;
+                    verified++;
 
                 }
 
 
                 if (
-                    rowVerification ===
-                    'pending'
+                    rowVerification === 'pending'
                 ) {
 
-                    visiblePending++;
+                    pending++;
 
                 }
 
 
                 if (
-                    rowVerification ===
-                    'deficiency'
+                    rowVerification === 'deficiency'
                 ) {
 
-                    visibleDeficiency++;
+                    deficiency++;
 
                 }
 
@@ -3202,80 +3294,103 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
 
-        if (totalCount) {
+        /* ==============================================================
+           UPDATE STATISTICS
+           ============================================================== */
 
-            totalCount.textContent =
-                visibleTotal;
+        const totalElement =
+            document.getElementById(
+                'totalCadetsCount'
+            );
+
+        const verifiedElement =
+            document.getElementById(
+                'verifiedCadetsCount'
+            );
+
+        const pendingElement =
+            document.getElementById(
+                'pendingCadetsCount'
+            );
+
+        const deficiencyElement =
+            document.getElementById(
+                'deficiencyCadetsCount'
+            );
+
+
+        if (totalElement) {
+
+            totalElement.textContent =
+                total;
 
         }
 
 
-        if (verifiedCount) {
+        if (verifiedElement) {
 
-            verifiedCount.textContent =
-                visibleVerified;
-
-        }
-
-
-        if (pendingCount) {
-
-            pendingCount.textContent =
-                visiblePending;
+            verifiedElement.textContent =
+                verified;
 
         }
 
 
-        if (deficiencyCount) {
+        if (pendingElement) {
 
-            deficiencyCount.textContent =
-                visibleDeficiency;
+            pendingElement.textContent =
+                pending;
+
+        }
+
+
+        if (deficiencyElement) {
+
+            deficiencyElement.textContent =
+                deficiency;
 
         }
 
     }
 
 
-    /* =====================================================
-       FILTER EVENTS
-       ===================================================== */
+    /* ======================================================================
+       FILTER EVENT LISTENERS
+       ====================================================================== */
 
-    [
-        courseFilter,
-        batchFilter,
-        deploymentFilter,
-        verificationFilter
-    ].forEach(function (element) {
+    courseFilter.addEventListener(
+        'change',
+        filterTable
+    );
 
-        if (!element) {
-            return;
-        }
+    batchFilter.addEventListener(
+        'change',
+        filterTable
+    );
 
-        element.addEventListener(
-            'change',
-            filterTable
-        );
+    deploymentFilter.addEventListener(
+        'change',
+        filterTable
+    );
 
-    });
+    verificationFilter.addEventListener(
+        'change',
+        filterTable
+    );
 
-
-    if (searchFilter) {
-
-        searchFilter.addEventListener(
-            'input',
-            filterTable
-        );
-
-    }
+    searchInput.addEventListener(
+        'input',
+        filterTable
+    );
 
 
-    /* =====================================================
+    /* ======================================================================
        INITIAL FILTER
-       ===================================================== */
+       ====================================================================== */
 
     filterTable();
 
 });
+
 </script>
 
 @endsection
