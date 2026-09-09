@@ -742,6 +742,32 @@
 
         </div>
 
+        {{-- =====================================================
+             PAGINATION
+        ====================================================== --}}
+
+        @if($cadets->hasPages())
+
+            <div class="pagination-wrapper">
+
+                <div class="pagination-info">
+                    Showing
+                    <strong>{{ $cadets->firstItem() }}</strong>
+                    to
+                    <strong>{{ $cadets->lastItem() }}</strong>
+                    of
+                    <strong>{{ $cadets->total() }}</strong>
+                    cadets
+                </div>
+
+                <div class="pagination-links">
+                    {{ $cadets->links() }}
+                </div>
+
+            </div>
+
+        @endif
+
     </div>
 
 </div>
