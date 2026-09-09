@@ -15,32 +15,40 @@ use App\Events\CadetLocationUpdated;
 
 class CadetController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $cadets = Cadet::with(['user', 'batch', 'deployment'])
-            ->orderBy('full_name')
-            ->get();
+        $cadets = Cadet::with([
+            'user:id,is_active',
+            'batch:id,batch_year',
+            'deployment:id,cadet_id,status',
+        ])
+        ->orderBy('full_name')
+        ->paginate(25)
+        ->withQueryString();
 
         $batches = Batch::orderBy('batch_year', 'desc')->get();
 
-        $courses = Cadet::select('course')
-            ->whereNotNull('course')
-            ->where('course', '!=', '')
-            ->distinct()
-            ->orderBy('course')
-            ->get();
+        $courses = Course::orderBy('course_name')->get();
 
         $totalCadets = Cadet::count();
 
-        return view('admin.cadets.index', [
-            'cadets' => $cadets,
-            'batches' => $batches,
-            'courses' => $courses,
-            'totalCadets' => $totalCadets,
-            'activeCadets' => $totalCadets,
-            'withDeployment' => Cadet::has('deployment')->count(),
-            'noDeployment' => Cadet::doesntHave('deployment')->count(),
-        ]);
+        $withDeployment = Cadet::has('deployment')->count();
+
+        $noDeployment = Cadet::doesntHave('deployment')->count();
+
+        $activeCadets = Cadet::whereHas('user', function ($query) {
+            $query->where('is_active', true);
+        })->count();
+
+        return view('admin.cadets.index', compact(
+            'cadets',
+            'batches',
+            'courses',
+            'totalCadets',
+            'activeCadets',
+            'withDeployment',
+            'noDeployment'
+        ));
     }
 
     public function create()
