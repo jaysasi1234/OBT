@@ -282,7 +282,8 @@
                     @foreach($courses as $course)
 
                         <option
-                            value="{{ strtolower(trim($course->course)) }}"
+                            value="{{ $course->course }}"
+                            {{ request('course') == $course->course ? 'selected' : '' }}
                         >
                             {{ strtoupper($course->course) }}
                         </option>
@@ -302,21 +303,24 @@
                     Batch
                 </label>
 
-                <select id="batchFilter">
+                    <select id="batchFilter">
 
-                    <option value="">
-                        All Batches
-                    </option>
-
-                    @foreach($batches as $batch)
-
-                        <option value="{{ strtolower(trim($batch->batch_year)) }}">
-                            {{ $batch->batch_year }}
+                        <option value="">
+                            All Batches
                         </option>
 
-                    @endforeach
+                        @foreach($batches as $batch)
 
-                </select>
+                            <option
+                                value="{{ $batch->id }}"
+                                {{ request('batch') == $batch->id ? 'selected' : '' }}
+                            >
+                                {{ $batch->batch_year }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
 
             </div>
 
@@ -335,15 +339,24 @@
                         All Deployment Status
                     </option>
 
-                    <option value="not_deployed">
+                    <option
+                        value="not_deployed"
+                        {{ request('deployment') === 'not_deployed' ? 'selected' : '' }}
+                    >
                         Not Deployed
                     </option>
 
-                    <option value="ongoing">
+                    <option
+                        value="ongoing"
+                        {{ request('deployment') === 'ongoing' ? 'selected' : '' }}
+                    >
                         Ongoing
                     </option>
 
-                    <option value="completed">
+                    <option
+                        value="completed"
+                        {{ request('deployment') === 'completed' ? 'selected' : '' }}
+                    >
                         Completed
                     </option>
 
@@ -2027,25 +2040,25 @@
        FILTER EVENTS
     ===================================================== */
 
-    deploymentFilter?.addEventListener(
-        'change',
-        filterTable
-    );
+deploymentFilter?.addEventListener(
+    'change',
+    applyFilters
+);
 
-    courseFilter?.addEventListener(
-        'change',
-        filterTable
-    );
+courseFilter?.addEventListener(
+    'change',
+    applyFilters
+);
 
-    batchFilter?.addEventListener(
-        'change',
-        filterTable
-    );
+batchFilter?.addEventListener(
+    'change',
+    applyFilters
+);
 
-    verificationFilter?.addEventListener(
-        'change',
-        filterTable
-    );
+verificationFilter?.addEventListener(
+    'change',
+    applyFilters
+);
 
     searchInput?.addEventListener(
         'input',
