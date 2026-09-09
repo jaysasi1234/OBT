@@ -6,25 +6,36 @@
 
 <div class="cadet-management-page">
 
-    {{-- =====================================================
+    {{-- =========================================================
          SUCCESS NOTIFICATION
-    ====================================================== --}}
+    ========================================================== --}}
     @if(session('success'))
         <div id="success-notif" class="notif success-notif">
+
             <i class="fas fa-circle-check"></i>
-            <span>{{ session('success') }}</span>
-            <button type="button" onclick="closeSuccessNotif()">
+
+            <span>
+                {{ session('success') }}
+            </span>
+
+            <button
+                type="button"
+                onclick="closeSuccessNotif()"
+                aria-label="Close notification"
+            >
                 <i class="fas fa-xmark"></i>
             </button>
+
         </div>
     @endif
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          VALIDATION ERRORS
-    ====================================================== --}}
+    ========================================================== --}}
     @if($errors->any())
-        <div class="notif error-notif">
+        <div class="validation-alert">
+
             <i class="fas fa-circle-exclamation"></i>
 
             <div>
@@ -37,99 +48,147 @@
                 </ul>
             </div>
 
-            <button type="button" onclick="this.parentElement.remove()">
-                <i class="fas fa-xmark"></i>
-            </button>
         </div>
     @endif
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          PAGE HEADER
-    ====================================================== --}}
+    ========================================================== --}}
     <div class="page-header">
 
-        <div class="page-header-left">
+        <div class="header-content">
 
-            <div class="page-title-icon">
+            <h1>
                 <i class="fas fa-user-graduate"></i>
-            </div>
+                Cadet Management
+            </h1>
 
-            <div>
-                <h1>Cadet Management</h1>
-                <p>Manage cadet records, deployment and verification status.</p>
-            </div>
+            <p>
+                Manage cadet records, deployment and verification status.
+            </p>
 
         </div>
 
-        <a href="{{ route('admin.cadets.create') }}" class="btn-primary">
-            <i class="fas fa-user-plus"></i>
-            <span>Add New Cadet</span>
-        </a>
+        <div class="header-actions">
+
+            <a
+                href="{{ route('admin.cadets.create') }}"
+                class="add-btn"
+            >
+                <i class="fas fa-user-plus"></i>
+                <span>Add New Cadet</span>
+            </a>
+
+        </div>
 
     </div>
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          STATISTICS
-    ====================================================== --}}
-    <div class="stats-grid">
+    ========================================================== --}}
+    <div class="cards">
 
-        {{-- Total --}}
-        <div class="stat-card">
+        {{-- TOTAL --}}
+        <div class="stat-card blue">
+
+            <div class="stat-content">
+
+                <div class="stat-label">
+                    TOTAL CADETS
+                </div>
+
+                <div class="stat-number">
+                    {{ number_format($totalCadets) }}
+                </div>
+
+                <div class="stat-subtitle">
+                    All registered cadets
+                </div>
+
+            </div>
 
             <div class="stat-icon">
                 <i class="fas fa-users"></i>
             </div>
 
-            <div class="stat-content">
-                <span class="stat-label">Total Cadets</span>
-                <strong>{{ number_format($totalCadets) }}</strong>
-            </div>
-
         </div>
 
 
-        {{-- Active --}}
-        <div class="stat-card">
+        {{-- ACTIVE --}}
+        <div class="stat-card green">
+
+            <div class="stat-content">
+
+                <div class="stat-label">
+                    ACTIVE CADETS
+                </div>
+
+                <div class="stat-number">
+                    {{ number_format($activeCadets) }}
+                </div>
+
+                <div class="stat-subtitle">
+                    Currently active accounts
+                </div>
+
+            </div>
 
             <div class="stat-icon">
                 <i class="fas fa-user-check"></i>
             </div>
 
-            <div class="stat-content">
-                <span class="stat-label">Active Cadets</span>
-                <strong>{{ number_format($activeCadets) }}</strong>
-            </div>
-
         </div>
 
 
-        {{-- Deployed --}}
-        <div class="stat-card">
+        {{-- DEPLOYED --}}
+        <div class="stat-card orange">
+
+            <div class="stat-content">
+
+                <div class="stat-label">
+                    CURRENTLY DEPLOYED
+                </div>
+
+                <div class="stat-number">
+                    {{ number_format($withDeployment) }}
+                </div>
+
+                <div class="stat-subtitle">
+                    Cadets with deployment
+                </div>
+
+            </div>
 
             <div class="stat-icon">
                 <i class="fas fa-ship"></i>
             </div>
 
-            <div class="stat-content">
-                <span class="stat-label">Currently Deployed</span>
-                <strong>{{ number_format($withDeployment) }}</strong>
-            </div>
-
         </div>
 
 
-        {{-- No Deployment --}}
-        <div class="stat-card">
+        {{-- NO DEPLOYMENT --}}
+        <div class="stat-card red">
+
+            <div class="stat-content">
+
+                <div class="stat-label">
+                    NO DEPLOYMENT
+                </div>
+
+                <div class="stat-number">
+                    {{ number_format($noDeployment) }}
+                </div>
+
+                <div class="stat-subtitle">
+                    Available for deployment
+                </div>
+
+            </div>
 
             <div class="stat-icon">
                 <i class="fas fa-user-clock"></i>
-            </div>
-
-            <div class="stat-content">
-                <span class="stat-label">No Deployment</span>
-                <strong>{{ number_format($noDeployment) }}</strong>
             </div>
 
         </div>
@@ -137,9 +196,9 @@
     </div>
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          FILTER PANEL
-    ====================================================== --}}
+    ========================================================== --}}
     <form
         method="GET"
         action="{{ route('admin.cadets.index') }}"
@@ -149,16 +208,22 @@
 
         <div class="filter-header">
 
-            <div>
-                <h3>
-                    <i class="fas fa-filter"></i>
-                    Filter Cadets
-                </h3>
+            <div class="filter-title">
 
-                <p>
-                    Search and filter cadet records.
-                </p>
+                <div class="filter-title-icon">
+                    <i class="fas fa-filter"></i>
+                </div>
+
+                <div>
+                    <h3>Filter Cadets</h3>
+
+                    <span>
+                        Search and filter cadet records
+                    </span>
+                </div>
+
             </div>
+
 
             @if(request()->hasAny([
                 'search',
@@ -167,6 +232,7 @@
                 'deployment',
                 'verification'
             ]))
+
                 <a
                     href="{{ route('admin.cadets.index') }}"
                     class="clear-filters"
@@ -174,6 +240,7 @@
                     <i class="fas fa-rotate-left"></i>
                     Clear Filters
                 </a>
+
             @endif
 
         </div>
@@ -182,22 +249,22 @@
         <div class="filter-grid">
 
             {{-- SEARCH --}}
-            <div class="filter-group search-group">
+            <div class="filter-control search-control">
 
                 <label for="searchInput">
                     Search
                 </label>
 
-                <div class="search-input-wrapper">
+                <div class="search-box">
 
                     <i class="fas fa-magnifying-glass"></i>
 
                     <input
                         type="text"
-                        name="search"
                         id="searchInput"
+                        name="search"
                         value="{{ request('search') }}"
-                        placeholder="Search name, TRB, course, rank..."
+                        placeholder="Name, TRB, course, rank..."
                         autocomplete="off"
                     >
 
@@ -207,15 +274,15 @@
 
 
             {{-- COURSE --}}
-            <div class="filter-group">
+            <div class="filter-control">
 
                 <label for="courseFilter">
                     Course
                 </label>
 
                 <select
-                    name="course"
                     id="courseFilter"
+                    name="course"
                 >
 
                     <option value="">
@@ -223,6 +290,7 @@
                     </option>
 
                     @foreach($courses as $course)
+
                         @php
                             $courseValue = is_object($course)
                                 ? ($course->course_name ?? $course->course ?? '')
@@ -230,13 +298,16 @@
                         @endphp
 
                         @if($courseValue !== '')
+
                             <option
                                 value="{{ $courseValue }}"
-                                {{ request('course') == $courseValue ? 'selected' : '' }}
+                                @selected(request('course') == $courseValue)
                             >
                                 {{ $courseValue }}
                             </option>
+
                         @endif
+
                     @endforeach
 
                 </select>
@@ -245,15 +316,15 @@
 
 
             {{-- BATCH --}}
-            <div class="filter-group">
+            <div class="filter-control">
 
                 <label for="batchFilter">
                     Batch
                 </label>
 
                 <select
-                    name="batch"
                     id="batchFilter"
+                    name="batch"
                 >
 
                     <option value="">
@@ -264,7 +335,7 @@
 
                         <option
                             value="{{ $batch->id }}"
-                            {{ request('batch') == $batch->id ? 'selected' : '' }}
+                            @selected(request('batch') == $batch->id)
                         >
                             {{ $batch->batch_year }}
                         </option>
@@ -277,15 +348,15 @@
 
 
             {{-- DEPLOYMENT --}}
-            <div class="filter-group">
+            <div class="filter-control">
 
                 <label for="deploymentFilter">
                     Deployment
                 </label>
 
                 <select
-                    name="deployment"
                     id="deploymentFilter"
+                    name="deployment"
                 >
 
                     <option value="">
@@ -294,21 +365,21 @@
 
                     <option
                         value="ongoing"
-                        {{ request('deployment') === 'ongoing' ? 'selected' : '' }}
+                        @selected(request('deployment') === 'ongoing')
                     >
                         Ongoing
                     </option>
 
                     <option
                         value="completed"
-                        {{ request('deployment') === 'completed' ? 'selected' : '' }}
+                        @selected(request('deployment') === 'completed')
                     >
                         Completed
                     </option>
 
                     <option
                         value="not_deployed"
-                        {{ request('deployment') === 'not_deployed' ? 'selected' : '' }}
+                        @selected(request('deployment') === 'not_deployed')
                     >
                         Not Deployed
                     </option>
@@ -319,15 +390,15 @@
 
 
             {{-- VERIFICATION --}}
-            <div class="filter-group">
+            <div class="filter-control">
 
                 <label for="verificationFilter">
                     Verification
                 </label>
 
                 <select
-                    name="verification"
                     id="verificationFilter"
+                    name="verification"
                 >
 
                     <option value="">
@@ -336,21 +407,21 @@
 
                     <option
                         value="approved"
-                        {{ request('verification') === 'approved' ? 'selected' : '' }}
+                        @selected(request('verification') === 'approved')
                     >
                         Approved
                     </option>
 
                     <option
                         value="pending"
-                        {{ request('verification') === 'pending' ? 'selected' : '' }}
+                        @selected(request('verification') === 'pending')
                     >
                         Pending
                     </option>
 
                     <option
                         value="rejected"
-                        {{ request('verification') === 'rejected' ? 'selected' : '' }}
+                        @selected(request('verification') === 'rejected')
                     >
                         Rejected
                     </option>
@@ -359,77 +430,60 @@
 
             </div>
 
-
-            {{-- FILTER BUTTON --}}
-            <div class="filter-actions">
-
-                <button
-                    type="submit"
-                    class="btn-filter"
-                >
-                    <i class="fas fa-filter"></i>
-                    Apply Filters
-                </button>
-
-            </div>
-
         </div>
 
     </form>
 
 
-    {{-- =====================================================
-         TABLE CARD
-    ====================================================== --}}
-    <div class="table-card">
+    {{-- =========================================================
+         TABLE PANEL
+    ========================================================== --}}
+    <div class="table-panel">
 
         {{-- TABLE HEADER --}}
-        <div class="table-card-header">
+        <div class="table-header">
 
-            <div>
+            <div class="table-title">
 
-                <h3>
+                <div class="table-title-icon">
                     <i class="fas fa-users"></i>
-                    Cadet Records
-                </h3>
+                </div>
 
-                <p>
-                    Showing
-                    <strong>{{ $cadets->firstItem() ?? 0 }}</strong>
-                    –
-                    <strong>{{ $cadets->lastItem() ?? 0 }}</strong>
-                    of
-                    <strong>{{ $cadets->total() }}</strong>
-                    cadets
-                </p>
+                <div>
+
+                    <h3>
+                        Cadet Records
+                    </h3>
+
+                    <p>
+                        Showing
+                        {{ $cadets->firstItem() ?? 0 }}
+                        -
+                        {{ $cadets->lastItem() ?? 0 }}
+                        of
+                        {{ number_format($cadets->total()) }}
+                        records
+                    </p>
+
+                </div>
 
             </div>
 
-            @if(request()->hasAny([
-                'search',
-                'course',
-                'batch',
-                'deployment',
-                'verification'
-            ]))
-                <div class="active-filter-label">
-                    <i class="fas fa-filter"></i>
-                    Filters applied
-                </div>
-            @endif
+
+            <div class="result-count">
+
+                {{ number_format($cadets->total()) }}
+                Results
+
+            </div>
 
         </div>
 
 
-        {{-- =================================================
-             TABLE
-        ================================================== --}}
-        <div class="table-responsive">
+        {{-- TABLE --}}
+        <div class="table-wrapper">
 
-            <table
-                class="cadet-table"
-                id="cadetTable"
-            >
+            <table>
 
                 <thead>
 
@@ -437,19 +491,19 @@
 
                         <th>TRB</th>
 
-                        <th>CADET</th>
+                        <th>Cadet</th>
 
-                        <th>COURSE</th>
+                        <th>Course</th>
 
-                        <th>BATCH</th>
+                        <th>Batch</th>
 
-                        <th>RANK</th>
+                        <th>Rank</th>
 
-                        <th>VERIFICATION</th>
+                        <th>Verification</th>
 
-                        <th>DEPLOYMENT</th>
+                        <th>Deployment</th>
 
-                        <th>ACTION</th>
+                        <th>Action</th>
 
                     </tr>
 
@@ -460,11 +514,13 @@
 
                     @forelse($cadets as $cadet)
 
-                        {{-- =================================================
-                             NORMALIZE STATUS
-                        ================================================== --}}
-
                         @php
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | VERIFICATION
+                            |--------------------------------------------------------------------------
+                            */
 
                             $verificationRaw = strtolower(
                                 trim(
@@ -477,29 +533,48 @@
                             if (
                                 in_array(
                                     $verificationRaw,
-                                    ['verified', 'approved', 'accepted', 'complete', 'completed']
+                                    [
+                                        'approved',
+                                        'verified',
+                                        'accepted',
+                                        'complete',
+                                        'completed'
+                                    ],
+                                    true
                                 )
                             ) {
+
                                 $verificationStatus = 'approved';
                                 $verificationText = 'Approved';
-                                $verificationClass = 'status-approved';
 
                             } elseif (
                                 in_array(
                                     $verificationRaw,
-                                    ['rejected', 'declined', 'denied']
+                                    [
+                                        'rejected',
+                                        'declined',
+                                        'denied'
+                                    ],
+                                    true
                                 )
                             ) {
+
                                 $verificationStatus = 'rejected';
                                 $verificationText = 'Rejected';
-                                $verificationClass = 'status-rejected';
 
                             } else {
+
                                 $verificationStatus = 'pending';
                                 $verificationText = 'Pending';
-                                $verificationClass = 'status-pending';
+
                             }
 
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | DEPLOYMENT
+                            |--------------------------------------------------------------------------
+                            */
 
                             $deploymentRaw = strtolower(
                                 trim(
@@ -511,24 +586,28 @@
 
                                 $deploymentStatus = 'ongoing';
                                 $deploymentText = 'Ongoing';
-                                $deploymentClass = 'status-ongoing';
 
                             } elseif ($deploymentRaw === 'completed') {
 
                                 $deploymentStatus = 'completed';
                                 $deploymentText = 'Completed';
-                                $deploymentClass = 'status-completed';
 
                             } else {
 
                                 $deploymentStatus = 'not_deployed';
                                 $deploymentText = 'Not Deployed';
-                                $deploymentClass = 'status-not-deployed';
 
                             }
 
 
-                            $batchYear = optional($cadet->batch)->batch_year
+                            /*
+                            |--------------------------------------------------------------------------
+                            | BATCH
+                            |--------------------------------------------------------------------------
+                            */
+
+                            $batchYear =
+                                optional($cadet->batch)->batch_year
                                 ?? '—';
 
 
@@ -539,31 +618,34 @@
                             */
 
                             $photoUrl = $cadet->photo
-                                ? asset('storage/' . ltrim($cadet->photo, '/'))
-                                : asset('images/default-avatar.png');
+                                ? asset(
+                                    'storage/' .
+                                    ltrim($cadet->photo, '/')
+                                )
+                                : asset(
+                                    'images/default-avatar.png'
+                                );
 
 
                             /*
                             |--------------------------------------------------------------------------
-                            | FULL NAME
+                            | NAME
                             |--------------------------------------------------------------------------
                             */
 
-                            $fullName = $cadet->full_name ?: 'Unnamed Cadet';
+                            $fullName =
+                                $cadet->full_name
+                                ?: 'Unnamed Cadet';
 
                         @endphp
 
 
-                        {{-- =================================================
-                             CADET ROW
-                        ================================================== --}}
-
-                        <tr class="cadet-row">
+                        <tr>
 
                             {{-- TRB --}}
                             <td>
 
-                                <span class="trb-number">
+                                <span class="trb-code">
 
                                     {{ $cadet->trb_control_number ?: '—' }}
 
@@ -580,22 +662,14 @@
                                     <img
                                         src="{{ $photoUrl }}"
                                         alt="{{ $fullName }}"
-                                        class="cadet-avatar"
+                                        class="table-avatar"
                                         loading="lazy"
                                         decoding="async"
                                     >
 
-                                    <div class="cadet-info">
+                                    <div class="cadet-name">
 
-                                        <strong>
-                                            {{ $fullName }}
-                                        </strong>
-
-                                        @if($cadet->email)
-                                            <small>
-                                                {{ $cadet->email }}
-                                            </small>
-                                        @endif
+                                        {{ $fullName }}
 
                                     </div>
 
@@ -608,7 +682,9 @@
                             <td>
 
                                 <span class="course-text">
+
                                     {{ $cadet->course ?: '—' }}
+
                                 </span>
 
                             </td>
@@ -617,9 +693,7 @@
                             {{-- BATCH --}}
                             <td>
 
-                                <span class="batch-badge">
-                                    {{ $batchYear }}
-                                </span>
+                                {{ $batchYear }}
 
                             </td>
 
@@ -627,9 +701,7 @@
                             {{-- RANK --}}
                             <td>
 
-                                <span class="rank-text">
-                                    {{ $cadet->rank ?: '—' }}
-                                </span>
+                                {{ $cadet->rank ?: '—' }}
 
                             </td>
 
@@ -637,21 +709,9 @@
                             {{-- VERIFICATION --}}
                             <td>
 
-                                <span class="status-badge {{ $verificationClass }}">
-
-                                    @if($verificationStatus === 'approved')
-
-                                        <i class="fas fa-circle-check"></i>
-
-                                    @elseif($verificationStatus === 'rejected')
-
-                                        <i class="fas fa-circle-xmark"></i>
-
-                                    @else
-
-                                        <i class="fas fa-clock"></i>
-
-                                    @endif
+                                <span
+                                    class="status {{ $verificationStatus }}"
+                                >
 
                                     {{ $verificationText }}
 
@@ -663,21 +723,9 @@
                             {{-- DEPLOYMENT --}}
                             <td>
 
-                                <span class="status-badge {{ $deploymentClass }}">
-
-                                    @if($deploymentStatus === 'ongoing')
-
-                                        <i class="fas fa-ship"></i>
-
-                                    @elseif($deploymentStatus === 'completed')
-
-                                        <i class="fas fa-circle-check"></i>
-
-                                    @else
-
-                                        <i class="fas fa-minus-circle"></i>
-
-                                    @endif
+                                <span
+                                    class="status {{ $deploymentStatus }}"
+                                >
 
                                     {{ $deploymentText }}
 
@@ -694,9 +742,9 @@
                                     {{-- VIEW --}}
                                     <button
                                         type="button"
-                                        class="action-btn view-btn"
-                                        title="View Cadet"
+                                        class="btn btn-view"
                                         onclick="openCadetModal(this)"
+                                        title="View Cadet"
                                         data-id="{{ $cadet->id }}"
                                         data-name="{{ $fullName }}"
                                         data-trb="{{ $cadet->trb_control_number ?? '' }}"
@@ -714,6 +762,7 @@
                                     >
 
                                         <i class="fas fa-eye"></i>
+                                        <span>View</span>
 
                                     </button>
 
@@ -721,14 +770,13 @@
                                     {{-- EDIT --}}
                                     <button
                                         type="button"
-                                        class="action-btn edit-btn"
-                                        title="Edit Cadet"
+                                        class="btn btn-edit"
                                         onclick="openEditModal(this)"
+                                        title="Edit Cadet"
                                         data-id="{{ $cadet->id }}"
                                         data-name="{{ $fullName }}"
                                         data-course="{{ $cadet->course ?? '' }}"
                                         data-batch-id="{{ $cadet->batch_id ?? '' }}"
-                                        data-batch="{{ $batchYear }}"
                                         data-dob="{{ $cadet->date_of_birth ?? '' }}"
                                         data-place="{{ $cadet->place_of_birth ?? '' }}"
                                         data-rank="{{ $cadet->rank ?? '' }}"
@@ -745,6 +793,7 @@
                                     >
 
                                         <i class="fas fa-pen-to-square"></i>
+                                        <span>Edit</span>
 
                                     </button>
 
@@ -760,20 +809,24 @@
 
                             <td
                                 colspan="8"
-                                class="empty-state"
+                                class="empty-row"
                             >
 
-                                <div class="empty-state-content">
+                                <div class="empty-state">
 
-                                    <div class="empty-state-icon">
+                                    <div class="empty-icon">
+
                                         <i class="fas fa-user-slash"></i>
+
                                     </div>
 
-                                    <h3>No Cadets Found</h3>
+                                    <strong>
+                                        No Cadets Found
+                                    </strong>
 
-                                    <p>
+                                    <span>
                                         No cadet records match your current filters.
-                                    </p>
+                                    </span>
 
                                     @if(request()->hasAny([
                                         'search',
@@ -782,13 +835,16 @@
                                         'deployment',
                                         'verification'
                                     ]))
+
                                         <a
                                             href="{{ route('admin.cadets.index') }}"
-                                            class="btn-secondary"
+                                            class="clear-filters"
+                                            style="margin-top:10px;"
                                         >
                                             <i class="fas fa-rotate-left"></i>
                                             Clear Filters
                                         </a>
+
                                     @endif
 
                                 </div>
@@ -806,23 +862,21 @@
         </div>
 
 
-        {{-- =================================================
+        {{-- =====================================================
              PAGINATION
-        ================================================== --}}
-
+        ====================================================== --}}
         @if($cadets->hasPages())
 
-            <div class="pagination-wrapper">
+            <div class="pagination-container">
 
-                <div class="pagination-info">
+                <div class="pagination-summary">
 
                     Showing
                     <strong>{{ $cadets->firstItem() }}</strong>
-                    to
+                    -
                     <strong>{{ $cadets->lastItem() }}</strong>
                     of
-                    <strong>{{ $cadets->total() }}</strong>
-                    results
+                    <strong>{{ number_format($cadets->total()) }}</strong>
 
                 </div>
 
@@ -842,38 +896,49 @@
 
 
 {{-- =========================================================
-     VIEW CADET MODAL
+     VIEW MODAL
 ========================================================= --}}
 
 <div
     id="cadetModal"
-    class="modal-overlay"
+    class="cadet-modal"
     aria-hidden="true"
 >
 
     <div
-        class="modal-container cadet-view-modal"
+        class="view-modal-content"
         role="dialog"
         aria-modal="true"
     >
 
-        <div class="modal-header">
+        {{-- HEADER --}}
+        <div class="edit-modal-header">
 
-            <div>
-                <h2>
-                    <i class="fas fa-user-graduate"></i>
-                    Cadet Information
-                </h2>
+            <div class="edit-modal-title">
 
-                <p>
-                    View cadet record
-                </p>
+                <div class="edit-modal-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <div>
+
+                    <h2>
+                        Cadet Information
+                    </h2>
+
+                    <p>
+                        View cadet record
+                    </p>
+
+                </div>
+
             </div>
 
             <button
                 type="button"
-                class="modal-close"
+                class="modal-x"
                 onclick="closeCadetModal()"
+                aria-label="Close"
             >
                 <i class="fas fa-xmark"></i>
             </button>
@@ -881,160 +946,191 @@
         </div>
 
 
-        <div class="modal-body">
+        {{-- BODY --}}
+        <div class="edit-modal-body view-modal-body">
 
-            <div class="profile-summary">
+            <div class="view-profile">
 
-                <img
-                    id="viewPhoto"
-                    src=""
-                    alt="Cadet"
-                    class="modal-profile-photo"
-                >
+                <div class="view-photo-wrapper">
 
-                <div class="profile-summary-info">
+                    <img
+                        id="viewPhoto"
+                        src="{{ asset('images/default-avatar.png') }}"
+                        alt="Cadet"
+                        class="view-photo"
+                    >
 
-                    <h3 id="viewName">
-                        —
-                    </h3>
+                </div>
 
-                    <p id="viewTrb">
-                        —
-                    </p>
+                <h2 id="viewName">
+                    —
+                </h2>
 
-                    <div class="profile-statuses">
-
-                        <span
-                            id="viewVerification"
-                            class="status-badge"
-                        >
-                            —
-                        </span>
-
-                        <span
-                            id="viewDeployment"
-                            class="status-badge"
-                        >
-                            —
-                        </span>
-
-                    </div>
-
+                <div id="viewTrb" class="trb-code">
+                    —
                 </div>
 
             </div>
 
 
-            <div class="details-grid">
+            <div class="view-information-grid">
 
-                <div class="detail-item">
+                <div class="view-field">
 
-                    <span>
-                        <i class="fas fa-graduation-cap"></i>
+                    <label>
                         Course
-                    </span>
+                    </label>
 
-                    <strong id="viewCourse">
+                    <div
+                        class="view-value"
+                        id="viewCourse"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="detail-item">
+                <div class="view-field">
 
-                    <span>
-                        <i class="fas fa-layer-group"></i>
+                    <label>
                         Batch
-                    </span>
+                    </label>
 
-                    <strong id="viewBatch">
+                    <div
+                        class="view-value"
+                        id="viewBatch"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="detail-item">
+                <div class="view-field">
 
-                    <span>
-                        <i class="fas fa-id-badge"></i>
+                    <label>
                         Rank
-                    </span>
+                    </label>
 
-                    <strong id="viewRank">
+                    <div
+                        class="view-value"
+                        id="viewRank"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="detail-item">
+                <div class="view-field">
 
-                    <span>
-                        <i class="fas fa-calendar"></i>
+                    <label>
+                        Verification
+                    </label>
+
+                    <div
+                        class="view-value verification-value"
+                        id="viewVerification"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="view-field">
+
+                    <label>
+                        Deployment
+                    </label>
+
+                    <div
+                        class="view-value"
+                        id="viewDeployment"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+                <div class="view-field">
+
+                    <label>
                         Date of Birth
-                    </span>
+                    </label>
 
-                    <strong id="viewDob">
+                    <div
+                        class="view-value"
+                        id="viewDob"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="detail-item">
+                <div class="view-field">
 
-                    <span>
-                        <i class="fas fa-location-dot"></i>
+                    <label>
                         Place of Birth
-                    </span>
+                    </label>
 
-                    <strong id="viewPlace">
+                    <div
+                        class="view-value"
+                        id="viewPlace"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="detail-item">
+                <div class="view-field">
 
-                    <span>
-                        <i class="fas fa-phone"></i>
+                    <label>
                         Contact Number
-                    </span>
+                    </label>
 
-                    <strong id="viewContact">
+                    <div
+                        class="view-value"
+                        id="viewContact"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="detail-item full-width">
+                <div class="view-field view-field-full">
 
-                    <span>
-                        <i class="fas fa-envelope"></i>
+                    <label>
                         Email
-                    </span>
+                    </label>
 
-                    <strong id="viewEmail">
+                    <div
+                        class="view-value"
+                        id="viewEmail"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
 
-                <div class="detail-item full-width">
+                <div class="view-field view-field-full">
 
-                    <span>
-                        <i class="fas fa-map-marker-alt"></i>
+                    <label>
                         Address
-                    </span>
+                    </label>
 
-                    <strong id="viewAddress">
+                    <div
+                        class="view-value"
+                        id="viewAddress"
+                    >
                         —
-                    </strong>
+                    </div>
 
                 </div>
 
@@ -1043,11 +1139,12 @@
         </div>
 
 
-        <div class="modal-footer">
+        {{-- FOOTER --}}
+        <div class="edit-modal-footer">
 
             <button
                 type="button"
-                class="btn-secondary"
+                class="modal-btn modal-btn-cancel"
                 onclick="closeCadetModal()"
             >
                 Close
@@ -1061,40 +1158,49 @@
 
 
 {{-- =========================================================
-     EDIT CADET MODAL
+     EDIT MODAL
 ========================================================= --}}
 
 <div
     id="editCadetModal"
-    class="modal-overlay"
+    class="cadet-modal"
     aria-hidden="true"
 >
 
     <div
-        class="modal-container edit-cadet-modal"
+        class="edit-modal-content"
         role="dialog"
         aria-modal="true"
     >
 
-        <div class="modal-header">
+        {{-- HEADER --}}
+        <div class="edit-modal-header">
 
-            <div>
+            <div class="edit-modal-title">
 
-                <h2>
+                <div class="edit-modal-icon">
                     <i class="fas fa-user-pen"></i>
-                    Edit Cadet
-                </h2>
+                </div>
 
-                <p>
-                    Update cadet information
-                </p>
+                <div>
+
+                    <h2>
+                        Edit Cadet
+                    </h2>
+
+                    <p>
+                        Update cadet information
+                    </p>
+
+                </div>
 
             </div>
 
             <button
                 type="button"
-                class="modal-close"
+                class="modal-x"
                 onclick="closeEditModal()"
+                aria-label="Close"
             >
                 <i class="fas fa-xmark"></i>
             </button>
@@ -1102,6 +1208,7 @@
         </div>
 
 
+        {{-- FORM --}}
         <form
             id="editCadetForm"
             method="POST"
@@ -1113,82 +1220,173 @@
             @method('PUT')
 
 
-            <div class="modal-body">
+            {{-- BODY --}}
+            <div class="edit-modal-body">
 
-                {{-- =================================================
-                     PHOTO
-                ================================================== --}}
+                {{-- PHOTO + BASIC --}}
+                <div class="edit-profile">
 
-                <div class="edit-photo-section">
-
-                    <div class="edit-photo-preview">
+                    <div class="photo-area">
 
                         <img
                             id="editPhotoPreview"
                             src="{{ asset('images/default-avatar.png') }}"
-                            alt="Cadet photo"
+                            alt="Cadet Photo"
+                            class="edit-photo"
                         >
+
+                        <div class="photo-actions">
+
+                            <label class="photo-btn photo-upload">
+
+                                <i class="fas fa-camera"></i>
+                                Change
+
+                                <input
+                                    type="file"
+                                    name="photo"
+                                    id="editPhotoInput"
+                                    accept="image/jpeg,image/png,image/jpg"
+                                    hidden
+                                >
+
+                            </label>
+
+                            <button
+                                type="button"
+                                class="photo-btn photo-remove"
+                                id="removePhotoBtn"
+                            >
+                                <i class="fas fa-trash"></i>
+                                Remove
+                            </button>
+
+                        </div>
 
                     </div>
 
-                    <div class="edit-photo-actions">
 
-                        <label class="btn-secondary photo-upload-btn">
+                    <div class="profile-fields">
 
-                            <i class="fas fa-camera"></i>
+                        <div class="form-row">
 
-                            Change Photo
+                            <div class="form-group">
 
-                            <input
-                                type="file"
-                                name="photo"
-                                id="editPhotoInput"
-                                accept="image/jpeg,image/png,image/jpg"
-                                hidden
-                            >
+                                <label class="form-label">
+                                    TRB Control Number
+                                    <span class="optional">
+                                        (Optional)
+                                    </span>
+                                </label>
 
-                        </label>
+                                <input
+                                    type="text"
+                                    name="trb_control_number"
+                                    id="editTrb"
+                                    class="edit-input"
+                                    maxlength="255"
+                                    placeholder="Enter TRB control number"
+                                >
 
-                        <button
-                            type="button"
-                            class="btn-danger-outline"
-                            id="removePhotoBtn"
-                        >
-                            <i class="fas fa-trash"></i>
-                            Remove
-                        </button>
+                            </div>
 
-                        <small>
-                            JPG, JPEG or PNG. Maximum 2MB.
-                        </small>
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Full Name
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="full_name"
+                                    id="editName"
+                                    class="edit-input"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="form-row">
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Course
+                                    <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="course"
+                                    id="editCourse"
+                                    class="edit-input"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label class="form-label">
+                                    Batch
+                                </label>
+
+                                <select
+                                    name="batch_id"
+                                    id="editBatch"
+                                    class="edit-select"
+                                >
+
+                                    <option value="">
+                                        Select Batch
+                                    </option>
+
+                                    @foreach($batches as $batch)
+
+                                        <option
+                                            value="{{ $batch->id }}"
+                                        >
+                                            {{ $batch->batch_year }}
+                                        </option>
+
+                                    @endforeach
+
+                                </select>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
                 </div>
 
 
-                {{-- =================================================
-                     TABS
-                ================================================== --}}
-
-                <div class="form-tabs">
+                {{-- TABS --}}
+                <div class="edit-tabs">
 
                     <button
                         type="button"
-                        class="form-tab active"
+                        class="edit-tab active"
                         data-tab="personalTab"
                     >
                         <i class="fas fa-user"></i>
-                        Personal Information
+                        <span>Personal Information</span>
                     </button>
 
                     <button
                         type="button"
-                        class="form-tab"
+                        class="edit-tab"
                         data-tab="guardianTab"
                     >
                         <i class="fas fa-people-roof"></i>
-                        Guardian Information
+                        <span>Guardian Information</span>
                     </button>
 
                 </div>
@@ -1197,198 +1395,149 @@
                 {{-- =================================================
                      PERSONAL TAB
                 ================================================== --}}
-
                 <div
                     id="personalTab"
-                    class="form-tab-content active"
+                    class="edit-tab-content active"
                 >
 
-                    <div class="form-grid">
+                    <div class="form-section">
 
+                        <div class="form-section-header">
 
-                        {{-- TRB --}}
-                        <div class="form-group">
+                            <div class="form-section-icon">
+                                <i class="fas fa-address-card"></i>
+                            </div>
 
-                            <label for="editTrb">
-                                TRB Control Number
-                                <span class="optional-label">
-                                    Optional
-                                </span>
-                            </label>
+                            <div>
 
-                            <input
-                                type="text"
-                                name="trb_control_number"
-                                id="editTrb"
-                                maxlength="255"
-                                placeholder="Enter TRB control number"
-                            >
+                                <h3>
+                                    Personal Details
+                                </h3>
 
-                        </div>
+                                <p>
+                                    Cadet personal information
+                                </p>
 
-
-                        {{-- FULL NAME --}}
-                        <div class="form-group">
-
-                            <label for="editName">
-                                Full Name
-                                <span class="required">*</span>
-                            </label>
-
-                            <input
-                                type="text"
-                                name="full_name"
-                                id="editName"
-                                required
-                            >
+                            </div>
 
                         </div>
 
 
-                        {{-- COURSE --}}
-                        <div class="form-group">
+                        <div class="form-section-body">
 
-                            <label for="editCourse">
-                                Course
-                                <span class="required">*</span>
-                            </label>
+                            <div class="form-row">
 
-                            <input
-                                type="text"
-                                name="course"
-                                id="editCourse"
-                                required
-                            >
+                                <div class="form-group">
 
-                        </div>
+                                    <label class="form-label">
+                                        Date of Birth
+                                    </label>
 
-
-                        {{-- BATCH --}}
-                        <div class="form-group">
-
-                            <label for="editBatch">
-                                Batch
-                            </label>
-
-                            <select
-                                name="batch_id"
-                                id="editBatch"
-                            >
-
-                                <option value="">
-                                    Select Batch
-                                </option>
-
-                                @foreach($batches as $batch)
-
-                                    <option
-                                        value="{{ $batch->id }}"
+                                    <input
+                                        type="date"
+                                        name="date_of_birth"
+                                        id="editDob"
+                                        class="edit-input"
                                     >
-                                        {{ $batch->batch_year }}
-                                    </option>
 
-                                @endforeach
-
-                            </select>
-
-                        </div>
+                                </div>
 
 
-                        {{-- DOB --}}
-                        <div class="form-group">
+                                <div class="form-group">
 
-                            <label for="editDob">
-                                Date of Birth
-                            </label>
+                                    <label class="form-label">
+                                        Place of Birth
+                                    </label>
 
-                            <input
-                                type="date"
-                                name="date_of_birth"
-                                id="editDob"
-                            >
+                                    <input
+                                        type="text"
+                                        name="place_of_birth"
+                                        id="editPlace"
+                                        class="edit-input"
+                                    >
 
-                        </div>
+                                </div>
 
-
-                        {{-- PLACE OF BIRTH --}}
-                        <div class="form-group">
-
-                            <label for="editPlace">
-                                Place of Birth
-                            </label>
-
-                            <input
-                                type="text"
-                                name="place_of_birth"
-                                id="editPlace"
-                            >
-
-                        </div>
+                            </div>
 
 
-                        {{-- RANK --}}
-                        <div class="form-group">
+                            <div class="form-row">
 
-                            <label for="editRank">
-                                Rank
-                                <span class="required">*</span>
-                            </label>
+                                <div class="form-group">
 
-                            <input
-                                type="text"
-                                name="rank"
-                                id="editRank"
-                                required
-                            >
+                                    <label class="form-label">
+                                        Rank
+                                        <span class="required">*</span>
+                                    </label>
 
-                        </div>
+                                    <input
+                                        type="text"
+                                        name="rank"
+                                        id="editRank"
+                                        class="edit-input"
+                                        required
+                                    >
 
-
-                        {{-- CONTACT --}}
-                        <div class="form-group">
-
-                            <label for="editContact">
-                                Contact Number
-                            </label>
-
-                            <input
-                                type="text"
-                                name="contact_number"
-                                id="editContact"
-                                maxlength="20"
-                            >
-
-                        </div>
+                                </div>
 
 
-                        {{-- EMAIL --}}
-                        <div class="form-group">
+                                <div class="form-group">
 
-                            <label for="editEmail">
-                                Email
-                            </label>
+                                    <label class="form-label">
+                                        Contact Number
+                                    </label>
 
-                            <input
-                                type="email"
-                                name="email"
-                                id="editEmail"
-                            >
+                                    <input
+                                        type="text"
+                                        name="contact_number"
+                                        id="editContact"
+                                        class="edit-input"
+                                        maxlength="20"
+                                    >
 
-                        </div>
+                                </div>
+
+                            </div>
 
 
-                        {{-- ADDRESS --}}
-                        <div class="form-group full-width">
+                            <div class="form-row single">
 
-                            <label for="editAddress">
-                                Address
-                            </label>
+                                <div class="form-group">
 
-                            <textarea
-                                name="address"
-                                id="editAddress"
-                                rows="3"
-                            ></textarea>
+                                    <label class="form-label">
+                                        Email
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="editEmail"
+                                        class="edit-input"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-row single">
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+                                        Address
+                                    </label>
+
+                                    <textarea
+                                        name="address"
+                                        id="editAddress"
+                                        class="edit-textarea"
+                                        rows="4"
+                                    ></textarea>
+
+                                </div>
+
+                            </div>
 
                         </div>
 
@@ -1400,93 +1549,141 @@
                 {{-- =================================================
                      GUARDIAN TAB
                 ================================================== --}}
-
                 <div
                     id="guardianTab"
-                    class="form-tab-content"
+                    class="edit-tab-content"
                 >
 
-                    <div class="form-grid">
+                    <div class="form-section">
 
+                        <div class="form-section-header">
 
-                        {{-- RELATIONSHIP --}}
-                        <div class="form-group">
+                            <div class="form-section-icon">
+                                <i class="fas fa-people-roof"></i>
+                            </div>
 
-                            <label for="editGuardianRelationship">
-                                Relationship
-                            </label>
+                            <div>
 
-                            <input
-                                type="text"
-                                name="guardian_relationship"
-                                id="editGuardianRelationship"
-                                placeholder="e.g. Father, Mother, Guardian"
-                            >
+                                <h3>
+                                    Guardian Information
+                                </h3>
 
-                        </div>
+                                <p>
+                                    Parent or guardian contact details
+                                </p>
 
-
-                        {{-- GUARDIAN NAME --}}
-                        <div class="form-group">
-
-                            <label for="editGuardianName">
-                                Guardian Name
-                            </label>
-
-                            <input
-                                type="text"
-                                name="parent_guardian_name"
-                                id="editGuardianName"
-                            >
+                            </div>
 
                         </div>
 
 
-                        {{-- GUARDIAN CONTACT --}}
-                        <div class="form-group">
+                        <div class="form-section-body">
 
-                            <label for="editGuardianContact">
-                                Guardian Contact
-                            </label>
+                            <div class="form-row">
 
-                            <input
-                                type="text"
-                                name="parent_guardian_contact"
-                                id="editGuardianContact"
-                                maxlength="20"
-                            >
+                                <div class="form-group">
 
-                        </div>
+                                    <label class="form-label">
+                                        Relationship
+                                    </label>
 
+                                    <input
+                                        type="text"
+                                        name="guardian_relationship"
+                                        id="editGuardianRelationship"
+                                        class="edit-input"
+                                        placeholder="Father, Mother, Guardian..."
+                                    >
 
-                        {{-- GUARDIAN EMAIL --}}
-                        <div class="form-group">
-
-                            <label for="editGuardianEmail">
-                                Guardian Email
-                            </label>
-
-                            <input
-                                type="email"
-                                name="parent_guardian_email"
-                                id="editGuardianEmail"
-                            >
-
-                        </div>
+                                </div>
 
 
-                        {{-- GUARDIAN ADDRESS --}}
-                        <div class="form-group full-width">
+                                <div class="form-group">
 
-                            <label for="editGuardianAddress">
-                                Guardian Address
-                            </label>
+                                    <label class="form-label">
+                                        Guardian Name
+                                    </label>
 
-                            <textarea
-                                name="parent_guardian_address"
-                                id="editGuardianAddress"
-                                rows="4"
-                            ></textarea>
+                                    <input
+                                        type="text"
+                                        name="parent_guardian_name"
+                                        id="editGuardianName"
+                                        class="edit-input"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-row">
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+                                        Guardian Contact
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        name="parent_guardian_contact"
+                                        id="editGuardianContact"
+                                        class="edit-input"
+                                        maxlength="20"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+                                        Guardian Email
+                                    </label>
+
+                                    <input
+                                        type="email"
+                                        name="parent_guardian_email"
+                                        id="editGuardianEmail"
+                                        class="edit-input"
+                                    >
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-row single">
+
+                                <div class="form-group">
+
+                                    <label class="form-label">
+                                        Guardian Address
+                                    </label>
+
+                                    <textarea
+                                        name="parent_guardian_address"
+                                        id="editGuardianAddress"
+                                        class="edit-textarea"
+                                        rows="5"
+                                    ></textarea>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="edit-warning">
+
+                                <i class="fas fa-circle-info"></i>
+
+                                <span>
+                                    Guardian information is optional.
+                                    Make sure the contact details are accurate
+                                    before saving the record.
+                                </span>
+
+                            </div>
 
                         </div>
 
@@ -1497,15 +1694,12 @@
             </div>
 
 
-            {{-- =================================================
-                 EDIT FOOTER
-            ================================================== --}}
-
-            <div class="modal-footer">
+            {{-- FOOTER --}}
+            <div class="edit-modal-footer">
 
                 <button
                     type="button"
-                    class="btn-secondary"
+                    class="modal-btn modal-btn-cancel"
                     onclick="closeEditModal()"
                 >
                     Cancel
@@ -1513,7 +1707,7 @@
 
                 <button
                     type="submit"
-                    class="btn-primary"
+                    class="modal-btn modal-btn-update"
                 >
                     <i class="fas fa-save"></i>
                     Save Changes
@@ -1531,19 +1725,25 @@
 {{-- =========================================================
      JAVASCRIPT
 ========================================================= --}}
-
 <script>
 
 document.addEventListener('DOMContentLoaded', function () {
 
     /*
     |--------------------------------------------------------------------------
-    | AUTO SUBMIT SEARCH
+    | SEARCH
     |--------------------------------------------------------------------------
+    |
+    | Server-side search.
+    | Debounced to prevent a request on every keystroke.
+    |
     */
 
-    const searchInput = document.getElementById('searchInput');
-    const filterForm = document.getElementById('cadetFilterForm');
+    const searchInput =
+        document.getElementById('searchInput');
+
+    const filterForm =
+        document.getElementById('cadetFilterForm');
 
     let searchTimer = null;
 
@@ -1555,18 +1755,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             searchTimer = setTimeout(function () {
 
-                /*
-                 * Only submit when the search has at least
-                 * 2 characters or is cleared.
-                 */
+                const value =
+                    searchInput.value.trim();
+
                 if (
-                    searchInput.value.trim().length >= 2 ||
-                    searchInput.value.trim().length === 0
+                    value.length >= 2 ||
+                    value.length === 0
                 ) {
                     filterForm.submit();
                 }
 
-            }, 500);
+            }, 600);
 
         });
 
@@ -1579,56 +1778,69 @@ document.addEventListener('DOMContentLoaded', function () {
     |--------------------------------------------------------------------------
     */
 
-    const selectFilters = document.querySelectorAll(
-        '#courseFilter, #batchFilter, #deploymentFilter, #verificationFilter'
-    );
+    document
+        .querySelectorAll(
+            '#courseFilter, #batchFilter, #deploymentFilter, #verificationFilter'
+        )
+        .forEach(function (select) {
 
-    selectFilters.forEach(function (select) {
+            select.addEventListener('change', function () {
 
-        select.addEventListener('change', function () {
+                if (filterForm) {
+                    filterForm.submit();
+                }
 
-            filterForm.submit();
+            });
 
         });
-
-    });
 
 
     /*
     |--------------------------------------------------------------------------
-    | FORM TABS
+    | EDIT TABS
     |--------------------------------------------------------------------------
     */
 
-    const tabs = document.querySelectorAll('.form-tab');
+    document
+        .querySelectorAll('.edit-tab')
+        .forEach(function (tab) {
 
-    tabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
 
-        tab.addEventListener('click', function () {
+                const target =
+                    this.dataset.tab;
 
-            const target = this.dataset.tab;
+                document
+                    .querySelectorAll('.edit-tab')
+                    .forEach(function (item) {
 
-            tabs.forEach(function (item) {
-                item.classList.remove('active');
+                        item.classList.remove('active');
+
+                    });
+
+
+                document
+                    .querySelectorAll('.edit-tab-content')
+                    .forEach(function (content) {
+
+                        content.classList.remove('active');
+
+                    });
+
+
+                this.classList.add('active');
+
+
+                const targetElement =
+                    document.getElementById(target);
+
+                if (targetElement) {
+                    targetElement.classList.add('active');
+                }
+
             });
 
-            document
-                .querySelectorAll('.form-tab-content')
-                .forEach(function (content) {
-                    content.classList.remove('active');
-                });
-
-            this.classList.add('active');
-
-            const targetElement = document.getElementById(target);
-
-            if (targetElement) {
-                targetElement.classList.add('active');
-            }
-
         });
-
-    });
 
 
     /*
@@ -1637,27 +1849,29 @@ document.addEventListener('DOMContentLoaded', function () {
     |--------------------------------------------------------------------------
     */
 
-    const photoInput = document.getElementById('editPhotoInput');
-    const photoPreview = document.getElementById('editPhotoPreview');
+    const photoInput =
+        document.getElementById('editPhotoInput');
+
+    const photoPreview =
+        document.getElementById('editPhotoPreview');
 
     if (photoInput) {
 
         photoInput.addEventListener('change', function () {
 
-            const file = this.files[0];
+            const file =
+                this.files && this.files[0];
 
             if (!file) {
                 return;
             }
 
 
-            /*
-             * 2MB max
-             */
-
             if (file.size > 2 * 1024 * 1024) {
 
-                alert('The selected photo must not exceed 2MB.');
+                alert(
+                    'The selected photo must not exceed 2MB.'
+                );
 
                 this.value = '';
 
@@ -1665,19 +1879,36 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
 
-            /*
-             * Preview
-             */
+            if (
+                ![
+                    'image/jpeg',
+                    'image/png',
+                    'image/jpg'
+                ].includes(file.type)
+            ) {
 
-            const reader = new FileReader();
+                alert(
+                    'Please select a JPG, JPEG, or PNG image.'
+                );
 
-            reader.onload = function (event) {
+                this.value = '';
 
-                if (photoPreview) {
-                    photoPreview.src = event.target.result;
-                }
+                return;
+            }
 
-            };
+
+            const reader =
+                new FileReader();
+
+            reader.onload =
+                function (event) {
+
+                    if (photoPreview) {
+                        photoPreview.src =
+                            event.target.result;
+                    }
+
+                };
 
             reader.readAsDataURL(file);
 
@@ -1692,104 +1923,124 @@ document.addEventListener('DOMContentLoaded', function () {
     |--------------------------------------------------------------------------
     */
 
-    const removePhotoBtn = document.getElementById('removePhotoBtn');
+    const removePhotoBtn =
+        document.getElementById('removePhotoBtn');
 
     if (removePhotoBtn) {
 
-        removePhotoBtn.addEventListener('click', function () {
+        removePhotoBtn.addEventListener(
+            'click',
+            function () {
 
-            if (photoInput) {
-                photoInput.value = '';
+                if (photoInput) {
+                    photoInput.value = '';
+                }
+
+                if (photoPreview) {
+
+                    photoPreview.src =
+                        '{{ asset('images/default-avatar.png') }}';
+
+                }
+
+
+                let removeInput =
+                    document.getElementById(
+                        'remove_existing_photo'
+                    );
+
+
+                if (!removeInput) {
+
+                    removeInput =
+                        document.createElement('input');
+
+                    removeInput.type =
+                        'hidden';
+
+                    removeInput.name =
+                        'remove_photo';
+
+                    removeInput.id =
+                        'remove_existing_photo';
+
+                    removeInput.value =
+                        '1';
+
+                    document
+                        .getElementById('editCadetForm')
+                        .appendChild(removeInput);
+
+                } else {
+
+                    removeInput.value = '1';
+
+                }
+
             }
-
-            if (photoPreview) {
-                photoPreview.src =
-                    '{{ asset('images/default-avatar.png') }}';
-            }
-
-            /*
-             * Hidden input tells controller to remove
-             * existing photo.
-             */
-
-            let removeInput =
-                document.getElementById('remove_existing_photo');
-
-            if (!removeInput) {
-
-                removeInput = document.createElement('input');
-
-                removeInput.type = 'hidden';
-                removeInput.name = 'remove_photo';
-                removeInput.id = 'remove_existing_photo';
-                removeInput.value = '1';
-
-                document
-                    .getElementById('editCadetForm')
-                    .appendChild(removeInput);
-
-            } else {
-
-                removeInput.value = '1';
-
-            }
-
-        });
+        );
 
     }
 
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL OUTSIDE CLICK
+    | MODAL BACKDROP CLICK
     |--------------------------------------------------------------------------
     */
 
     document
-        .querySelectorAll('.modal-overlay')
+        .querySelectorAll('.cadet-modal')
         .forEach(function (modal) {
 
-            modal.addEventListener('click', function (event) {
+            modal.addEventListener(
+                'click',
+                function (event) {
 
-                if (event.target === modal) {
+                    if (event.target === modal) {
 
-                    modal.classList.remove('active');
+                        modal.classList.remove('show');
 
-                    modal.setAttribute(
-                        'aria-hidden',
-                        'true'
-                    );
+                        modal.setAttribute(
+                            'aria-hidden',
+                            'true'
+                        );
 
-                    document.body.classList.remove('modal-open');
+                        document.body
+                            .classList.remove('modal-open');
+
+                    }
 
                 }
-
-            });
+            );
 
         });
 
 
     /*
     |--------------------------------------------------------------------------
-    | ESCAPE KEY
+    | ESCAPE
     |--------------------------------------------------------------------------
     */
 
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener(
+        'keydown',
+        function (event) {
 
-        if (event.key !== 'Escape') {
-            return;
+            if (event.key === 'Escape') {
+
+                closeCadetModal();
+                closeEditModal();
+
+            }
+
         }
-
-        closeCadetModal();
-        closeEditModal();
-
-    });
+    );
 
 
     /*
     |--------------------------------------------------------------------------
-    | SUCCESS NOTIFICATION
+    | SUCCESS MESSAGE
     |--------------------------------------------------------------------------
     */
 
@@ -1800,11 +2051,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (notification) {
 
-            notification.style.opacity = '0';
+            notification.classList.add('closing');
 
             setTimeout(function () {
+
                 notification.remove();
-            }, 300);
+
+            }, 350);
 
         }
 
@@ -1815,7 +2068,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /*
 |--------------------------------------------------------------------------
-| VIEW CADET MODAL
+| VIEW MODAL
 |--------------------------------------------------------------------------
 */
 
@@ -1825,6 +2078,8 @@ function openCadetModal(button) {
         return;
     }
 
+    const data =
+        button.dataset;
 
     const modal =
         document.getElementById('cadetModal');
@@ -1834,18 +2089,11 @@ function openCadetModal(button) {
     }
 
 
-    /*
-     * Get data from button
-     */
+    setText(
+        'viewName',
+        data.name
+    );
 
-    const data = button.dataset;
-
-
-    /*
-     * Basic information
-     */
-
-    setText('viewName', data.name);
     setText(
         'viewTrb',
         data.trb
@@ -1853,26 +2101,59 @@ function openCadetModal(button) {
             : 'TRB: Not assigned'
     );
 
-    setText('viewCourse', data.course);
-    setText('viewBatch', data.batch);
-    setText('viewRank', data.rank);
-    setText('viewDob', data.dob);
-    setText('viewPlace', data.place);
-    setText('viewContact', data.contact);
-    setText('viewEmail', data.email);
-    setText('viewAddress', data.address);
+    setText(
+        'viewCourse',
+        data.course
+    );
+
+    setText(
+        'viewBatch',
+        data.batch
+    );
+
+    setText(
+        'viewRank',
+        data.rank
+    );
+
+    setText(
+        'viewDob',
+        data.dob
+    );
+
+    setText(
+        'viewPlace',
+        data.place
+    );
+
+    setText(
+        'viewContact',
+        data.contact
+    );
+
+    setText(
+        'viewEmail',
+        data.email
+    );
+
+    setText(
+        'viewAddress',
+        data.address
+    );
 
 
     /*
-     * Photo
-     */
+    |--------------------------------------------------------------------------
+    | PHOTO
+    |--------------------------------------------------------------------------
+    */
 
-    const photo =
+    const viewPhoto =
         document.getElementById('viewPhoto');
 
-    if (photo) {
+    if (viewPhoto) {
 
-        photo.src =
+        viewPhoto.src =
             data.photo ||
             '{{ asset('images/default-avatar.png') }}';
 
@@ -1880,11 +2161,15 @@ function openCadetModal(button) {
 
 
     /*
-     * Verification
-     */
+    |--------------------------------------------------------------------------
+    | VERIFICATION
+    |--------------------------------------------------------------------------
+    */
 
     const verification =
-        document.getElementById('viewVerification');
+        document.getElementById(
+            'viewVerification'
+        );
 
     if (verification) {
 
@@ -1892,7 +2177,7 @@ function openCadetModal(button) {
             data.verification || 'Pending';
 
         verification.className =
-            'status-badge ' +
+            'view-value verification-value ' +
             getVerificationClass(
                 data.verification
             );
@@ -1901,45 +2186,47 @@ function openCadetModal(button) {
 
 
     /*
-     * Deployment
-     */
+    |--------------------------------------------------------------------------
+    | DEPLOYMENT
+    |--------------------------------------------------------------------------
+    */
 
     const deployment =
-        document.getElementById('viewDeployment');
+        document.getElementById(
+            'viewDeployment'
+        );
 
     if (deployment) {
 
         deployment.textContent =
             data.deployment || 'Not Deployed';
 
-        deployment.className =
-            'status-badge ' +
-            getDeploymentClass(
-                data.deployment
-            );
-
     }
 
 
     /*
-     * Show modal
-     */
+    |--------------------------------------------------------------------------
+    | SHOW
+    |--------------------------------------------------------------------------
+    */
 
-    modal.classList.add('active');
+    modal.classList.add('show');
 
     modal.setAttribute(
         'aria-hidden',
         'false'
     );
 
-    document.body.classList.add('modal-open');
+    document.body.classList.add(
+        'modal-open'
+    );
 
 }
 
 
 /*
 |--------------------------------------------------------------------------
-| EDIT CADET MODAL
+| EDIT MODAL
 |--------------------------------------------------------------------------
 */
 
@@ -1949,14 +2236,18 @@ function openEditModal(button) {
         return;
     }
 
-
-    const data = button.dataset;
+    const data =
+        button.dataset;
 
     const modal =
-        document.getElementById('editCadetModal');
+        document.getElementById(
+            'editCadetModal'
+        );
 
     const form =
-        document.getElementById('editCadetForm');
+        document.getElementById(
+            'editCadetForm'
+        );
 
     if (!modal || !form) {
         return;
@@ -1964,8 +2255,10 @@ function openEditModal(button) {
 
 
     /*
-     * Set form action
-     */
+    |--------------------------------------------------------------------------
+    | FORM ACTION
+    |--------------------------------------------------------------------------
+    */
 
     form.action =
         '{{ url('/admin/cadets') }}/' +
@@ -1973,31 +2266,83 @@ function openEditModal(button) {
 
 
     /*
-     * Clear old remove-photo instruction
-     */
+    |--------------------------------------------------------------------------
+    | RESET REMOVE PHOTO
+    |--------------------------------------------------------------------------
+    */
 
-    const oldRemoveInput =
-        document.getElementById('remove_existing_photo');
+    const removeInput =
+        document.getElementById(
+            'remove_existing_photo'
+        );
 
-    if (oldRemoveInput) {
-        oldRemoveInput.remove();
+    if (removeInput) {
+        removeInput.remove();
     }
 
 
     /*
-     * Fill fields
-     */
+    |--------------------------------------------------------------------------
+    | PERSONAL INFORMATION
+    |--------------------------------------------------------------------------
+    */
 
-    setInputValue('editTrb', data.trb);
-    setInputValue('editName', data.name);
-    setInputValue('editCourse', data.course);
-    setInputValue('editBatch', data.batchId);
-    setInputValue('editDob', data.dob);
-    setInputValue('editPlace', data.place);
-    setInputValue('editRank', data.rank);
-    setInputValue('editAddress', data.address);
-    setInputValue('editContact', data.contact);
-    setInputValue('editEmail', data.email);
+    setInputValue(
+        'editTrb',
+        data.trb
+    );
+
+    setInputValue(
+        'editName',
+        data.name
+    );
+
+    setInputValue(
+        'editCourse',
+        data.course
+    );
+
+    setInputValue(
+        'editBatch',
+        data.batchId
+    );
+
+    setInputValue(
+        'editDob',
+        data.dob
+    );
+
+    setInputValue(
+        'editPlace',
+        data.place
+    );
+
+    setInputValue(
+        'editRank',
+        data.rank
+    );
+
+    setInputValue(
+        'editAddress',
+        data.address
+    );
+
+    setInputValue(
+        'editContact',
+        data.contact
+    );
+
+    setInputValue(
+        'editEmail',
+        data.email
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | GUARDIAN
+    |--------------------------------------------------------------------------
+    */
 
     setInputValue(
         'editGuardianRelationship',
@@ -2026,11 +2371,15 @@ function openEditModal(button) {
 
 
     /*
-     * Photo
-     */
+    |--------------------------------------------------------------------------
+    | PHOTO
+    |--------------------------------------------------------------------------
+    */
 
     const preview =
-        document.getElementById('editPhotoPreview');
+        document.getElementById(
+            'editPhotoPreview'
+        );
 
     if (preview) {
 
@@ -2041,12 +2390,10 @@ function openEditModal(button) {
     }
 
 
-    /*
-     * Reset photo input
-     */
-
     const photoInput =
-        document.getElementById('editPhotoInput');
+        document.getElementById(
+            'editPhotoInput'
+        );
 
     if (photoInput) {
         photoInput.value = '';
@@ -2054,20 +2401,28 @@ function openEditModal(button) {
 
 
     /*
-     * Always open Personal Information tab
-     */
+    |--------------------------------------------------------------------------
+    | RESET TAB
+    |--------------------------------------------------------------------------
+    */
 
     document
-        .querySelectorAll('.form-tab')
+        .querySelectorAll('.edit-tab')
         .forEach(function (tab) {
+
             tab.classList.remove('active');
+
         });
 
+
     document
-        .querySelectorAll('.form-tab-content')
+        .querySelectorAll('.edit-tab-content')
         .forEach(function (content) {
+
             content.classList.remove('active');
+
         });
+
 
     const personalTab =
         document.querySelector(
@@ -2078,42 +2433,48 @@ function openEditModal(button) {
         personalTab.classList.add('active');
     }
 
-    document
-        .getElementById('personalTab')
-        ?.classList.add('active');
+
+    const personalContent =
+        document.getElementById(
+            'personalTab'
+        );
+
+    if (personalContent) {
+        personalContent.classList.add('active');
+    }
 
 
     /*
-     * Show modal
-     */
+    |--------------------------------------------------------------------------
+    | SHOW
+    |--------------------------------------------------------------------------
+    */
 
-    modal.classList.add('active');
+    modal.classList.add('show');
 
     modal.setAttribute(
         'aria-hidden',
         'false'
     );
 
-    document.body.classList.add('modal-open');
+    document.body.classList.add(
+        'modal-open'
+    );
 
 }
 
 
 /*
 |--------------------------------------------------------------------------
-| OPEN EDIT MODAL BY ID
+| COMPATIBILITY
 |--------------------------------------------------------------------------
-|
-| Kept for compatibility with any existing code
-| that may call this function.
-|
 */
 
 function openEditModalById(id) {
 
     const button =
         document.querySelector(
-            '.edit-btn[data-id="' +
+            '.btn-edit[data-id="' +
             CSS.escape(String(id)) +
             '"]'
         );
@@ -2127,54 +2488,62 @@ function openEditModalById(id) {
 
 /*
 |--------------------------------------------------------------------------
-| CLOSE VIEW MODAL
+| CLOSE VIEW
 |--------------------------------------------------------------------------
 */
 
 function closeCadetModal() {
 
     const modal =
-        document.getElementById('cadetModal');
+        document.getElementById(
+            'cadetModal'
+        );
 
     if (!modal) {
         return;
     }
 
-    modal.classList.remove('active');
+    modal.classList.remove('show');
 
     modal.setAttribute(
         'aria-hidden',
         'true'
     );
 
-    document.body.classList.remove('modal-open');
+    document.body.classList.remove(
+        'modal-open'
+    );
 
 }
 
 
 /*
 |--------------------------------------------------------------------------
-| CLOSE EDIT MODAL
+| CLOSE EDIT
 |--------------------------------------------------------------------------
 */
 
 function closeEditModal() {
 
     const modal =
-        document.getElementById('editCadetModal');
+        document.getElementById(
+            'editCadetModal'
+        );
 
     if (!modal) {
         return;
     }
 
-    modal.classList.remove('active');
+    modal.classList.remove('show');
 
     modal.setAttribute(
         'aria-hidden',
         'true'
     );
 
-    document.body.classList.remove('modal-open');
+    document.body.classList.remove(
+        'modal-open'
+    );
 
 }
 
@@ -2195,7 +2564,8 @@ function setText(id, value) {
     }
 
     element.textContent =
-        value && String(value).trim()
+        value &&
+        String(value).trim()
             ? value
             : '—';
 
@@ -2232,14 +2602,16 @@ function setInputValue(id, value) {
 function getVerificationClass(status) {
 
     const value =
-        String(status || '').toLowerCase().trim();
+        String(status || '')
+            .toLowerCase()
+            .trim();
 
     if (
         value === 'approved' ||
         value === 'verified' ||
         value === 'accepted'
     ) {
-        return 'status-approved';
+        return 'approved';
     }
 
     if (
@@ -2247,58 +2619,40 @@ function getVerificationClass(status) {
         value === 'declined' ||
         value === 'denied'
     ) {
-        return 'status-rejected';
+        return 'rejected';
     }
 
-    return 'status-pending';
+    return 'pending';
 
 }
 
 
 /*
 |--------------------------------------------------------------------------
-| DEPLOYMENT CLASS
-|--------------------------------------------------------------------------
-*/
-
-function getDeploymentClass(status) {
-
-    const value =
-        String(status || '').toLowerCase().trim();
-
-    if (value === 'ongoing') {
-        return 'status-ongoing';
-    }
-
-    if (value === 'completed') {
-        return 'status-completed';
-    }
-
-    return 'status-not-deployed';
-
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| SUCCESS NOTIFICATION
+| CLOSE SUCCESS
 |--------------------------------------------------------------------------
 */
 
 function closeSuccessNotif() {
 
     const notification =
-        document.getElementById('success-notif');
+        document.getElementById(
+            'success-notif'
+        );
 
     if (!notification) {
         return;
     }
 
-    notification.style.opacity = '0';
+    notification.classList.add(
+        'closing'
+    );
 
     setTimeout(function () {
+
         notification.remove();
-    }, 300);
+
+    }, 350);
 
 }
 
