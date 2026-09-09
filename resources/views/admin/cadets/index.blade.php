@@ -699,28 +699,6 @@
 
                                 </button>
 
-
-                                {{-- TRACK --}}
-
-                                @if($cadet->deployment)
-
-                                    <a
-                                        href="{{ route(
-                                            'admin.cadets.location',
-                                            $cadet->id
-                                        ) }}"
-                                        class="btn btn-track"
-                                        title="View Live Location"
-                                    >
-
-                                        <i class="fas fa-location-dot"></i>
-
-                                        <span>Track</span>
-
-                                    </a>
-
-                                @endif
-
                             </div>
 
                         </td>

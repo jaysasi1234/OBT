@@ -141,7 +141,6 @@ Route::prefix('admin')
         Route::post('/profile/password', [AdminProfileController::class, 'changePassword'])->name('profile.password');
 
         Route::resource('cadets', CadetController::class);
-        Route::get('/cadet-location/{id}', [CadetController::class, 'showLocation'])->name('cadets.location');
         Route::resource('users', UserController::class);
         Route::post('users/create-cadet-account',[UserController::class, 'createCadetAccount'])->name('users.createCadetAccount');
         Route::post('/users/create-batch-accounts',[UserController::class, 'createBatchAccounts'])->name('users.createBatchAccounts');

@@ -774,11 +774,4 @@ public function updateLocation(Request $request)
 
     }
 }
-
-    public function showLocation(int $id)
-    {
-        $cadet = Cadet::whereHas('deployment')->findOrFail($id);
-
-        return view('admin.cadets.location', compact('cadet'));
-    }
 }
