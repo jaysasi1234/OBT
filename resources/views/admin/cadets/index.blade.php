@@ -4,6 +4,7 @@
 
 @vite(['resources/css/admin/cadets/cadets.css'])
 
+
 <div class="cadet-management-page">
 
     {{-- =====================================================
@@ -87,6 +88,7 @@
             </p>
 
         </div>
+
 
         <div class="header-actions">
 
@@ -251,6 +253,7 @@
 
             </div>
 
+
             <button
                 type="button"
                 id="clearFilters"
@@ -265,7 +268,9 @@
 
         <div class="filter-grid">
 
-            {{-- COURSE --}}
+            {{-- =================================================
+                 COURSE FILTER
+            ================================================== --}}
 
             <div class="filter-control">
 
@@ -295,7 +300,9 @@
             </div>
 
 
-            {{-- BATCH --}}
+            {{-- =================================================
+                 BATCH FILTER
+            ================================================== --}}
 
             <div class="filter-control">
 
@@ -303,29 +310,31 @@
                     Batch
                 </label>
 
-                    <select id="batchFilter">
+                <select id="batchFilter">
 
-                        <option value="">
-                            All Batches
+                    <option value="">
+                        All Batches
+                    </option>
+
+                    @foreach($batches as $batch)
+
+                        <option
+                            value="{{ $batch->id }}"
+                            {{ request('batch') == $batch->id ? 'selected' : '' }}
+                        >
+                            {{ $batch->batch_year }}
                         </option>
 
-                        @foreach($batches as $batch)
+                    @endforeach
 
-                            <option
-                                value="{{ $batch->id }}"
-                                {{ request('batch') == $batch->id ? 'selected' : '' }}
-                            >
-                                {{ $batch->batch_year }}
-                            </option>
-
-                        @endforeach
-
-                    </select>
+                </select>
 
             </div>
 
 
-            {{-- DEPLOYMENT --}}
+            {{-- =================================================
+                 DEPLOYMENT FILTER
+            ================================================== --}}
 
             <div class="filter-control">
 
@@ -365,7 +374,9 @@
             </div>
 
 
-            {{-- VERIFICATION --}}
+            {{-- =================================================
+                 VERIFICATION FILTER
+            ================================================== --}}
 
             <div class="filter-control">
 
@@ -379,15 +390,24 @@
                         All Verification
                     </option>
 
-                    <option value="approved">
+                    <option
+                        value="approved"
+                        {{ request('verification') === 'approved' ? 'selected' : '' }}
+                    >
                         Complete
                     </option>
 
-                    <option value="pending">
+                    <option
+                        value="pending"
+                        {{ request('verification') === 'pending' ? 'selected' : '' }}
+                    >
                         Pending
                     </option>
 
-                    <option value="rejected">
+                    <option
+                        value="rejected"
+                        {{ request('verification') === 'rejected' ? 'selected' : '' }}
+                    >
                         Incomplete
                     </option>
 
@@ -396,7 +416,9 @@
             </div>
 
 
-            {{-- SEARCH --}}
+            {{-- =================================================
+                 SEARCH
+            ================================================== --}}
 
             <div class="filter-control search-control">
 
@@ -413,6 +435,7 @@
                         id="searchInput"
                         placeholder="Name, TRB, course..."
                         autocomplete="off"
+                        value="{{ request('search') }}"
                     >
 
                 </div>
@@ -425,7 +448,7 @@
 
 
     {{-- =====================================================
-         TABLE
+         TABLE PANEL
     ====================================================== --}}
 
     <div class="table-panel">
@@ -452,16 +475,24 @@
 
             </div>
 
+
             <div
                 class="result-count"
                 id="resultCount"
             >
-                {{ $totalCadets }}
-                {{ $totalCadets == 1 ? 'Record' : 'Records' }}
+
+                {{ $cadets->total() }}
+
+                {{ $cadets->total() == 1 ? 'Record' : 'Records' }}
+
             </div>
 
         </div>
 
+
+        {{-- =================================================
+             TABLE
+        ================================================== --}}
 
         <div class="table-wrapper">
 
@@ -491,6 +522,12 @@
 
                     @php
 
+                        /*
+                         * =================================================
+                         * VERIFICATION STATUS
+                         * =================================================
+                         */
+
                         $verificationRaw = strtolower(
                             trim($cadet->verification_status_label ?? '')
                         );
@@ -514,6 +551,13 @@
 
                         };
 
+
+                        /*
+                         * =================================================
+                         * DEPLOYMENT STATUS
+                         * =================================================
+                         */
+
                         $deployRaw = strtolower(
                             trim($cadet->deployment->status ?? '')
                         );
@@ -528,9 +572,23 @@
 
                         };
 
+
+                        /*
+                         * =================================================
+                         * BATCH
+                         * =================================================
+                         */
+
                         $batchYear =
                             optional($cadet->batch)->batch_year
                             ?? 'No Batch';
+
+
+                        /*
+                         * =================================================
+                         * PHOTO
+                         * =================================================
+                         */
 
                         $photoUrl =
                             $cadet->photo
@@ -543,25 +601,26 @@
                     <tr
                         class="cadet-row"
                         data-cadet-id="{{ $cadet->id }}"
-                        data-active="{{ optional($cadet->user)->is_active ? '1' : '0' }}"
-                        data-course="{{ strtolower(trim($cadet->course ?? '')) }}"
-                        data-batch="{{ strtolower(trim($batchYear)) }}"
-                        data-deployment="{{ $deploy }}"
-                        data-verification="{{ $verification }}"
                     >
 
-                        {{-- TRB --}}
+                        {{-- =================================================
+                             TRB
+                        ================================================== --}}
 
                         <td>
 
                             <span class="trb-code">
-                                {{ $cadet->trb_control_number }}
+
+                                {{ $cadet->trb_control_number ?: 'N/A' }}
+
                             </span>
 
                         </td>
 
 
-                        {{-- NAME --}}
+                        {{-- =================================================
+                             CADET
+                        ================================================== --}}
 
                         <td>
 
@@ -571,10 +630,13 @@
                                     src="{{ $photoUrl }}"
                                     alt="{{ $cadet->full_name }}"
                                     class="table-avatar"
+                                    onerror="this.onerror=null;this.src='https://cdn-icons-png.flaticon.com/512/3135/3135715.png';"
                                 >
 
                                 <span class="cadet-name">
+
                                     {{ $cadet->full_name }}
+
                                 </span>
 
                             </div>
@@ -582,32 +644,46 @@
                         </td>
 
 
-                        {{-- COURSE --}}
+                        {{-- =================================================
+                             COURSE
+                        ================================================== --}}
 
                         <td>
 
                             <span class="course-text">
+
                                 {{ strtoupper($cadet->course) }}
+
                             </span>
 
                         </td>
 
 
-                        {{-- BATCH --}}
+                        {{-- =================================================
+                             BATCH
+                        ================================================== --}}
 
                         <td>
+
                             {{ $batchYear }}
+
                         </td>
 
 
-                        {{-- RANK --}}
+                        {{-- =================================================
+                             RANK
+                        ================================================== --}}
 
                         <td>
+
                             {{ $cadet->rank ?: 'N/A' }}
+
                         </td>
 
 
-                        {{-- VERIFICATION --}}
+                        {{-- =================================================
+                             VERIFICATION
+                        ================================================== --}}
 
                         <td>
 
@@ -616,13 +692,17 @@
                                 data-status="{{ $verification }}"
                                 data-verification="{{ $verification }}"
                             >
+
                                 {{ ucfirst($verification) }}
+
                             </span>
 
                         </td>
 
 
-                        {{-- DEPLOYMENT --}}
+                        {{-- =================================================
+                             DEPLOYMENT
+                        ================================================== --}}
 
                         <td>
 
@@ -644,7 +724,9 @@
                         </td>
 
 
-                        {{-- ACTIONS --}}
+                        {{-- =================================================
+                             ACTIONS
+                        ================================================== --}}
 
                         <td>
 
@@ -673,7 +755,9 @@
 
                                     <i class="fas fa-eye"></i>
 
-                                    <span>View</span>
+                                    <span>
+                                        View
+                                    </span>
 
                                 </button>
 
@@ -708,7 +792,9 @@
 
                                     <i class="fas fa-pen"></i>
 
-                                    <span>Edit</span>
+                                    <span>
+                                        Edit
+                                    </span>
 
                                 </button>
 
@@ -755,6 +841,7 @@
 
         </div>
 
+
         {{-- =====================================================
              PAGINATION
         ====================================================== --}}
@@ -764,17 +851,34 @@
             <div class="pagination-wrapper">
 
                 <div class="pagination-info">
+
                     Showing
-                    <strong>{{ $cadets->firstItem() }}</strong>
+
+                    <strong>
+                        {{ $cadets->firstItem() }}
+                    </strong>
+
                     to
-                    <strong>{{ $cadets->lastItem() }}</strong>
+
+                    <strong>
+                        {{ $cadets->lastItem() }}
+                    </strong>
+
                     of
-                    <strong>{{ $cadets->total() }}</strong>
+
+                    <strong>
+                        {{ $cadets->total() }}
+                    </strong>
+
                     cadets
+
                 </div>
 
+
                 <div class="pagination-links">
-                    {{ $cadets->links() }}
+
+                    {{ $cadets->withQueryString()->links() }}
+
                 </div>
 
             </div>
@@ -784,6 +888,7 @@
     </div>
 
 </div>
+
 
 
 {{-- =========================================================
@@ -825,6 +930,7 @@
 
             </div>
 
+
             <button
                 type="button"
                 class="modal-x"
@@ -852,7 +958,9 @@
 
                 </div>
 
+
                 <h2 id="modalName"></h2>
+
 
                 <div
                     id="modalDeploy"
@@ -1000,6 +1108,7 @@
 </div>
 
 
+
 {{-- =========================================================
      EDIT CADET MODAL
 ========================================================= --}}
@@ -1041,6 +1150,7 @@
 
             </div>
 
+
             <button
                 type="button"
                 class="modal-x"
@@ -1068,7 +1178,9 @@
 
             <div class="edit-modal-body">
 
-                {{-- TABS --}}
+                {{-- =================================================
+                     TABS
+                ================================================== --}}
 
                 <div
                     class="edit-tabs"
@@ -1158,6 +1270,7 @@
                                         alt="Cadet Photo"
                                     >
 
+
                                     <div class="photo-actions">
 
                                         <button
@@ -1196,6 +1309,7 @@
                                         hidden
                                     >
 
+
                                     <input
                                         type="hidden"
                                         id="remove_edit_photo"
@@ -1207,6 +1321,8 @@
 
 
                                 <div class="profile-fields">
+
+                                    {{-- FULL NAME --}}
 
                                     <div class="form-group">
 
@@ -1231,6 +1347,8 @@
 
                                     </div>
 
+
+                                    {{-- TRB --}}
 
                                     <div class="form-group">
 
@@ -1277,6 +1395,7 @@
 
                                     </label>
 
+
                                     <select
                                         id="edit_course"
                                         name="course"
@@ -1298,7 +1417,9 @@
                                                 {{ strtoupper($course->course) }}
 
                                                 @if(!empty($course->course_name))
+
                                                     — {{ $course->course_name }}
+
                                                 @endif
 
                                             </option>
@@ -1319,6 +1440,7 @@
                                         Batch
                                     </label>
 
+
                                     <select
                                         id="edit_batch_id"
                                         name="batch_id"
@@ -1335,7 +1457,9 @@
                                                 value="{{ $batch->id }}"
                                                 data-batch-year="{{ $batch->batch_year }}"
                                             >
+
                                                 {{ $batch->batch_year }}
+
                                             </option>
 
                                         @endforeach
@@ -1360,6 +1484,7 @@
                                         Date of Birth
                                     </label>
 
+
                                     <input
                                         type="date"
                                         id="edit_date_of_birth"
@@ -1378,6 +1503,7 @@
                                     >
                                         Place of Birth
                                     </label>
+
 
                                     <input
                                         type="text"
@@ -1404,6 +1530,7 @@
                                     >
                                         Rank
                                     </label>
+
 
                                     <select
                                         id="edit_rank"
@@ -1441,6 +1568,7 @@
                                         Contact Number
                                     </label>
 
+
                                     <input
                                         type="text"
                                         id="edit_contact_number"
@@ -1466,6 +1594,7 @@
                                     >
                                         Address
                                     </label>
+
 
                                     <input
                                         type="text"
@@ -1498,6 +1627,7 @@
                                         </span>
 
                                     </label>
+
 
                                     <input
                                         type="email"
@@ -1583,6 +1713,7 @@
                                         Relationship
                                     </label>
 
+
                                     <select
                                         id="edit_guardian_relationship"
                                         name="guardian_relationship"
@@ -1625,6 +1756,7 @@
                                         Parent / Guardian Full Name
                                     </label>
 
+
                                     <input
                                         type="text"
                                         id="edit_parent_guardian_name"
@@ -1650,6 +1782,7 @@
                                     >
                                         Contact Number
                                     </label>
+
 
                                     <input
                                         type="text"
@@ -1677,6 +1810,7 @@
 
                                     </label>
 
+
                                     <input
                                         type="email"
                                         id="edit_parent_guardian_email"
@@ -1703,6 +1837,7 @@
                                         Complete Address
                                     </label>
 
+
                                     <textarea
                                         id="edit_parent_guardian_address"
                                         name="parent_guardian_address"
@@ -1723,7 +1858,9 @@
             </div>
 
 
-            {{-- FOOTER --}}
+            {{-- =================================================
+                 FOOTER
+            ================================================== --}}
 
             <div class="edit-modal-footer">
 
@@ -1758,6 +1895,7 @@
     </div>
 
 </div>
+
 
 
 <script>
@@ -1797,12 +1935,6 @@
     const clearFilters =
         document.getElementById('clearFilters');
 
-    const table =
-        document.getElementById('cadetTable');
-
-    const resultCount =
-        document.getElementById('resultCount');
-
     const viewModal =
         document.getElementById('cadetViewModal');
 
@@ -1827,6 +1959,10 @@
     }
 
 
+    /* =====================================================
+       NORMALIZE DATE
+    ===================================================== */
+
     function normalizeDate(value) {
 
         if (!value) {
@@ -1836,11 +1972,6 @@
         const stringValue =
             String(value).trim();
 
-        /*
-         * If Laravel gives us an ISO date/time,
-         * only keep the date portion.
-         */
-
         return stringValue.includes('T')
             ? stringValue.split('T')[0]
             : stringValue.substring(0, 10);
@@ -1849,189 +1980,118 @@
 
 
     /* =====================================================
-       FILTER TABLE
+       SERVER-SIDE FILTERING
     ===================================================== */
 
-    function filterTable() {
+    function applyFilters() {
 
-        if (!table) {
-            return;
-        }
+        const params =
+            new URLSearchParams();
 
-        const selectedCourse =
-            normalize(courseFilter?.value);
 
-        const selectedBatch =
-            normalize(batchFilter?.value);
+        const course =
+            courseFilter?.value?.trim() || '';
 
-        const selectedVerification =
-            normalize(verificationFilter?.value);
 
-        const selectedDeployment =
-            normalize(deploymentFilter?.value);
+        const batch =
+            batchFilter?.value?.trim() || '';
+
+
+        const deployment =
+            deploymentFilter?.value?.trim() || '';
+
+
+        const verification =
+            verificationFilter?.value?.trim() || '';
+
 
         const search =
-            String(searchInput?.value ?? '')
-                .trim()
-                .toLowerCase();
+            searchInput?.value?.trim() || '';
 
 
-        let total = 0;
-        let active = 0;
-        let deployed = 0;
-        let notDeployed = 0;
+        if (course) {
 
-
-        const rows =
-            table.querySelectorAll(
-                'tbody tr.cadet-row'
+            params.set(
+                'course',
+                course
             );
 
-
-        rows.forEach(row => {
-
-            const rowCourse =
-                normalize(
-                    row.dataset.course
-                );
-
-            const rowBatch =
-                normalize(
-                    row.dataset.batch
-                );
-
-            const rowVerification =
-                normalize(
-                    row.dataset.verification
-                );
-
-            const rowDeployment =
-                normalize(
-                    row.dataset.deployment
-                );
-
-            const rowText =
-                row.innerText
-                    .toLowerCase();
-
-
-            const matchCourse =
-                !selectedCourse ||
-                rowCourse === selectedCourse;
-
-
-            const matchBatch =
-                !selectedBatch ||
-                rowBatch === selectedBatch;
-
-
-            const matchVerification =
-                !selectedVerification ||
-                rowVerification === selectedVerification;
-
-
-            const matchDeployment =
-                !selectedDeployment ||
-                rowDeployment === selectedDeployment;
-
-
-            const matchSearch =
-                !search ||
-                rowText.includes(search);
-
-
-            const visible =
-                matchCourse &&
-                matchBatch &&
-                matchVerification &&
-                matchDeployment &&
-                matchSearch;
-
-
-            row.hidden = !visible;
-
-
-            if (!visible) {
-                return;
-            }
-
-
-            total++;
-
-
-            if (
-                row.dataset.active === '1'
-            ) {
-                active++;
-            }
-
-
-            if (
-                rowDeployment === 'ongoing' ||
-                rowDeployment === 'completed'
-            ) {
-                deployed++;
-            }
-
-
-            if (
-                rowDeployment === 'not_deployed'
-            ) {
-                notDeployed++;
-            }
-
-        });
-
-
-        const totalCard =
-            document.getElementById(
-                'totalCadetsCard'
-            );
-
-        const activeCard =
-            document.getElementById(
-                'activeCadetsCard'
-            );
-
-        const deployedCard =
-            document.getElementById(
-                'deployedCadetsCard'
-            );
-
-        const notDeployedCard =
-            document.getElementById(
-                'notDeployedCard'
-            );
-
-
-        if (totalCard) {
-            totalCard.innerText = total;
-        }
-
-        if (activeCard) {
-            activeCard.innerText = active;
-        }
-
-        if (deployedCard) {
-            deployedCard.innerText = deployed;
-        }
-
-        if (notDeployedCard) {
-            notDeployedCard.innerText =
-                notDeployed;
         }
 
 
-        if (resultCount) {
+        if (batch) {
 
-            resultCount.innerText =
-                `${total} ${
-                    total === 1
-                        ? 'Record'
-                        : 'Records'
-                }`;
+            params.set(
+                'batch',
+                batch
+            );
 
         }
+
+
+        if (deployment) {
+
+            params.set(
+                'deployment',
+                deployment
+            );
+
+        }
+
+
+        if (verification) {
+
+            params.set(
+                'verification',
+                verification
+            );
+
+        }
+
+
+        if (search) {
+
+            params.set(
+                'search',
+                search
+            );
+
+        }
+
+
+        /*
+         * Always remove the current page
+         * when changing filters.
+         *
+         * Example:
+         *
+         * page=4 + batch=2026
+         *
+         * becomes:
+         *
+         * batch=2026
+         *
+         * so Laravel starts at page 1.
+         */
+
+        params.delete('page');
+
+
+        const queryString =
+            params.toString();
+
+
+        const url =
+            window.location.pathname +
+            (
+                queryString
+                    ? '?' + queryString
+                    : ''
+            );
+
+
+        window.location.href =
+            url;
 
     }
 
@@ -2040,66 +2100,101 @@
        FILTER EVENTS
     ===================================================== */
 
-deploymentFilter?.addEventListener(
-    'change',
-    applyFilters
-);
-
-courseFilter?.addEventListener(
-    'change',
-    applyFilters
-);
-
-batchFilter?.addEventListener(
-    'change',
-    applyFilters
-);
-
-verificationFilter?.addEventListener(
-    'change',
-    applyFilters
-);
-
-    searchInput?.addEventListener(
-        'input',
-        filterTable
+    deploymentFilter?.addEventListener(
+        'change',
+        applyFilters
     );
 
 
-    clearFilters?.addEventListener(
-        'click',
+    courseFilter?.addEventListener(
+        'change',
+        applyFilters
+    );
+
+
+    batchFilter?.addEventListener(
+        'change',
+        applyFilters
+    );
+
+
+    verificationFilter?.addEventListener(
+        'change',
+        applyFilters
+    );
+
+
+    /* =====================================================
+       SEARCH
+    ===================================================== */
+
+    let searchTimer = null;
+
+
+    searchInput?.addEventListener(
+        'input',
         function () {
 
-            if (courseFilter) {
-                courseFilter.value = '';
+            clearTimeout(
+                searchTimer
+            );
+
+
+            searchTimer =
+                setTimeout(
+                    function () {
+
+                        applyFilters();
+
+                    },
+                    500
+                );
+
+        }
+    );
+
+
+    searchInput?.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key === 'Enter'
+            ) {
+
+                event.preventDefault();
+
+
+                clearTimeout(
+                    searchTimer
+                );
+
+
+                applyFilters();
+
             }
-
-            if (batchFilter) {
-                batchFilter.value = '';
-            }
-
-            if (deploymentFilter) {
-                deploymentFilter.value = '';
-            }
-
-            if (verificationFilter) {
-                verificationFilter.value = '';
-            }
-
-            if (searchInput) {
-                searchInput.value = '';
-            }
-
-            filterTable();
-
-            searchInput?.focus();
 
         }
     );
 
 
     /* =====================================================
-       VIEW MODAL
+       CLEAR FILTERS
+    ===================================================== */
+
+    clearFilters?.addEventListener(
+        'click',
+        function () {
+
+            window.location.href =
+                window.location.pathname;
+
+        }
+    );
+
+
+    /* =====================================================
+       VIEW CADET MODAL
     ===================================================== */
 
     window.openCadetModal = function (
@@ -2126,45 +2221,54 @@ verificationFilter?.addEventListener(
                 'modalPhoto'
             );
 
+
         const modalName =
             document.getElementById(
                 'modalName'
             );
+
 
         const modalTrb =
             document.getElementById(
                 'modalTrb'
             );
 
+
         const modalCourse =
             document.getElementById(
                 'modalCourse'
             );
+
 
         const modalBatch =
             document.getElementById(
                 'modalBatch'
             );
 
+
         const modalRank =
             document.getElementById(
                 'modalRank'
             );
+
 
         const modalBirth =
             document.getElementById(
                 'modalBirth'
             );
 
+
         const modalContact =
             document.getElementById(
                 'modalContact'
             );
 
+
         const modalVerification =
             document.getElementById(
                 'modalVerification'
             );
+
 
         const deployBadge =
             document.getElementById(
@@ -2172,72 +2276,105 @@ verificationFilter?.addEventListener(
             );
 
 
+        /* =================================================
+           PHOTO
+        ================================================== */
+
         if (modalPhoto) {
 
             modalPhoto.src =
                 photo || DEFAULT_PHOTO;
 
+
             modalPhoto.onerror =
                 function () {
+
+                    this.onerror = null;
+
                     this.src =
                         DEFAULT_PHOTO;
+
                 };
 
         }
 
 
+        /* =================================================
+           BASIC INFORMATION
+        ================================================== */
+
         if (modalName) {
+
             modalName.innerText =
                 name || 'N/A';
+
         }
 
 
         if (modalTrb) {
+
             modalTrb.innerText =
                 trb || 'N/A';
+
         }
 
 
         if (modalCourse) {
+
             modalCourse.innerText =
                 course || 'N/A';
+
         }
 
 
         if (modalBatch) {
+
             modalBatch.innerText =
                 batch || 'No Batch';
+
         }
 
 
         if (modalRank) {
+
             modalRank.innerText =
                 rank || 'N/A';
+
         }
 
 
         if (modalBirth) {
+
             modalBirth.innerText =
                 birth || 'N/A';
+
         }
 
 
         if (modalContact) {
+
             modalContact.innerText =
                 contact || 'N/A';
+
         }
 
+
+        /* =================================================
+           VERIFICATION
+        ================================================== */
 
         if (modalVerification) {
 
             const verificationValue =
                 normalize(
                     verification
-                );
+                ) || 'pending';
+
 
             modalVerification.innerText =
                 verification ||
                 'Pending';
+
 
             modalVerification.className =
                 'view-value verification-value ' +
@@ -2245,6 +2382,10 @@ verificationFilter?.addEventListener(
 
         }
 
+
+        /* =================================================
+           DEPLOYMENT
+        ================================================== */
 
         if (deployBadge) {
 
@@ -2258,11 +2399,17 @@ verificationFilter?.addEventListener(
                 deploymentStatus === 'not_deployed'
                     ? 'Not Deployed'
                     : deploymentStatus
-                        .replace(/_/g, ' ')
+                        .replace(
+                            /_/g,
+                            ' '
+                        )
                         .replace(
                             /\b\w/g,
-                            letter =>
-                                letter.toUpperCase()
+                            function (letter) {
+
+                                return letter.toUpperCase();
+
+                            }
                         );
 
 
@@ -2272,6 +2419,10 @@ verificationFilter?.addEventListener(
 
         }
 
+
+        /* =================================================
+           EDIT BUTTON
+        ================================================== */
 
         const viewEditButton =
             document.getElementById(
@@ -2293,12 +2444,20 @@ verificationFilter?.addEventListener(
         }
 
 
-        viewModal.classList.add('show');
+        /* =================================================
+           OPEN MODAL
+        ================================================== */
+
+        viewModal.classList.add(
+            'show'
+        );
+
 
         viewModal.setAttribute(
             'aria-hidden',
             'false'
         );
+
 
         document.body.classList.add(
             'modal-open'
@@ -2306,6 +2465,10 @@ verificationFilter?.addEventListener(
 
     };
 
+
+    /* =====================================================
+       CLOSE VIEW MODAL
+    ===================================================== */
 
     window.closeCadetModal = function () {
 
@@ -2317,6 +2480,7 @@ verificationFilter?.addEventListener(
         viewModal.classList.remove(
             'show'
         );
+
 
         viewModal.setAttribute(
             'aria-hidden',
@@ -2363,19 +2527,28 @@ verificationFilter?.addEventListener(
         guardianAddress
     ) {
 
-        if (!editModal || !editForm) {
+        if (
+            !editModal ||
+            !editForm
+        ) {
+
             return;
+
         }
 
 
-        /*
-         * KEEP EXISTING LARAVEL UPDATE ROUTE
-         */
+        /* =================================================
+           FORM ACTION
+        ================================================== */
 
         editForm.action =
             "{{ url('/admin/cadets') }}/" +
             id;
 
+
+        /* =================================================
+           PERSONAL INFORMATION
+        ================================================== */
 
         setInputValue(
             'edit_full_name',
@@ -2383,7 +2556,9 @@ verificationFilter?.addEventListener(
         );
 
 
-        setCourseValue(course);
+        setCourseValue(
+            course
+        );
 
 
         setInputValue(
@@ -2428,11 +2603,21 @@ verificationFilter?.addEventListener(
         );
 
 
+        /*
+         * TRB IS OPTIONAL.
+         *
+         * Empty value becomes an empty input.
+         */
+
         setInputValue(
             'edit_trb_control_number',
             trb
         );
 
+
+        /* =================================================
+           GUARDIAN INFORMATION
+        ================================================== */
 
         setInputValue(
             'edit_guardian_relationship',
@@ -2464,6 +2649,10 @@ verificationFilter?.addEventListener(
         );
 
 
+        /* =================================================
+           PHOTO PREVIEW
+        ================================================== */
+
         const preview =
             document.getElementById(
                 'editCadetPreview'
@@ -2475,14 +2664,23 @@ verificationFilter?.addEventListener(
             preview.src =
                 photo || DEFAULT_PHOTO;
 
+
             preview.onerror =
                 function () {
+
+                    this.onerror = null;
+
                     this.src =
                         DEFAULT_PHOTO;
+
                 };
 
         }
 
+
+        /* =================================================
+           RESET PHOTO INPUT
+        ================================================== */
 
         const photoInput =
             document.getElementById(
@@ -2491,7 +2689,10 @@ verificationFilter?.addEventListener(
 
 
         if (photoInput) {
-            photoInput.value = '';
+
+            photoInput.value =
+                '';
+
         }
 
 
@@ -2502,23 +2703,36 @@ verificationFilter?.addEventListener(
 
 
         if (removePhotoInput) {
-            removePhotoInput.value = '0';
+
+            removePhotoInput.value =
+                '0';
+
         }
 
+
+        /* =================================================
+           RESET TAB
+        ================================================== */
 
         switchEditTab(
             'personal'
         );
 
 
+        /* =================================================
+           OPEN MODAL
+        ================================================== */
+
         editModal.classList.add(
             'show'
         );
+
 
         editModal.setAttribute(
             'aria-hidden',
             'false'
         );
+
 
         document.body.classList.add(
             'modal-open'
@@ -2527,13 +2741,19 @@ verificationFilter?.addEventListener(
     };
 
 
+    /* =====================================================
+       SET INPUT VALUE
+    ===================================================== */
+
     function setInputValue(
         id,
         value
     ) {
 
         const element =
-            document.getElementById(id);
+            document.getElementById(
+                id
+            );
 
 
         if (element) {
@@ -2550,7 +2770,9 @@ verificationFilter?.addEventListener(
        COURSE MATCHING
     ===================================================== */
 
-    function setCourseValue(course) {
+    function setCourseValue(
+        course
+    ) {
 
         const select =
             document.getElementById(
@@ -2564,10 +2786,13 @@ verificationFilter?.addEventListener(
 
 
         const incoming =
-            normalize(course);
+            normalize(
+                course
+            );
 
 
-        select.value = '';
+        select.value =
+            '';
 
 
         if (!incoming) {
@@ -2583,12 +2808,13 @@ verificationFilter?.addEventListener(
 
         const match =
             options.find(
-                option => {
+                function (option) {
 
                     const optionValue =
                         normalize(
                             option.value
                         );
+
 
                     const optionCourse =
                         normalize(
@@ -2606,7 +2832,10 @@ verificationFilter?.addEventListener(
 
 
         if (match) {
-            match.selected = true;
+
+            match.selected =
+                true;
+
         }
 
     }
@@ -2616,7 +2845,9 @@ verificationFilter?.addEventListener(
        FIND EDIT BUTTON
     ===================================================== */
 
-    window.openEditModalById = function (id) {
+    window.openEditModalById = function (
+        id
+    ) {
 
         const row =
             document.querySelector(
@@ -2636,7 +2867,9 @@ verificationFilter?.addEventListener(
 
 
         if (editButton) {
+
             editButton.click();
+
         }
 
     };
@@ -2656,6 +2889,7 @@ verificationFilter?.addEventListener(
         editModal.classList.remove(
             'show'
         );
+
 
         editModal.setAttribute(
             'aria-hidden',
@@ -2681,22 +2915,27 @@ verificationFilter?.addEventListener(
        EDIT TABS
     ===================================================== */
 
-    window.switchEditTab = function (tab) {
+    window.switchEditTab = function (
+        tab
+    ) {
 
         const personalTab =
             document.getElementById(
                 'editPersonalTab'
             );
 
+
         const guardianTab =
             document.getElementById(
                 'editGuardianTab'
             );
 
+
         const personalContent =
             document.getElementById(
                 'editPersonalContent'
             );
+
 
         const guardianContent =
             document.getElementById(
@@ -2710,7 +2949,9 @@ verificationFilter?.addEventListener(
             !personalContent ||
             !guardianContent
         ) {
+
             return;
+
         }
 
 
@@ -2723,6 +2964,7 @@ verificationFilter?.addEventListener(
             !guardian
         );
 
+
         guardianTab.classList.toggle(
             'active',
             guardian
@@ -2733,6 +2975,7 @@ verificationFilter?.addEventListener(
             'active',
             !guardian
         );
+
 
         guardianContent.classList.toggle(
             'active',
@@ -2767,39 +3010,59 @@ verificationFilter?.addEventListener(
                 }
 
 
+                /* -----------------------------------------
+                   FILE TYPE
+                ----------------------------------------- */
+
                 if (
-                    !file.type.startsWith('image/')
+                    !file.type.startsWith(
+                        'image/'
+                    )
                 ) {
 
                     alert(
                         'Please select a valid image file.'
                     );
 
+
                     editPhotoInput.value =
                         '';
+
 
                     return;
 
                 }
 
+
+                /* -----------------------------------------
+                   FILE SIZE
+                ----------------------------------------- */
 
                 const maxSize =
                     5 * 1024 * 1024;
 
 
-                if (file.size > maxSize) {
+                if (
+                    file.size > maxSize
+                ) {
 
                     alert(
                         'Please select an image smaller than 5 MB.'
                     );
 
+
                     editPhotoInput.value =
                         '';
+
 
                     return;
 
                 }
 
+
+                /* -----------------------------------------
+                   RESET REMOVE FLAG
+                ----------------------------------------- */
 
                 const removePhotoInput =
                     document.getElementById(
@@ -2808,9 +3071,16 @@ verificationFilter?.addEventListener(
 
 
                 if (removePhotoInput) {
-                    removePhotoInput.value = '0';
+
+                    removePhotoInput.value =
+                        '0';
+
                 }
 
+
+                /* -----------------------------------------
+                   PREVIEW
+                ----------------------------------------- */
 
                 const reader =
                     new FileReader();
@@ -2856,10 +3126,12 @@ verificationFilter?.addEventListener(
                 'editPhotoInput'
             );
 
+
         const preview =
             document.getElementById(
                 'editCadetPreview'
             );
+
 
         const removePhotoInput =
             document.getElementById(
@@ -2868,7 +3140,10 @@ verificationFilter?.addEventListener(
 
 
         if (input) {
-            input.value = '';
+
+            input.value =
+                '';
+
         }
 
 
@@ -2937,7 +3212,9 @@ verificationFilter?.addEventListener(
             if (
                 event.key !== 'Escape'
             ) {
+
                 return;
+
             }
 
 
@@ -3016,10 +3293,26 @@ verificationFilter?.addEventListener(
 
 
     /* =====================================================
-       INITIAL FILTER
+       IMPORTANT
     ===================================================== */
 
-    filterTable();
+    /*
+     * There is intentionally NO filterTable() call here.
+     *
+     * Filtering is handled by Laravel on the server.
+     *
+     * Example:
+     *
+     * /admin/cadets?batch=5
+     *
+     * Pagination:
+     *
+     * /admin/cadets?batch=5&page=2
+     *
+     * Because Laravel uses withQueryString(),
+     * the selected filters remain active
+     * when navigating between pages.
+     */
 
 })();
 
