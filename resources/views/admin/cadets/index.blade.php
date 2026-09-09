@@ -1199,8 +1199,8 @@
 
                                             TRB Control Number
 
-                                            <span class="required">
-                                                *
+                                            <span class="optional">
+                                                (Optional)
                                             </span>
 
                                         </label>
@@ -1211,7 +1211,7 @@
                                             name="trb_control_number"
                                             class="edit-input"
                                             required
-                                            placeholder="Enter TRB control number"
+                                            placeholder="Enter TRB control number (optional)"
                                         >
 
                                     </div>
