@@ -15,191 +15,33 @@ use App\Events\CadetLocationUpdated;
 
 class CadetController extends Controller
 {
-public function index(Request $request)
-{
-    $query = Cadet::with([
-        'user:id,is_active',
-        'batch:id,batch_year',
-        'deployment:id,cadet_id,status',
-    ]);
+    public function index()
+    {
+        $cadets = Cadet::with(['user', 'batch', 'deployment'])
+            ->orderBy('full_name')
+            ->get();
 
-    /*
-    |--------------------------------------------------------------------------
-    | SEARCH
-    |--------------------------------------------------------------------------
-    */
+        $batches = Batch::orderBy('batch_year', 'desc')->get();
 
-    if ($request->filled('search')) {
+        $courses = Cadet::select('course')
+            ->whereNotNull('course')
+            ->where('course', '!=', '')
+            ->distinct()
+            ->orderBy('course')
+            ->get();
 
-        $search = trim($request->search);
+        $totalCadets = Cadet::count();
 
-        $query->where(function ($q) use ($search) {
-
-            $q->where('full_name', 'like', "%{$search}%")
-              ->orWhere('trb_control_number', 'like', "%{$search}%")
-              ->orWhere('course', 'like', "%{$search}%");
-
-        });
+        return view('admin.cadets.index', [
+            'cadets' => $cadets,
+            'batches' => $batches,
+            'courses' => $courses,
+            'totalCadets' => $totalCadets,
+            'activeCadets' => $totalCadets,
+            'withDeployment' => Cadet::has('deployment')->count(),
+            'noDeployment' => Cadet::doesntHave('deployment')->count(),
+        ]);
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | COURSE
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('course')) {
-
-        $query->where(
-            'course',
-            $request->course
-        );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | BATCH
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('batch')) {
-
-        $query->where(
-            'batch_id',
-            $request->batch
-        );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | DEPLOYMENT
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('deployment')) {
-
-        switch ($request->deployment) {
-
-            case 'not_deployed':
-
-                $query->doesntHave('deployment');
-
-                break;
-
-
-            case 'ongoing':
-
-                $query->whereHas(
-                    'deployment',
-                    function ($q) {
-
-                        $q->where(
-                            'status',
-                            'Ongoing'
-                        );
-
-                    }
-                );
-
-                break;
-
-
-            case 'completed':
-
-                $query->whereHas(
-                    'deployment',
-                    function ($q) {
-
-                        $q->where(
-                            'status',
-                            'Completed'
-                        );
-
-                    }
-                );
-
-                break;
-
-        }
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PAGINATION
-    |--------------------------------------------------------------------------
-    */
-
-    $cadets = $query
-        ->orderBy('full_name')
-        ->paginate(25)
-        ->withQueryString();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FILTER OPTIONS
-    |--------------------------------------------------------------------------
-    */
-
-    $batches = Batch::orderBy(
-        'batch_year',
-        'desc'
-    )->get();
-
-    $courses = Course::orderBy(
-        'course_name'
-    )->get();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | STATISTICS
-    |--------------------------------------------------------------------------
-    */
-
-    $totalCadets = Cadet::count();
-
-    $withDeployment = Cadet::has(
-        'deployment'
-    )->count();
-
-    $noDeployment = Cadet::doesntHave(
-        'deployment'
-    )->count();
-
-    $activeCadets = Cadet::whereHas(
-        'user',
-        function ($query) {
-
-            $query->where(
-                'is_active',
-                true
-            );
-
-        }
-    )->count();
-
-
-    return view(
-        'admin.cadets.index',
-        compact(
-            'cadets',
-            'batches',
-            'courses',
-            'totalCadets',
-            'activeCadets',
-            'withDeployment',
-            'noDeployment'
-        )
-    );
-}
 
     public function create()
     {
