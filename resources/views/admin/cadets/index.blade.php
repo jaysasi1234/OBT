@@ -1200,7 +1200,6 @@
                                             TRB Control Number
 
                                             <span class="optional">
-                                                (Optional)
                                             </span>
 
                                         </label>
@@ -1210,8 +1209,7 @@
                                             id="edit_trb_control_number"
                                             name="trb_control_number"
                                             class="edit-input"
-                                            required
-                                            placeholder="Enter TRB control number (optional)"
+                                            placeholder="Enter TRB control number"
                                         >
 
                                     </div>
