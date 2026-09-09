@@ -2,7 +2,7 @@
    CADET MANAGEMENT
    PROFESSIONAL ADMIN UI
    RESPONSIVE DARK BLUE DESIGN
-   PERFORMANCE OPTIMIZED
+   FULL RESPONSIVE MODAL FIX
    ========================================================= */
 
 :root {
@@ -26,12 +26,12 @@
     --cm-border: rgba(255, 255, 255, 0.08);
 
     --cm-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.28);
+        0 20px 50px rgba(0, 0, 0, 0.30);
 
     --cm-radius: 18px;
 
     --cm-transition:
-        0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 
@@ -71,6 +71,16 @@ body {
     color: var(--cm-text);
 
     background:
+        radial-gradient(
+            circle at 10% 5%,
+            rgba(59, 130, 246, 0.15),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(6, 182, 212, 0.08),
+            transparent 25%
+        ),
         linear-gradient(
             135deg,
             #050b20 0%,
@@ -103,21 +113,50 @@ select {
 
 .cadet-management-page {
     position: relative;
-
     width: 100%;
     min-width: 0;
-
     min-height: 100vh;
     min-height: 100dvh;
-
     padding: 28px;
-
     color: var(--cm-text);
+}
+
+.cadet-management-page::before {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    z-index: -1;
+
+    pointer-events: none;
+
+    opacity: 0.42;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(59, 130, 246, 0.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            rgba(59, 130, 246, 0.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 40px 40px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent 90%
+        );
 }
 
 
 /* =========================================================
-   NOTIFICATION
+   SUCCESS NOTIFICATION
    ========================================================= */
 
 .notif {
@@ -147,7 +186,7 @@ select {
 
     border:
         1px solid
-        rgba(34, 197, 94, 0.3);
+        rgba(34, 197, 94, 0.30);
 
     border-left:
         4px solid
@@ -165,21 +204,18 @@ select {
     color: #fff;
 
     box-shadow:
-        0 18px 45px
-        rgba(0, 0, 0, 0.35);
+        0 18px 45px rgba(0, 0, 0, 0.35);
 
     font-size: 14px;
     font-weight: 600;
 
     animation:
-        successSlideIn 0.3s ease;
+        successSlideIn 0.35s ease;
 }
 
 .notif i {
     flex-shrink: 0;
-
     color: #bbf7d0;
-
     font-size: 18px;
 }
 
@@ -196,7 +232,6 @@ select {
     height: 28px;
 
     border: none;
-
     border-radius: 7px;
 
     background: transparent;
@@ -204,7 +239,6 @@ select {
     color: #bbf7d0;
 
     font-size: 20px;
-
     line-height: 1;
 
     cursor: pointer;
@@ -215,7 +249,7 @@ select {
 }
 
 .notif button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.10);
     color: #fff;
 }
 
@@ -233,7 +267,7 @@ select {
 @keyframes successSlideIn {
     from {
         opacity: 0;
-        transform: translateX(30px);
+        transform: translateX(35px);
     }
 
     to {
@@ -249,7 +283,6 @@ select {
 
 .validation-alert {
     display: flex;
-
     align-items: flex-start;
 
     gap: 12px;
@@ -260,7 +293,7 @@ select {
 
     border:
         1px solid
-        rgba(239, 68, 68, 0.3);
+        rgba(239, 68, 68, 0.30);
 
     border-left:
         4px solid
@@ -274,13 +307,11 @@ select {
     color: #fecaca;
 
     font-size: 13px;
-
     line-height: 1.5;
 }
 
 .validation-alert i {
     flex-shrink: 0;
-
     margin-top: 2px;
 }
 
@@ -289,9 +320,7 @@ select {
 }
 
 .validation-alert ul {
-    margin:
-        6px 0 0 18px;
-
+    margin: 6px 0 0 18px;
     padding: 0;
 }
 
@@ -302,13 +331,10 @@ select {
 
 .page-header {
     position: relative;
-
     overflow: hidden;
 
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
 
     gap: 20px;
@@ -374,7 +400,6 @@ select {
 
 .header-content {
     position: relative;
-
     z-index: 2;
 
     min-width: 0;
@@ -384,15 +409,12 @@ select {
     margin: 0;
 
     display: flex;
-
     align-items: center;
 
     gap: 11px;
 
     font-size: 30px;
-
     line-height: 1.15;
-
     font-weight: 800;
 
     letter-spacing: -0.5px;
@@ -410,13 +432,11 @@ select {
     color: #cbd5e1;
 
     font-size: 14px;
-
     line-height: 1.5;
 }
 
 .header-actions {
     position: relative;
-
     z-index: 2;
 
     display: flex;
@@ -430,7 +450,6 @@ select {
     display: inline-flex;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 9px;
@@ -441,7 +460,7 @@ select {
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.2);
+        rgba(255, 255, 255, 0.20);
 
     border-radius: 12px;
 
@@ -453,7 +472,6 @@ select {
     text-decoration: none;
 
     font-size: 14px;
-
     font-weight: 700;
 
     transition: var(--cm-transition);
@@ -461,14 +479,12 @@ select {
 
 .add-btn:hover {
     color: var(--cm-primary);
-
     background: #fff;
 
     transform: translateY(-2px);
 
     box-shadow:
-        0 10px 25px
-        rgba(0, 0, 0, 0.18);
+        0 10px 25px rgba(0, 0, 0, 0.18);
 }
 
 
@@ -489,7 +505,6 @@ select {
 
 .stat-card {
     position: relative;
-
     overflow: hidden;
 
     min-height: 145px;
@@ -504,17 +519,14 @@ select {
 
     box-shadow: var(--cm-shadow);
 
-    transition:
-        transform var(--cm-transition),
-        box-shadow var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
 
     box-shadow:
-        0 24px 50px
-        rgba(0, 0, 0, 0.35);
+        0 24px 50px rgba(0, 0, 0, 0.40);
 }
 
 .stat-card::before {
@@ -536,7 +548,6 @@ select {
 
 .stat-content {
     position: relative;
-
     z-index: 2;
 }
 
@@ -547,7 +558,6 @@ select {
         rgba(255, 255, 255, 0.82);
 
     font-size: 12px;
-
     font-weight: 700;
 
     letter-spacing: 0.5px;
@@ -557,7 +567,6 @@ select {
     margin: 0;
 
     font-size: 34px;
-
     line-height: 1;
 
     font-weight: 800;
@@ -567,10 +576,9 @@ select {
     margin-top: 12px;
 
     color:
-        rgba(255, 255, 255, 0.7);
+        rgba(255, 255, 255, 0.70);
 
     font-size: 12px;
-
     line-height: 1.4;
 }
 
@@ -586,7 +594,6 @@ select {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     border-radius: 14px;
@@ -663,7 +670,6 @@ select {
     display: flex;
 
     justify-content: space-between;
-
     align-items: center;
 
     gap: 15px;
@@ -677,8 +683,6 @@ select {
     align-items: center;
 
     gap: 10px;
-
-    min-width: 0;
 }
 
 .filter-title-icon {
@@ -688,7 +692,6 @@ select {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -705,7 +708,6 @@ select {
     margin: 0;
 
     font-size: 16px;
-
     font-weight: 700;
 }
 
@@ -723,9 +725,6 @@ select {
     display: inline-flex;
 
     align-items: center;
-
-    justify-content: center;
-
     gap: 7px;
 
     min-height: 34px;
@@ -744,12 +743,9 @@ select {
     color: #94a3b8;
 
     font-size: 11px;
-
     font-weight: 700;
 
     cursor: pointer;
-
-    text-decoration: none;
 
     transition: var(--cm-transition);
 }
@@ -759,7 +755,7 @@ select {
         rgba(59, 130, 246, 0.35);
 
     background:
-        rgba(59, 130, 246, 0.1);
+        rgba(59, 130, 246, 0.10);
 
     color: #bfdbfe;
 }
@@ -768,8 +764,8 @@ select {
     display: grid;
 
     grid-template-columns:
-        minmax(220px, 1.3fr)
-        repeat(4, minmax(150px, 1fr));
+        repeat(4, minmax(0, 1fr))
+        minmax(220px, 1.3fr);
 
     gap: 12px;
 
@@ -788,7 +784,6 @@ select {
     color: #94a3b8;
 
     font-size: 10px;
-
     font-weight: 700;
 
     text-transform: uppercase;
@@ -799,7 +794,6 @@ select {
 .filter-control select,
 .filter-control input {
     width: 100%;
-
     height: 46px;
 
     padding: 0 14px;
@@ -820,15 +814,11 @@ select {
 
     font-size: 13px;
 
-    transition:
-        border-color var(--cm-transition),
-        background var(--cm-transition),
-        box-shadow var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .filter-control select {
     cursor: pointer;
-
     appearance: auto;
 }
 
@@ -846,6 +836,10 @@ select {
 
 .filter-control input::placeholder {
     color: #94a3b8;
+}
+
+.search-control {
+    min-width: 0;
 }
 
 .search-box {
@@ -895,7 +889,6 @@ select {
     display: flex;
 
     justify-content: space-between;
-
     align-items: center;
 
     gap: 15px;
@@ -924,7 +917,6 @@ select {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -941,7 +933,6 @@ select {
     margin: 0;
 
     font-size: 16px;
-
     font-weight: 700;
 }
 
@@ -965,14 +956,8 @@ select {
     color: #bfdbfe;
 
     font-size: 12px;
-
     font-weight: 600;
 }
-
-
-/* =========================================================
-   TABLE
-   ========================================================= */
 
 .table-wrapper {
     width: 100%;
@@ -988,7 +973,6 @@ select {
 
 table {
     width: 100%;
-
     min-width: 1100px;
 
     border-collapse: collapse;
@@ -1008,7 +992,6 @@ thead th {
     text-align: left;
 
     font-size: 11px;
-
     font-weight: 700;
 
     text-transform: uppercase;
@@ -1057,8 +1040,8 @@ tbody td {
 }
 
 .table-avatar {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
 
     flex-shrink: 0;
 
@@ -1068,7 +1051,7 @@ tbody td {
 
     border:
         2px solid
-        rgba(255, 255, 255, 0.1);
+        rgba(255, 255, 255, 0.10);
 
     background: #17285d;
 }
@@ -1081,8 +1064,6 @@ tbody td {
     font-weight: 700;
 
     text-overflow: ellipsis;
-
-    max-width: 220px;
 }
 
 .trb-code {
@@ -1101,31 +1082,26 @@ tbody td {
 
 .course-text {
     color: #cbd5e1;
-
     font-weight: 600;
 }
-
-
-/* =========================================================
-   EMPTY
-   ========================================================= */
 
 .empty-row {
     padding: 65px 25px !important;
 
     text-align: center;
+
+    color: #64748b;
 }
 
 .empty-state {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-direction: column;
 
-    gap: 7px;
+    gap: 6px;
 }
 
 .empty-icon {
@@ -1135,7 +1111,6 @@ tbody td {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     margin-bottom: 6px;
@@ -1152,13 +1127,11 @@ tbody td {
 
 .empty-state strong {
     color: #94a3b8;
-
     font-size: 14px;
 }
 
 .empty-state span {
     color: #64748b;
-
     font-size: 12px;
 }
 
@@ -1179,7 +1152,6 @@ tbody td {
     border-radius: 20px;
 
     font-size: 11px;
-
     font-weight: 700;
 
     white-space: nowrap;
@@ -1259,7 +1231,6 @@ tbody td {
     display: inline-flex;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 6px;
@@ -1276,15 +1247,11 @@ tbody td {
     text-decoration: none;
 
     font-size: 11px;
-
     font-weight: 700;
 
     cursor: pointer;
 
-    transition:
-        transform var(--cm-transition),
-        background var(--cm-transition),
-        color var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .btn:hover {
@@ -1311,104 +1278,22 @@ tbody td {
 
 .btn-edit:hover {
     background: #f59e0b;
-
     color: #fff;
 }
 
+.btn-track {
+    background:
+        rgba(16, 185, 129, 0.13);
 
-/* =========================================================
-   PAGINATION
-   ========================================================= */
+    border-color:
+        rgba(16, 185, 129, 0.2);
 
-.pagination-container {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    padding: 18px 22px;
-
-    border-top:
-        1px solid
-        var(--cm-border);
-
-    background: #0b1738;
+    color: #34d399;
 }
 
-.pagination-summary {
-    color: #94a3b8;
-
-    font-size: 12px;
-
-    white-space: nowrap;
-}
-
-.pagination-summary strong {
-    color: #e2e8f0;
-}
-
-.pagination-links {
-    display: flex;
-
-    align-items: center;
-
-    justify-content: flex-end;
-
-    min-width: 0;
-}
-
-.pagination-links nav {
-    display: flex;
-}
-
-.pagination-links svg {
-    width: 18px;
-    height: 18px;
-}
-
-.pagination-links span,
-.pagination-links a {
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-width: 34px;
-    height: 34px;
-
-    padding: 0 10px;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.08);
-
-    background: #121f4d;
-
-    color: #cbd5e1;
-
-    font-size: 12px;
-
-    text-decoration: none;
-}
-
-.pagination-links a:hover {
-    background: #1d4ed8;
-
+.btn-track:hover {
+    background: #10b981;
     color: #fff;
-}
-
-.pagination-links span[aria-current="page"] {
-    background: #2563eb;
-
-    border-color: #2563eb;
-
-    color: #fff;
-
-    font-weight: 700;
 }
 
 
@@ -1426,9 +1311,12 @@ tbody td {
     display: none;
 
     align-items: center;
-
     justify-content: center;
 
+    /*
+     * Prevent the page behind the modal
+     * from controlling modal dimensions.
+     */
     width: 100%;
     height: 100%;
 
@@ -1438,6 +1326,12 @@ tbody td {
 
     background:
         rgba(2, 6, 23, 0.84);
+
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
 }
 
 .cadet-modal.show {
@@ -1460,6 +1354,10 @@ tbody td {
 
 /* =========================================================
    MODAL CONTENT
+   IMPORTANT FIX:
+   The modal itself and the form are BOTH flex containers.
+   This allows the body to scroll while the header/footer
+   remain inside the viewport.
    ========================================================= */
 
 .edit-modal-content {
@@ -1467,13 +1365,16 @@ tbody td {
 
     width: min(920px, 100%);
 
+    /*
+     * IMPORTANT:
+     * Use dynamic viewport height.
+     */
     max-height:
         calc(100dvh - 40px);
 
     height: auto;
 
     display: flex;
-
     flex-direction: column;
 
     min-height: 0;
@@ -1490,11 +1391,20 @@ tbody td {
 
     box-shadow:
         0 35px 90px
-        rgba(0, 0, 0, 0.6);
+        rgba(0, 0, 0, 0.60);
 
     animation:
-        modalScaleIn 0.2s ease;
+        modalScaleIn 0.25s ease;
 }
+
+
+/*
+ * THIS IS THE IMPORTANT FIX.
+ *
+ * Your <form> wraps the modal body and footer.
+ * Without flex here, the body cannot correctly
+ * calculate the remaining modal height.
+ */
 
 .edit-modal-content > form {
     display: flex;
@@ -1510,6 +1420,12 @@ tbody td {
     overflow: hidden;
 }
 
+
+/*
+ * Allow the modal to shrink correctly
+ * on smaller screens.
+ */
+
 .edit-modal-content,
 .edit-modal-content > form,
 .edit-modal-body {
@@ -1521,28 +1437,6 @@ tbody td {
 
     max-height:
         calc(100dvh - 40px);
-
-    height: auto;
-
-    display: flex;
-
-    flex-direction: column;
-
-    min-height: 0;
-
-    overflow: hidden;
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.12);
-
-    border-radius: 22px;
-
-    background: #0f1b42;
-
-    box-shadow:
-        0 35px 90px
-        rgba(0, 0, 0, 0.6);
 }
 
 @keyframes modalScaleIn {
@@ -1550,8 +1444,8 @@ tbody td {
         opacity: 0;
 
         transform:
-            translateY(15px)
-            scale(0.98);
+            translateY(20px)
+            scale(0.97);
     }
 
     to {
@@ -1576,7 +1470,6 @@ tbody td {
     display: flex;
 
     justify-content: space-between;
-
     align-items: center;
 
     gap: 20px;
@@ -1641,7 +1534,6 @@ tbody td {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -1666,7 +1558,6 @@ tbody td {
     overflow: hidden;
 
     font-size: 21px;
-
     line-height: 1.25;
 
     font-weight: 800;
@@ -1684,9 +1575,7 @@ tbody td {
     font-size: 12px;
 
     overflow: hidden;
-
     text-overflow: ellipsis;
-
     white-space: nowrap;
 }
 
@@ -1701,7 +1590,6 @@ tbody td {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -1711,7 +1599,7 @@ tbody td {
     border-radius: 10px;
 
     background:
-        rgba(255, 255, 255, 0.1);
+        rgba(255, 255, 255, 0.10);
 
     color: #fff;
 
@@ -1719,9 +1607,7 @@ tbody td {
 
     cursor: pointer;
 
-    transition:
-        background var(--cm-transition),
-        transform var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .modal-x:hover {
@@ -1734,6 +1620,8 @@ tbody td {
 
 /* =========================================================
    MODAL BODY
+   IMPORTANT:
+   This is the ONLY area that should scroll.
    ========================================================= */
 
 .edit-modal-body {
@@ -1746,7 +1634,6 @@ tbody td {
     width: 100%;
 
     overflow-y: auto;
-
     overflow-x: hidden;
 
     padding: 22px;
@@ -1793,13 +1680,11 @@ tbody td {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-direction: column;
 
-    padding:
-        6px 10px 24px;
+    padding: 6px 10px 24px;
 
     text-align: center;
 }
@@ -1833,15 +1718,13 @@ tbody td {
 }
 
 .view-profile h2 {
-    margin:
-        0 0 10px;
+    margin: 0 0 10px;
 
     max-width: 100%;
 
     overflow-wrap: anywhere;
 
     font-size: 22px;
-
     font-weight: 800;
 }
 
@@ -1881,7 +1764,6 @@ tbody td {
     color: #64748b;
 
     font-size: 10px;
-
     font-weight: 700;
 
     text-transform: uppercase;
@@ -1895,7 +1777,6 @@ tbody td {
     color: #e2e8f0;
 
     font-size: 13px;
-
     font-weight: 600;
 
     word-break: break-word;
@@ -1944,13 +1825,11 @@ tbody td {
     flex: 1 1 0;
 
     min-width: 0;
-
     min-height: 42px;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 7px;
@@ -1964,14 +1843,11 @@ tbody td {
     color: #94a3b8;
 
     font-size: 13px;
-
     font-weight: 700;
 
     cursor: pointer;
 
-    transition:
-        background var(--cm-transition),
-        color var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .edit-tab:hover {
@@ -2059,7 +1935,6 @@ tbody td {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     flex-shrink: 0;
@@ -2076,7 +1951,6 @@ tbody td {
     margin: 0;
 
     font-size: 14px;
-
     font-weight: 750;
 }
 
@@ -2137,7 +2011,7 @@ tbody td {
 
     border:
         4px solid
-        rgba(255, 255, 255, 0.1);
+        rgba(255, 255, 255, 0.10);
 
     background: #17285d;
 
@@ -2166,7 +2040,6 @@ tbody td {
     display: inline-flex;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 5px;
@@ -2178,7 +2051,6 @@ tbody td {
     color: #fff;
 
     font-size: 10px;
-
     font-weight: 700;
 
     cursor: pointer;
@@ -2204,7 +2076,6 @@ tbody td {
 
 .profile-fields {
     min-width: 0;
-
     width: 100%;
 }
 
@@ -2236,7 +2107,6 @@ tbody td {
 
 .form-group {
     min-width: 0;
-
     width: 100%;
 }
 
@@ -2248,13 +2118,11 @@ tbody td {
     color: #cbd5e1;
 
     font-size: 12px;
-
     font-weight: 700;
 }
 
 .form-label .optional {
     color: #64748b;
-
     font-weight: 500;
 }
 
@@ -2264,7 +2132,6 @@ tbody td {
     display: block;
 
     width: 100%;
-
     max-width: 100%;
 
     min-height: 44px;
@@ -2288,10 +2155,7 @@ tbody td {
 
     font-size: 13px;
 
-    transition:
-        border-color var(--cm-transition),
-        background var(--cm-transition),
-        box-shadow var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .edit-input::placeholder,
@@ -2309,7 +2173,7 @@ tbody td {
 
     box-shadow:
         0 0 0 3px
-        rgba(59, 130, 246, 0.1);
+        rgba(59, 130, 246, 0.10);
 }
 
 .edit-select {
@@ -2324,8 +2188,6 @@ tbody td {
 
 .edit-input[type="date"] {
     color-scheme: dark;
-
-    min-width: 0;
 }
 
 
@@ -2355,7 +2217,7 @@ tbody td {
 
     border:
         1px solid
-        rgba(245, 158, 11, 0.2);
+        rgba(245, 158, 11, 0.20);
 
     border-left:
         4px solid
@@ -2364,7 +2226,7 @@ tbody td {
     border-radius: 10px;
 
     background:
-        rgba(120, 53, 15, 0.2);
+        rgba(120, 53, 15, 0.20);
 
     color: #fde68a;
 
@@ -2384,13 +2246,14 @@ tbody td {
 
 /* =========================================================
    MODAL FOOTER
+   IMPORTANT:
+   Footer never scrolls away.
    ========================================================= */
 
 .edit-modal-footer {
     display: flex;
 
     justify-content: flex-end;
-
     align-items: center;
 
     gap: 10px;
@@ -2414,7 +2277,6 @@ tbody td {
     display: inline-flex;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 8px;
@@ -2426,17 +2288,13 @@ tbody td {
     border-radius: 10px;
 
     font-size: 12px;
-
     font-weight: 700;
 
     cursor: pointer;
 
     text-decoration: none;
 
-    transition:
-        transform var(--cm-transition),
-        background var(--cm-transition),
-        box-shadow var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .modal-btn:hover {
@@ -2445,7 +2303,6 @@ tbody td {
 
 .modal-btn-cancel {
     background: #334155;
-
     color: #fff;
 }
 
@@ -2476,7 +2333,7 @@ tbody td {
 
 
 /* =========================================================
-   LARGE TABLET
+   LARGE TABLET / SMALL LAPTOP
    ========================================================= */
 
 @media (max-width: 1250px) {
@@ -2486,9 +2343,8 @@ tbody td {
             repeat(3, minmax(0, 1fr));
     }
 
-    .search-control {
-        grid-column:
-            1 / -1;
+    .add-btn {
+        width: 100%;
     }
 
 }
@@ -2509,11 +2365,16 @@ tbody td {
         align-items: flex-start;
     }
 
+    /*
+     * Give the modal a little more usable width
+     * on tablets.
+     */
+    .cadet-modal {
+        padding: 16px;
+    }
+
     .edit-modal-content {
-        width: 100%;
-
-        max-width: 920px;
-
+        width: min(920px, 100%);
         max-height:
             calc(100dvh - 32px);
     }
@@ -2522,7 +2383,7 @@ tbody td {
 
 
 /* =========================================================
-   SMALL LAPTOP / TABLET
+   TABLET / SMALL LAPTOP
    ========================================================= */
 
 @media (max-width: 900px) {
@@ -2533,7 +2394,6 @@ tbody td {
 
     .page-header {
         flex-direction: column;
-
         align-items: flex-start;
     }
 
@@ -2548,11 +2408,6 @@ tbody td {
     .filter-grid {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
-    }
-
-    .search-control {
-        grid-column:
-            1 / -1;
     }
 
     .edit-profile {
@@ -2575,6 +2430,9 @@ tbody td {
         grid-column: auto;
     }
 
+    /*
+     * Edit modal becomes almost full width.
+     */
     .edit-modal-content {
         width: 100%;
 
@@ -2586,20 +2444,6 @@ tbody td {
 
     .edit-modal-body {
         padding: 18px;
-    }
-
-    .pagination-container {
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-    .pagination-links {
-        width: 100%;
-
-        justify-content: flex-start;
-
-        overflow-x: auto;
     }
 
 }
@@ -2633,7 +2477,6 @@ tbody td {
 
     .header-content h1 {
         font-size: 24px;
-
         gap: 9px;
     }
 
@@ -2655,8 +2498,8 @@ tbody td {
         grid-template-columns: 1fr;
     }
 
-    .search-control {
-        grid-column: auto;
+    .clear-filters {
+        flex-shrink: 0;
     }
 
     .table-header {
@@ -2680,7 +2523,6 @@ tbody td {
 
     .cadet-modal {
         align-items: stretch;
-
         justify-content: center;
 
         padding: 8px;
@@ -2690,10 +2532,15 @@ tbody td {
 
     .edit-modal-content,
     .view-modal-content {
+
         width: 100%;
 
         max-width: 100%;
 
+        /*
+         * Use the dynamic viewport height so the modal
+         * works correctly on Android/iPhone browsers.
+         */
         max-height:
             calc(100dvh - 16px);
 
@@ -2704,7 +2551,9 @@ tbody td {
     }
 
 
-    /* HEADER */
+    /* =====================================================
+       MOBILE MODAL HEADER
+       ===================================================== */
 
     .edit-modal-header {
         padding: 14px 15px;
@@ -2747,13 +2596,14 @@ tbody td {
     }
 
 
-    /* BODY */
+    /* =====================================================
+       MOBILE MODAL BODY
+       ===================================================== */
 
     .edit-modal-body {
         padding: 12px;
 
         overflow-y: auto;
-
         overflow-x: hidden;
     }
 
@@ -2762,7 +2612,9 @@ tbody td {
     }
 
 
-    /* TABS */
+    /* =====================================================
+       MOBILE TABS
+       ===================================================== */
 
     .edit-tabs {
         width: 100%;
@@ -2789,7 +2641,9 @@ tbody td {
     }
 
 
-    /* FORM */
+    /* =====================================================
+       MOBILE FORM
+       ===================================================== */
 
     .form-section {
         border-radius: 14px;
@@ -2837,7 +2691,9 @@ tbody td {
     }
 
 
-    /* FOOTER */
+    /* =====================================================
+       MOBILE FOOTER
+       ===================================================== */
 
     .edit-modal-footer {
         flex-direction: column;
@@ -2848,6 +2704,9 @@ tbody td {
 
         padding: 10px 12px;
 
+        /*
+         * Footer stays visible while body scrolls.
+         */
         flex-shrink: 0;
     }
 
@@ -2858,7 +2717,9 @@ tbody td {
     }
 
 
-    /* WARNING */
+    /* =====================================================
+       MOBILE WARNING
+       ===================================================== */
 
     .edit-warning {
         margin-top: 12px;
@@ -2869,7 +2730,9 @@ tbody td {
     }
 
 
-    /* VIEW */
+    /* =====================================================
+       MOBILE VIEW MODAL
+       ===================================================== */
 
     .view-profile {
         padding:
@@ -2900,13 +2763,13 @@ tbody td {
     }
 
 
-    /* NOTIFICATION */
+    /* =====================================================
+       MOBILE NOTIFICATION
+       ===================================================== */
 
     .notif {
         top: 12px;
-
         right: 12px;
-
         left: 12px;
 
         width: auto;
@@ -2914,15 +2777,6 @@ tbody td {
         min-width: 0;
 
         max-width: none;
-    }
-
-
-    /* PAGINATION */
-
-    .pagination-container {
-        padding: 14px;
-
-        gap: 12px;
     }
 
 }
@@ -2998,7 +2852,6 @@ tbody td {
 
     .edit-tab {
         flex-basis: 135px;
-
         min-width: 135px;
     }
 
@@ -3015,7 +2868,7 @@ tbody td {
 
 
 /* =========================================================
-   EXTRA SMALL
+   EXTRA SMALL DEVICES
    ========================================================= */
 
 @media (max-width: 360px) {
@@ -3066,10 +2919,6 @@ tbody td {
     }
 
     .form-section-body {
-        padding: 10px;
-    }
-
-    .form-section-header {
         padding: 10px;
     }
 
@@ -3138,7 +2987,7 @@ tbody td {
 
 
 /* =========================================================
-   SAFETY / OVERFLOW
+   PREVENT FORM ELEMENT OVERFLOW
    ========================================================= */
 
 .edit-input,
@@ -3152,13 +3001,28 @@ tbody td {
     max-width: 100%;
 }
 
+
+/* =========================================================
+   DATE INPUT
+   ========================================================= */
+
+.edit-input[type="date"] {
+    min-width: 0;
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   FILE INPUT
+   ========================================================= */
+
 input[type="file"] {
     max-width: 100%;
 }
 
 
 /* =========================================================
-   ACCESSIBILITY
+   FOCUS ACCESSIBILITY
    ========================================================= */
 
 .edit-tab:focus-visible,
