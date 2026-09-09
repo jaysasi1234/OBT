@@ -1,3 +1,10 @@
+/* =========================================================
+   CADET MANAGEMENT
+   PROFESSIONAL ADMIN UI
+   RESPONSIVE DARK BLUE DESIGN
+   FULL RESPONSIVE MODAL FIX
+   ========================================================= */
+
 :root {
     --cm-bg: #07112f;
     --cm-bg-deep: #050b20;
@@ -29,7 +36,7 @@
 
 
 /* =========================================================
-   GLOBAL RESET
+   RESET
    ========================================================= */
 
 *,
@@ -40,16 +47,15 @@
 
 html {
     min-height: 100%;
-    background: var(--cm-bg);
+    background: #07112f;
 }
 
 html,
 body {
     margin: 0;
     padding: 0;
-    min-width: 0;
     overflow-x: hidden;
-    background: var(--cm-bg) !important;
+    background: #07112f !important;
 }
 
 body {
@@ -100,14 +106,6 @@ select {
     -webkit-tap-highlight-color: transparent;
 }
 
-img {
-    max-width: 100%;
-}
-
-button {
-    appearance: none;
-}
-
 
 /* =========================================================
    PAGE
@@ -115,15 +113,11 @@ button {
 
 .cadet-management-page {
     position: relative;
-
     width: 100%;
     min-width: 0;
-
     min-height: 100vh;
     min-height: 100dvh;
-
     padding: 28px;
-
     color: var(--cm-text);
 }
 
@@ -221,9 +215,7 @@ button {
 
 .notif i {
     flex-shrink: 0;
-
     color: #bbf7d0;
-
     font-size: 18px;
 }
 
@@ -339,11 +331,9 @@ button {
 
 .page-header {
     position: relative;
-
     overflow: hidden;
 
     display: flex;
-
     justify-content: space-between;
     align-items: center;
 
@@ -425,7 +415,6 @@ button {
 
     font-size: 30px;
     line-height: 1.15;
-
     font-weight: 800;
 
     letter-spacing: -0.5px;
@@ -490,7 +479,6 @@ button {
 
 .add-btn:hover {
     color: var(--cm-primary);
-
     background: #fff;
 
     transform: translateY(-2px);
@@ -517,7 +505,6 @@ button {
 
 .stat-card {
     position: relative;
-
     overflow: hidden;
 
     min-height: 145px;
@@ -605,6 +592,7 @@ button {
     height: 48px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -695,8 +683,6 @@ button {
     align-items: center;
 
     gap: 10px;
-
-    min-width: 0;
 }
 
 .filter-title-icon {
@@ -704,6 +690,7 @@ button {
     height: 36px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -738,8 +725,6 @@ button {
     display: inline-flex;
 
     align-items: center;
-    justify-content: center;
-
     gap: 7px;
 
     min-height: 34px;
@@ -775,21 +760,12 @@ button {
     color: #bfdbfe;
 }
 
-
-/* =========================================================
-   FILTER GRID
-   ========================================================= */
-
 .filter-grid {
     display: grid;
 
-    /*
-     * 4 normal filters + flexible search field.
-     * Search takes slightly more space.
-     */
     grid-template-columns:
-        repeat(4, minmax(130px, 1fr))
-        minmax(220px, 1.35fr);
+        repeat(4, minmax(0, 1fr))
+        minmax(220px, 1.3fr);
 
     gap: 12px;
 
@@ -798,7 +774,6 @@ button {
 
 .filter-control {
     min-width: 0;
-    width: 100%;
 }
 
 .filter-control label {
@@ -818,11 +793,7 @@ button {
 
 .filter-control select,
 .filter-control input {
-    display: block;
-
     width: 100%;
-    min-width: 0;
-
     height: 46px;
 
     padding: 0 14px;
@@ -843,14 +814,12 @@ button {
 
     font-size: 13px;
 
-    transition:
-        border-color var(--cm-transition),
-        background var(--cm-transition),
-        box-shadow var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .filter-control select {
     cursor: pointer;
+    appearance: auto;
 }
 
 .filter-control select:focus,
@@ -875,8 +844,6 @@ button {
 
 .search-box {
     position: relative;
-
-    width: 100%;
 }
 
 .search-box i {
@@ -905,8 +872,6 @@ button {
    ========================================================= */
 
 .table-panel {
-    width: 100%;
-
     overflow: hidden;
 
     border:
@@ -950,6 +915,7 @@ button {
     height: 38px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -993,60 +959,23 @@ button {
     font-weight: 600;
 }
 
-
-/* =========================================================
-   RESPONSIVE TABLE
-   ========================================================= */
-
 .table-wrapper {
-    position: relative;
-
     width: 100%;
 
     overflow-x: auto;
-    overflow-y: hidden;
 
     scrollbar-width: thin;
 
     scrollbar-color:
         #334b91
         transparent;
-
-    -webkit-overflow-scrolling: touch;
-
-    overscroll-behavior-x: contain;
-}
-
-.table-wrapper::-webkit-scrollbar {
-    height: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-    border-radius: 20px;
-
-    background: #334b91;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #4160b1;
 }
 
 table {
     width: 100%;
-
-    /*
-     * Prevent the columns from becoming unreadably narrow.
-     * On smaller screens the wrapper will scroll horizontally.
-     */
     min-width: 1100px;
 
     border-collapse: collapse;
-
-    border-spacing: 0;
 }
 
 thead th {
@@ -1128,8 +1057,6 @@ tbody td {
 }
 
 .cadet-name {
-    min-width: 0;
-
     overflow: hidden;
 
     color: #fff;
@@ -1137,8 +1064,6 @@ tbody td {
     font-weight: 700;
 
     text-overflow: ellipsis;
-
-    white-space: nowrap;
 }
 
 .trb-code {
@@ -1157,14 +1082,8 @@ tbody td {
 
 .course-text {
     color: #cbd5e1;
-
     font-weight: 600;
 }
-
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
 
 .empty-row {
     padding: 65px 25px !important;
@@ -1190,6 +1109,7 @@ tbody td {
     height: 56px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -1207,19 +1127,17 @@ tbody td {
 
 .empty-state strong {
     color: #94a3b8;
-
     font-size: 14px;
 }
 
 .empty-state span {
     color: #64748b;
-
     font-size: 12px;
 }
 
 
 /* =========================================================
-   STATUS BADGES
+   STATUS
    ========================================================= */
 
 .status {
@@ -1305,8 +1223,6 @@ tbody td {
     align-items: center;
 
     gap: 7px;
-
-    flex-wrap: nowrap;
 }
 
 .btn {
@@ -1334,8 +1250,6 @@ tbody td {
     font-weight: 700;
 
     cursor: pointer;
-
-    white-space: nowrap;
 
     transition: var(--cm-transition);
 }
@@ -1399,6 +1313,10 @@ tbody td {
     align-items: center;
     justify-content: center;
 
+    /*
+     * Prevent the page behind the modal
+     * from controlling modal dimensions.
+     */
     width: 100%;
     height: 100%;
 
@@ -1414,8 +1332,6 @@ tbody td {
 
     -webkit-backdrop-filter:
         blur(8px);
-
-    overscroll-behavior: contain;
 }
 
 .cadet-modal.show {
@@ -1438,19 +1354,32 @@ tbody td {
 
 /* =========================================================
    MODAL CONTENT
+   IMPORTANT FIX:
+   The modal itself and the form are BOTH flex containers.
+   This allows the body to scroll while the header/footer
+   remain inside the viewport.
    ========================================================= */
 
-.edit-modal-content,
-.view-modal-content {
+.edit-modal-content {
     position: relative;
+
+    width: min(920px, 100%);
+
+    /*
+     * IMPORTANT:
+     * Use dynamic viewport height.
+     */
+    max-height:
+        calc(100dvh - 40px);
+
+    height: auto;
 
     display: flex;
     flex-direction: column;
 
-    min-width: 0;
     min-height: 0;
 
-    max-width: 100%;
+    overflow: hidden;
 
     border:
         1px solid
@@ -1468,28 +1397,14 @@ tbody td {
         modalScaleIn 0.25s ease;
 }
 
-.edit-modal-content {
-    width: min(920px, 100%);
 
-    max-height:
-        calc(100dvh - 40px);
-
-    overflow: hidden;
-}
-
-.view-modal-content {
-    width: min(760px, 100%);
-
-    max-height:
-        calc(100dvh - 40px);
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   MODAL FORM FLEX FIX
-   ========================================================= */
+/*
+ * THIS IS THE IMPORTANT FIX.
+ *
+ * Your <form> wraps the modal body and footer.
+ * Without flex here, the body cannot correctly
+ * calculate the remaining modal height.
+ */
 
 .edit-modal-content > form {
     display: flex;
@@ -1498,12 +1413,30 @@ tbody td {
 
     flex: 1 1 auto;
 
-    min-width: 0;
     min-height: 0;
 
     width: 100%;
 
     overflow: hidden;
+}
+
+
+/*
+ * Allow the modal to shrink correctly
+ * on smaller screens.
+ */
+
+.edit-modal-content,
+.edit-modal-content > form,
+.edit-modal-body {
+    min-width: 0;
+}
+
+.view-modal-content {
+    width: min(760px, 100%);
+
+    max-height:
+        calc(100dvh - 40px);
 }
 
 @keyframes modalScaleIn {
@@ -1599,6 +1532,7 @@ tbody td {
     height: 46px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -1641,9 +1575,7 @@ tbody td {
     font-size: 12px;
 
     overflow: hidden;
-
     text-overflow: ellipsis;
-
     white-space: nowrap;
 }
 
@@ -1656,6 +1588,7 @@ tbody td {
     height: 38px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -1687,13 +1620,15 @@ tbody td {
 
 /* =========================================================
    MODAL BODY
-   ONLY THIS AREA SCROLLS
+   IMPORTANT:
+   This is the ONLY area that should scroll.
    ========================================================= */
 
 .edit-modal-body {
     flex: 1 1 auto;
 
     min-height: 0;
+
     min-width: 0;
 
     width: 100%;
@@ -1739,36 +1674,7 @@ tbody td {
 
 .view-modal-body {
     padding: 24px;
-
-    overflow-y: auto;
-    overflow-x: hidden;
-
-    min-height: 0;
-
-    scrollbar-width: thin;
-
-    scrollbar-color:
-        #334b91
-        transparent;
 }
-
-.view-modal-body::-webkit-scrollbar {
-    width: 7px;
-}
-
-.view-modal-body::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.view-modal-body::-webkit-scrollbar-thumb {
-    border-radius: 20px;
-    background: #334b91;
-}
-
-
-/* =========================================================
-   VIEW PROFILE
-   ========================================================= */
 
 .view-profile {
     display: flex;
@@ -1819,7 +1725,6 @@ tbody td {
     overflow-wrap: anywhere;
 
     font-size: 22px;
-
     font-weight: 800;
 }
 
@@ -1920,7 +1825,6 @@ tbody td {
     flex: 1 1 0;
 
     min-width: 0;
-
     min-height: 42px;
 
     display: flex;
@@ -2029,6 +1933,7 @@ tbody td {
     height: 34px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -2046,7 +1951,6 @@ tbody td {
     margin: 0;
 
     font-size: 14px;
-
     font-weight: 750;
 }
 
@@ -2172,7 +2076,6 @@ tbody td {
 
 .profile-fields {
     min-width: 0;
-
     width: 100%;
 }
 
@@ -2204,7 +2107,6 @@ tbody td {
 
 .form-group {
     min-width: 0;
-
     width: 100%;
 }
 
@@ -2216,13 +2118,11 @@ tbody td {
     color: #cbd5e1;
 
     font-size: 12px;
-
     font-weight: 700;
 }
 
 .form-label .optional {
     color: #64748b;
-
     font-weight: 500;
 }
 
@@ -2233,7 +2133,6 @@ tbody td {
 
     width: 100%;
     max-width: 100%;
-    min-width: 0;
 
     min-height: 44px;
 
@@ -2256,10 +2155,7 @@ tbody td {
 
     font-size: 13px;
 
-    transition:
-        border-color var(--cm-transition),
-        background var(--cm-transition),
-        box-shadow var(--cm-transition);
+    transition: var(--cm-transition);
 }
 
 .edit-input::placeholder,
@@ -2292,8 +2188,6 @@ tbody td {
 
 .edit-input[type="date"] {
     color-scheme: dark;
-
-    min-width: 0;
 }
 
 
@@ -2352,6 +2246,8 @@ tbody td {
 
 /* =========================================================
    MODAL FOOTER
+   IMPORTANT:
+   Footer never scrolls away.
    ========================================================= */
 
 .edit-modal-footer {
@@ -2407,7 +2303,6 @@ tbody td {
 
 .modal-btn-cancel {
     background: #334155;
-
     color: #fff;
 }
 
@@ -2438,90 +2333,20 @@ tbody td {
 
 
 /* =========================================================
-   PAGINATION
-   ========================================================= */
-
-.pagination-wrapper {
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-
-    padding: 20px;
-
-    border-top:
-        1px solid
-        rgba(255, 255, 255, 0.06);
-}
-
-
-/* Laravel pagination compatibility */
-
-.pagination-wrapper nav {
-    max-width: 100%;
-
-    overflow-x: auto;
-
-    scrollbar-width: none;
-}
-
-.pagination-wrapper nav::-webkit-scrollbar {
-    display: none;
-}
-
-.pagination-wrapper svg {
-    max-width: 18px;
-}
-
-.pagination-wrapper a,
-.pagination-wrapper span {
-    white-space: nowrap;
-}
-
-
-/* =========================================================
-   LARGE LAPTOP
-   ========================================================= */
-
-@media (max-width: 1350px) {
-
-    .filter-grid {
-        grid-template-columns:
-            repeat(3, minmax(140px, 1fr))
-            minmax(220px, 1.35fr);
-    }
-}
-
-
-/* =========================================================
-   TABLET / SMALL LAPTOP
+   LARGE TABLET / SMALL LAPTOP
    ========================================================= */
 
 @media (max-width: 1250px) {
 
-    .cards {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
     .filter-grid {
         grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
-    .search-control {
-        grid-column: 1 / -1;
-    }
-
-    .header-actions {
-        flex-shrink: 0;
+            repeat(3, minmax(0, 1fr));
     }
 
     .add-btn {
         width: 100%;
     }
+
 }
 
 
@@ -2531,34 +2356,34 @@ tbody td {
 
 @media (max-width: 1100px) {
 
-    .cadet-management-page {
-        padding: 18px;
+    .cards {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
     }
 
     .page-header {
         align-items: flex-start;
     }
 
-    .edit-modal-content {
-        width: min(920px, 100%);
-
-        max-height:
-            calc(100dvh - 32px);
-    }
-
-    .view-modal-content {
-        max-height:
-            calc(100dvh - 32px);
-    }
-
+    /*
+     * Give the modal a little more usable width
+     * on tablets.
+     */
     .cadet-modal {
         padding: 16px;
     }
+
+    .edit-modal-content {
+        width: min(920px, 100%);
+        max-height:
+            calc(100dvh - 32px);
+    }
+
 }
 
 
 /* =========================================================
-   SMALL TABLET
+   TABLET / SMALL LAPTOP
    ========================================================= */
 
 @media (max-width: 900px) {
@@ -2569,7 +2394,6 @@ tbody td {
 
     .page-header {
         flex-direction: column;
-
         align-items: flex-start;
     }
 
@@ -2584,10 +2408,6 @@ tbody td {
     .filter-grid {
         grid-template-columns:
             repeat(2, minmax(0, 1fr));
-    }
-
-    .search-control {
-        grid-column: 1 / -1;
     }
 
     .edit-profile {
@@ -2610,16 +2430,13 @@ tbody td {
         grid-column: auto;
     }
 
+    /*
+     * Edit modal becomes almost full width.
+     */
     .edit-modal-content {
         width: 100%;
+
         max-width: 920px;
-
-        max-height:
-            calc(100dvh - 28px);
-    }
-
-    .view-modal-content {
-        width: 100%;
 
         max-height:
             calc(100dvh - 28px);
@@ -2629,9 +2446,6 @@ tbody td {
         padding: 18px;
     }
 
-    .view-modal-body {
-        padding: 18px;
-    }
 }
 
 
@@ -2645,11 +2459,6 @@ tbody td {
         padding: 12px;
     }
 
-
-    /* -----------------------------------------------------
-       STATISTICS
-       ----------------------------------------------------- */
-
     .cards {
         grid-template-columns: 1fr;
 
@@ -2660,11 +2469,6 @@ tbody td {
         min-height: 125px;
     }
 
-
-    /* -----------------------------------------------------
-       HEADER
-       ----------------------------------------------------- */
-
     .page-header {
         padding: 22px;
 
@@ -2673,18 +2477,12 @@ tbody td {
 
     .header-content h1 {
         font-size: 24px;
-
         gap: 9px;
     }
 
     .header-content p {
         font-size: 12px;
     }
-
-
-    /* -----------------------------------------------------
-       FILTERS
-       ----------------------------------------------------- */
 
     .filter-panel {
         padding: 15px;
@@ -2696,54 +2494,18 @@ tbody td {
         align-items: flex-start;
     }
 
-    .filter-title {
-        min-width: 0;
-    }
-
-    .filter-title h3 {
-        font-size: 14px;
-    }
-
-    .filter-title span {
-        font-size: 10px;
+    .filter-grid {
+        grid-template-columns: 1fr;
     }
 
     .clear-filters {
         flex-shrink: 0;
     }
 
-    .filter-grid {
-        grid-template-columns: 1fr;
-
-        gap: 11px;
-    }
-
-    .search-control {
-        grid-column: auto;
-    }
-
-    .filter-control select,
-    .filter-control input {
-        height: 44px;
-    }
-
-
-    /* -----------------------------------------------------
-       TABLE HEADER
-       ----------------------------------------------------- */
-
     .table-header {
         padding: 16px;
 
         align-items: flex-start;
-    }
-
-    .table-title {
-        min-width: 0;
-    }
-
-    .table-title h3 {
-        font-size: 14px;
     }
 
     .table-title p {
@@ -2755,38 +2517,12 @@ tbody td {
     }
 
 
-    /* -----------------------------------------------------
-       TABLE
-       ----------------------------------------------------- */
-
-    .table-wrapper {
-        overflow-x: auto;
-    }
-
-    table {
-        min-width: 1000px;
-    }
-
-    thead th {
-        padding: 13px 14px;
-
-        font-size: 10px;
-    }
-
-    tbody td {
-        padding: 12px 14px;
-
-        font-size: 12px;
-    }
-
-
-    /* -----------------------------------------------------
+    /* =====================================================
        MOBILE MODAL
-       ----------------------------------------------------- */
+       ===================================================== */
 
     .cadet-modal {
         align-items: stretch;
-
         justify-content: center;
 
         padding: 8px;
@@ -2796,23 +2532,28 @@ tbody td {
 
     .edit-modal-content,
     .view-modal-content {
+
         width: 100%;
 
         max-width: 100%;
 
-        height:
+        /*
+         * Use the dynamic viewport height so the modal
+         * works correctly on Android/iPhone browsers.
+         */
+        max-height:
             calc(100dvh - 16px);
 
-        max-height:
+        height:
             calc(100dvh - 16px);
 
         border-radius: 16px;
     }
 
 
-    /* -----------------------------------------------------
-       MODAL HEADER
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE MODAL HEADER
+       ===================================================== */
 
     .edit-modal-header {
         padding: 14px 15px;
@@ -2855,9 +2596,9 @@ tbody td {
     }
 
 
-    /* -----------------------------------------------------
-       MODAL BODY
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE MODAL BODY
+       ===================================================== */
 
     .edit-modal-body {
         padding: 12px;
@@ -2868,15 +2609,12 @@ tbody td {
 
     .view-modal-body {
         padding: 15px;
-
-        overflow-y: auto;
-        overflow-x: hidden;
     }
 
 
-    /* -----------------------------------------------------
-       TABS
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE TABS
+       ===================================================== */
 
     .edit-tabs {
         width: 100%;
@@ -2886,8 +2624,6 @@ tbody td {
         scrollbar-width: none;
 
         margin-bottom: 14px;
-
-        -webkit-overflow-scrolling: touch;
     }
 
     .edit-tabs::-webkit-scrollbar {
@@ -2900,12 +2636,14 @@ tbody td {
             145px;
 
         min-width: 145px;
+
+        white-space: nowrap;
     }
 
 
-    /* -----------------------------------------------------
-       FORM
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE FORM
+       ===================================================== */
 
     .form-section {
         border-radius: 14px;
@@ -2953,9 +2691,9 @@ tbody td {
     }
 
 
-    /* -----------------------------------------------------
-       FOOTER
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE FOOTER
+       ===================================================== */
 
     .edit-modal-footer {
         flex-direction: column;
@@ -2966,6 +2704,9 @@ tbody td {
 
         padding: 10px 12px;
 
+        /*
+         * Footer stays visible while body scrolls.
+         */
         flex-shrink: 0;
     }
 
@@ -2976,9 +2717,9 @@ tbody td {
     }
 
 
-    /* -----------------------------------------------------
-       WARNING
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE WARNING
+       ===================================================== */
 
     .edit-warning {
         margin-top: 12px;
@@ -2989,9 +2730,9 @@ tbody td {
     }
 
 
-    /* -----------------------------------------------------
-       VIEW MODAL
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE VIEW MODAL
+       ===================================================== */
 
     .view-profile {
         padding:
@@ -3022,13 +2763,12 @@ tbody td {
     }
 
 
-    /* -----------------------------------------------------
-       NOTIFICATION
-       ----------------------------------------------------- */
+    /* =====================================================
+       MOBILE NOTIFICATION
+       ===================================================== */
 
     .notif {
         top: 12px;
-
         right: 12px;
         left: 12px;
 
@@ -3038,6 +2778,7 @@ tbody td {
 
         max-width: none;
     }
+
 }
 
 
@@ -3046,10 +2787,6 @@ tbody td {
    ========================================================= */
 
 @media (max-width: 420px) {
-
-    .cadet-management-page {
-        padding: 10px;
-    }
 
     .stat-number {
         font-size: 29px;
@@ -3066,26 +2803,10 @@ tbody td {
         flex-direction: column;
 
         align-items: stretch;
-
-        gap: 5px;
     }
 
     .btn {
         width: 100%;
-    }
-
-    .table-header {
-        gap: 8px;
-    }
-
-    .table-title-icon {
-        width: 34px;
-        height: 34px;
-    }
-
-    .result-count {
-        font-size: 10px;
-        padding: 6px 8px;
     }
 
     .edit-modal-header {
@@ -3121,10 +2842,6 @@ tbody td {
         padding: 10px;
     }
 
-    .view-modal-body {
-        padding: 10px;
-    }
-
     .form-section-body {
         padding: 12px;
     }
@@ -3135,7 +2852,6 @@ tbody td {
 
     .edit-tab {
         flex-basis: 135px;
-
         min-width: 135px;
     }
 
@@ -3148,11 +2864,6 @@ tbody td {
         font-size: 18px;
     }
 
-    .edit-input,
-    .edit-select,
-    .edit-textarea {
-        font-size: 12px;
-    }
 }
 
 
@@ -3161,10 +2872,6 @@ tbody td {
    ========================================================= */
 
 @media (max-width: 360px) {
-
-    .cadet-management-page {
-        padding: 8px;
-    }
 
     .cadet-modal {
         padding: 4px;
@@ -3186,10 +2893,6 @@ tbody td {
     }
 
     .edit-modal-body {
-        padding: 8px;
-    }
-
-    .view-modal-body {
         padding: 8px;
     }
 
@@ -3219,20 +2922,12 @@ tbody td {
         padding: 10px;
     }
 
-    .form-section-header {
-        padding: 10px;
+    .edit-input,
+    .edit-select,
+    .edit-textarea {
+        font-size: 12px;
     }
 
-    .edit-tab {
-        flex-basis: 125px;
-
-        min-width: 125px;
-    }
-
-    .view-photo {
-        width: 85px;
-        height: 85px;
-    }
 }
 
 
@@ -3245,10 +2940,6 @@ tbody td {
 ) and (
     orientation: landscape
 ) {
-
-    .cadet-management-page {
-        padding: 10px;
-    }
 
     .cadet-modal {
         padding: 6px;
@@ -3278,10 +2969,6 @@ tbody td {
         padding: 12px;
     }
 
-    .view-modal-body {
-        padding: 12px;
-    }
-
     .edit-modal-footer {
         flex-direction: row;
 
@@ -3296,31 +2983,6 @@ tbody td {
         min-width: 120px;
     }
 
-    /*
-     * Landscape has very limited vertical space,
-     * so keep the profile compact.
-     */
-    .edit-profile {
-        grid-template-columns:
-            120px
-            minmax(0, 1fr);
-
-        gap: 15px;
-    }
-
-    .edit-photo {
-        width: 85px;
-        height: 85px;
-    }
-
-    .photo-actions {
-        max-width: 120px;
-    }
-
-    .form-row {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
 }
 
 
@@ -3337,7 +2999,6 @@ tbody td {
 .form-section-body,
 .profile-fields {
     max-width: 100%;
-    min-width: 0;
 }
 
 
@@ -3347,7 +3008,6 @@ tbody td {
 
 .edit-input[type="date"] {
     min-width: 0;
-
     max-width: 100%;
 }
 
@@ -3357,13 +3017,7 @@ tbody td {
    ========================================================= */
 
 input[type="file"] {
-    width: 100%;
-
     max-width: 100%;
-
-    min-width: 0;
-
-    overflow: hidden;
 }
 
 
@@ -3377,39 +3031,12 @@ input[type="file"] {
 .photo-btn:focus-visible,
 .btn:focus-visible,
 .add-btn:focus-visible,
-.clear-filters:focus-visible,
-.edit-input:focus-visible,
-.edit-select:focus-visible,
-.edit-textarea:focus-visible {
+.clear-filters:focus-visible {
     outline:
         2px solid
         rgba(96, 165, 250, 0.9);
 
     outline-offset: 2px;
-}
-
-
-/* =========================================================
-   TOUCH DEVICES
-   ========================================================= */
-
-@media (hover: none) {
-
-    .stat-card:hover {
-        transform: none;
-
-        box-shadow: var(--cm-shadow);
-    }
-
-    .btn:hover,
-    .modal-btn:hover,
-    .add-btn:hover {
-        transform: none;
-    }
-
-    .modal-x:hover {
-        transform: none;
-    }
 }
 
 
@@ -3433,4 +3060,5 @@ input[type="file"] {
         transition-duration:
             0.01ms !important;
     }
+
 }
