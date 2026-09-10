@@ -425,19 +425,27 @@
 
                                 <!-- CONTACT -->
 
-                                <div class="form-group">
+                            <div class="form-group">
+                                <label>
+                                    Contact Number
+                                </label>
 
-                                    <label>
-                                        Contact Number
-                                    </label>
+                                <input
+                                    type="text"
+                                    name="contact_number"
+                                    id="contact_number"
+                                    value="{{ old('contact_number') }}"
+                                    placeholder="Enter 11-digit contact number"
+                                    inputmode="numeric"
+                                    maxlength="11"
+                                    minlength="11"
+                                    pattern="[0-9]{11}"
+                                    autocomplete="tel">
 
-                                    <input
-                                        type="text"
-                                        name="contact_number"
-                                        value="{{ old('contact_number') }}"
-                                        placeholder="Enter contact number (optional)">
-
-                                </div>
+                                <small class="input-hint">
+                                    Enter exactly 11 digits.
+                                </small>
+                            </div>
 
 
                                 <!-- EMAIL -->
@@ -554,20 +562,27 @@
 
 
                             <!-- CONTACT -->
+                                <div class="form-group">
+                                    <label>
+                                        Contact Number
+                                    </label>
 
-                            <div class="form-group">
+                                    <input
+                                        type="text"
+                                        name="parent_contact"
+                                        id="parent_contact"
+                                        value="{{ old('parent_contact') }}"
+                                        placeholder="Enter 11-digit contact number"
+                                        inputmode="numeric"
+                                        maxlength="11"
+                                        minlength="11"
+                                        pattern="[0-9]{11}"
+                                        autocomplete="tel">
 
-                                <label>
-                                    Contact Number
-                                </label>
-
-                                <input
-                                    type="text"
-                                    name="parent_contact"
-                                    value="{{ old('parent_contact') }}"
-                                    placeholder="Enter guardian contact number">
-
-                            </div>
+                                    <small class="input-hint">
+                                        Enter exactly 11 digits.
+                                    </small>
+                                </div>
 
 
                             <!-- EMAIL -->
@@ -800,6 +815,38 @@ if (removePhoto) {
     );
 
 }
+
+/* =========================================================
+   CONTACT NUMBER
+   NUMBERS ONLY + MAXIMUM 11 DIGITS
+========================================================= */
+
+document
+    .querySelectorAll(
+        '.cadet-create-page input[name="contact_number"], .cadet-create-page input[name="parent_contact"]'
+    )
+    .forEach(function (input) {
+
+        input.addEventListener('input', function () {
+
+            // Remove anything that is not a number
+            this.value = this.value.replace(/\D/g, '');
+
+            // Limit to 11 digits
+            if (this.value.length > 11) {
+                this.value = this.value.substring(0, 11);
+            }
+        });
+
+        input.addEventListener('keypress', function (e) {
+
+            // Prevent letters and special characters
+            if (!/[0-9]/.test(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+    });
 
 </script>
 

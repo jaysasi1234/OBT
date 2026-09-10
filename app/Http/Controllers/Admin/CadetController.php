@@ -256,7 +256,7 @@ public function store(Request $request)
         'place_of_birth' => 'required|string',
         'rank' => 'required|string',
         'address' => 'required|string',
-        'contact_number' => 'nullable|string|max:20',
+        'contact_number' => 'nullable|digits:11',
         'email' => 'nullable|email',
         'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
@@ -264,7 +264,7 @@ public function store(Request $request)
         'parent_first' => 'nullable|string|max:255',
         'parent_middle' => 'nullable|string|max:255',
         'parent_last' => 'nullable|string|max:255',
-        'parent_contact' => 'nullable|string|max:20',
+        'parent_contact' => 'nullable|digits:11',
         'parent_email' => 'nullable|email',
         'parent_address' => 'nullable|string',
     ]);
@@ -538,14 +538,14 @@ public function update(Request $request, Cadet $cadet)
         'place_of_birth' => 'nullable|string',
         'rank' => 'required|string',
         'address' => 'nullable|string',
-        'contact_number' => 'nullable|string|max:20',
+        'contact_number' => 'nullable|digits:11',
         'email' => 'nullable|email',
         'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
 
         'guardian_relationship' => 'nullable|string|max:255',
 
         'parent_guardian_name' => 'nullable|string|max:255',
-        'parent_guardian_contact' => 'nullable|string|max:20',
+        'parent_guardian_contact' => 'nullable|digits:11',
         'parent_guardian_email' => 'nullable|email',
         'parent_guardian_address' => 'nullable|string',
     ]);
