@@ -1,41 +1,13 @@
-html,
-body {
-    margin: 0;
-    padding: 0;
-    background: #162653 !important;
-}
-
-body {
-    color: #f8fafc;
-}
-
-/* Common Laravel admin layout wrappers */
-#app,
-.app,
-.admin-layout,
-.admin-content,
-.main-content,
-.content,
-main {
-    background: #162653 !important;
-}
-
-/* Deployment page itself */
-.dm-page {
-    width: 100%;
-    min-width: 0;
-    min-height: calc(100vh - 78px);
-
-    padding: 22px;
-
-    color: #f8fafc;
-
-    background: #162653 !important;
-}
 /* =========================================================
    DEPLOYMENT MONITORING
    Professional Admin Dashboard
-========================================================= */
+   Responsive Dark Blue Design
+   NO SCROLLABLE TABLE
+   ========================================================= */
+
+/* =========================================================
+   ROOT VARIABLES
+   ========================================================= */
 
 :root {
     --dm-bg: #162653;
@@ -54,20 +26,46 @@ main {
 
     --dm-text: #f8fafc;
     --dm-muted: #94a3b8;
-    --dm-border: rgba(255,255,255,.08);
+
+    --dm-border: rgba(255, 255, 255, 0.08);
 
     --dm-radius: 16px;
-    --dm-shadow: 0 12px 35px rgba(0,0,0,.30);
+
+    --dm-shadow:
+        0 12px 35px rgba(0, 0, 0, 0.30);
 }
+
 
 /* =========================================================
-   GLOBAL
-========================================================= */
+   GLOBAL PAGE BACKGROUND
+   ========================================================= */
 
-.dm-page,
-.dm-page * {
-    box-sizing: border-box;
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--dm-bg) !important;
 }
+
+body {
+    color: var(--dm-text);
+}
+
+/* Common Laravel admin layout wrappers */
+#app,
+.app,
+.admin-layout,
+.admin-content,
+.main-content,
+.content,
+main {
+    background: var(--dm-bg) !important;
+}
+
+
+/* =========================================================
+   DEPLOYMENT PAGE
+   ========================================================= */
 
 .dm-page {
     width: 100%;
@@ -77,8 +75,12 @@ main {
     padding: 22px;
 
     color: var(--dm-text);
-
     background: var(--dm-bg);
+}
+
+.dm-page,
+.dm-page * {
+    box-sizing: border-box;
 }
 
 .dm-page button,
@@ -87,14 +89,16 @@ main {
     font-family: inherit;
 }
 
+
 /* =========================================================
    PAGE HEADER
-========================================================= */
+   ========================================================= */
 
 .dm-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
 
     padding: 22px 24px;
@@ -106,8 +110,8 @@ main {
     background:
         linear-gradient(
             135deg,
-            rgba(30,64,175,.95),
-            rgba(19,44,122,.95)
+            rgba(30, 64, 175, 0.95),
+            rgba(19, 44, 122, 0.95)
         );
 
     box-shadow: var(--dm-shadow);
@@ -119,14 +123,18 @@ main {
 
 .dm-header h1 {
     margin: 0;
+
     font-size: 25px;
     font-weight: 800;
-    letter-spacing: -.3px;
+
+    letter-spacing: -0.3px;
 }
 
 .dm-header p {
     margin: 6px 0 0;
-    color: rgba(255,255,255,.72);
+
+    color: rgba(255, 255, 255, 0.72);
+
     font-size: 13px;
 }
 
@@ -141,18 +149,23 @@ main {
     flex-shrink: 0;
 
     border-radius: 14px;
-    background: rgba(255,255,255,.12);
+
+    background: rgba(255, 255, 255, 0.12);
 
     font-size: 25px;
 }
 
+
 /* =========================================================
    STATISTICS
-========================================================= */
+   ========================================================= */
 
 .dm-stats {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
     gap: 18px;
 
     margin-bottom: 22px;
@@ -160,6 +173,7 @@ main {
 
 .dm-stat {
     position: relative;
+
     overflow: hidden;
 
     min-height: 145px;
@@ -173,13 +187,15 @@ main {
     color: white;
 
     transition:
-        transform .25s ease,
-        box-shadow .25s ease;
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
 .dm-stat:hover {
     transform: translateY(-4px);
-    box-shadow: 0 18px 40px rgba(0,0,0,.38);
+
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.38);
 }
 
 .dm-stat::before {
@@ -195,7 +211,7 @@ main {
 
     border-radius: 50%;
 
-    background: rgba(255,255,255,.10);
+    background: rgba(255, 255, 255, 0.10);
 }
 
 .dm-stat::after {
@@ -211,7 +227,7 @@ main {
 
     border-radius: 50%;
 
-    background: rgba(255,255,255,.06);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .dm-stat-top {
@@ -228,10 +244,11 @@ main {
 .dm-stat-label {
     font-size: 12px;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .8px;
 
-    opacity: .88;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+
+    opacity: 0.88;
 }
 
 .dm-stat-icon {
@@ -244,7 +261,7 @@ main {
 
     border-radius: 13px;
 
-    background: rgba(255,255,255,.14);
+    background: rgba(255, 255, 255, 0.14);
 
     font-size: 21px;
 }
@@ -269,34 +286,54 @@ main {
 
     font-size: 12px;
 
-    color: rgba(255,255,255,.72);
+    color: rgba(255, 255, 255, 0.72);
 }
 
 .dm-stat-blue {
-    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
 }
 
 .dm-stat-cyan {
-    background: linear-gradient(135deg,#0891b2,#0369a1);
+    background:
+        linear-gradient(
+            135deg,
+            #0891b2,
+            #0369a1
+        );
 }
 
 .dm-stat-green {
-    background: linear-gradient(135deg,#16a34a,#15803d);
+    background:
+        linear-gradient(
+            135deg,
+            #16a34a,
+            #15803d
+        );
 }
 
 .dm-stat-gray {
-    background: linear-gradient(135deg,#475569,#1e293b);
+    background:
+        linear-gradient(
+            135deg,
+            #475569,
+            #1e293b
+        );
 }
+
 
 /* =========================================================
    FILTER PANEL
-========================================================= */
+   ========================================================= */
 
 .dm-filter-panel {
     position: relative;
 
     margin-bottom: 22px;
-
     padding: 18px;
 
     border: 1px solid var(--dm-border);
@@ -305,8 +342,8 @@ main {
     background:
         linear-gradient(
             145deg,
-            rgba(21,31,77,.98),
-            rgba(10,18,55,.98)
+            rgba(21, 31, 77, 0.98),
+            rgba(10, 18, 55, 0.98)
         );
 
     box-shadow: var(--dm-shadow);
@@ -323,6 +360,7 @@ main {
 .dm-filter-title {
     display: flex;
     align-items: center;
+
     gap: 9px;
 
     font-size: 14px;
@@ -339,7 +377,7 @@ main {
 
     border-radius: 8px;
 
-    background: rgba(59,130,246,.15);
+    background: rgba(59, 130, 246, 0.15);
 
     color: #60a5fa;
 }
@@ -348,23 +386,25 @@ main {
     display: grid;
 
     grid-template-columns:
-        minmax(160px,1fr)
-        minmax(160px,1fr)
-        minmax(160px,1fr)
-        minmax(190px,1.3fr)
-        minmax(150px,1fr)
-        minmax(150px,1fr);
+        minmax(160px, 1fr)
+        minmax(160px, 1fr)
+        minmax(160px, 1fr)
+        minmax(190px, 1.3fr)
+        minmax(150px, 1fr)
+        minmax(150px, 1fr);
 
     gap: 12px;
 }
 
+
 /* =========================================================
    FILTER INPUTS
-========================================================= */
+   ========================================================= */
 
 .dm-filter-field,
 .dm-filter-dropdown {
     position: relative;
+
     min-width: 0;
 }
 
@@ -374,7 +414,7 @@ main {
     width: 100%;
     height: 46px;
 
-    border: 1px solid rgba(255,255,255,.07);
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 11px;
 
     background: #192354;
@@ -383,7 +423,10 @@ main {
 
     outline: none;
 
-    transition: .2s ease;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
 .dm-search {
@@ -397,10 +440,10 @@ main {
 .dm-search:focus,
 .dm-date-input:focus,
 .dm-filter-button:focus {
-    border-color: rgba(59,130,246,.65);
+    border-color: rgba(59, 130, 246, 0.65);
 
     box-shadow:
-        0 0 0 3px rgba(59,130,246,.12);
+        0 0 0 3px rgba(59, 130, 246, 0.12);
 
     background: #1d2a61;
 }
@@ -420,16 +463,17 @@ main {
 
 .dm-date-input {
     padding: 0 13px;
+
     color-scheme: dark;
 }
 
+
 /* =========================================================
    CUSTOM DROPDOWN
-========================================================= */
+   ========================================================= */
 
 .dm-filter-button {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
@@ -446,7 +490,9 @@ main {
 
 .dm-filter-arrow {
     color: #94a3b8;
-    transition: transform .2s ease;
+
+    transition:
+        transform 0.2s ease;
 }
 
 .dm-filter-dropdown.open .dm-filter-arrow {
@@ -470,12 +516,13 @@ main {
 
     padding: 8px;
 
-    border: 1px solid rgba(255,255,255,.09);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 12px;
 
     background: #121a42;
 
-    box-shadow: 0 18px 40px rgba(0,0,0,.45);
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, 0.45);
 
     z-index: 500;
 }
@@ -490,12 +537,12 @@ main {
 
 .dm-dropdown-menu::-webkit-scrollbar-thumb {
     background: #334b9c;
+
     border-radius: 10px;
 }
 
 .dm-check-option {
     display: flex;
-
     align-items: center;
 
     gap: 10px;
@@ -510,11 +557,12 @@ main {
 
     font-size: 13px;
 
-    transition: background .18s ease;
+    transition:
+        background 0.18s ease;
 }
 
 .dm-check-option:hover {
-    background: rgba(59,130,246,.12);
+    background: rgba(59, 130, 246, 0.12);
 }
 
 .dm-check-option input {
@@ -528,9 +576,10 @@ main {
     cursor: pointer;
 }
 
+
 /* =========================================================
-   TABLE CONTAINER
-========================================================= */
+   TABLE CARD
+   ========================================================= */
 
 .dm-table-card {
     width: 100%;
@@ -547,7 +596,6 @@ main {
 
 .dm-table-header {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
@@ -557,12 +605,13 @@ main {
 
     border-bottom: 1px solid var(--dm-border);
 
-    background: rgba(255,255,255,.015);
+    background: rgba(255, 255, 255, 0.015);
 }
 
 .dm-table-title {
     display: flex;
     flex-direction: column;
+
     gap: 3px;
 }
 
@@ -572,61 +621,61 @@ main {
 
 .dm-table-title span {
     font-size: 11px;
+
     color: var(--dm-muted);
 }
 
 .dm-table-hint {
     color: #64748b;
+
     font-size: 11px;
 }
 
+
 /* =========================================================
    TABLE
-========================================================= */
+   NO FIXED HEIGHT
+   NO TABLE SCROLL
+   ========================================================= */
 
 .dm-table-scroll {
     width: 100%;
 
-    overflow-x: auto;
-    overflow-y: auto;
+    /*
+     * IMPORTANT:
+     * No overflow-x auto
+     * No overflow-y auto
+     * No max-height
+     */
 
-    max-height: 650px;
+    overflow: visible;
 
-    cursor: grab;
+    cursor: default;
 
-    -webkit-overflow-scrolling: touch;
-}
-
-.dm-table-scroll:active {
-    cursor: grabbing;
-}
-
-.dm-table-scroll::-webkit-scrollbar {
-    width: 8px;
-    height: 9px;
-}
-
-.dm-table-scroll::-webkit-scrollbar-track {
-    background: #0b1230;
-}
-
-.dm-table-scroll::-webkit-scrollbar-thumb {
-    background: #334b9c;
-    border-radius: 20px;
+    -webkit-overflow-scrolling: auto;
 }
 
 .dm-table {
-    width: max-content;
+    width: 100%;
 
-    min-width: 1800px;
+    /*
+     * The table is allowed to fill the available area.
+     * The columns use fixed widths so the 15-column layout
+     * stays organized.
+     */
+
+    min-width: 0;
 
     border-collapse: separate;
     border-spacing: 0;
+
+    table-layout: auto;
 }
+
 
 /* =========================================================
    TABLE HEADER
-========================================================= */
+   ========================================================= */
 
 .dm-table thead th {
     position: sticky;
@@ -635,43 +684,46 @@ main {
 
     height: 52px;
 
-    padding: 0 16px;
+    padding: 0 14px;
 
     background: #263b91;
 
     color: #f8fafc;
 
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
 
     text-transform: uppercase;
-    letter-spacing: .55px;
+    letter-spacing: 0.45px;
 
     white-space: nowrap;
 
-    border-bottom: 1px solid rgba(255,255,255,.12);
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.12);
 
     z-index: 30;
 }
 
+
 /* =========================================================
    TABLE BODY
-========================================================= */
+   ========================================================= */
 
 .dm-table tbody td {
     height: 58px;
 
-    padding: 0 16px;
+    padding: 0 14px;
 
     background: #111a42;
 
     color: #e2e8f0;
 
-    font-size: 13px;
+    font-size: 12px;
 
     white-space: nowrap;
 
-    border-bottom: 1px solid rgba(255,255,255,.055);
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.055);
 }
 
 .dm-table tbody tr:nth-child(even) td {
@@ -682,88 +734,139 @@ main {
     background: #1b2b68;
 }
 
+
 /* =========================================================
-   STICKY COLUMNS
-========================================================= */
+   TABLE COLUMN SIZING
+   ========================================================= */
 
 /* TRB */
 .dm-table th:nth-child(1),
 .dm-table td:nth-child(1) {
-    position: sticky;
-
-    left: 0;
-
-    width: 150px;
-    min-width: 150px;
-    max-width: 150px;
-
-    z-index: 20;
+    width: 125px;
+    min-width: 125px;
 }
 
 /* NAME */
 .dm-table th:nth-child(2),
 .dm-table td:nth-child(2) {
-    position: sticky;
-
-    left: 150px;
-
-    width: 300px;
-    min-width: 300px;
-    max-width: 300px;
-
-    z-index: 20;
+    width: 190px;
+    min-width: 190px;
 }
 
 /* COURSE */
 .dm-table th:nth-child(3),
 .dm-table td:nth-child(3) {
-    position: sticky;
-
-    left: 450px;
-
-    width: 160px;
-    min-width: 160px;
-    max-width: 160px;
-
-    z-index: 20;
+    width: 100px;
+    min-width: 100px;
 }
 
 /* BATCH */
 .dm-table th:nth-child(4),
 .dm-table td:nth-child(4) {
-    position: sticky;
+    width: 80px;
+    min-width: 80px;
+}
 
-    left: 610px;
+/* VESSEL */
+.dm-table th:nth-child(5),
+.dm-table td:nth-child(5) {
+    width: 125px;
+    min-width: 125px;
+}
 
+/* COMPANY */
+.dm-table th:nth-child(6),
+.dm-table td:nth-child(6) {
+    width: 140px;
+    min-width: 140px;
+}
+
+/* DEPLOYMENT TYPE */
+.dm-table th:nth-child(7),
+.dm-table td:nth-child(7) {
     width: 120px;
     min-width: 120px;
-    max-width: 120px;
-
-    z-index: 20;
 }
 
-/* Sticky header */
-.dm-table thead th:nth-child(-n+4) {
-    z-index: 40;
-    background: #2d5cff;
+/* EMBARKATION PLACE */
+.dm-table th:nth-child(8),
+.dm-table td:nth-child(8) {
+    width: 145px;
+    min-width: 145px;
 }
 
-/* Sticky body */
-.dm-table tbody td:nth-child(-n+4) {
-    background: #16235f;
+/* EMBARKATION DATE */
+.dm-table th:nth-child(9),
+.dm-table td:nth-child(9) {
+    width: 120px;
+    min-width: 120px;
 }
 
-.dm-table tbody tr:nth-child(even) td:nth-child(-n+4) {
-    background: #182968;
+/* DISEMBARKATION PLACE */
+.dm-table th:nth-child(10),
+.dm-table td:nth-child(10) {
+    width: 150px;
+    min-width: 150px;
 }
 
-.dm-table tbody tr:hover td:nth-child(-n+4) {
-    background: #24419b;
+/* DISEMBARKATION DATE */
+.dm-table th:nth-child(11),
+.dm-table td:nth-child(11) {
+    width: 125px;
+    min-width: 125px;
 }
+
+/* SEA SERVICE */
+.dm-table th:nth-child(12),
+.dm-table td:nth-child(12) {
+    width: 150px;
+    min-width: 150px;
+}
+
+/* PROGRESS */
+.dm-table th:nth-child(13),
+.dm-table td:nth-child(13) {
+    width: 130px;
+    min-width: 130px;
+}
+
+/* STATUS */
+.dm-table th:nth-child(14),
+.dm-table td:nth-child(14) {
+    width: 120px;
+    min-width: 120px;
+}
+
+/* ACTION */
+.dm-table th:nth-child(15),
+.dm-table td:nth-child(15) {
+    width: 90px;
+    min-width: 90px;
+}
+
+
+/* =========================================================
+   STICKY FIRST COLUMNS
+   ========================================================= */
+
+/*
+ * The table itself no longer scrolls.
+ *
+ * These sticky rules are therefore disabled.
+ *
+ * This prevents the first four columns from creating
+ * awkward overlapping behavior when the page is resized.
+ */
+
+.dm-table th:nth-child(-n + 4),
+.dm-table td:nth-child(-n + 4) {
+    position: static;
+}
+
 
 /* =========================================================
    BADGES
-========================================================= */
+   ========================================================= */
 
 .dm-badge {
     display: inline-flex;
@@ -773,19 +876,17 @@ main {
 
     gap: 5px;
 
-    min-width: 105px;
+    min-width: 100px;
 
-    padding: 7px 12px;
+    padding: 7px 11px;
 
     border-radius: 999px;
 
     font-size: 10px;
-
     font-weight: 800;
 
     text-transform: uppercase;
-
-    letter-spacing: .45px;
+    letter-spacing: 0.4px;
 
     white-space: nowrap;
 }
@@ -793,46 +894,54 @@ main {
 .dm-badge-blue {
     color: #60a5fa;
 
-    background: rgba(59,130,246,.13);
+    background:
+        rgba(59, 130, 246, 0.13);
 
-    border: 1px solid rgba(59,130,246,.28);
+    border:
+        1px solid rgba(59, 130, 246, 0.28);
 }
 
 .dm-badge-green {
     color: #4ade80;
 
-    background: rgba(34,197,94,.13);
+    background:
+        rgba(34, 197, 94, 0.13);
 
-    border: 1px solid rgba(34,197,94,.28);
+    border:
+        1px solid rgba(34, 197, 94, 0.28);
 }
 
 .dm-badge-gray {
     color: #cbd5e1;
 
-    background: rgba(148,163,184,.10);
+    background:
+        rgba(148, 163, 184, 0.10);
 
-    border: 1px solid rgba(148,163,184,.22);
+    border:
+        1px solid rgba(148, 163, 184, 0.22);
 }
 
 .dm-badge-warning {
     color: #fbbf24;
 
-    background: rgba(245,158,11,.12);
+    background:
+        rgba(245, 158, 11, 0.12);
 
-    border: 1px solid rgba(245,158,11,.25);
+    border:
+        1px solid rgba(245, 158, 11, 0.25);
 }
+
 
 /* =========================================================
    PROGRESS
-========================================================= */
+   ========================================================= */
 
 .dm-progress {
-    width: 120px;
+    width: 110px;
 }
 
 .dm-progress-top {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
@@ -843,6 +952,7 @@ main {
 
 .dm-progress-value {
     color: #cbd5e1;
+
     font-weight: 700;
 }
 
@@ -862,26 +972,30 @@ main {
 
     border-radius: inherit;
 
-    background: linear-gradient(
-        90deg,
-        #6366f1,
-        #8b5cf6
-    );
+    background:
+        linear-gradient(
+            90deg,
+            #6366f1,
+            #8b5cf6
+        );
 
-    transition: width .3s ease;
+    transition:
+        width 0.3s ease;
 }
 
 .dm-progress-fill.complete {
-    background: linear-gradient(
-        90deg,
-        #16a34a,
-        #22c55e
-    );
+    background:
+        linear-gradient(
+            90deg,
+            #16a34a,
+            #22c55e
+        );
 }
+
 
 /* =========================================================
    ACTION BUTTON
-========================================================= */
+   ========================================================= */
 
 .dm-view-btn {
     display: inline-flex;
@@ -891,17 +1005,18 @@ main {
 
     gap: 6px;
 
-    min-width: 75px;
-
+    min-width: 70px;
     height: 34px;
 
-    padding: 0 13px;
+    padding: 0 12px;
 
-    border: 1px solid rgba(96,165,250,.25);
+    border:
+        1px solid rgba(96, 165, 250, 0.25);
 
     border-radius: 9px;
 
-    background: rgba(59,130,246,.14);
+    background:
+        rgba(59, 130, 246, 0.14);
 
     color: #60a5fa;
 
@@ -910,20 +1025,27 @@ main {
 
     cursor: pointer;
 
-    transition: .2s ease;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
 }
 
 .dm-view-btn:hover {
     background: #2563eb;
+
     border-color: #2563eb;
+
     color: white;
 
     transform: translateY(-1px);
 }
 
+
 /* =========================================================
    EMPTY STATE
-========================================================= */
+   ========================================================= */
 
 .dm-empty {
     padding: 65px 20px !important;
@@ -945,7 +1067,8 @@ main {
 
     border-radius: 16px;
 
-    background: rgba(59,130,246,.10);
+    background:
+        rgba(59, 130, 246, 0.10);
 
     font-size: 25px;
 }
@@ -964,9 +1087,10 @@ main {
     font-size: 12px;
 }
 
+
 /* =========================================================
    SUCCESS TOAST
-========================================================= */
+   ========================================================= */
 
 .dm-toast {
     position: fixed;
@@ -975,7 +1099,6 @@ main {
     right: 25px;
 
     display: flex;
-
     align-items: center;
 
     gap: 12px;
@@ -984,7 +1107,9 @@ main {
 
     padding: 14px 17px;
 
-    border: 1px solid rgba(74,222,128,.20);
+    border:
+        1px solid rgba(74, 222, 128, 0.20);
+
     border-radius: 13px;
 
     background:
@@ -995,7 +1120,7 @@ main {
         );
 
     box-shadow:
-        0 15px 40px rgba(0,0,0,.40);
+        0 15px 40px rgba(0, 0, 0, 0.40);
 
     color: white;
 
@@ -1007,7 +1132,9 @@ main {
 
     pointer-events: none;
 
-    transition: .35s ease;
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease;
 }
 
 .dm-toast.show {
@@ -1050,83 +1177,115 @@ main {
 
     font-size: 11px;
 
-    color: rgba(255,255,255,.78);
+    color:
+        rgba(255, 255, 255, 0.78);
 }
 
+
 /* =========================================================
-   AJAX RESULTS LOADING
-========================================================= */
+   AJAX RESULTS
+   ========================================================= */
 
 #deploymentResults {
     position: relative;
+
     min-width: 0;
+
+    width: 100%;
 }
 
 #deploymentResults.is-loading {
-    opacity: .55;
+    opacity: 0.55;
+
     pointer-events: none;
-    transition: opacity .18s ease;
+
+    transition:
+        opacity 0.18s ease;
 }
 
 #deploymentResults.is-loading::after {
     content: "";
+
     position: absolute;
+
     top: 18px;
     right: 18px;
+
     width: 24px;
     height: 24px;
-    border: 3px solid rgba(255,255,255,.18);
+
+    border:
+        3px solid rgba(255, 255, 255, 0.18);
+
     border-top-color: #60a5fa;
+
     border-radius: 50%;
-    animation: dmSpin .7s linear infinite;
+
+    animation:
+        dmSpin 0.7s linear infinite;
+
     z-index: 100;
 }
 
+
 /* =========================================================
    PAGINATION
-========================================================= */
+   ========================================================= */
 
 .dm-pagination {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 15px;
+
     padding: 15px 18px;
-    border-top: 1px solid var(--dm-border);
+
+    border-top:
+        1px solid var(--dm-border);
+
     background: #0e1738;
 }
 
 .dm-pagination-info {
     flex-shrink: 0;
+
     color: #94a3b8;
+
     font-size: 12px;
 }
 
 .dm-pagination-info strong {
     color: #e2e8f0;
+
     font-weight: 700;
 }
 
 .dm-pagination-links {
     display: flex;
-    align-items: center;
-    gap: 5px;
-}
 
-/*
-   Laravel pagination can output different internal
-   markup depending on the pagination view/version.
-   These selectors style the common elements.
-*/
+    align-items: center;
+
+    gap: 5px;
+
+    min-width: 0;
+}
 
 .dm-pagination-links nav {
     display: flex;
+
     align-items: center;
+
+    max-width: 100%;
 }
 
 .dm-pagination-links nav > div {
     display: flex;
+
     align-items: center;
+
+    gap: 5px;
 }
 
 .dm-pagination-links svg {
@@ -1138,39 +1297,57 @@ main {
 .dm-pagination-links span {
     min-width: 36px;
     height: 36px;
+
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
+
     padding: 0 10px;
-    border: 1px solid rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255, 255, 255, 0.08);
+
     border-radius: 8px;
+
     background: #192354;
+
     color: #cbd5e1;
+
     font-size: 12px;
     font-weight: 700;
+
     text-decoration: none;
+
     transition:
-        background .18s ease,
-        border-color .18s ease,
-        color .18s ease,
-        transform .18s ease;
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.18s ease;
 }
 
 .dm-pagination-links a:hover {
     background: #263b91;
-    border-color: rgba(96,165,250,.35);
+
+    border-color:
+        rgba(96, 165, 250, 0.35);
+
     color: white;
+
     transform: translateY(-1px);
 }
 
 .dm-pagination-links span[aria-current="page"] {
     background: #2563eb;
+
     border-color: #2563eb;
+
     color: white;
 }
 
 .dm-pagination-links span[aria-disabled="true"] {
-    opacity: .40;
+    opacity: 0.40;
+
     cursor: not-allowed;
 }
 
@@ -1179,9 +1356,10 @@ main {
     padding: 0 12px;
 }
 
+
 /* =========================================================
-   PAGINATION - COMMON TAILWIND/LARAVEL WRAPPERS
-========================================================= */
+   LARAVEL PAGINATION COMPATIBILITY
+   ========================================================= */
 
 .dm-pagination-links .relative {
     position: relative;
@@ -1214,7 +1392,8 @@ main {
 }
 
 .dm-pagination-links .border {
-    border-color: rgba(255,255,255,.08);
+    border-color:
+        rgba(255, 255, 255, 0.08);
 }
 
 .dm-pagination-links .bg-white {
@@ -1234,12 +1413,14 @@ main {
 }
 
 .dm-pagination-links .focus\:ring {
-    box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    box-shadow:
+        0 0 0 3px rgba(59, 130, 246, 0.12);
 }
+
 
 /* =========================================================
    MODAL
-========================================================= */
+   ========================================================= */
 
 .dm-modal {
     display: none;
@@ -1250,7 +1431,8 @@ main {
 
     padding: 20px;
 
-    background: rgba(2,6,23,.78);
+    background:
+        rgba(2, 6, 23, 0.78);
 
     backdrop-filter: blur(5px);
 
@@ -1270,40 +1452,51 @@ main {
     width: 100%;
     max-width: 680px;
 
-    max-height: calc(100vh - 40px);
+    max-height:
+        calc(100vh - 40px);
 
     display: flex;
+
     flex-direction: column;
 
     overflow: hidden;
 
-    border: 1px solid rgba(255,255,255,.09);
+    border:
+        1px solid rgba(255, 255, 255, 0.09);
 
     border-radius: 18px;
 
     background: #121b48;
 
     box-shadow:
-        0 30px 80px rgba(0,0,0,.55);
+        0 30px 80px rgba(0, 0, 0, 0.55);
 
-    animation: dmModalIn .22s ease;
+    animation:
+        dmModalIn 0.22s ease;
 }
 
 @keyframes dmModalIn {
     from {
         opacity: 0;
-        transform: translateY(15px) scale(.98);
+
+        transform:
+            translateY(15px)
+            scale(0.98);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+
+        transform:
+            translateY(0)
+            scale(1);
     }
 }
 
+
 /* =========================================================
    MODAL HEADER
-========================================================= */
+   ========================================================= */
 
 .dm-modal-header {
     display: flex;
@@ -1322,12 +1515,15 @@ main {
             #18265e
         );
 
-    border-bottom: 1px solid rgba(255,255,255,.08);
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
 }
 
 .dm-modal-title {
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 }
 
@@ -1336,12 +1532,14 @@ main {
     height: 40px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     border-radius: 11px;
 
-    background: rgba(255,255,255,.12);
+    background:
+        rgba(255, 255, 255, 0.12);
 
     font-size: 19px;
 }
@@ -1359,7 +1557,8 @@ main {
 
     font-size: 11px;
 
-    color: rgba(255,255,255,.65);
+    color:
+        rgba(255, 255, 255, 0.65);
 }
 
 .dm-modal-close {
@@ -1367,13 +1566,16 @@ main {
     height: 36px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     border: none;
+
     border-radius: 9px;
 
-    background: rgba(255,255,255,.08);
+    background:
+        rgba(255, 255, 255, 0.08);
 
     color: white;
 
@@ -1381,17 +1583,22 @@ main {
 
     cursor: pointer;
 
-    transition: .2s;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
 
 .dm-modal-close:hover {
-    background: rgba(239,68,68,.20);
+    background:
+        rgba(239, 68, 68, 0.20);
+
     color: #fca5a5;
 }
 
+
 /* =========================================================
    MODAL BODY
-========================================================= */
+   ========================================================= */
 
 .dm-modal-body {
     padding: 20px;
@@ -1411,9 +1618,10 @@ main {
     border-radius: 10px;
 }
 
+
 /* =========================================================
    PROFILE
-========================================================= */
+   ========================================================= */
 
 .dm-profile {
     display: flex;
@@ -1426,11 +1634,13 @@ main {
 
     padding: 14px;
 
-    border: 1px solid rgba(255,255,255,.07);
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
 
     border-radius: 13px;
 
-    background: rgba(255,255,255,.035);
+    background:
+        rgba(255, 255, 255, 0.035);
 }
 
 .dm-profile img {
@@ -1439,7 +1649,8 @@ main {
 
     min-width: 62px;
 
-    border: 2px solid rgba(96,165,250,.35);
+    border:
+        2px solid rgba(96, 165, 250, 0.35);
 
     border-radius: 13px;
 
@@ -1450,6 +1661,7 @@ main {
 
 .dm-profile-name {
     font-size: 16px;
+
     font-weight: 750;
 }
 
@@ -1457,6 +1669,7 @@ main {
     margin-top: 5px;
 
     display: flex;
+
     flex-wrap: wrap;
 
     gap: 6px;
@@ -1466,9 +1679,10 @@ main {
     font-size: 11px;
 }
 
+
 /* =========================================================
    FORM
-========================================================= */
+   ========================================================= */
 
 .dm-section {
     margin-bottom: 21px;
@@ -1501,7 +1715,8 @@ main {
 
     border-radius: 7px;
 
-    background: rgba(59,130,246,.14);
+    background:
+        rgba(59, 130, 246, 0.14);
 
     color: #60a5fa;
 
@@ -1511,7 +1726,8 @@ main {
 .dm-form-grid {
     display: grid;
 
-    grid-template-columns: repeat(2,minmax(0,1fr));
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
 
     gap: 13px;
 }
@@ -1539,12 +1755,12 @@ main {
 .dm-form-input,
 .dm-form-select {
     width: 100%;
-
     height: 45px;
 
     padding: 0 13px;
 
-    border: 1px solid rgba(255,255,255,.07);
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
 
     border-radius: 10px;
 
@@ -1556,7 +1772,10 @@ main {
 
     outline: none;
 
-    transition: .2s ease;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .dm-form-input::placeholder {
@@ -1565,12 +1784,13 @@ main {
 
 .dm-form-input:focus,
 .dm-form-select:focus {
-    border-color: rgba(96,165,250,.55);
+    border-color:
+        rgba(96, 165, 250, 0.55);
 
     background: #202f6b;
 
     box-shadow:
-        0 0 0 3px rgba(59,130,246,.10);
+        0 0 0 3px rgba(59, 130, 246, 0.10);
 }
 
 .dm-form-input[type="date"] {
@@ -1582,23 +1802,27 @@ main {
 
     margin: 20px 0;
 
-    background: rgba(255,255,255,.07);
+    background:
+        rgba(255, 255, 255, 0.07);
 }
+
 
 /* =========================================================
    MODAL PROGRESS
-========================================================= */
+   ========================================================= */
 
 .dm-modal-progress {
     margin-top: 8px;
 
     padding: 14px;
 
-    border: 1px solid rgba(255,255,255,.07);
+    border:
+        1px solid rgba(255, 255, 255, 0.07);
 
     border-radius: 12px;
 
-    background: rgba(255,255,255,.025);
+    background:
+        rgba(255, 255, 255, 0.025);
 }
 
 .dm-modal-progress-top {
@@ -1621,7 +1845,6 @@ main {
 
 .dm-modal-progress-track {
     width: 100%;
-
     height: 9px;
 
     overflow: hidden;
@@ -1633,23 +1856,25 @@ main {
 
 .dm-modal-progress-fill {
     width: 0;
-
     height: 100%;
 
     border-radius: inherit;
 
-    background: linear-gradient(
-        90deg,
-        #6366f1,
-        #8b5cf6
-    );
+    background:
+        linear-gradient(
+            90deg,
+            #6366f1,
+            #8b5cf6
+        );
 
-    transition: width .3s ease;
+    transition:
+        width 0.3s ease;
 }
+
 
 /* =========================================================
    MODAL FOOTER
-========================================================= */
+   ========================================================= */
 
 .dm-modal-footer {
     display: flex;
@@ -1660,9 +1885,11 @@ main {
 
     padding: 16px 20px;
 
-    border-top: 1px solid rgba(255,255,255,.07);
+    border-top:
+        1px solid rgba(255, 255, 255, 0.07);
 
-    background: rgba(255,255,255,.02);
+    background:
+        rgba(255, 255, 255, 0.02);
 }
 
 .dm-cancel-btn,
@@ -1681,11 +1908,16 @@ main {
 
     cursor: pointer;
 
-    transition: .2s ease;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
 }
 
 .dm-cancel-btn {
     background: #475569;
+
     color: white;
 }
 
@@ -1694,11 +1926,12 @@ main {
 }
 
 .dm-save-btn {
-    background: linear-gradient(
-        135deg,
-        #4f46e5,
-        #7c3aed
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #7c3aed
+        );
 
     color: white;
 }
@@ -1707,48 +1940,135 @@ main {
     transform: translateY(-1px);
 
     box-shadow:
-        0 8px 20px rgba(99,102,241,.28);
+        0 8px 20px rgba(99, 102, 241, 0.28);
 }
 
 .dm-save-btn.loading {
-    opacity: .65;
+    opacity: 0.65;
+
     pointer-events: none;
 }
 
+
 /* =========================================================
    DURATION OF SEA SERVICE
-========================================================= */
+   ========================================================= */
 
 .dm-sea-duration {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
-    min-width: 145px;
-    padding: 8px 12px;
-    border: 1px solid rgba(96,165,250,.20);
+
+    min-width: 140px;
+
+    padding: 8px 11px;
+
+    border:
+        1px solid rgba(96, 165, 250, 0.20);
+
     border-radius: 10px;
-    background: rgba(59,130,246,.08);
+
+    background:
+        rgba(59, 130, 246, 0.08);
+
     color: #cbd5e1;
-    font-size: 12px;
+
+    font-size: 11px;
+
     font-weight: 700;
+
     white-space: nowrap;
 }
 
 .dm-sea-duration.completed {
-    border-color: rgba(34,197,94,.22);
-    background: rgba(34,197,94,.08);
+    border-color:
+        rgba(34, 197, 94, 0.22);
+
+    background:
+        rgba(34, 197, 94, 0.08);
+
     color: #86efac;
 }
 
 .dm-sea-duration.empty {
-    border-color: rgba(148,163,184,.15);
-    background: rgba(148,163,184,.06);
+    border-color:
+        rgba(148, 163, 184, 0.15);
+
+    background:
+        rgba(148, 163, 184, 0.06);
+
     color: #64748b;
 }
 
+
+/* =========================================================
+   MODAL SEA SERVICE VALUE
+   ========================================================= */
+
+.dm-sea-service-value {
+    display: flex;
+
+    align-items: center;
+
+    min-height: 45px;
+
+    width: 100%;
+
+    padding: 0 13px;
+
+    border:
+        1px solid rgba(96, 165, 250, 0.20);
+
+    border-radius: 10px;
+
+    background:
+        rgba(59, 130, 246, 0.08);
+
+    color: #cbd5e1;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.dm-sea-service-value:not(:empty) {
+    color: #cbd5e1;
+}
+
+.dm-sea-service-value.completed {
+    border-color:
+        rgba(34, 197, 94, 0.22);
+
+    background:
+        rgba(34, 197, 94, 0.08);
+
+    color: #86efac;
+}
+
+.dm-sea-service-value.empty {
+    border-color:
+        rgba(148, 163, 184, 0.15);
+
+    background:
+        rgba(148, 163, 184, 0.06);
+
+    color: #64748b;
+}
+
+
 /* =========================================================
    LOADING
-========================================================= */
+   ========================================================= */
 
 .dm-loading {
     position: absolute;
@@ -1760,7 +2080,8 @@ main {
     align-items: center;
     justify-content: center;
 
-    background: rgba(10,18,55,.70);
+    background:
+        rgba(10, 18, 55, 0.70);
 
     backdrop-filter: blur(2px);
 
@@ -1775,13 +2096,15 @@ main {
     width: 32px;
     height: 32px;
 
-    border: 3px solid rgba(255,255,255,.20);
+    border:
+        3px solid rgba(255, 255, 255, 0.20);
 
     border-top-color: #60a5fa;
 
     border-radius: 50%;
 
-    animation: dmSpin .7s linear infinite;
+    animation:
+        dmSpin 0.7s linear infinite;
 }
 
 @keyframes dmSpin {
@@ -1790,95 +2113,289 @@ main {
     }
 }
 
-/* =========================================================
-   DURATION OF SEA SERVICE - VIEW MODAL
-========================================================= */
-
-.dm-sea-service-value {
-    display: flex;
-    align-items: center;
-    min-height: 45px;
-    width: 100%;
-    padding: 0 13px;
-
-    border: 1px solid rgba(96, 165, 250, .20);
-    border-radius: 10px;
-
-    background: rgba(59, 130, 246, .08);
-
-    color: #cbd5e1;
-
-    font-size: 13px;
-    font-weight: 700;
-
-    white-space: nowrap;
-
-    box-sizing: border-box;
-
-    transition:
-        border-color .2s ease,
-        background .2s ease,
-        color .2s ease;
-}
-
-/* When duration has a value */
-.dm-sea-service-value:not(:empty) {
-    color: #cbd5e1;
-}
-
-/* Optional completed/valid duration appearance */
-.dm-sea-service-value.completed {
-    border-color: rgba(34, 197, 94, .22);
-    background: rgba(34, 197, 94, .08);
-    color: #86efac;
-}
-
-/* Empty duration */
-.dm-sea-service-value.empty {
-    border-color: rgba(148, 163, 184, .15);
-    background: rgba(148, 163, 184, .06);
-    color: #64748b;
-}
 
 /* =========================================================
-   RESPONSIVE
-========================================================= */
+   RESPONSIVE — LARGE TABLET
+   ========================================================= */
+
+@media (max-width: 1400px) {
+
+    .dm-page {
+        padding: 18px;
+    }
+
+    .dm-table thead th {
+        padding: 0 11px;
+
+        font-size: 9px;
+    }
+
+    .dm-table tbody td {
+        padding: 0 11px;
+
+        font-size: 11px;
+    }
+
+    .dm-table {
+        font-size: 11px;
+    }
+
+    .dm-sea-duration {
+        min-width: 125px;
+
+        padding-left: 8px;
+        padding-right: 8px;
+
+        font-size: 10px;
+    }
+
+    .dm-progress {
+        width: 95px;
+    }
+
+    .dm-badge {
+        min-width: 90px;
+
+        padding-left: 8px;
+        padding-right: 8px;
+
+        font-size: 9px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — 1200px
+   ========================================================= */
 
 @media (max-width: 1200px) {
 
     .dm-filter-grid {
         grid-template-columns:
-            repeat(3,minmax(0,1fr));
+            repeat(3, minmax(0, 1fr));
     }
 
     .dm-stats {
         grid-template-columns:
-            repeat(2,minmax(0,1fr));
+            repeat(2, minmax(0, 1fr));
+    }
+
+    /*
+     * At this width the 15-column table naturally becomes
+     * wider than the viewport. We keep it intact instead of
+     * adding a scroll container.
+     */
+    .dm-table {
+        min-width: 1500px;
+    }
+
+    .dm-table-card {
+        overflow-x: visible;
     }
 }
 
-@media (max-width: 900px) {
+
+/* =========================================================
+   RESPONSIVE — 1000px
+   ========================================================= */
+
+@media (max-width: 1000px) {
 
     .dm-page {
         padding: 15px;
     }
 
+    .dm-header {
+        padding: 19px;
+    }
+
     .dm-filter-grid {
         grid-template-columns:
-            repeat(2,minmax(0,1fr));
+            repeat(2, minmax(0, 1fr));
     }
 
     .dm-table-hint {
         display: none;
     }
+
+    /*
+     * Allow the page itself to expand naturally.
+     * No internal table scrolling.
+     */
+    .dm-table-scroll {
+        overflow: visible;
+    }
+
+    .dm-table {
+        min-width: 1450px;
+    }
 }
+
+
+/* =========================================================
+   RESPONSIVE — 800px
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .dm-page {
+        padding: 12px;
+    }
+
+    .dm-header {
+        padding: 17px;
+
+        gap: 12px;
+    }
+
+    .dm-header h1 {
+        font-size: 22px;
+    }
+
+    .dm-header p {
+        font-size: 12px;
+    }
+
+    .dm-header-icon {
+        width: 46px;
+        height: 46px;
+
+        font-size: 21px;
+    }
+
+    .dm-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dm-stats {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+    }
+
+    .dm-stat {
+        min-height: 130px;
+
+        padding: 17px;
+    }
+
+    .dm-stat-value {
+        font-size: 32px;
+    }
+
+    /*
+     * Table remains full width of its content.
+     * The page, rather than .dm-table-scroll, controls
+     * the overall layout.
+     */
+    .dm-table {
+        min-width: 1400px;
+    }
+
+    .dm-table-card {
+        overflow: visible;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
 
 @media (max-width: 680px) {
 
-        .dm-pagination {
+    .dm-page {
+        padding: 10px;
+    }
+
+    .dm-header {
+        padding: 16px;
+
+        border-radius: 13px;
+    }
+
+    .dm-header h1 {
+        font-size: 20px;
+    }
+
+    .dm-header p {
+        font-size: 11px;
+    }
+
+    .dm-header-icon {
+        width: 43px;
+        height: 43px;
+
+        border-radius: 11px;
+
+        font-size: 19px;
+    }
+
+    .dm-stats {
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+    .dm-stat {
+        min-height: 125px;
+
+        padding: 16px;
+    }
+
+    .dm-stat-top {
+        margin-bottom: 16px;
+    }
+
+    .dm-stat-value {
+        font-size: 31px;
+    }
+
+    .dm-filter-panel {
+        padding: 13px;
+
+        border-radius: 13px;
+    }
+
+    .dm-filter-header {
+        margin-bottom: 12px;
+    }
+
+    .dm-filter-title {
+        font-size: 13px;
+    }
+
+    .dm-table-header {
+        padding: 13px;
+    }
+
+    .dm-table-title strong {
+        font-size: 13px;
+    }
+
+    /*
+     * NO scroll container.
+     *
+     * The table remains wide enough to preserve the
+     * 15-column desktop structure.
+     */
+    .dm-table-scroll {
+        overflow: visible;
+    }
+
+    .dm-table {
+        min-width: 1380px;
+    }
+
+    /* Pagination */
+    .dm-pagination {
         flex-direction: column;
+
         align-items: stretch;
+
         gap: 12px;
+
         padding: 14px;
     }
 
@@ -1888,66 +2405,39 @@ main {
 
     .dm-pagination-links {
         justify-content: center;
+
         width: 100%;
-        overflow-x: auto;
-        padding-bottom: 2px;
+
+        overflow-x: visible;
+
+        flex-wrap: wrap;
     }
 
     .dm-pagination-links nav {
         max-width: 100%;
+
+        flex-wrap: wrap;
+
+        justify-content: center;
     }
 
     .dm-pagination-links a,
     .dm-pagination-links span {
         min-width: 34px;
         height: 34px;
+
         flex-shrink: 0;
     }
 
-    .dm-page {
-        padding: 10px;
-    }
-
-    .dm-header {
-        padding: 18px;
-    }
-
-    .dm-header h1 {
-        font-size: 21px;
-    }
-
-    .dm-header-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 21px;
-    }
-
-    .dm-stats {
-        grid-template-columns: 1fr;
-    }
-
-    .dm-filter-panel {
-        padding: 13px;
-    }
-
-    .dm-filter-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .dm-table-header {
-        padding: 14px;
-    }
-
-    .dm-table {
-        min-width: 1800px;
-    }
-
+    /* Modal */
     .dm-modal {
         padding: 8px;
     }
 
     .dm-modal-card {
-        max-height: calc(100vh - 16px);
+        max-height:
+            calc(100vh - 16px);
+
         border-radius: 14px;
     }
 
@@ -1972,29 +2462,96 @@ main {
         width: 100%;
     }
 
+    /* Toast */
     .dm-toast {
         left: 12px;
         right: 12px;
+
         top: 15px;
 
         min-width: 0;
     }
 }
 
+
+/* =========================================================
+   RESPONSIVE — SMALL MOBILE
+   ========================================================= */
+
 @media (max-width: 420px) {
 
+    .dm-page {
+        padding: 8px;
+    }
+
+    .dm-header {
+        padding: 14px;
+    }
+
+    .dm-header h1 {
+        font-size: 18px;
+    }
+
+    .dm-header p {
+        font-size: 10px;
+    }
+
+    .dm-header-icon {
+        width: 40px;
+        height: 40px;
+
+        font-size: 17px;
+    }
+
     .dm-stat {
-        min-height: 130px;
-        padding: 17px;
+        min-height: 120px;
+
+        padding: 15px;
+    }
+
+    .dm-stat-label {
+        font-size: 11px;
     }
 
     .dm-stat-value {
-        font-size: 32px;
+        font-size: 30px;
+    }
+
+    .dm-stat-description {
+        font-size: 11px;
     }
 
     .dm-profile img {
         width: 55px !important;
         height: 55px !important;
+
         min-width: 55px;
+    }
+
+    .dm-profile-name {
+        font-size: 14px;
+    }
+
+    .dm-modal-header {
+        padding: 15px;
+    }
+
+    .dm-modal-body {
+        padding: 13px;
+    }
+
+    .dm-modal-footer {
+        padding: 13px;
+    }
+}
+
+
+/* =========================================================
+   ANIMATION
+   ========================================================= */
+
+@keyframes dmSpin {
+    to {
+        transform: rotate(360deg);
     }
 }
