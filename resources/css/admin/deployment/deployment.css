@@ -2208,6 +2208,165 @@ main {
     pointer-events: none;
 }
 
+/* =========================================================
+   STICKY FIRST 4 COLUMNS
+   TRB + NAME + COURSE + BATCH
+========================================================= */
+
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1),
+.dm-table th:nth-child(2),
+.dm-table td:nth-child(2),
+.dm-table th:nth-child(3),
+.dm-table td:nth-child(3),
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    position: sticky;
+    z-index: 4;
+}
+
+
+/* ---------------------------------------------------------
+   COLUMN 1 — TRB
+--------------------------------------------------------- */
+
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1) {
+    left: 0;
+    min-width: 130px;
+    width: 130px;
+}
+
+
+/* ---------------------------------------------------------
+   COLUMN 2 — NAME
+--------------------------------------------------------- */
+
+.dm-table th:nth-child(2),
+.dm-table td:nth-child(2) {
+    left: 130px;
+    min-width: 190px;
+    width: 190px;
+}
+
+
+/* ---------------------------------------------------------
+   COLUMN 3 — COURSE
+--------------------------------------------------------- */
+
+.dm-table th:nth-child(3),
+.dm-table td:nth-child(3) {
+    left: 320px;
+    min-width: 120px;
+    width: 120px;
+}
+
+
+/* ---------------------------------------------------------
+   COLUMN 4 — BATCH
+--------------------------------------------------------- */
+
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    left: 440px;
+    min-width: 110px;
+    width: 110px;
+}
+
+
+/* =========================================================
+   HEADER LAYER
+========================================================= */
+
+.dm-table thead th:nth-child(1),
+.dm-table thead th:nth-child(2),
+.dm-table thead th:nth-child(3),
+.dm-table thead th:nth-child(4) {
+    z-index: 8;
+}
+
+
+/* =========================================================
+   STICKY COLUMN BACKGROUND
+   Prevent scrolling columns from showing underneath
+========================================================= */
+
+.dm-table tbody td:nth-child(1),
+.dm-table tbody td:nth-child(2),
+.dm-table tbody td:nth-child(3),
+.dm-table tbody td:nth-child(4) {
+    background: #0f1b42;
+}
+
+
+/* Header background */
+
+.dm-table thead th:nth-child(1),
+.dm-table thead th:nth-child(2),
+.dm-table thead th:nth-child(3),
+.dm-table thead th:nth-child(4) {
+    background: #0b1738;
+}
+
+
+/* =========================================================
+   SEPARATION SHADOW
+   Makes it obvious where the fixed area ends
+========================================================= */
+
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    box-shadow:
+        6px 0 12px rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   KEEP TABLE SCROLLING
+========================================================= */
+
+.dm-table-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .dm-table th:nth-child(1),
+    .dm-table td:nth-child(1) {
+        left: 0;
+        min-width: 110px;
+        width: 110px;
+    }
+
+    .dm-table th:nth-child(2),
+    .dm-table td:nth-child(2) {
+        left: 110px;
+        min-width: 170px;
+        width: 170px;
+    }
+
+    .dm-table th:nth-child(3),
+    .dm-table td:nth-child(3) {
+        left: 280px;
+        min-width: 110px;
+        width: 110px;
+    }
+
+    .dm-table th:nth-child(4),
+    .dm-table td:nth-child(4) {
+        left: 390px;
+        min-width: 100px;
+        width: 100px;
+    }
+
+}
 
 /* =========================================================
    30. ANIMATIONS
