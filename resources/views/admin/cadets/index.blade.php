@@ -6,14 +6,12 @@
 
 <div class="cadet-management-page">
 
-    {{-- =====================================================
+    {{-- =========================================================
          SUCCESS NOTIFICATION
-    ====================================================== --}}
+    ========================================================== --}}
 
     @if(session('success'))
-
         <div id="success-notif" class="notif">
-
             <i class="fas fa-circle-check"></i>
 
             <span>
@@ -27,55 +25,38 @@
             >
                 ×
             </button>
-
         </div>
-
     @endif
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          VALIDATION ERRORS
-    ====================================================== --}}
+    ========================================================== --}}
 
     @if($errors->any())
-
         <div class="validation-alert">
-
             <i class="fas fa-circle-exclamation"></i>
 
             <div>
-
-                <strong>
-                    Please check the following:
-                </strong>
+                <strong>Please check the following:</strong>
 
                 <ul>
-
                     @foreach($errors->all() as $error)
-
-                        <li>
-                            {{ $error }}
-                        </li>
-
+                        <li>{{ $error }}</li>
                     @endforeach
-
                 </ul>
-
             </div>
-
         </div>
-
     @endif
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          PAGE HEADER
-    ====================================================== --}}
+    ========================================================== --}}
 
     <div class="page-header">
 
         <div class="header-content">
-
             <h1>
                 <i class="fas fa-user-graduate"></i>
                 <span>Cadet Management</span>
@@ -85,11 +66,9 @@
                 Manage cadet profiles, verification status,
                 deployment information and records.
             </p>
-
         </div>
 
         <div class="header-actions">
-
             <a
                 href="{{ route('admin.cadets.create') }}"
                 class="add-btn"
@@ -97,135 +76,98 @@
                 <i class="fas fa-plus"></i>
                 <span>Add New Cadet</span>
             </a>
-
         </div>
 
     </div>
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          STATISTICS
-    ====================================================== --}}
+    ========================================================== --}}
 
     <div class="cards">
 
         <div class="stat-card blue">
-
             <div class="stat-content">
+                <div class="stat-label">TOTAL CADETS</div>
 
-                <div class="stat-label">
-                    TOTAL CADETS
-                </div>
-
-                <h2
-                    class="stat-number"
-                    id="totalCadetsCard"
-                >
+                <h2 class="stat-number">
                     {{ $totalCadets }}
                 </h2>
 
                 <div class="stat-subtitle">
                     Registered cadet records
                 </div>
-
             </div>
 
             <div class="stat-icon">
                 <i class="fas fa-users"></i>
             </div>
-
         </div>
 
 
         <div class="stat-card green">
-
             <div class="stat-content">
+                <div class="stat-label">ACTIVE CADETS</div>
 
-                <div class="stat-label">
-                    ACTIVE CADETS
-                </div>
-
-                <h2
-                    class="stat-number"
-                    id="activeCadetsCard"
-                >
+                <h2 class="stat-number">
                     {{ $activeCadets }}
                 </h2>
 
                 <div class="stat-subtitle">
                     Currently active accounts
                 </div>
-
             </div>
 
             <div class="stat-icon">
                 <i class="fas fa-user-check"></i>
             </div>
-
         </div>
 
 
         <div class="stat-card orange">
-
             <div class="stat-content">
+                <div class="stat-label">CURRENTLY DEPLOYED</div>
 
-                <div class="stat-label">
-                    CURRENTLY DEPLOYED
-                </div>
-
-                <h2
-                    class="stat-number"
-                    id="deployedCadetsCard"
-                >
+                <h2 class="stat-number">
                     {{ $withDeployment }}
                 </h2>
 
                 <div class="stat-subtitle">
                     Cadets with deployment
                 </div>
-
             </div>
 
             <div class="stat-icon">
                 <i class="fas fa-ship"></i>
             </div>
-
         </div>
 
 
         <div class="stat-card red">
-
             <div class="stat-content">
+                <div class="stat-label">NO DEPLOYMENT</div>
 
-                <div class="stat-label">
-                    NO DEPLOYMENT
-                </div>
-
-                <h2
-                    class="stat-number"
-                    id="notDeployedCard"
-                >
+                <h2 class="stat-number">
                     {{ $noDeployment }}
                 </h2>
 
                 <div class="stat-subtitle">
                     Awaiting deployment
                 </div>
-
             </div>
 
             <div class="stat-icon">
                 <i class="fas fa-location-dot"></i>
             </div>
-
         </div>
 
     </div>
 
 
-    {{-- =====================================================
+    {{-- =========================================================
          FILTER PANEL
-    ====================================================== --}}
+    ========================================================== --}}
 
     <div class="filter-panel">
 
@@ -238,18 +180,15 @@
                 </div>
 
                 <div>
-
-                    <h3>
-                        Filter & Search
-                    </h3>
+                    <h3>Filter & Search</h3>
 
                     <span>
                         Narrow down cadet records
                     </span>
-
                 </div>
 
             </div>
+
 
             <button
                 type="button"
@@ -282,7 +221,8 @@
                     @foreach($courses as $course)
 
                         <option
-                            value="{{ strtolower(trim($course->course)) }}"
+                            value="{{ $course->course }}"
+                            {{ request('course') == $course->course ? 'selected' : '' }}
                         >
                             {{ strtoupper($course->course) }}
                         </option>
@@ -310,7 +250,10 @@
 
                     @foreach($batches as $batch)
 
-                        <option value="{{ strtolower(trim($batch->batch_year)) }}">
+                        <option
+                            value="{{ $batch->id }}"
+                            {{ request('batch') == $batch->id ? 'selected' : '' }}
+                        >
                             {{ $batch->batch_year }}
                         </option>
 
@@ -335,15 +278,24 @@
                         All Deployment Status
                     </option>
 
-                    <option value="not_deployed">
+                    <option
+                        value="not_deployed"
+                        {{ request('deployment') === 'not_deployed' ? 'selected' : '' }}
+                    >
                         Not Deployed
                     </option>
 
-                    <option value="ongoing">
+                    <option
+                        value="ongoing"
+                        {{ request('deployment') === 'ongoing' ? 'selected' : '' }}
+                    >
                         Ongoing
                     </option>
 
-                    <option value="completed">
+                    <option
+                        value="completed"
+                        {{ request('deployment') === 'completed' ? 'selected' : '' }}
+                    >
                         Completed
                     </option>
 
@@ -366,15 +318,24 @@
                         All Verification
                     </option>
 
-                    <option value="approved">
+                    <option
+                        value="approved"
+                        {{ request('verification') === 'approved' ? 'selected' : '' }}
+                    >
                         Complete
                     </option>
 
-                    <option value="pending">
+                    <option
+                        value="pending"
+                        {{ request('verification') === 'pending' ? 'selected' : '' }}
+                    >
                         Pending
                     </option>
 
-                    <option value="rejected">
+                    <option
+                        value="rejected"
+                        {{ request('verification') === 'rejected' ? 'selected' : '' }}
+                    >
                         Incomplete
                     </option>
 
@@ -400,6 +361,7 @@
                         id="searchInput"
                         placeholder="Name, TRB, course..."
                         autocomplete="off"
+                        value="{{ request('search') }}"
                     >
 
                 </div>
@@ -411,9 +373,9 @@
     </div>
 
 
-    {{-- =====================================================
-         TABLE
-    ====================================================== --}}
+    {{-- =========================================================
+         TABLE PANEL
+    ========================================================== --}}
 
     <div class="table-panel">
 
@@ -439,16 +401,21 @@
 
             </div>
 
-            <div
-                class="result-count"
-                id="resultCount"
-            >
-                {{ $totalCadets }}
-                {{ $totalCadets == 1 ? 'Record' : 'Records' }}
+
+            <div class="result-count">
+
+                {{ $cadets->total() }}
+
+                {{ $cadets->total() == 1 ? 'Record' : 'Records' }}
+
             </div>
 
         </div>
 
+
+        {{-- =====================================================
+             TABLE
+        ====================================================== --}}
 
         <div class="table-wrapper">
 
@@ -457,7 +424,6 @@
                 <thead>
 
                     <tr>
-
                         <th>TRB</th>
                         <th>Cadet</th>
                         <th>Course</th>
@@ -466,7 +432,6 @@
                         <th>Verification</th>
                         <th>Deployment</th>
                         <th>Actions</th>
-
                     </tr>
 
                 </thead>
@@ -474,267 +439,273 @@
 
                 <tbody>
 
-                @forelse($cadets as $cadet)
+                    @forelse($cadets as $cadet)
 
-                    @php
+                        @php
 
-                        $verificationRaw = strtolower(
-                            trim($cadet->verification_status_label ?? '')
-                        );
+                            /*
+                             * VERIFICATION
+                             */
 
-                        $verification = match ($verificationRaw) {
+                            $verificationRaw = strtolower(
+                                trim($cadet->verification_status_label ?? $cadet->verification_status ?? '')
+                            );
 
-                            'verified',
-                            'complete',
-                            'completed',
-                            'approved' => 'approved',
+                            $verification = match ($verificationRaw) {
 
-                            'deficiency',
-                            'incomplete',
-                            'rejected' => 'rejected',
+                                'verified',
+                                'complete',
+                                'completed',
+                                'approved' => 'approved',
 
-                            'pending',
-                            'for verification',
-                            'for_verification' => 'pending',
+                                'deficiency',
+                                'incomplete',
+                                'rejected' => 'rejected',
 
-                            default => 'pending',
+                                'pending',
+                                'for verification',
+                                'for_verification' => 'pending',
 
-                        };
+                                default => 'pending',
 
-                        $deployRaw = strtolower(
-                            trim($cadet->deployment->status ?? '')
-                        );
-
-                        $deploy = match ($deployRaw) {
-
-                            'ongoing' => 'ongoing',
-
-                            'completed' => 'completed',
-
-                            default => 'not_deployed',
-
-                        };
-
-                        $batchYear =
-                            optional($cadet->batch)->batch_year
-                            ?? 'No Batch';
-
-                        $photoUrl =
-                            $cadet->photo
-                            ? asset('storage/' . $cadet->photo)
-                            : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
-
-                    @endphp
+                            };
 
 
-                    <tr
-                        class="cadet-row"
-                        data-cadet-id="{{ $cadet->id }}"
-                        data-active="{{ optional($cadet->user)->is_active ? '1' : '0' }}"
-                        data-course="{{ strtolower(trim($cadet->course ?? '')) }}"
-                        data-batch="{{ strtolower(trim($batchYear)) }}"
-                        data-deployment="{{ $deploy }}"
-                        data-verification="{{ $verification }}"
-                    >
+                            /*
+                             * DEPLOYMENT
+                             */
 
-                        {{-- TRB --}}
+                            $deployRaw = strtolower(
+                                trim($cadet->deployment->status ?? '')
+                            );
 
-                        <td>
+                            $deploy = match ($deployRaw) {
 
-                            <span class="trb-code">
-                                {{ $cadet->trb_control_number }}
-                            </span>
+                                'ongoing' => 'ongoing',
 
-                        </td>
+                                'completed' => 'completed',
+
+                                default => 'not_deployed',
+
+                            };
 
 
-                        {{-- NAME --}}
+                            /*
+                             * BATCH
+                             */
 
-                        <td>
+                            $batchYear =
+                                optional($cadet->batch)->batch_year
+                                ?? 'No Batch';
 
-                            <div class="cadet-identity">
 
-                                <img
-                                    src="{{ $photoUrl }}"
-                                    alt="{{ $cadet->full_name }}"
-                                    class="table-avatar"
-                                >
+                            /*
+                             * PHOTO
+                             */
 
-                                <span class="cadet-name">
-                                    {{ $cadet->full_name }}
+                            $photoUrl = $cadet->photo
+                                ? asset('storage/' . $cadet->photo)
+                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+                        @endphp
+
+
+                        <tr class="cadet-row">
+
+                            {{-- TRB --}}
+
+                            <td>
+
+                                <span class="trb-code">
+                                    {{ $cadet->trb_control_number ?: 'N/A' }}
                                 </span>
 
-                            </div>
-
-                        </td>
+                            </td>
 
 
-                        {{-- COURSE --}}
+                            {{-- CADET --}}
 
-                        <td>
+                            <td>
 
-                            <span class="course-text">
-                                {{ strtoupper($cadet->course) }}
-                            </span>
+                                <div class="cadet-identity">
 
-                        </td>
+                                    <img
+                                        src="{{ $photoUrl }}"
+                                        alt="{{ $cadet->full_name }}"
+                                        class="table-avatar"
+                                        onerror="this.onerror=null;this.src='https://cdn-icons-png.flaticon.com/512/3135/3135713.png';"
+                                    >
 
+                                    <span class="cadet-name">
+                                        {{ $cadet->full_name }}
+                                    </span>
 
-                        {{-- BATCH --}}
-
-                        <td>
-                            {{ $batchYear }}
-                        </td>
-
-
-                        {{-- RANK --}}
-
-                        <td>
-                            {{ $cadet->rank ?: 'N/A' }}
-                        </td>
-
-
-                        {{-- VERIFICATION --}}
-
-                        <td>
-
-                            <span
-                                class="status {{ $verification }}"
-                                data-status="{{ $verification }}"
-                                data-verification="{{ $verification }}"
-                            >
-                                {{ ucfirst($verification) }}
-                            </span>
-
-                        </td>
-
-
-                        {{-- DEPLOYMENT --}}
-
-                        <td>
-
-                            <span
-                                class="status {{ $deploy }}"
-                                data-deploy="{{ $deploy }}"
-                            >
-
-                                {{ ucwords(
-                                    str_replace(
-                                        '_',
-                                        ' ',
-                                        $deploy
-                                    )
-                                ) }}
-
-                            </span>
-
-                        </td>
-
-
-                        {{-- ACTIONS --}}
-
-                        <td>
-
-                            <div class="action-buttons">
-
-                                {{-- VIEW --}}
-
-                                <button
-                                    type="button"
-                                    class="btn btn-view"
-                                    data-action="view"
-                                    onclick="openCadetModal(
-                                        @js($cadet->full_name),
-                                        @js($cadet->trb_control_number),
-                                        @js(strtoupper($cadet->course)),
-                                        @js($batchYear),
-                                        @js($cadet->rank),
-                                        @js($deploy),
-                                        @js($cadet->verification_status_label),
-                                        @js($cadet->contact_number ?? 'N/A'),
-                                        @js($cadet->date_of_birth ?? 'N/A'),
-                                        @js($photoUrl),
-                                        @js($cadet->id)
-                                    )"
-                                >
-
-                                    <i class="fas fa-eye"></i>
-
-                                    <span>View</span>
-
-                                </button>
-
-
-                                {{-- EDIT --}}
-
-                                <button
-                                    type="button"
-                                    class="btn btn-edit"
-                                    data-action="edit"
-                                    onclick="openEditModal(
-                                        @js($cadet->id),
-                                        @js($cadet->full_name),
-                                        @js($cadet->course),
-                                        @js($cadet->batch_id),
-                                        @js($batchYear === 'No Batch' ? '' : $batchYear),
-                                        @js($cadet->date_of_birth),
-                                        @js($cadet->place_of_birth),
-                                        @js($cadet->rank),
-                                        @js($cadet->address),
-                                        @js($cadet->contact_number),
-                                        @js($cadet->email),
-                                        @js($cadet->trb_control_number),
-                                        @js($photoUrl),
-                                        @js($cadet->guardian_relationship),
-                                        @js($cadet->parent_guardian_name),
-                                        @js($cadet->parent_guardian_contact),
-                                        @js($cadet->parent_guardian_email),
-                                        @js($cadet->parent_guardian_address)
-                                    )"
-                                >
-
-                                    <i class="fas fa-pen"></i>
-
-                                    <span>Edit</span>
-
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-                @empty
-
-                    <tr class="empty-table-row">
-
-                        <td
-                            colspan="8"
-                            class="empty-row"
-                        >
-
-                            <div class="empty-state">
-
-                                <div class="empty-icon">
-                                    <i class="fas fa-users-slash"></i>
                                 </div>
 
-                                <strong>
-                                    No cadet records found
-                                </strong>
+                            </td>
 
-                                <span>
-                                    There are currently no cadets to display.
+
+                            {{-- COURSE --}}
+
+                            <td>
+
+                                <span class="course-text">
+                                    {{ strtoupper($cadet->course) }}
                                 </span>
 
-                            </div>
+                            </td>
 
-                        </td>
 
-                    </tr>
+                            {{-- BATCH --}}
 
-                @endforelse
+                            <td>
+                                {{ $batchYear }}
+                            </td>
+
+
+                            {{-- RANK --}}
+
+                            <td>
+                                {{ $cadet->rank ?: 'N/A' }}
+                            </td>
+
+
+                            {{-- VERIFICATION --}}
+
+                            <td>
+
+                                <span
+                                    class="status {{ $verification }}"
+                                    data-status="{{ $verification }}"
+                                >
+                                    {{ ucfirst($verification) }}
+                                </span>
+
+                            </td>
+
+
+                            {{-- DEPLOYMENT --}}
+
+                            <td>
+
+                                <span
+                                    class="status {{ $deploy }}"
+                                    data-deploy="{{ $deploy }}"
+                                >
+                                    {{ ucwords(str_replace('_', ' ', $deploy)) }}
+                                </span>
+
+                            </td>
+
+
+                            {{-- ACTIONS --}}
+
+                            <td>
+
+                                <div class="action-buttons">
+
+                                    {{-- VIEW --}}
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-view"
+                                        data-action="view"
+                                        onclick="openCadetModal(
+                                            @js($cadet->full_name),
+                                            @js($cadet->trb_control_number),
+                                            @js(strtoupper($cadet->course)),
+                                            @js($batchYear),
+                                            @js($cadet->rank),
+                                            @js($deploy),
+                                            @js($cadet->verification_status_label ?? $cadet->verification_status),
+                                            @js($cadet->contact_number ?? 'N/A'),
+                                            @js($cadet->date_of_birth ?? 'N/A'),
+                                            @js($photoUrl),
+                                            @js($cadet->id)
+                                        )"
+                                    >
+
+                                        <i class="fas fa-eye"></i>
+
+                                        <span>
+                                            View
+                                        </span>
+
+                                    </button>
+
+
+                                    {{-- EDIT --}}
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-edit"
+                                        data-action="edit"
+                                        onclick="openEditModal(
+                                            @js($cadet->id),
+                                            @js($cadet->full_name),
+                                            @js($cadet->course),
+                                            @js($cadet->batch_id),
+                                            @js($batchYear === 'No Batch' ? '' : $batchYear),
+                                            @js($cadet->date_of_birth),
+                                            @js($cadet->place_of_birth),
+                                            @js($cadet->rank),
+                                            @js($cadet->address),
+                                            @js($cadet->contact_number),
+                                            @js($cadet->email),
+                                            @js($cadet->trb_control_number),
+                                            @js($photoUrl),
+                                            @js($cadet->guardian_relationship),
+                                            @js($cadet->parent_guardian_name),
+                                            @js($cadet->parent_guardian_contact),
+                                            @js($cadet->parent_guardian_email),
+                                            @js($cadet->parent_guardian_address)
+                                        )"
+                                    >
+
+                                        <i class="fas fa-pen"></i>
+
+                                        <span>
+                                            Edit
+                                        </span>
+
+                                    </button>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr class="empty-table-row">
+
+                            <td
+                                colspan="8"
+                                class="empty-row"
+                            >
+
+                                <div class="empty-state">
+
+                                    <div class="empty-icon">
+                                        <i class="fas fa-users-slash"></i>
+                                    </div>
+
+                                    <strong>
+                                        No cadet records found
+                                    </strong>
+
+                                    <span>
+                                        There are currently no cadets matching your filters.
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    @endforelse
 
                 </tbody>
 
@@ -742,57 +713,54 @@
 
         </div>
 
-{{-- =====================================================
-             PAGINATION
+
+        {{-- =====================================================
+             SERVER-SIDE PAGINATION
         ====================================================== --}}
 
-        <div
-            class="pagination-wrapper"
-            id="cadetPagination"
-        >
+        @if($cadets->hasPages())
 
-            <div
-                class="pagination-info"
-                id="paginationInfo"
-            >
-                Showing 1–50 of 50 records
-            </div>
+            <div class="pagination-wrapper">
 
+                <div class="pagination-info">
 
-            <div class="pagination-controls">
+                    Showing
 
-                <button
-                    type="button"
-                    class="pagination-btn"
-                    id="prevPage"
-                    aria-label="Previous page"
-                >
-                    <i class="fas fa-chevron-left"></i>
-                </button>
+                    <strong>
+                        {{ $cadets->firstItem() }}
+                    </strong>
 
+                    to
 
-                <div
-                    class="pagination-pages"
-                    id="paginationPages"
-                ></div>
+                    <strong>
+                        {{ $cadets->lastItem() }}
+                    </strong>
+
+                    of
+
+                    <strong>
+                        {{ $cadets->total() }}
+                    </strong>
+
+                    cadets
+
+                </div>
 
 
-                <button
-                    type="button"
-                    class="pagination-btn"
-                    id="nextPage"
-                    aria-label="Next page"
-                >
-                    <i class="fas fa-chevron-right"></i>
-                </button>
+                <div class="pagination-links">
+
+                    {{ $cadets->withQueryString()->links() }}
+
+                </div>
 
             </div>
 
-        </div>
+        @endif
 
     </div>
 
 </div>
+
 
 
 {{-- =========================================================
@@ -833,6 +801,7 @@
                 </div>
 
             </div>
+
 
             <button
                 type="button"
@@ -982,11 +951,8 @@
                 class="modal-btn modal-btn-cancel"
                 onclick="closeCadetModal()"
             >
-
                 <i class="fas fa-xmark"></i>
-
                 Close
-
             </button>
 
 
@@ -995,11 +961,8 @@
                 id="viewEditButton"
                 class="modal-btn modal-btn-update"
             >
-
                 <i class="fas fa-pen"></i>
-
                 Edit Cadet
-
             </button>
 
         </div>
@@ -1007,6 +970,7 @@
     </div>
 
 </div>
+
 
 
 {{-- =========================================================
@@ -1050,6 +1014,7 @@
 
             </div>
 
+
             <button
                 type="button"
                 class="modal-x"
@@ -1068,10 +1033,10 @@
             id="editCadetForm"
             method="POST"
             enctype="multipart/form-data"
+            action=""
         >
 
             @csrf
-
             @method('PUT')
 
 
@@ -1091,7 +1056,6 @@
                         onclick="switchEditTab('personal')"
                         role="tab"
                     >
-
                         <i class="fas fa-user"></i>
 
                         <span>
@@ -1108,7 +1072,6 @@
                         onclick="switchEditTab('guardian')"
                         role="tab"
                     >
-
                         <i class="fas fa-people-roof"></i>
 
                         <span>
@@ -1163,9 +1126,10 @@
                                     <img
                                         id="editCadetPreview"
                                         class="edit-photo"
-                                        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                                        src="https://cdn-icons-png.flaticon.com/512/3135/3135713.png"
                                         alt="Cadet Photo"
                                     >
+
 
                                     <div class="photo-actions">
 
@@ -1174,11 +1138,8 @@
                                             class="photo-btn photo-upload"
                                             onclick="document.getElementById('editPhotoInput').click()"
                                         >
-
                                             <i class="fas fa-camera"></i>
-
                                             Upload
-
                                         </button>
 
 
@@ -1187,11 +1148,8 @@
                                             class="photo-btn photo-remove"
                                             onclick="removeEditPhoto()"
                                         >
-
                                             <i class="fas fa-trash"></i>
-
                                             Remove
-
                                         </button>
 
                                     </div>
@@ -1205,6 +1163,7 @@
                                         hidden
                                     >
 
+
                                     <input
                                         type="hidden"
                                         id="remove_edit_photo"
@@ -1217,16 +1176,16 @@
 
                                 <div class="profile-fields">
 
+                                    {{-- FULL NAME --}}
+
                                     <div class="form-group">
 
                                         <label class="form-label">
-
                                             Full Name
 
                                             <span class="required">
                                                 *
                                             </span>
-
                                         </label>
 
                                         <input
@@ -1241,15 +1200,16 @@
                                     </div>
 
 
+                                    {{-- TRB OPTIONAL --}}
+
                                     <div class="form-group">
 
                                         <label class="form-label">
-
                                             TRB Control Number
 
                                             <span class="optional">
+                                                (Optional)
                                             </span>
-
                                         </label>
 
                                         <input
@@ -1277,14 +1237,13 @@
                                         class="form-label"
                                         for="edit_course"
                                     >
-
                                         Course
 
                                         <span class="required">
                                             *
                                         </span>
-
                                     </label>
+
 
                                     <select
                                         id="edit_course"
@@ -1303,13 +1262,11 @@
                                                 value="{{ $course->course }}"
                                                 data-course="{{ $course->course }}"
                                             >
-
                                                 {{ strtoupper($course->course) }}
 
                                                 @if(!empty($course->course_name))
                                                     — {{ $course->course_name }}
                                                 @endif
-
                                             </option>
 
                                         @endforeach
@@ -1327,6 +1284,7 @@
                                     >
                                         Batch
                                     </label>
+
 
                                     <select
                                         id="edit_batch_id"
@@ -1499,13 +1457,11 @@
                                         class="form-label"
                                         for="edit_email"
                                     >
-
                                         Email Address
 
                                         <span class="optional">
                                             (Optional)
                                         </span>
-
                                     </label>
 
                                     <input
@@ -1592,6 +1548,7 @@
                                         Relationship
                                     </label>
 
+
                                     <select
                                         id="edit_guardian_relationship"
                                         name="guardian_relationship"
@@ -1677,13 +1634,11 @@
                                         class="form-label"
                                         for="edit_parent_guardian_email"
                                     >
-
                                         Email Address
 
                                         <span class="optional">
                                             (Optional)
                                         </span>
-
                                     </label>
 
                                     <input
@@ -1741,11 +1696,8 @@
                     class="modal-btn modal-btn-cancel"
                     onclick="closeEditModal()"
                 >
-
                     <i class="fas fa-xmark"></i>
-
                     Cancel
-
                 </button>
 
 
@@ -1753,11 +1705,8 @@
                     type="submit"
                     class="modal-btn modal-btn-update"
                 >
-
                     <i class="fas fa-save"></i>
-
                     Update Cadet
-
                 </button>
 
             </div>
@@ -1769,6 +1718,7 @@
 </div>
 
 
+
 <script>
 
 (function () {
@@ -1776,23 +1726,17 @@
     'use strict';
 
 
-    /* =====================================================
+    /* =========================================================
        CONSTANTS
-    ===================================================== */
+    ========================================================== */
 
     const DEFAULT_PHOTO =
-        'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
-
-    const ROWS_PER_PAGE = 50;
-
-    let currentPage = 1;
-
-    let filteredRows = [];
+        'https://cdn-icons-png.flaticon.com/512/3135/3135713.png';
 
 
-    /* =====================================================
+    /* =========================================================
        ELEMENTS
-    ===================================================== */
+    ========================================================== */
 
     const deploymentFilter =
         document.getElementById('deploymentFilter');
@@ -1812,12 +1756,6 @@
     const clearFilters =
         document.getElementById('clearFilters');
 
-    const table =
-        document.getElementById('cadetTable');
-
-    const resultCount =
-        document.getElementById('resultCount');
-
     const viewModal =
         document.getElementById('cadetViewModal');
 
@@ -1827,25 +1765,10 @@
     const editForm =
         document.getElementById('editCadetForm');
 
-    const pagination =
-        document.getElementById('cadetPagination');
 
-    const paginationInfo =
-        document.getElementById('paginationInfo');
-
-    const paginationPages =
-        document.getElementById('paginationPages');
-
-    const prevPage =
-        document.getElementById('prevPage');
-
-    const nextPage =
-        document.getElementById('nextPage');
-
-
-    /* =====================================================
-       NORMALIZATION
-    ===================================================== */
+    /* =========================================================
+       NORMALIZE
+    ========================================================== */
 
     function normalize(value) {
 
@@ -1857,6 +1780,10 @@
     }
 
 
+    /* =========================================================
+       DATE NORMALIZATION
+    ========================================================== */
+
     function normalizeDate(value) {
 
         if (!value) {
@@ -1866,11 +1793,6 @@
         const stringValue =
             String(value).trim();
 
-        /*
-         * If Laravel gives us an ISO date/time,
-         * only keep the date portion.
-         */
-
         return stringValue.includes('T')
             ? stringValue.split('T')[0]
             : stringValue.substring(0, 10);
@@ -1878,827 +1800,175 @@
     }
 
 
-/* =====================================================
-   FILTER + PAGINATION
-===================================================== */
+    /* =========================================================
+       SERVER-SIDE FILTERING
+    ========================================================== */
 
-function filterTable(resetPage = true) {
+    function applyFilters() {
 
-    if (!table) {
-        return;
-    }
+        const params =
+            new URLSearchParams();
 
 
-    /*
-     * When a filter/search changes:
-     *
-     * - go back to page 1
-     * - DO NOT clear the filters
-     */
+        const course =
+            courseFilter?.value?.trim() || '';
 
-    if (resetPage) {
-        currentPage = 1;
-    }
-
-
-    const selectedCourse =
-        normalize(
-            courseFilter?.value
-        );
-
-
-    const selectedBatch =
-        normalize(
-            batchFilter?.value
-        );
-
-
-    const selectedVerification =
-        normalize(
-            verificationFilter?.value
-        );
-
-
-    const selectedDeployment =
-        normalize(
-            deploymentFilter?.value
-        );
-
-
-    const search =
-        String(
-            searchInput?.value ?? ''
-        )
-            .trim()
-            .toLowerCase();
-
-
-    const rows =
-        Array.from(
-            table.querySelectorAll(
-                'tbody tr.cadet-row'
-            )
-        );
-
-
-    /*
-     * =====================================================
-     * FIND ALL MATCHING CADETS
-     * =====================================================
-     */
-
-    filteredRows = rows.filter(row => {
-
-        const rowCourse =
-            normalize(
-                row.dataset.course
-            );
-
-
-        const rowBatch =
-            normalize(
-                row.dataset.batch
-            );
-
-
-        const rowVerification =
-            normalize(
-                row.dataset.verification
-            );
-
-
-        const rowDeployment =
-            normalize(
-                row.dataset.deployment
-            );
-
-
-        const rowText =
-            row.innerText
-                .toLowerCase();
-
-
-        const matchCourse =
-            !selectedCourse ||
-            rowCourse === selectedCourse;
-
-
-        const matchBatch =
-            !selectedBatch ||
-            rowBatch === selectedBatch;
-
-
-        const matchVerification =
-            !selectedVerification ||
-            rowVerification === selectedVerification;
-
-
-        const matchDeployment =
-            !selectedDeployment ||
-            rowDeployment === selectedDeployment;
-
-
-        const matchSearch =
-            !search ||
-            rowText.includes(search);
-
-
-        return (
-            matchCourse &&
-            matchBatch &&
-            matchVerification &&
-            matchDeployment &&
-            matchSearch
-        );
-
-    });
-
-
-    /*
-     * =====================================================
-     * TOTAL PAGES
-     * =====================================================
-     */
-
-    const total =
-        filteredRows.length;
-
-
-    const totalPages =
-        Math.max(
-            1,
-            Math.ceil(
-                total / ROWS_PER_PAGE
-            )
-        );
-
-
-    /*
-     * If filtering causes the current page
-     * to disappear, move to the last valid page.
-     */
-
-    if (
-        currentPage > totalPages
-    ) {
-
-        currentPage =
-            totalPages;
-
-    }
-
-
-    /*
-     * =====================================================
-     * HIDE EVERY ROW
-     * =====================================================
-     */
-
-    rows.forEach(row => {
-
-        row.hidden = true;
-
-    });
-
-
-    /*
-     * =====================================================
-     * SHOW ONLY 50 ROWS FOR CURRENT PAGE
-     * =====================================================
-     */
-
-    const startIndex =
-        (currentPage - 1) *
-        ROWS_PER_PAGE;
-
-
-    const endIndex =
-        Math.min(
-            startIndex + ROWS_PER_PAGE,
-            total
-        );
-
-
-    for (
-        let i = startIndex;
-        i < endIndex;
-        i++
-    ) {
-
-        filteredRows[i].hidden =
-            false;
-
-    }
-
-
-    /*
-     * =====================================================
-     * UPDATE STATISTICS
-     * =====================================================
-     */
-
-    let active = 0;
-
-    let deployed = 0;
-
-    let notDeployed = 0;
-
-
-    filteredRows.forEach(row => {
-
-        if (
-            row.dataset.active === '1'
-        ) {
-
-            active++;
-
-        }
-
+        const batch =
+            batchFilter?.value?.trim() || '';
 
         const deployment =
-            normalize(
-                row.dataset.deployment
+            deploymentFilter?.value?.trim() || '';
+
+        const verification =
+            verificationFilter?.value?.trim() || '';
+
+        const search =
+            searchInput?.value?.trim() || '';
+
+
+        if (course) {
+            params.set('course', course);
+        }
+
+        if (batch) {
+            params.set('batch', batch);
+        }
+
+        if (deployment) {
+            params.set('deployment', deployment);
+        }
+
+        if (verification) {
+            params.set('verification', verification);
+        }
+
+        if (search) {
+            params.set('search', search);
+        }
+
+
+        /*
+         * ALWAYS REMOVE PAGE
+         *
+         * When a filter changes:
+         *
+         * page=5 + course=BSMT
+         *
+         * becomes:
+         *
+         * course=BSMT
+         *
+         * so Laravel starts at page 1.
+         */
+
+        params.delete('page');
+
+
+        const queryString =
+            params.toString();
+
+
+        const url =
+            window.location.pathname +
+            (
+                queryString
+                    ? '?' + queryString
+                    : ''
             );
 
 
-        if (
-            deployment === 'ongoing' ||
-            deployment === 'completed'
-        ) {
-
-            deployed++;
-
-        }
-
-
-        if (
-            deployment === 'not_deployed'
-        ) {
-
-            notDeployed++;
-
-        }
-
-    });
-
-
-    const totalCard =
-        document.getElementById(
-            'totalCadetsCard'
-        );
-
-
-    const activeCard =
-        document.getElementById(
-            'activeCadetsCard'
-        );
-
-
-    const deployedCard =
-        document.getElementById(
-            'deployedCadetsCard'
-        );
-
-
-    const notDeployedCard =
-        document.getElementById(
-            'notDeployedCard'
-        );
-
-
-    if (totalCard) {
-
-        totalCard.innerText =
-            total;
+        window.location.href = url;
 
     }
 
 
-    if (activeCard) {
+    /* =========================================================
+       FILTER EVENTS
+    ========================================================== */
 
-        activeCard.innerText =
-            active;
-
-    }
-
-
-    if (deployedCard) {
-
-        deployedCard.innerText =
-            deployed;
-
-    }
-
-
-    if (notDeployedCard) {
-
-        notDeployedCard.innerText =
-            notDeployed;
-
-    }
-
-
-    /*
-     * =====================================================
-     * RESULT COUNT
-     * =====================================================
-     */
-
-    if (resultCount) {
-
-        resultCount.innerText =
-            `${total} ${
-                total === 1
-                    ? 'Record'
-                    : 'Records'
-            }`;
-
-    }
-
-
-    /*
-     * =====================================================
-     * UPDATE PAGINATION
-     * =====================================================
-     */
-
-    renderPagination(
-        total,
-        totalPages,
-        startIndex,
-        endIndex
+    courseFilter?.addEventListener(
+        'change',
+        applyFilters
     );
 
-}
+    batchFilter?.addEventListener(
+        'change',
+        applyFilters
+    );
+
+    deploymentFilter?.addEventListener(
+        'change',
+        applyFilters
+    );
+
+    verificationFilter?.addEventListener(
+        'change',
+        applyFilters
+    );
 
 
-/* =====================================================
-   RENDER PAGINATION
-===================================================== */
+    /* =========================================================
+       SEARCH
+    ========================================================== */
 
-function renderPagination(
-    total,
-    totalPages,
-    startIndex,
-    endIndex
-) {
-
-    if (!pagination) {
-        return;
-    }
+    let searchTimer = null;
 
 
-    /*
-     * No records = hide pagination
-     */
+    searchInput?.addEventListener(
+        'input',
+        function () {
 
-    if (total === 0) {
-
-        pagination.style.display =
-            'none';
-
-        return;
-
-    }
+            clearTimeout(searchTimer);
 
 
-    pagination.style.display =
-        'flex';
-
-
-    /*
-     * =====================================================
-     * SHOWING 1–50 OF 241 RECORDS
-     * =====================================================
-     */
-
-    if (paginationInfo) {
-
-        paginationInfo.innerText =
-            `Showing ${
-                startIndex + 1
-            }–${
-                endIndex
-            } of ${
-                total
-            } ${
-                total === 1
-                    ? 'record'
-                    : 'records'
-            }`;
-
-    }
-
-
-    /*
-     * =====================================================
-     * PREVIOUS BUTTON
-     * =====================================================
-     */
-
-    if (prevPage) {
-
-        prevPage.disabled =
-            currentPage === 1;
-
-    }
-
-
-    /*
-     * =====================================================
-     * NEXT BUTTON
-     * =====================================================
-     */
-
-    if (nextPage) {
-
-        nextPage.disabled =
-            currentPage === totalPages;
-
-    }
-
-
-    /*
-     * =====================================================
-     * PAGE NUMBERS
-     * =====================================================
-     */
-
-    if (!paginationPages) {
-        return;
-    }
-
-
-    paginationPages.innerHTML =
-        '';
-
-
-    const maxPages = 5;
-
-
-    let startPage =
-        Math.max(
-            1,
-            currentPage -
-            Math.floor(maxPages / 2)
-        );
-
-
-    let endPage =
-        Math.min(
-            totalPages,
-            startPage + maxPages - 1
-        );
-
-
-    if (
-        endPage - startPage + 1 <
-        maxPages
-    ) {
-
-        startPage =
-            Math.max(
-                1,
-                endPage - maxPages + 1
-            );
-
-    }
-
-
-    /*
-     * FIRST PAGE
-     */
-
-    if (startPage > 1) {
-
-        createPageButton(1);
-
-
-        if (startPage > 2) {
-
-            createEllipsis();
+            searchTimer =
+                setTimeout(
+                    function () {
+                        applyFilters();
+                    },
+                    500
+                );
 
         }
-
-    }
-
-
-    /*
-     * PAGE NUMBERS
-     */
-
-    for (
-        let page = startPage;
-        page <= endPage;
-        page++
-    ) {
-
-        createPageButton(page);
-
-    }
+    );
 
 
-    /*
-     * LAST PAGE
-     */
+    searchInput?.addEventListener(
+        'keydown',
+        function (event) {
 
-    if (
-        endPage < totalPages
-    ) {
+            if (event.key === 'Enter') {
 
-        if (
-            endPage < totalPages - 1
-        ) {
+                event.preventDefault();
 
-            createEllipsis();
+                clearTimeout(searchTimer);
+
+                applyFilters();
+
+            }
 
         }
+    );
 
 
-        createPageButton(
-            totalPages
-        );
+    /* =========================================================
+       CLEAR FILTERS
+    ========================================================== */
 
-    }
-
-}
-
-
-/* =====================================================
-   CREATE PAGE BUTTON
-===================================================== */
-
-function createPageButton(page) {
-
-    const button =
-        document.createElement(
-            'button'
-        );
-
-
-    button.type = 'button';
-
-
-    button.className =
-        'pagination-page';
-
-
-    button.innerText =
-        page;
-
-
-    if (
-        page === currentPage
-    ) {
-
-        button.classList.add(
-            'active'
-        );
-
-    }
-
-
-    button.addEventListener(
+    clearFilters?.addEventListener(
         'click',
         function () {
 
-            /*
-             * IMPORTANT:
-             *
-             * Changing page does NOT
-             * clear any filter.
-             */
-
-            currentPage =
-                page;
-
-
-            filterTable(
-                false
-            );
+            window.location.href =
+                window.location.pathname;
 
         }
     );
 
 
-    paginationPages.appendChild(
-        button
-    );
-
-}
-
-
-/* =====================================================
-   ELLIPSIS
-===================================================== */
-
-function createEllipsis() {
-
-    const span =
-        document.createElement(
-            'span'
-        );
-
-
-    span.className =
-        'pagination-ellipsis';
-
-
-    span.innerText =
-        '…';
-
-
-    paginationPages.appendChild(
-        span
-    );
-
-}
-
-
-/* =====================================================
-   PREVIOUS PAGE
-===================================================== */
-
-prevPage?.addEventListener(
-    'click',
-    function () {
-
-        if (
-            currentPage <= 1
-        ) {
-
-            return;
-
-        }
-
-
-        currentPage--;
-
-
-        /*
-         * false means:
-         * KEEP ALL CURRENT FILTERS
-         */
-
-        filterTable(false);
-
-    }
-);
-
-
-/* =====================================================
-   NEXT PAGE
-===================================================== */
-
-nextPage?.addEventListener(
-    'click',
-    function () {
-
-        const totalPages =
-            Math.max(
-                1,
-                Math.ceil(
-                    filteredRows.length /
-                    ROWS_PER_PAGE
-                )
-            );
-
-
-        if (
-            currentPage >= totalPages
-        ) {
-
-            return;
-
-        }
-
-
-        currentPage++;
-
-
-        /*
-         * false means:
-         * KEEP ALL CURRENT FILTERS
-         */
-
-        filterTable(false);
-
-    }
-);
-
-    /* =====================================================
-       FILTER EVENTS
-    ===================================================== */
-
-deploymentFilter?.addEventListener(
-    'change',
-    function () {
-
-        currentPage = 1;
-
-        filterTable(false);
-
-    }
-);
-
-
-courseFilter?.addEventListener(
-    'change',
-    function () {
-
-        currentPage = 1;
-
-        filterTable(false);
-
-    }
-);
-
-
-batchFilter?.addEventListener(
-    'change',
-    function () {
-
-        currentPage = 1;
-
-        filterTable(false);
-
-    }
-);
-
-
-verificationFilter?.addEventListener(
-    'change',
-    function () {
-
-        currentPage = 1;
-
-        filterTable(false);
-
-    }
-);
-
-
-searchInput?.addEventListener(
-    'input',
-    function () {
-
-        currentPage = 1;
-
-        filterTable(false);
-
-    }
-);
-
-
-clearFilters?.addEventListener(
-    'click',
-    function () {
-
-        if (courseFilter) {
-            courseFilter.value = '';
-        }
-
-
-        if (batchFilter) {
-            batchFilter.value = '';
-        }
-
-
-        if (deploymentFilter) {
-            deploymentFilter.value = '';
-        }
-
-
-        if (verificationFilter) {
-            verificationFilter.value = '';
-        }
-
-
-        if (searchInput) {
-            searchInput.value = '';
-        }
-
-
-        /*
-         * Clear button intentionally
-         * returns to page 1.
-         */
-
-        currentPage = 1;
-
-
-        filterTable(false);
-
-
-        searchInput?.focus();
-
-    }
-);
-
-
-    /* =====================================================
-       VIEW MODAL
-    ===================================================== */
+    /* =========================================================
+       VIEW CADET MODAL
+    ========================================================== */
 
     window.openCadetModal = function (
         name,
@@ -2720,55 +1990,37 @@ clearFilters?.addEventListener(
 
 
         const modalPhoto =
-            document.getElementById(
-                'modalPhoto'
-            );
+            document.getElementById('modalPhoto');
 
         const modalName =
-            document.getElementById(
-                'modalName'
-            );
+            document.getElementById('modalName');
 
         const modalTrb =
-            document.getElementById(
-                'modalTrb'
-            );
+            document.getElementById('modalTrb');
 
         const modalCourse =
-            document.getElementById(
-                'modalCourse'
-            );
+            document.getElementById('modalCourse');
 
         const modalBatch =
-            document.getElementById(
-                'modalBatch'
-            );
+            document.getElementById('modalBatch');
 
         const modalRank =
-            document.getElementById(
-                'modalRank'
-            );
+            document.getElementById('modalRank');
 
         const modalBirth =
-            document.getElementById(
-                'modalBirth'
-            );
+            document.getElementById('modalBirth');
 
         const modalContact =
-            document.getElementById(
-                'modalContact'
-            );
+            document.getElementById('modalContact');
 
         const modalVerification =
-            document.getElementById(
-                'modalVerification'
-            );
+            document.getElementById('modalVerification');
 
         const deployBadge =
-            document.getElementById(
-                'modalDeploy'
-            );
+            document.getElementById('modalDeploy');
 
+
+        /* PHOTO */
 
         if (modalPhoto) {
 
@@ -2777,48 +2029,48 @@ clearFilters?.addEventListener(
 
             modalPhoto.onerror =
                 function () {
+
+                    this.onerror = null;
+
                     this.src =
                         DEFAULT_PHOTO;
+
                 };
 
         }
 
+
+        /* BASIC INFORMATION */
 
         if (modalName) {
             modalName.innerText =
                 name || 'N/A';
         }
 
-
         if (modalTrb) {
             modalTrb.innerText =
                 trb || 'N/A';
         }
-
 
         if (modalCourse) {
             modalCourse.innerText =
                 course || 'N/A';
         }
 
-
         if (modalBatch) {
             modalBatch.innerText =
                 batch || 'No Batch';
         }
-
 
         if (modalRank) {
             modalRank.innerText =
                 rank || 'N/A';
         }
 
-
         if (modalBirth) {
             modalBirth.innerText =
                 birth || 'N/A';
         }
-
 
         if (modalContact) {
             modalContact.innerText =
@@ -2826,16 +2078,15 @@ clearFilters?.addEventListener(
         }
 
 
+        /* VERIFICATION */
+
         if (modalVerification) {
 
             const verificationValue =
-                normalize(
-                    verification
-                );
+                normalize(verification) || 'pending';
 
             modalVerification.innerText =
-                verification ||
-                'Pending';
+                verification || 'Pending';
 
             modalVerification.className =
                 'view-value verification-value ' +
@@ -2844,12 +2095,12 @@ clearFilters?.addEventListener(
         }
 
 
+        /* DEPLOYMENT */
+
         if (deployBadge) {
 
             const deploymentStatus =
-                normalize(
-                    deploy
-                ) || 'not_deployed';
+                normalize(deploy) || 'not_deployed';
 
 
             deployBadge.innerText =
@@ -2859,8 +2110,9 @@ clearFilters?.addEventListener(
                         .replace(/_/g, ' ')
                         .replace(
                             /\b\w/g,
-                            letter =>
-                                letter.toUpperCase()
+                            function (letter) {
+                                return letter.toUpperCase();
+                            }
                         );
 
 
@@ -2871,10 +2123,10 @@ clearFilters?.addEventListener(
         }
 
 
+        /* EDIT BUTTON */
+
         const viewEditButton =
-            document.getElementById(
-                'viewEditButton'
-            );
+            document.getElementById('viewEditButton');
 
 
         if (viewEditButton) {
@@ -2891,6 +2143,8 @@ clearFilters?.addEventListener(
         }
 
 
+        /* OPEN */
+
         viewModal.classList.add('show');
 
         viewModal.setAttribute(
@@ -2905,16 +2159,17 @@ clearFilters?.addEventListener(
     };
 
 
+    /* =========================================================
+       CLOSE VIEW MODAL
+    ========================================================== */
+
     window.closeCadetModal = function () {
 
         if (!viewModal) {
             return;
         }
 
-
-        viewModal.classList.remove(
-            'show'
-        );
+        viewModal.classList.remove('show');
 
         viewModal.setAttribute(
             'aria-hidden',
@@ -2936,9 +2191,9 @@ clearFilters?.addEventListener(
     };
 
 
-    /* =====================================================
+    /* =========================================================
        EDIT MODAL
-    ===================================================== */
+    ========================================================== */
 
     window.openEditModal = function (
         id,
@@ -2967,13 +2222,29 @@ clearFilters?.addEventListener(
 
 
         /*
-         * KEEP EXISTING LARAVEL UPDATE ROUTE
+         * IMPORTANT:
+         *
+         * Keep the current filters in the UPDATE URL.
+         *
+         * Example:
+         *
+         * /admin/cadets/25?course=BSMT&batch=5
+         *
+         * This allows validation failures to return to
+         * the same filtered page.
          */
+
+        const currentQuery =
+            window.location.search;
+
 
         editForm.action =
             "{{ url('/admin/cadets') }}/" +
-            id;
+            id +
+            currentQuery;
 
+
+        /* PERSONAL */
 
         setInputValue(
             'edit_full_name',
@@ -3026,11 +2297,17 @@ clearFilters?.addEventListener(
         );
 
 
+        /*
+         * TRB IS OPTIONAL.
+         */
+
         setInputValue(
             'edit_trb_control_number',
             trb
         );
 
+
+        /* GUARDIAN */
 
         setInputValue(
             'edit_guardian_relationship',
@@ -3062,6 +2339,8 @@ clearFilters?.addEventListener(
         );
 
 
+        /* PHOTO */
+
         const preview =
             document.getElementById(
                 'editCadetPreview'
@@ -3075,8 +2354,12 @@ clearFilters?.addEventListener(
 
             preview.onerror =
                 function () {
+
+                    this.onerror = null;
+
                     this.src =
                         DEFAULT_PHOTO;
+
                 };
 
         }
@@ -3104,14 +2387,14 @@ clearFilters?.addEventListener(
         }
 
 
-        switchEditTab(
-            'personal'
-        );
+        /* RESET TAB */
+
+        switchEditTab('personal');
 
 
-        editModal.classList.add(
-            'show'
-        );
+        /* OPEN */
+
+        editModal.classList.add('show');
 
         editModal.setAttribute(
             'aria-hidden',
@@ -3124,6 +2407,10 @@ clearFilters?.addEventListener(
 
     };
 
+
+    /* =========================================================
+       SET INPUT VALUE
+    ========================================================== */
 
     function setInputValue(
         id,
@@ -3144,9 +2431,9 @@ clearFilters?.addEventListener(
     }
 
 
-    /* =====================================================
+    /* =========================================================
        COURSE MATCHING
-    ===================================================== */
+    ========================================================== */
 
     function setCourseValue(course) {
 
@@ -3181,12 +2468,13 @@ clearFilters?.addEventListener(
 
         const match =
             options.find(
-                option => {
+                function (option) {
 
                     const optionValue =
                         normalize(
                             option.value
                         );
+
 
                     const optionCourse =
                         normalize(
@@ -3210,39 +2498,53 @@ clearFilters?.addEventListener(
     }
 
 
-    /* =====================================================
+    /* =========================================================
        FIND EDIT BUTTON
-    ===================================================== */
+    ========================================================== */
 
     window.openEditModalById = function (id) {
 
-        const row =
-            document.querySelector(
-                `tr.cadet-row[data-cadet-id="${CSS.escape(String(id))}"]`
+        /*
+         * Because only 50 records are rendered on the
+         * current server-side page, search the current
+         * page only.
+         */
+
+        const buttons =
+            document.querySelectorAll(
+                '.cadet-row .btn-edit'
             );
 
 
-        if (!row) {
-            return;
-        }
+        for (const button of buttons) {
+
+            const onclick =
+                button.getAttribute(
+                    'onclick'
+                );
 
 
-        const editButton =
-            row.querySelector(
-                '.btn-edit'
-            );
+            if (
+                onclick &&
+                onclick.includes(
+                    String(id)
+                )
+            ) {
 
+                button.click();
 
-        if (editButton) {
-            editButton.click();
+                return;
+
+            }
+
         }
 
     };
 
 
-    /* =====================================================
+    /* =========================================================
        CLOSE EDIT MODAL
-    ===================================================== */
+    ========================================================== */
 
     window.closeEditModal = function () {
 
@@ -3251,9 +2553,8 @@ clearFilters?.addEventListener(
         }
 
 
-        editModal.classList.remove(
-            'show'
-        );
+        editModal.classList.remove('show');
+
 
         editModal.setAttribute(
             'aria-hidden',
@@ -3275,9 +2576,9 @@ clearFilters?.addEventListener(
     };
 
 
-    /* =====================================================
+    /* =========================================================
        EDIT TABS
-    ===================================================== */
+    ========================================================== */
 
     window.switchEditTab = function (tab) {
 
@@ -3308,7 +2609,9 @@ clearFilters?.addEventListener(
             !personalContent ||
             !guardianContent
         ) {
+
             return;
+
         }
 
 
@@ -3321,6 +2624,7 @@ clearFilters?.addEventListener(
             !guardian
         );
 
+
         guardianTab.classList.toggle(
             'active',
             guardian
@@ -3332,6 +2636,7 @@ clearFilters?.addEventListener(
             !guardian
         );
 
+
         guardianContent.classList.toggle(
             'active',
             guardian
@@ -3340,9 +2645,9 @@ clearFilters?.addEventListener(
     };
 
 
-    /* =====================================================
+    /* =========================================================
        PHOTO PREVIEW
-    ===================================================== */
+    ========================================================== */
 
     const editPhotoInput =
         document.getElementById(
@@ -3366,15 +2671,16 @@ clearFilters?.addEventListener(
 
 
                 if (
-                    !file.type.startsWith('image/')
+                    !file.type.startsWith(
+                        'image/'
+                    )
                 ) {
 
                     alert(
                         'Please select a valid image file.'
                     );
 
-                    editPhotoInput.value =
-                        '';
+                    editPhotoInput.value = '';
 
                     return;
 
@@ -3391,8 +2697,7 @@ clearFilters?.addEventListener(
                         'Please select an image smaller than 5 MB.'
                     );
 
-                    editPhotoInput.value =
-                        '';
+                    editPhotoInput.value = '';
 
                     return;
 
@@ -3433,9 +2738,7 @@ clearFilters?.addEventListener(
                     };
 
 
-                reader.readAsDataURL(
-                    file
-                );
+                reader.readAsDataURL(file);
 
             }
         );
@@ -3443,9 +2746,9 @@ clearFilters?.addEventListener(
     }
 
 
-    /* =====================================================
+    /* =========================================================
        REMOVE PHOTO
-    ===================================================== */
+    ========================================================== */
 
     window.removeEditPhoto = function () {
 
@@ -3471,37 +2774,27 @@ clearFilters?.addEventListener(
 
 
         if (preview) {
-
-            preview.src =
-                DEFAULT_PHOTO;
-
+            preview.src = DEFAULT_PHOTO;
         }
 
 
         if (removePhotoInput) {
-
-            removePhotoInput.value =
-                '1';
-
+            removePhotoInput.value = '1';
         }
 
     };
 
 
-    /* =====================================================
-       MODAL OUTSIDE CLICK
-    ===================================================== */
+    /* =========================================================
+       OUTSIDE MODAL CLICK
+    ========================================================== */
 
     viewModal?.addEventListener(
         'click',
         function (event) {
 
-            if (
-                event.target === viewModal
-            ) {
-
+            if (event.target === viewModal) {
                 closeCadetModal();
-
             }
 
         }
@@ -3512,42 +2805,40 @@ clearFilters?.addEventListener(
         'click',
         function (event) {
 
-            if (
-                event.target === editModal
-            ) {
-
+            if (event.target === editModal) {
                 closeEditModal();
-
             }
 
         }
     );
 
 
-    /* =====================================================
+    /* =========================================================
        ESC KEY
-    ===================================================== */
+    ========================================================== */
 
     document.addEventListener(
         'keydown',
         function (event) {
 
-            if (
-                event.key !== 'Escape'
-            ) {
+            if (event.key !== 'Escape') {
                 return;
             }
 
 
             if (
-                editModal?.classList.contains('show')
+                editModal?.classList.contains(
+                    'show'
+                )
             ) {
 
                 closeEditModal();
 
             }
             else if (
-                viewModal?.classList.contains('show')
+                viewModal?.classList.contains(
+                    'show'
+                )
             ) {
 
                 closeCadetModal();
@@ -3558,9 +2849,9 @@ clearFilters?.addEventListener(
     );
 
 
-    /* =====================================================
+    /* =========================================================
        SUCCESS NOTIFICATION
-    ===================================================== */
+    ========================================================== */
 
     window.closeSuccessNotification =
         function () {
@@ -3611,13 +2902,6 @@ clearFilters?.addEventListener(
         );
 
     }
-
-
-    /* =====================================================
-       INITIAL FILTER
-    ===================================================== */
-
-    filterTable();
 
 })();
 
