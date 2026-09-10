@@ -435,16 +435,13 @@
                                     name="contact_number"
                                     id="contact_number"
                                     value="{{ old('contact_number') }}"
-                                    placeholder="Enter 11-digit contact number"
+                                    placeholder="Enter contact number"
                                     inputmode="numeric"
                                     maxlength="11"
                                     minlength="11"
                                     pattern="[0-9]{11}"
                                     autocomplete="tel">
 
-                                <small class="input-hint">
-                                    Enter exactly 11 digits.
-                                </small>
                             </div>
 
 
@@ -572,16 +569,13 @@
                                         name="parent_contact"
                                         id="parent_contact"
                                         value="{{ old('parent_contact') }}"
-                                        placeholder="Enter 11-digit contact number"
+                                        placeholder="Enter contact number"
                                         inputmode="numeric"
                                         maxlength="11"
                                         minlength="11"
                                         pattern="[0-9]{11}"
                                         autocomplete="tel">
 
-                                    <small class="input-hint">
-                                        Enter exactly 11 digits.
-                                    </small>
                                 </div>
 
 
