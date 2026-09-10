@@ -15,33 +15,227 @@ use App\Events\CadetLocationUpdated;
 
 class CadetController extends Controller
 {
-    public function index()
-    {
-        $cadets = Cadet::with(['user', 'batch', 'deployment'])
-            ->orderBy('full_name')
-            ->get();
+public function index(Request $request)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | CADET QUERY
+    |--------------------------------------------------------------------------
+    | Only load the 50 records needed for the current page.
+    | Filters are performed by the database instead of JavaScript.
+    */
 
-        $batches = Batch::orderBy('batch_year', 'desc')->get();
+    $query = Cadet::with([
+        'user',
+        'batch',
+        'deployment',
+    ]);
 
-        $courses = Cadet::select('course')
-            ->whereNotNull('course')
-            ->where('course', '!=', '')
-            ->distinct()
-            ->orderBy('course')
-            ->get();
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE FILTER
+    |--------------------------------------------------------------------------
+    */
 
-        $totalCadets = Cadet::count();
-
-        return view('admin.cadets.index', [
-            'cadets' => $cadets,
-            'batches' => $batches,
-            'courses' => $courses,
-            'totalCadets' => $totalCadets,
-            'activeCadets' => $totalCadets,
-            'withDeployment' => Cadet::has('deployment')->count(),
-            'noDeployment' => Cadet::doesntHave('deployment')->count(),
-        ]);
+    if ($request->filled('course')) {
+        $query->where(
+            'course',
+            $request->input('course')
+        );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATCH FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('batch')) {
+        $query->where(
+            'batch_id',
+            $request->input('batch')
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DEPLOYMENT FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('deployment')) {
+
+        $deployment = strtolower(
+            trim(
+                $request->input('deployment')
+            )
+        );
+
+        if ($deployment === 'not_deployed') {
+
+            $query->doesntHave('deployment');
+
+        } elseif ($deployment === 'ongoing') {
+
+            $query->whereHas('deployment', function ($q) {
+                $q->where('status', 'Ongoing');
+            });
+
+        } elseif ($deployment === 'completed') {
+
+            $query->whereHas('deployment', function ($q) {
+                $q->where('status', 'Completed');
+            });
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VERIFICATION FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('verification')) {
+
+        $verification = strtolower(
+            trim(
+                $request->input('verification')
+            )
+        );
+
+        if ($verification === 'approved') {
+
+            $query->whereIn(
+                'verification_status',
+                [
+                    'Verified',
+                    'Complete',
+                    'Completed',
+                    'Approved',
+                ]
+            );
+
+        } elseif ($verification === 'rejected') {
+
+            $query->whereIn(
+                'verification_status',
+                [
+                    'Deficiency',
+                    'Incomplete',
+                    'Rejected',
+                ]
+            );
+
+        } elseif ($verification === 'pending') {
+
+            $query->whereIn(
+                'verification_status',
+                [
+                    'Pending',
+                    'For Verification',
+                    'For_Verification',
+                ]
+            );
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('search')) {
+
+        $search = trim(
+            $request->input('search')
+        );
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'full_name',
+                'like',
+                '%' . $search . '%'
+            )
+
+            ->orWhere(
+                'trb_control_number',
+                'like',
+                '%' . $search . '%'
+            )
+
+            ->orWhere(
+                'course',
+                'like',
+                '%' . $search . '%'
+            )
+
+            ->orWhere(
+                'rank',
+                'like',
+                '%' . $search . '%'
+            );
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    | Only 50 cadets are sent to the browser.
+    */
+
+    $cadets = $query
+        ->orderBy('full_name')
+        ->paginate(50)
+        ->withQueryString();
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER OPTIONS
+    |--------------------------------------------------------------------------
+    */
+
+    $batches = Batch::orderBy(
+        'batch_year',
+        'desc'
+    )->get();
+
+    $courses = Cadet::select('course')
+        ->whereNotNull('course')
+        ->where('course', '!=', '')
+        ->distinct()
+        ->orderBy('course')
+        ->get();
+
+    /*
+    |--------------------------------------------------------------------------
+    | DASHBOARD COUNTS
+    |--------------------------------------------------------------------------
+    */
+
+    $totalCadets = Cadet::count();
+
+    return view('admin.cadets.index', [
+
+        'cadets' => $cadets,
+
+        'batches' => $batches,
+
+        'courses' => $courses,
+
+        'totalCadets' => $totalCadets,
+
+        'activeCadets' => $totalCadets,
+
+        'withDeployment' =>
+            Cadet::has('deployment')->count(),
+
+        'noDeployment' =>
+            Cadet::doesntHave('deployment')->count(),
+    ]);
+}
 
     public function create()
     {
