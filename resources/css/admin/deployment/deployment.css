@@ -1,19 +1,24 @@
 /* =========================================================
    DEPLOYMENT MONITORING
    Professional Admin Dashboard
-   Responsive Dark Blue Design
-   NO SCROLLABLE TABLE
+   Responsive Dark Blue UI
+   AJAX + Pagination Friendly
    ========================================================= */
 
+
 /* =========================================================
-   ROOT VARIABLES
+   1. DESIGN TOKENS
    ========================================================= */
 
 :root {
     --dm-bg: #162653;
+    --dm-bg-deep: #0b1433;
+
     --dm-panel: #10183d;
     --dm-panel-2: #151f4d;
     --dm-panel-3: #1b285f;
+    --dm-input: #192554;
+    --dm-input-focus: #202f6b;
 
     --dm-primary: #3b82f6;
     --dm-primary-dark: #2563eb;
@@ -25,25 +30,28 @@
     --dm-danger: #ef4444;
 
     --dm-text: #f8fafc;
+    --dm-text-soft: #e2e8f0;
     --dm-muted: #94a3b8;
+    --dm-muted-dark: #64748b;
 
     --dm-border: rgba(255, 255, 255, 0.08);
+    --dm-border-soft: rgba(255, 255, 255, 0.055);
 
     --dm-radius: 16px;
-
-    --dm-shadow:
-        0 12px 35px rgba(0, 0, 0, 0.30);
+    --dm-shadow: 0 12px 35px rgba(0, 0, 0, 0.30);
 }
 
 
 /* =========================================================
-   GLOBAL PAGE BACKGROUND
+   2. GLOBAL PAGE RESET
    ========================================================= */
 
 html,
 body {
     margin: 0;
     padding: 0;
+    max-width: 100%;
+    overflow-x: hidden;
     background: var(--dm-bg) !important;
 }
 
@@ -51,7 +59,10 @@ body {
     color: var(--dm-text);
 }
 
-/* Common Laravel admin layout wrappers */
+body.dm-modal-open {
+    overflow: hidden;
+}
+
 #app,
 .app,
 .admin-layout,
@@ -59,12 +70,13 @@ body {
 .main-content,
 .content,
 main {
+    max-width: 100%;
     background: var(--dm-bg) !important;
 }
 
 
 /* =========================================================
-   DEPLOYMENT PAGE
+   3. PAGE CONTAINER
    ========================================================= */
 
 .dm-page {
@@ -85,62 +97,138 @@ main {
 
 .dm-page button,
 .dm-page input,
-.dm-page select {
+.dm-page select,
+.dm-page textarea {
     font-family: inherit;
 }
 
 
 /* =========================================================
-   PAGE HEADER
+   4. PAGE HEADER
    ========================================================= */
 
 .dm-header {
+    position: relative;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     gap: 20px;
 
-    padding: 22px 24px;
-    margin-bottom: 22px;
+    min-width: 0;
+    margin-bottom: 20px;
+    padding: 24px 26px;
+
+    overflow: hidden;
 
     border: 1px solid var(--dm-border);
     border-radius: var(--dm-radius);
 
-    background:
-        linear-gradient(
-            135deg,
-            rgba(30, 64, 175, 0.95),
-            rgba(19, 44, 122, 0.95)
-        );
+    background: linear-gradient(
+        135deg,
+        #23459d 0%,
+        #193678 52%,
+        #12285f 100%
+    );
 
     box-shadow: var(--dm-shadow);
 }
 
+.dm-header::before {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    top: -145px;
+    right: 100px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.dm-header::after {
+    content: "";
+
+    position: absolute;
+
+    width: 130px;
+    height: 130px;
+
+    right: -45px;
+    bottom: -70px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.06);
+}
+
 .dm-header-content {
+    position: relative;
+    z-index: 2;
+
     min-width: 0;
+}
+
+.dm-header-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-bottom: 7px;
+
+    color: rgba(255, 255, 255, 0.62);
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+}
+
+.dm-header-eyebrow-dot {
+    width: 6px;
+    height: 6px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #60a5fa;
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.8);
 }
 
 .dm-header h1 {
     margin: 0;
 
-    font-size: 25px;
-    font-weight: 800;
+    color: #ffffff;
 
-    letter-spacing: -0.3px;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
 }
 
 .dm-header p {
-    margin: 6px 0 0;
+    max-width: 720px;
 
-    color: rgba(255, 255, 255, 0.72);
+    margin: 7px 0 0;
 
-    font-size: 13px;
+    color: rgba(255, 255, 255, 0.68);
+
+    font-size: 12px;
+    line-height: 1.6;
 }
 
 .dm-header-icon {
-    width: 52px;
-    height: 52px;
+    position: relative;
+    z-index: 2;
+
+    width: 58px;
+    height: 58px;
 
     display: flex;
     align-items: center;
@@ -148,54 +236,57 @@ main {
 
     flex-shrink: 0;
 
-    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 16px;
 
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.11);
 
-    font-size: 25px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    font-size: 27px;
 }
 
 
 /* =========================================================
-   STATISTICS
+   5. STATISTICS
    ========================================================= */
 
 .dm-stats {
     display: grid;
 
-    grid-template-columns:
-        repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
 
-    gap: 18px;
+    gap: 16px;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
 }
 
 .dm-stat {
     position: relative;
 
-    overflow: hidden;
-
+    min-width: 0;
     min-height: 145px;
 
-    padding: 20px;
+    padding: 19px 20px;
 
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--dm-radius);
+
+    color: #ffffff;
 
     box-shadow: var(--dm-shadow);
 
-    color: white;
-
     transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
+        transform 0.22s ease,
+        box-shadow 0.22s ease;
 }
 
 .dm-stat:hover {
-    transform: translateY(-4px);
+    transform: translateY(-3px);
 
-    box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.38);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.38);
 }
 
 .dm-stat::before {
@@ -203,11 +294,11 @@ main {
 
     position: absolute;
 
-    width: 140px;
-    height: 140px;
+    width: 145px;
+    height: 145px;
 
-    right: -55px;
-    top: -65px;
+    top: -72px;
+    right: -60px;
 
     border-radius: 50%;
 
@@ -222,12 +313,12 @@ main {
     width: 90px;
     height: 90px;
 
-    left: -35px;
-    bottom: -45px;
+    left: -40px;
+    bottom: -48px;
 
     border-radius: 50%;
 
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.055);
 }
 
 .dm-stat-top {
@@ -238,32 +329,37 @@ main {
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: 20px;
+    gap: 10px;
+
+    margin-bottom: 19px;
 }
 
 .dm-stat-label {
-    font-size: 12px;
-    font-weight: 700;
+    color: rgba(255, 255, 255, 0.83);
 
-    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 800;
+
     letter-spacing: 0.8px;
-
-    opacity: 0.88;
+    text-transform: uppercase;
 }
 
 .dm-stat-icon {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 13px;
+    flex-shrink: 0;
 
-    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
 
-    font-size: 21px;
+    background: rgba(255, 255, 255, 0.13);
+
+    font-size: 19px;
 }
 
 .dm-stat-value {
@@ -272,10 +368,13 @@ main {
 
     margin: 0;
 
-    font-size: 36px;
+    color: #ffffff;
+
+    font-size: 35px;
+    font-weight: 800;
     line-height: 1;
 
-    font-weight: 800;
+    letter-spacing: -0.8px;
 }
 
 .dm-stat-description {
@@ -284,67 +383,63 @@ main {
 
     margin-top: 9px;
 
-    font-size: 12px;
+    color: rgba(255, 255, 255, 0.65);
 
-    color: rgba(255, 255, 255, 0.72);
+    font-size: 11px;
 }
 
 .dm-stat-blue {
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #1d4ed8
-        );
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
 }
 
 .dm-stat-cyan {
-    background:
-        linear-gradient(
-            135deg,
-            #0891b2,
-            #0369a1
-        );
+    background: linear-gradient(
+        135deg,
+        #0891b2,
+        #0369a1
+    );
 }
 
 .dm-stat-green {
-    background:
-        linear-gradient(
-            135deg,
-            #16a34a,
-            #15803d
-        );
+    background: linear-gradient(
+        135deg,
+        #16a34a,
+        #15803d
+    );
 }
 
 .dm-stat-gray {
-    background:
-        linear-gradient(
-            135deg,
-            #475569,
-            #1e293b
-        );
+    background: linear-gradient(
+        135deg,
+        #475569,
+        #1e293b
+    );
 }
 
 
 /* =========================================================
-   FILTER PANEL
+   6. FILTER PANEL
    ========================================================= */
 
 .dm-filter-panel {
     position: relative;
+    z-index: 100;
 
-    margin-bottom: 22px;
+    margin-bottom: 20px;
     padding: 18px;
 
     border: 1px solid var(--dm-border);
     border-radius: var(--dm-radius);
 
-    background:
-        linear-gradient(
-            145deg,
-            rgba(21, 31, 77, 0.98),
-            rgba(10, 18, 55, 0.98)
-        );
+    background: linear-gradient(
+        145deg,
+        rgba(21, 31, 77, 0.98),
+        rgba(10, 18, 55, 0.98)
+    );
 
     box-shadow: var(--dm-shadow);
 }
@@ -354,6 +449,8 @@ main {
     align-items: center;
     justify-content: space-between;
 
+    gap: 15px;
+
     margin-bottom: 14px;
 }
 
@@ -361,45 +458,78 @@ main {
     display: flex;
     align-items: center;
 
-    gap: 9px;
+    gap: 10px;
 
-    font-size: 14px;
-    font-weight: 700;
+    min-width: 0;
 }
 
 .dm-filter-title-icon {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    border-radius: 8px;
+    flex-shrink: 0;
 
-    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(96, 165, 250, 0.14);
+    border-radius: 9px;
+
+    background: rgba(59, 130, 246, 0.14);
 
     color: #60a5fa;
+
+    font-size: 14px;
+}
+
+.dm-filter-title strong {
+    display: block;
+
+    color: var(--dm-text);
+
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.dm-filter-title span:not(.dm-filter-title-icon) {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--dm-muted);
+
+    font-size: 10px;
+}
+
+.dm-clear-filters {
+    flex-shrink: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #60a5fa;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.dm-clear-filters:hover {
+    color: #ffffff;
 }
 
 .dm-filter-grid {
     display: grid;
 
-    grid-template-columns:
-        minmax(160px, 1fr)
-        minmax(160px, 1fr)
-        minmax(160px, 1fr)
-        minmax(190px, 1.3fr)
-        minmax(150px, 1fr)
-        minmax(150px, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
 
-    gap: 12px;
+    gap: 11px;
 }
-
-
-/* =========================================================
-   FILTER INPUTS
-   ========================================================= */
 
 .dm-filter-field,
 .dm-filter-dropdown {
@@ -408,20 +538,25 @@ main {
     min-width: 0;
 }
 
+
+/* =========================================================
+   7. FILTER INPUTS
+   ========================================================= */
+
 .dm-search,
 .dm-date-input,
 .dm-filter-button {
     width: 100%;
-    height: 46px;
+    height: 45px;
 
     border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 11px;
-
-    background: #192354;
-
-    color: white;
+    border-radius: 10px;
 
     outline: none;
+
+    background: var(--dm-input);
+
+    color: #ffffff;
 
     transition:
         border-color 0.2s ease,
@@ -430,11 +565,11 @@ main {
 }
 
 .dm-search {
-    padding: 0 14px 0 42px;
+    padding: 0 13px 0 40px;
 }
 
 .dm-search::placeholder {
-    color: #94a3b8;
+    color: #71809b;
 }
 
 .dm-search:focus,
@@ -442,34 +577,56 @@ main {
 .dm-filter-button:focus {
     border-color: rgba(59, 130, 246, 0.65);
 
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.12);
+    background: var(--dm-input-focus);
 
-    background: #1d2a61;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.11);
 }
 
 .dm-search-icon {
     position: absolute;
 
-    left: 14px;
     top: 50%;
+    left: 13px;
 
     transform: translateY(-50%);
 
     color: #64748b;
 
     pointer-events: none;
+
+    font-size: 13px;
 }
 
 .dm-date-input {
-    padding: 0 13px;
+    padding: 0 12px;
 
     color-scheme: dark;
 }
 
+.dm-date-label {
+    position: absolute;
+
+    top: -6px;
+    left: 12px;
+
+    z-index: 2;
+
+    padding: 0 5px;
+
+    background: #111a42;
+
+    color: #7890b4;
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
 
 /* =========================================================
-   CUSTOM DROPDOWN
+   8. CUSTOM FILTER DROPDOWNS
    ========================================================= */
 
 .dm-filter-button {
@@ -477,7 +634,9 @@ main {
     align-items: center;
     justify-content: space-between;
 
-    padding: 0 14px;
+    gap: 10px;
+
+    padding: 0 13px;
 
     cursor: pointer;
 
@@ -489,10 +648,13 @@ main {
 }
 
 .dm-filter-arrow {
+    flex-shrink: 0;
+
     color: #94a3b8;
 
-    transition:
-        transform 0.2s ease;
+    font-size: 9px;
+
+    transition: transform 0.2s ease;
 }
 
 .dm-filter-dropdown.open .dm-filter-arrow {
@@ -509,22 +671,20 @@ main {
 
     width: 100%;
     min-width: 190px;
-
-    max-height: 280px;
+    max-height: 270px;
 
     overflow-y: auto;
 
-    padding: 8px;
+    padding: 7px;
 
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 12px;
 
     background: #121a42;
 
-    box-shadow:
-        0 18px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
 
-    z-index: 500;
+    z-index: 1000;
 }
 
 .dm-filter-dropdown.open .dm-dropdown-menu {
@@ -532,7 +692,11 @@ main {
 }
 
 .dm-dropdown-menu::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
+}
+
+.dm-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 .dm-dropdown-menu::-webkit-scrollbar-thumb {
@@ -545,20 +709,21 @@ main {
     display: flex;
     align-items: center;
 
-    gap: 10px;
+    gap: 9px;
 
-    padding: 9px 10px;
+    min-height: 35px;
+
+    padding: 7px 9px;
 
     border-radius: 8px;
 
-    cursor: pointer;
-
     color: #e2e8f0;
 
-    font-size: 13px;
+    font-size: 12px;
 
-    transition:
-        background 0.18s ease;
+    cursor: pointer;
+
+    transition: background 0.18s ease;
 }
 
 .dm-check-option:hover {
@@ -566,8 +731,8 @@ main {
 }
 
 .dm-check-option input {
-    width: 17px;
-    height: 17px;
+    width: 16px;
+    height: 16px;
 
     margin: 0;
 
@@ -578,18 +743,76 @@ main {
 
 
 /* =========================================================
-   TABLE CARD
+   9. RESULTS CONTAINER
+   ========================================================= */
+
+#deploymentResults {
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+
+    isolation: isolate;
+}
+
+#deploymentResults.is-loading {
+    pointer-events: none;
+}
+
+#deploymentResults.is-loading::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 68px 0 0;
+
+    z-index: 90;
+
+    background: rgba(10, 18, 55, 0.42);
+
+    backdrop-filter: blur(1.5px);
+}
+
+#deploymentResults.is-loading::after {
+    content: "";
+
+    position: absolute;
+
+    top: 95px;
+    left: 50%;
+
+    width: 28px;
+    height: 28px;
+
+    margin-left: -14px;
+
+    z-index: 100;
+
+    border: 3px solid rgba(255, 255, 255, 0.16);
+    border-top-color: #60a5fa;
+
+    border-radius: 50%;
+
+    animation: dmSpin 0.7s linear infinite;
+}
+
+
+/* =========================================================
+   10. TABLE CARD
    ========================================================= */
 
 .dm-table-card {
+    position: relative;
+
     width: 100%;
+    min-width: 0;
 
     overflow: hidden;
 
     border: 1px solid var(--dm-border);
     border-radius: var(--dm-radius);
 
-    background: #10183d;
+    background: var(--dm-panel);
 
     box-shadow: var(--dm-shadow);
 }
@@ -601,129 +824,193 @@ main {
 
     gap: 15px;
 
-    padding: 16px 18px;
+    min-height: 68px;
+
+    padding: 14px 18px;
 
     border-bottom: 1px solid var(--dm-border);
 
     background: rgba(255, 255, 255, 0.015);
 }
 
-.dm-table-title {
+.dm-table-title-main {
     display: flex;
-    flex-direction: column;
+    align-items: center;
 
-    gap: 3px;
+    gap: 10px;
+
+    min-width: 0;
+}
+
+.dm-table-title-icon {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+
+    background: rgba(59, 130, 246, 0.11);
+
+    color: #60a5fa;
+
+    font-size: 13px;
 }
 
 .dm-table-title strong {
-    font-size: 14px;
+    display: block;
+
+    color: var(--dm-text);
+
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .dm-table-title span {
-    font-size: 11px;
+    display: block;
+
+    margin-top: 3px;
 
     color: var(--dm-muted);
+
+    font-size: 10px;
 }
 
 .dm-table-hint {
+    display: flex;
+    align-items: center;
+
+    gap: 5px;
+
+    flex-shrink: 0;
+
     color: #64748b;
 
-    font-size: 11px;
+    font-size: 10px;
+}
+
+.dm-table-hint span {
+    color: #60a5fa;
+
+    font-size: 13px;
 }
 
 
 /* =========================================================
-   TABLE
-   NO FIXED HEIGHT
-   NO TABLE SCROLL
+   11. TABLE SCROLL AREA
    ========================================================= */
 
+/*
+   IMPORTANT:
+   The table scrolls INSIDE this container.
+   The entire webpage will NOT become horizontally scrollable.
+*/
+
 .dm-table-scroll {
+    position: relative;
+
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
 
-    /*
-     * IMPORTANT:
-     * No overflow-x auto
-     * No overflow-y auto
-     * No max-height
-     */
+    overflow-x: auto;
+    overflow-y: visible;
 
-    overflow: visible;
+    cursor: grab;
 
-    cursor: default;
+    scrollbar-width: thin;
+    scrollbar-color: #3a4f98 #0d1534;
 
-    -webkit-overflow-scrolling: auto;
+    -webkit-overflow-scrolling: touch;
 }
+
+.dm-table-scroll.is-dragging {
+    cursor: grabbing;
+
+    user-select: none;
+}
+
+.dm-table-scroll::-webkit-scrollbar {
+    height: 9px;
+}
+
+.dm-table-scroll::-webkit-scrollbar-track {
+    background: #0d1534;
+}
+
+.dm-table-scroll::-webkit-scrollbar-thumb {
+    background: #34488f;
+
+    border-radius: 999px;
+}
+
+.dm-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #4b64b4;
+}
+
+
+/* =========================================================
+   12. DEPLOYMENT TABLE
+   ========================================================= */
 
 .dm-table {
     width: 100%;
-
-    /*
-     * The table is allowed to fill the available area.
-     * The columns use fixed widths so the 15-column layout
-     * stays organized.
-     */
-
-    min-width: 0;
+    min-width: 1580px;
 
     border-collapse: separate;
     border-spacing: 0;
 
-    table-layout: auto;
+    table-layout: fixed;
 }
-
-
-/* =========================================================
-   TABLE HEADER
-   ========================================================= */
 
 .dm-table thead th {
     position: sticky;
-
     top: 0;
 
-    height: 52px;
+    height: 50px;
 
-    padding: 0 14px;
+    padding: 0 12px;
 
     background: #263b91;
 
     color: #f8fafc;
 
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
+
+    text-align: left;
 
     text-transform: uppercase;
     letter-spacing: 0.45px;
 
     white-space: nowrap;
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 
-    z-index: 30;
+    z-index: 5;
 }
-
-
-/* =========================================================
-   TABLE BODY
-   ========================================================= */
 
 .dm-table tbody td {
     height: 58px;
 
-    padding: 0 14px;
+    padding: 0 12px;
+
+    overflow: hidden;
 
     background: #111a42;
 
     color: #e2e8f0;
 
-    font-size: 12px;
+    font-size: 11px;
 
     white-space: nowrap;
+    text-overflow: ellipsis;
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.055);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
 }
 
 .dm-table tbody tr:nth-child(even) td {
@@ -736,141 +1023,154 @@ main {
 
 
 /* =========================================================
-   TABLE COLUMN SIZING
+   13. TABLE COLUMN WIDTHS
    ========================================================= */
 
-/* TRB */
 .dm-table th:nth-child(1),
 .dm-table td:nth-child(1) {
-    width: 125px;
-    min-width: 125px;
+    width: 115px;
 }
 
-/* NAME */
 .dm-table th:nth-child(2),
 .dm-table td:nth-child(2) {
-    width: 190px;
-    min-width: 190px;
+    width: 180px;
 }
 
-/* COURSE */
 .dm-table th:nth-child(3),
 .dm-table td:nth-child(3) {
-    width: 100px;
-    min-width: 100px;
+    width: 90px;
 }
 
-/* BATCH */
 .dm-table th:nth-child(4),
 .dm-table td:nth-child(4) {
     width: 80px;
-    min-width: 80px;
 }
 
-/* VESSEL */
 .dm-table th:nth-child(5),
 .dm-table td:nth-child(5) {
-    width: 125px;
-    min-width: 125px;
+    width: 135px;
 }
 
-/* COMPANY */
 .dm-table th:nth-child(6),
 .dm-table td:nth-child(6) {
-    width: 140px;
-    min-width: 140px;
+    width: 145px;
 }
 
-/* DEPLOYMENT TYPE */
 .dm-table th:nth-child(7),
 .dm-table td:nth-child(7) {
-    width: 120px;
-    min-width: 120px;
+    width: 130px;
 }
 
-/* EMBARKATION PLACE */
 .dm-table th:nth-child(8),
 .dm-table td:nth-child(8) {
-    width: 145px;
-    min-width: 145px;
+    width: 150px;
 }
 
-/* EMBARKATION DATE */
 .dm-table th:nth-child(9),
 .dm-table td:nth-child(9) {
     width: 120px;
-    min-width: 120px;
 }
 
-/* DISEMBARKATION PLACE */
 .dm-table th:nth-child(10),
 .dm-table td:nth-child(10) {
-    width: 150px;
-    min-width: 150px;
+    width: 155px;
 }
 
-/* DISEMBARKATION DATE */
 .dm-table th:nth-child(11),
 .dm-table td:nth-child(11) {
     width: 125px;
-    min-width: 125px;
 }
 
-/* SEA SERVICE */
 .dm-table th:nth-child(12),
 .dm-table td:nth-child(12) {
-    width: 150px;
-    min-width: 150px;
+    width: 155px;
 }
 
-/* PROGRESS */
 .dm-table th:nth-child(13),
 .dm-table td:nth-child(13) {
-    width: 130px;
-    min-width: 130px;
+    width: 135px;
 }
 
-/* STATUS */
 .dm-table th:nth-child(14),
 .dm-table td:nth-child(14) {
-    width: 120px;
-    min-width: 120px;
+    width: 125px;
 }
 
-/* ACTION */
 .dm-table th:nth-child(15),
 .dm-table td:nth-child(15) {
-    width: 90px;
-    min-width: 90px;
+    width: 95px;
 }
 
 
 /* =========================================================
-   STICKY FIRST COLUMNS
+   14. TABLE CONTENT
    ========================================================= */
 
-/*
- * The table itself no longer scrolls.
- *
- * These sticky rules are therefore disabled.
- *
- * This prevents the first four columns from creating
- * awkward overlapping behavior when the page is resized.
- */
+.dm-trb {
+    color: #93c5fd;
 
-.dm-table th:nth-child(-n + 4),
-.dm-table td:nth-child(-n + 4) {
-    position: static;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.dm-cadet-name {
+    overflow: hidden;
+
+    color: #f1f5f9;
+
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+}
+
+.dm-course {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 5px 8px;
+
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 7px;
+
+    background: rgba(148, 163, 184, 0.07);
+
+    color: #cbd5e1;
+
+    font-size: 9px;
+    font-weight: 800;
+}
+
+.dm-batch {
+    color: #cbd5e1;
+
+    font-weight: 700;
+}
+
+.dm-cell-text {
+    display: block;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.dm-date {
+    color: #cbd5e1;
+
+    font-weight: 600;
+}
+
+.dm-empty-value {
+    color: #64748b;
 }
 
 
 /* =========================================================
-   BADGES
+   15. STATUS BADGES
    ========================================================= */
 
 .dm-badge {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
@@ -878,15 +1178,16 @@ main {
 
     min-width: 100px;
 
-    padding: 7px 11px;
+    padding: 6px 9px;
 
     border-radius: 999px;
 
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 800;
 
+    letter-spacing: 0.35px;
+
     text-transform: uppercase;
-    letter-spacing: 0.4px;
 
     white-space: nowrap;
 }
@@ -894,46 +1195,38 @@ main {
 .dm-badge-blue {
     color: #60a5fa;
 
-    background:
-        rgba(59, 130, 246, 0.13);
+    background: rgba(59, 130, 246, 0.13);
 
-    border:
-        1px solid rgba(59, 130, 246, 0.28);
+    border: 1px solid rgba(59, 130, 246, 0.28);
 }
 
 .dm-badge-green {
     color: #4ade80;
 
-    background:
-        rgba(34, 197, 94, 0.13);
+    background: rgba(34, 197, 94, 0.13);
 
-    border:
-        1px solid rgba(34, 197, 94, 0.28);
+    border: 1px solid rgba(34, 197, 94, 0.28);
 }
 
 .dm-badge-gray {
     color: #cbd5e1;
 
-    background:
-        rgba(148, 163, 184, 0.10);
+    background: rgba(148, 163, 184, 0.10);
 
-    border:
-        1px solid rgba(148, 163, 184, 0.22);
+    border: 1px solid rgba(148, 163, 184, 0.22);
 }
 
 .dm-badge-warning {
     color: #fbbf24;
 
-    background:
-        rgba(245, 158, 11, 0.12);
+    background: rgba(245, 158, 11, 0.12);
 
-    border:
-        1px solid rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 
 /* =========================================================
-   PROGRESS
+   16. PROGRESS BAR
    ========================================================= */
 
 .dm-progress {
@@ -945,20 +1238,24 @@ main {
     align-items: center;
     justify-content: space-between;
 
+    gap: 7px;
+
     margin-bottom: 6px;
 
-    font-size: 11px;
+    color: #94a3b8;
+
+    font-size: 9px;
 }
 
 .dm-progress-value {
-    color: #cbd5e1;
+    color: #e2e8f0;
 
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .dm-progress-track {
     width: 100%;
-    height: 7px;
+    height: 6px;
 
     overflow: hidden;
 
@@ -972,56 +1269,104 @@ main {
 
     border-radius: inherit;
 
-    background:
-        linear-gradient(
-            90deg,
-            #6366f1,
-            #8b5cf6
-        );
+    background: linear-gradient(
+        90deg,
+        #6366f1,
+        #8b5cf6
+    );
 
-    transition:
-        width 0.3s ease;
+    transition: width 0.35s ease;
 }
 
 .dm-progress-fill.complete {
-    background:
-        linear-gradient(
-            90deg,
-            #16a34a,
-            #22c55e
-        );
+    background: linear-gradient(
+        90deg,
+        #16a34a,
+        #22c55e
+    );
 }
 
 
 /* =========================================================
-   ACTION BUTTON
+   17. SEA SERVICE
+   ========================================================= */
+
+.dm-sea-duration {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 135px;
+
+    padding: 7px 9px;
+
+    border: 1px solid rgba(96, 165, 250, 0.20);
+    border-radius: 9px;
+
+    background: rgba(59, 130, 246, 0.08);
+
+    color: #cbd5e1;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.dm-sea-service-value {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 44px;
+
+    padding: 0 12px;
+
+    border: 1px solid rgba(96, 165, 250, 0.20);
+    border-radius: 10px;
+
+    background: rgba(59, 130, 246, 0.08);
+
+    color: #cbd5e1;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.dm-sea-service-value.invalid {
+    border-color: rgba(239, 68, 68, 0.30);
+
+    background: rgba(239, 68, 68, 0.08);
+
+    color: #fca5a5;
+}
+
+
+/* =========================================================
+   18. ACTION BUTTON
    ========================================================= */
 
 .dm-view-btn {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
-    gap: 6px;
+    gap: 5px;
 
     min-width: 70px;
-    height: 34px;
+    height: 33px;
 
-    padding: 0 12px;
+    padding: 0 10px;
 
-    border:
-        1px solid rgba(96, 165, 250, 0.25);
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    border-radius: 8px;
 
-    border-radius: 9px;
-
-    background:
-        rgba(59, 130, 246, 0.14);
+    background: rgba(59, 130, 246, 0.14);
 
     color: #60a5fa;
 
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 800;
 
     cursor: pointer;
 
@@ -1033,42 +1378,46 @@ main {
 }
 
 .dm-view-btn:hover {
-    background: #2563eb;
+    transform: translateY(-1px);
 
     border-color: #2563eb;
 
-    color: white;
+    background: #2563eb;
 
-    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.dm-view-btn:active {
+    transform: translateY(0);
 }
 
 
 /* =========================================================
-   EMPTY STATE
+   19. EMPTY STATE
    ========================================================= */
 
 .dm-empty {
-    padding: 65px 20px !important;
+    height: 280px !important;
 
-    text-align: center;
+    padding: 40px 20px !important;
 
-    color: #94a3b8;
+    text-align: center !important;
 }
 
 .dm-empty-icon {
-    width: 58px;
-    height: 58px;
-
-    margin: 0 auto 13px;
+    width: 60px;
+    height: 60px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
+    margin: 0 auto 13px;
+
+    border: 1px solid rgba(59, 130, 246, 0.14);
     border-radius: 16px;
 
-    background:
-        rgba(59, 130, 246, 0.10);
+    background: rgba(59, 130, 246, 0.10);
 
     font-size: 25px;
 }
@@ -1084,166 +1433,28 @@ main {
 }
 
 .dm-empty span {
-    font-size: 12px;
-}
-
-
-/* =========================================================
-   SUCCESS TOAST
-   ========================================================= */
-
-.dm-toast {
-    position: fixed;
-
-    top: 25px;
-    right: 25px;
-
-    display: flex;
-    align-items: center;
-
-    gap: 12px;
-
-    min-width: 320px;
-
-    padding: 14px 17px;
-
-    border:
-        1px solid rgba(74, 222, 128, 0.20);
-
-    border-radius: 13px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #166534,
-            #15803d
-        );
-
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.40);
-
-    color: white;
-
-    z-index: 999999;
-
-    opacity: 0;
-
-    transform: translateY(-15px);
-
-    pointer-events: none;
-
-    transition:
-        opacity 0.35s ease,
-        transform 0.35s ease;
-}
-
-.dm-toast.show {
-    opacity: 1;
-
-    transform: translateY(0);
-
-    pointer-events: auto;
-}
-
-.dm-toast-icon {
-    width: 35px;
-    height: 35px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    border-radius: 50%;
-
-    background: white;
-
-    color: #16a34a;
-
-    font-weight: 900;
-}
-
-.dm-toast-content strong {
-    display: block;
-
-    font-size: 13px;
-}
-
-.dm-toast-content span {
-    display: block;
-
-    margin-top: 2px;
+    color: #94a3b8;
 
     font-size: 11px;
-
-    color:
-        rgba(255, 255, 255, 0.78);
 }
 
 
 /* =========================================================
-   AJAX RESULTS
+   20. PAGINATION
    ========================================================= */
 
-#deploymentResults {
-    position: relative;
-
-    min-width: 0;
-
-    width: 100%;
-}
-
-#deploymentResults.is-loading {
-    opacity: 0.55;
-
-    pointer-events: none;
-
-    transition:
-        opacity 0.18s ease;
-}
-
-#deploymentResults.is-loading::after {
-    content: "";
-
-    position: absolute;
-
-    top: 18px;
-    right: 18px;
-
-    width: 24px;
-    height: 24px;
-
-    border:
-        3px solid rgba(255, 255, 255, 0.18);
-
-    border-top-color: #60a5fa;
-
-    border-radius: 50%;
-
-    animation:
-        dmSpin 0.7s linear infinite;
-
-    z-index: 100;
-}
-
-
-/* =========================================================
-   PAGINATION
-   ========================================================= */
-
-.dm-pagination {
+.dm-pagination-wrapper {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
     gap: 15px;
 
-    padding: 15px 18px;
+    min-height: 68px;
 
-    border-top:
-        1px solid var(--dm-border);
+    padding: 13px 18px;
+
+    border-top: 1px solid var(--dm-border);
 
     background: #0e1738;
 }
@@ -1253,69 +1464,56 @@ main {
 
     color: #94a3b8;
 
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .dm-pagination-info strong {
     color: #e2e8f0;
 
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .dm-pagination-links {
-    display: flex;
-
-    align-items: center;
-
-    gap: 5px;
-
     min-width: 0;
 }
 
 .dm-pagination-links nav {
     display: flex;
-
     align-items: center;
-
-    max-width: 100%;
 }
 
 .dm-pagination-links nav > div {
     display: flex;
-
     align-items: center;
 
     gap: 5px;
 }
 
 .dm-pagination-links svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
 }
 
 .dm-pagination-links a,
 .dm-pagination-links span {
-    min-width: 36px;
-    height: 36px;
+    min-width: 34px;
+    height: 34px;
 
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
-    padding: 0 10px;
+    padding: 0 9px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.08);
-
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 8px;
 
     background: #192354;
 
     color: #cbd5e1;
 
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 800;
 
     text-decoration: none;
 
@@ -1327,38 +1525,37 @@ main {
 }
 
 .dm-pagination-links a:hover {
+    transform: translateY(-1px);
+
+    border-color: rgba(96, 165, 250, 0.35);
+
     background: #263b91;
 
-    border-color:
-        rgba(96, 165, 250, 0.35);
-
-    color: white;
-
-    transform: translateY(-1px);
+    color: #ffffff;
 }
 
 .dm-pagination-links span[aria-current="page"] {
-    background: #2563eb;
-
     border-color: #2563eb;
 
-    color: white;
+    background: #2563eb;
+
+    color: #ffffff;
 }
 
 .dm-pagination-links span[aria-disabled="true"] {
-    opacity: 0.40;
+    opacity: 0.35;
 
     cursor: not-allowed;
 }
 
-.dm-pagination-links a[rel="next"],
-.dm-pagination-links a[rel="prev"] {
-    padding: 0 12px;
+.dm-pagination-links a[rel="prev"],
+.dm-pagination-links a[rel="next"] {
+    padding: 0 11px;
 }
 
 
 /* =========================================================
-   LARAVEL PAGINATION COMPATIBILITY
+   21. LARAVEL PAGINATION COMPATIBILITY
    ========================================================= */
 
 .dm-pagination-links .relative {
@@ -1374,17 +1571,17 @@ main {
 }
 
 .dm-pagination-links .px-4 {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-right: 11px;
+    padding-left: 11px;
 }
 
 .dm-pagination-links .py-2 {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 7px;
+    padding-bottom: 7px;
 }
 
 .dm-pagination-links .text-sm {
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .dm-pagination-links .rounded-md {
@@ -1392,8 +1589,7 @@ main {
 }
 
 .dm-pagination-links .border {
-    border-color:
-        rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .dm-pagination-links .bg-white {
@@ -1413,13 +1609,99 @@ main {
 }
 
 .dm-pagination-links .focus\:ring {
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.12);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
 }
 
 
 /* =========================================================
-   MODAL
+   22. SUCCESS TOAST
+   ========================================================= */
+
+.dm-toast {
+    position: fixed;
+
+    top: 25px;
+    right: 25px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    width: min(370px, calc(100vw - 30px));
+
+    padding: 14px 16px;
+
+    border: 1px solid rgba(74, 222, 128, 0.20);
+    border-radius: 13px;
+
+    background: linear-gradient(
+        135deg,
+        #166534,
+        #15803d
+    );
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.40);
+
+    color: #ffffff;
+
+    z-index: 999999;
+
+    opacity: 0;
+
+    transform: translateY(-15px);
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.35s ease,
+        transform 0.35s ease;
+}
+
+.dm-toast.show {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+.dm-toast-icon {
+    width: 35px;
+    height: 35px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    color: #16a34a;
+
+    font-weight: 900;
+}
+
+.dm-toast-content strong {
+    display: block;
+
+    font-size: 12px;
+}
+
+.dm-toast-content span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: rgba(255, 255, 255, 0.76);
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   23. MODAL
    ========================================================= */
 
 .dm-modal {
@@ -1429,19 +1711,18 @@ main {
 
     inset: 0;
 
+    align-items: center;
+    justify-content: center;
+
     padding: 20px;
-
-    background:
-        rgba(2, 6, 23, 0.78);
-
-    backdrop-filter: blur(5px);
 
     overflow-y: auto;
 
-    z-index: 99999;
+    background: rgba(2, 6, 23, 0.80);
 
-    align-items: center;
-    justify-content: center;
+    backdrop-filter: blur(6px);
+
+    z-index: 99999;
 }
 
 .dm-modal.show {
@@ -1450,29 +1731,22 @@ main {
 
 .dm-modal-card {
     width: 100%;
-    max-width: 680px;
-
-    max-height:
-        calc(100vh - 40px);
+    max-width: 700px;
+    max-height: calc(100vh - 40px);
 
     display: flex;
-
     flex-direction: column;
 
     overflow: hidden;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.09);
-
+    border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: 18px;
 
     background: #121b48;
 
-    box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
 
-    animation:
-        dmModalIn 0.22s ease;
+    animation: dmModalIn 0.22s ease;
 }
 
 @keyframes dmModalIn {
@@ -1495,36 +1769,36 @@ main {
 
 
 /* =========================================================
-   MODAL HEADER
+   24. MODAL HEADER
    ========================================================= */
 
 .dm-modal-header {
     display: flex;
-
     align-items: center;
     justify-content: space-between;
 
     gap: 15px;
 
-    padding: 18px 20px;
+    flex-shrink: 0;
 
-    background:
-        linear-gradient(
-            135deg,
-            #243b8f,
-            #18265e
-        );
+    padding: 17px 20px;
 
-    border-bottom:
-        1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    background: linear-gradient(
+        135deg,
+        #243b8f,
+        #18265e
+    );
 }
 
 .dm-modal-title {
     display: flex;
-
     align-items: center;
 
     gap: 12px;
+
+    min-width: 0;
 }
 
 .dm-modal-title-icon {
@@ -1532,22 +1806,24 @@ main {
     height: 40px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
+    flex-shrink: 0;
+
     border-radius: 11px;
 
-    background:
-        rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.12);
 
-    font-size: 19px;
+    font-size: 18px;
 }
 
 .dm-modal-title strong {
     display: block;
 
-    font-size: 16px;
+    color: #ffffff;
+
+    font-size: 15px;
 }
 
 .dm-modal-title span {
@@ -1555,10 +1831,9 @@ main {
 
     margin-top: 2px;
 
-    font-size: 11px;
+    color: rgba(255, 255, 255, 0.63);
 
-    color:
-        rgba(255, 255, 255, 0.65);
+    font-size: 10px;
 }
 
 .dm-modal-close {
@@ -1566,20 +1841,20 @@ main {
     height: 36px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
-    border: none;
+    flex-shrink: 0;
 
+    border: none;
     border-radius: 9px;
 
-    background:
-        rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.08);
 
-    color: white;
+    color: #ffffff;
 
-    font-size: 23px;
+    font-size: 22px;
+    line-height: 1;
 
     cursor: pointer;
 
@@ -1589,27 +1864,32 @@ main {
 }
 
 .dm-modal-close:hover {
-    background:
-        rgba(239, 68, 68, 0.20);
+    background: rgba(239, 68, 68, 0.20);
 
     color: #fca5a5;
 }
 
 
 /* =========================================================
-   MODAL BODY
+   25. MODAL BODY
    ========================================================= */
 
 .dm-modal-body {
+    min-height: 0;
+
     padding: 20px;
 
     overflow-y: auto;
 
-    min-height: 0;
+    overscroll-behavior: contain;
 }
 
 .dm-modal-body::-webkit-scrollbar {
     width: 7px;
+}
+
+.dm-modal-body::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 .dm-modal-body::-webkit-scrollbar-thumb {
@@ -1620,38 +1900,31 @@ main {
 
 
 /* =========================================================
-   PROFILE
+   26. MODAL PROFILE
    ========================================================= */
 
 .dm-profile {
     display: flex;
-
     align-items: center;
 
     gap: 14px;
 
-    margin-bottom: 22px;
+    margin-bottom: 21px;
 
-    padding: 14px;
+    padding: 13px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.07);
-
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 13px;
 
-    background:
-        rgba(255, 255, 255, 0.035);
+    background: rgba(255, 255, 255, 0.035);
 }
 
 .dm-profile img {
     width: 62px !important;
     height: 62px !important;
-
     min-width: 62px;
 
-    border:
-        2px solid rgba(96, 165, 250, 0.35);
-
+    border: 2px solid rgba(96, 165, 250, 0.35);
     border-radius: 13px;
 
     object-fit: cover;
@@ -1660,48 +1933,46 @@ main {
 }
 
 .dm-profile-name {
-    font-size: 16px;
+    color: #f8fafc;
 
-    font-weight: 750;
+    font-size: 16px;
+    font-weight: 800;
 }
 
 .dm-profile-meta {
-    margin-top: 5px;
-
     display: flex;
-
     flex-wrap: wrap;
 
     gap: 6px;
 
+    margin-top: 5px;
+
     color: #94a3b8;
 
-    font-size: 11px;
+    font-size: 10px;
 }
 
 
 /* =========================================================
-   FORM
+   27. MODAL FORM SECTIONS
    ========================================================= */
 
 .dm-section {
-    margin-bottom: 21px;
+    margin-bottom: 20px;
 }
 
 .dm-section-title {
     display: flex;
-
     align-items: center;
 
     gap: 8px;
 
     margin-bottom: 12px;
 
-    font-size: 13px;
-
-    font-weight: 800;
-
     color: #e2e8f0;
+
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .dm-section-number {
@@ -1709,25 +1980,22 @@ main {
     height: 24px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     border-radius: 7px;
 
-    background:
-        rgba(59, 130, 246, 0.14);
+    background: rgba(59, 130, 246, 0.14);
 
     color: #60a5fa;
 
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .dm-form-grid {
     display: grid;
 
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 
     gap: 13px;
 }
@@ -1747,30 +2015,27 @@ main {
 
     color: #cbd5e1;
 
-    font-size: 12px;
-
-    font-weight: 650;
+    font-size: 11px;
+    font-weight: 700;
 }
 
 .dm-form-input,
 .dm-form-select {
     width: 100%;
-    height: 45px;
+    height: 44px;
 
-    padding: 0 13px;
+    padding: 0 12px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.07);
-
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 10px;
+
+    outline: none;
 
     background: #1c285d;
 
-    color: white;
+    color: #ffffff;
 
-    font-size: 13px;
-
-    outline: none;
+    font-size: 12px;
 
     transition:
         border-color 0.2s ease,
@@ -1784,13 +2049,11 @@ main {
 
 .dm-form-input:focus,
 .dm-form-select:focus {
-    border-color:
-        rgba(96, 165, 250, 0.55);
+    border-color: rgba(96, 165, 250, 0.55);
 
     background: #202f6b;
 
-    box-shadow:
-        0 0 0 3px rgba(59, 130, 246, 0.10);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.10);
 }
 
 .dm-form-input[type="date"] {
@@ -1800,47 +2063,42 @@ main {
 .dm-divider {
     height: 1px;
 
-    margin: 20px 0;
+    margin: 19px 0;
 
-    background:
-        rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.07);
 }
 
 
 /* =========================================================
-   MODAL PROGRESS
+   28. MODAL PROGRESS
    ========================================================= */
 
 .dm-modal-progress {
     margin-top: 8px;
 
-    padding: 14px;
+    padding: 13px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.07);
-
+    border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 12px;
 
-    background:
-        rgba(255, 255, 255, 0.025);
+    background: rgba(255, 255, 255, 0.025);
 }
 
 .dm-modal-progress-top {
     display: flex;
-
     justify-content: space-between;
 
     margin-bottom: 8px;
 
-    font-size: 11px;
-
     color: #94a3b8;
+
+    font-size: 10px;
 }
 
 .dm-modal-progress-percent {
     color: #e2e8f0;
 
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .dm-modal-progress-track {
@@ -1860,36 +2118,41 @@ main {
 
     border-radius: inherit;
 
-    background:
-        linear-gradient(
-            90deg,
-            #6366f1,
-            #8b5cf6
-        );
+    background: linear-gradient(
+        90deg,
+        #6366f1,
+        #8b5cf6
+    );
 
-    transition:
-        width 0.3s ease;
+    transition: width 0.3s ease;
+}
+
+.dm-modal-progress-fill.complete {
+    background: linear-gradient(
+        90deg,
+        #16a34a,
+        #22c55e
+    );
 }
 
 
 /* =========================================================
-   MODAL FOOTER
+   29. MODAL FOOTER
    ========================================================= */
 
 .dm-modal-footer {
     display: flex;
-
     justify-content: flex-end;
 
-    gap: 10px;
+    gap: 9px;
 
-    padding: 16px 20px;
+    flex-shrink: 0;
 
-    border-top:
-        1px solid rgba(255, 255, 255, 0.07);
+    padding: 14px 20px;
 
-    background:
-        rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .dm-cancel-btn,
@@ -1899,12 +2162,10 @@ main {
     padding: 0 17px;
 
     border: none;
-
     border-radius: 9px;
 
-    font-size: 12px;
-
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 800;
 
     cursor: pointer;
 
@@ -1918,7 +2179,7 @@ main {
 .dm-cancel-btn {
     background: #475569;
 
-    color: white;
+    color: #ffffff;
 }
 
 .dm-cancel-btn:hover {
@@ -1926,21 +2187,19 @@ main {
 }
 
 .dm-save-btn {
-    background:
-        linear-gradient(
-            135deg,
-            #4f46e5,
-            #7c3aed
-        );
+    background: linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed
+    );
 
-    color: white;
+    color: #ffffff;
 }
 
 .dm-save-btn:hover {
     transform: translateY(-1px);
 
-    box-shadow:
-        0 8px 20px rgba(99, 102, 241, 0.28);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.28);
 }
 
 .dm-save-btn.loading {
@@ -1951,161 +2210,8 @@ main {
 
 
 /* =========================================================
-   DURATION OF SEA SERVICE
+   30. ANIMATIONS
    ========================================================= */
-
-.dm-sea-duration {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    min-width: 140px;
-
-    padding: 8px 11px;
-
-    border:
-        1px solid rgba(96, 165, 250, 0.20);
-
-    border-radius: 10px;
-
-    background:
-        rgba(59, 130, 246, 0.08);
-
-    color: #cbd5e1;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    white-space: nowrap;
-}
-
-.dm-sea-duration.completed {
-    border-color:
-        rgba(34, 197, 94, 0.22);
-
-    background:
-        rgba(34, 197, 94, 0.08);
-
-    color: #86efac;
-}
-
-.dm-sea-duration.empty {
-    border-color:
-        rgba(148, 163, 184, 0.15);
-
-    background:
-        rgba(148, 163, 184, 0.06);
-
-    color: #64748b;
-}
-
-
-/* =========================================================
-   MODAL SEA SERVICE VALUE
-   ========================================================= */
-
-.dm-sea-service-value {
-    display: flex;
-
-    align-items: center;
-
-    min-height: 45px;
-
-    width: 100%;
-
-    padding: 0 13px;
-
-    border:
-        1px solid rgba(96, 165, 250, 0.20);
-
-    border-radius: 10px;
-
-    background:
-        rgba(59, 130, 246, 0.08);
-
-    color: #cbd5e1;
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-    white-space: nowrap;
-
-    box-sizing: border-box;
-
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease;
-}
-
-.dm-sea-service-value:not(:empty) {
-    color: #cbd5e1;
-}
-
-.dm-sea-service-value.completed {
-    border-color:
-        rgba(34, 197, 94, 0.22);
-
-    background:
-        rgba(34, 197, 94, 0.08);
-
-    color: #86efac;
-}
-
-.dm-sea-service-value.empty {
-    border-color:
-        rgba(148, 163, 184, 0.15);
-
-    background:
-        rgba(148, 163, 184, 0.06);
-
-    color: #64748b;
-}
-
-
-/* =========================================================
-   LOADING
-   ========================================================= */
-
-.dm-loading {
-    position: absolute;
-
-    inset: 0;
-
-    display: none;
-
-    align-items: center;
-    justify-content: center;
-
-    background:
-        rgba(10, 18, 55, 0.70);
-
-    backdrop-filter: blur(2px);
-
-    z-index: 10;
-}
-
-.dm-loading.show {
-    display: flex;
-}
-
-.dm-spinner {
-    width: 32px;
-    height: 32px;
-
-    border:
-        3px solid rgba(255, 255, 255, 0.20);
-
-    border-top-color: #60a5fa;
-
-    border-radius: 50%;
-
-    animation:
-        dmSpin 0.7s linear infinite;
-}
 
 @keyframes dmSpin {
     to {
@@ -2115,7 +2221,7 @@ main {
 
 
 /* =========================================================
-   RESPONSIVE — LARGE TABLET
+   31. LARGE DESKTOP
    ========================================================= */
 
 @media (max-width: 1400px) {
@@ -2124,79 +2230,34 @@ main {
         padding: 18px;
     }
 
-    .dm-table thead th {
-        padding: 0 11px;
-
-        font-size: 9px;
-    }
-
-    .dm-table tbody td {
-        padding: 0 11px;
-
-        font-size: 11px;
-    }
-
-    .dm-table {
-        font-size: 11px;
-    }
-
-    .dm-sea-duration {
-        min-width: 125px;
-
-        padding-left: 8px;
-        padding-right: 8px;
-
-        font-size: 10px;
-    }
-
-    .dm-progress {
-        width: 95px;
-    }
-
-    .dm-badge {
-        min-width: 90px;
-
-        padding-left: 8px;
-        padding-right: 8px;
-
-        font-size: 9px;
+    .dm-filter-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
 
 
 /* =========================================================
-   RESPONSIVE — 1200px
+   32. TABLET / SMALL DESKTOP
    ========================================================= */
 
 @media (max-width: 1200px) {
 
-    .dm-filter-grid {
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
-    }
-
     .dm-stats {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /*
-     * At this width the 15-column table naturally becomes
-     * wider than the viewport. We keep it intact instead of
-     * adding a scroll container.
-     */
+    .dm-filter-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
     .dm-table {
-        min-width: 1500px;
-    }
-
-    .dm-table-card {
-        overflow-x: visible;
+        min-width: 1580px;
     }
 }
 
 
 /* =========================================================
-   RESPONSIVE — 1000px
+   33. TABLET
    ========================================================= */
 
 @media (max-width: 1000px) {
@@ -2206,34 +2267,25 @@ main {
     }
 
     .dm-header {
-        padding: 19px;
+        padding: 20px;
+    }
+
+    .dm-header h1 {
+        font-size: 23px;
     }
 
     .dm-filter-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .dm-table-hint {
         display: none;
     }
-
-    /*
-     * Allow the page itself to expand naturally.
-     * No internal table scrolling.
-     */
-    .dm-table-scroll {
-        overflow: visible;
-    }
-
-    .dm-table {
-        min-width: 1450px;
-    }
 }
 
 
 /* =========================================================
-   RESPONSIVE — 800px
+   34. SMALL TABLET
    ========================================================= */
 
 @media (max-width: 800px) {
@@ -2243,64 +2295,64 @@ main {
     }
 
     .dm-header {
-        padding: 17px;
-
-        gap: 12px;
+        padding: 18px;
     }
 
     .dm-header h1 {
-        font-size: 22px;
-    }
-
-    .dm-header p {
-        font-size: 12px;
-    }
-
-    .dm-header-icon {
-        width: 46px;
-        height: 46px;
-
         font-size: 21px;
     }
 
+    .dm-header p {
+        font-size: 11px;
+    }
+
+    .dm-header-icon {
+        width: 48px;
+        height: 48px;
+
+        border-radius: 13px;
+
+        font-size: 22px;
+    }
+
     .dm-filter-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .dm-stats {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+    .dm-table-header {
+        min-height: 60px;
 
-        gap: 12px;
+        padding: 12px 14px;
     }
 
-    .dm-stat {
-        min-height: 130px;
+    .dm-pagination-wrapper {
+        align-items: flex-start;
 
-        padding: 17px;
+        flex-direction: column;
     }
 
-    .dm-stat-value {
-        font-size: 32px;
+    .dm-pagination-info {
+        width: 100%;
     }
 
-    /*
-     * Table remains full width of its content.
-     * The page, rather than .dm-table-scroll, controls
-     * the overall layout.
-     */
-    .dm-table {
-        min-width: 1400px;
+    .dm-pagination-links {
+        width: 100%;
+
+        overflow-x: auto;
+
+        padding-bottom: 2px;
     }
 
-    .dm-table-card {
-        overflow: visible;
+    .dm-pagination-links nav {
+        justify-content: flex-start;
+
+        min-width: max-content;
     }
 }
 
 
 /* =========================================================
-   RESPONSIVE — MOBILE
+   35. MOBILE
    ========================================================= */
 
 @media (max-width: 680px) {
@@ -2309,7 +2361,11 @@ main {
         padding: 10px;
     }
 
+    /* Header */
+
     .dm-header {
+        min-height: 130px;
+
         padding: 16px;
 
         border-radius: 13px;
@@ -2320,7 +2376,13 @@ main {
     }
 
     .dm-header p {
-        font-size: 11px;
+        max-width: 90%;
+
+        font-size: 10px;
+    }
+
+    .dm-header-eyebrow {
+        font-size: 8px;
     }
 
     .dm-header-icon {
@@ -2332,6 +2394,8 @@ main {
         font-size: 19px;
     }
 
+    /* Statistics */
+
     .dm-stats {
         grid-template-columns: 1fr;
 
@@ -2339,18 +2403,16 @@ main {
     }
 
     .dm-stat {
-        min-height: 125px;
+        min-height: 120px;
 
         padding: 16px;
-    }
-
-    .dm-stat-top {
-        margin-bottom: 16px;
     }
 
     .dm-stat-value {
         font-size: 31px;
     }
+
+    /* Filters */
 
     .dm-filter-panel {
         padding: 13px;
@@ -2359,90 +2421,97 @@ main {
     }
 
     .dm-filter-header {
-        margin-bottom: 12px;
+        align-items: flex-start;
     }
 
-    .dm-filter-title {
-        font-size: 13px;
+    .dm-filter-grid {
+        grid-template-columns: 1fr;
     }
+
+    .dm-filter-button,
+    .dm-search,
+    .dm-date-input {
+        height: 44px;
+    }
+
+    /* Table */
 
     .dm-table-header {
-        padding: 13px;
+        padding: 12px;
     }
 
     .dm-table-title strong {
-        font-size: 13px;
+        font-size: 12px;
     }
 
-    /*
-     * NO scroll container.
-     *
-     * The table remains wide enough to preserve the
-     * 15-column desktop structure.
-     */
-    .dm-table-scroll {
-        overflow: visible;
+    .dm-table-title span {
+        font-size: 9px;
     }
 
-    .dm-table {
-        min-width: 1380px;
+    .dm-table thead th {
+        height: 46px;
+
+        padding: 0 10px;
+
+        font-size: 8px;
+    }
+
+    .dm-table tbody td {
+        height: 55px;
+
+        padding: 0 10px;
+
+        font-size: 10px;
     }
 
     /* Pagination */
-    .dm-pagination {
-        flex-direction: column;
 
-        align-items: stretch;
-
-        gap: 12px;
-
-        padding: 14px;
+    .dm-pagination-wrapper {
+        padding: 13px;
     }
 
     .dm-pagination-info {
+        width: 100%;
+
         text-align: center;
     }
 
     .dm-pagination-links {
-        justify-content: center;
-
         width: 100%;
-
-        overflow-x: visible;
-
-        flex-wrap: wrap;
     }
 
     .dm-pagination-links nav {
-        max-width: 100%;
-
-        flex-wrap: wrap;
-
-        justify-content: center;
+        justify-content: flex-start;
     }
 
     .dm-pagination-links a,
     .dm-pagination-links span {
-        min-width: 34px;
-        height: 34px;
-
-        flex-shrink: 0;
+        min-width: 32px;
+        height: 32px;
     }
 
     /* Modal */
+
     .dm-modal {
+        align-items: flex-start;
+
         padding: 8px;
     }
 
     .dm-modal-card {
-        max-height:
-            calc(100vh - 16px);
+        max-height: calc(100vh - 16px);
+
+        margin: auto 0;
 
         border-radius: 14px;
     }
 
+    .dm-modal-header {
+        padding: 14px;
+    }
+
     .dm-modal-body {
-        padding: 15px;
+        padding: 14px;
     }
 
     .dm-form-grid {
@@ -2455,6 +2524,8 @@ main {
 
     .dm-modal-footer {
         flex-direction: column-reverse;
+
+        padding: 13px;
     }
 
     .dm-cancel-btn,
@@ -2463,19 +2534,19 @@ main {
     }
 
     /* Toast */
+
     .dm-toast {
-        left: 12px;
-        right: 12px;
-
         top: 15px;
+        right: 12px;
+        left: 12px;
 
-        min-width: 0;
+        width: auto;
     }
 }
 
 
 /* =========================================================
-   RESPONSIVE — SMALL MOBILE
+   36. VERY SMALL MOBILE
    ========================================================= */
 
 @media (max-width: 420px) {
@@ -2493,7 +2564,7 @@ main {
     }
 
     .dm-header p {
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .dm-header-icon {
@@ -2504,27 +2575,30 @@ main {
     }
 
     .dm-stat {
-        min-height: 120px;
+        min-height: 115px;
 
-        padding: 15px;
+        padding: 14px;
     }
 
     .dm-stat-label {
-        font-size: 11px;
+        font-size: 10px;
     }
 
     .dm-stat-value {
-        font-size: 30px;
+        font-size: 29px;
     }
 
     .dm-stat-description {
-        font-size: 11px;
+        font-size: 10px;
+    }
+
+    .dm-filter-panel {
+        padding: 11px;
     }
 
     .dm-profile img {
         width: 55px !important;
         height: 55px !important;
-
         min-width: 55px;
     }
 
@@ -2532,26 +2606,66 @@ main {
         font-size: 14px;
     }
 
-    .dm-modal-header {
-        padding: 15px;
+    .dm-modal-title strong {
+        font-size: 14px;
+    }
+
+    .dm-modal-title span {
+        font-size: 9px;
     }
 
     .dm-modal-body {
-        padding: 13px;
+        padding: 12px;
     }
 
     .dm-modal-footer {
-        padding: 13px;
+        padding: 12px;
     }
 }
 
 
 /* =========================================================
-   ANIMATION
+   37. ACCESSIBILITY / TOUCH
    ========================================================= */
 
-@keyframes dmSpin {
-    to {
-        transform: rotate(360deg);
+.dm-view-btn:focus-visible,
+.dm-clear-filters:focus-visible,
+.dm-filter-button:focus-visible,
+.dm-modal-close:focus-visible,
+.dm-save-btn:focus-visible,
+.dm-cancel-btn:focus-visible,
+.dm-pagination-links a:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   38. REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dm-stat,
+    .dm-view-btn,
+    .dm-filter-button,
+    .dm-modal-close,
+    .dm-save-btn,
+    .dm-pagination-links a,
+    .dm-pagination-links span {
+        transition: none;
+    }
+
+    .dm-modal-card {
+        animation: none;
+    }
+
+    .dm-progress-fill,
+    .dm-modal-progress-fill {
+        transition: none;
+    }
+
+    #deploymentResults.is-loading::after {
+        animation: none;
     }
 }

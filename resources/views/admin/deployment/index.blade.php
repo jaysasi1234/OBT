@@ -4,1349 +4,1253 @@
 
 @vite(['resources/css/admin/deployment/deployment.css'])
 
-
 <div class="dm-page">
 
-    {{-- =====================================================
-         PAGE HEADER
-    ====================================================== --}}
+```
+{{-- =====================================================
+     PAGE HEADER
+====================================================== --}}
 
-    <div class="dm-header">
+<div class="dm-header">
 
-        <div class="dm-header-content">
+    <div class="dm-header-content">
 
-            <h1>
-                Deployment Monitoring
-            </h1>
+        <div class="dm-header-eyebrow">
+            <span class="dm-header-eyebrow-dot"></span>
+            ADMINISTRATION
+        </div>
 
-            <p>
-                Monitor cadet deployment information, vessel assignments,
-                progress, and training status.
-            </p>
+        <h1>
+            Deployment Monitoring
+        </h1>
+
+        <p>
+            Monitor cadet deployment information, vessel assignments,
+            progress, and training status.
+        </p>
+
+    </div>
+
+    <div class="dm-header-icon" aria-hidden="true">
+        🚢
+    </div>
+
+</div>
+
+
+{{-- =====================================================
+     AJAX CONTENT
+====================================================== --}}
+
+<div id="deploymentPageContent">
+
+    {{-- =================================================
+         STATISTICS
+    ================================================== --}}
+
+    <div class="dm-stats" id="deploymentStats">
+
+        <div class="dm-stat dm-stat-blue">
+
+            <div class="dm-stat-top">
+
+                <div class="dm-stat-label">
+                    Total Deployed
+                </div>
+
+                <div class="dm-stat-icon">
+                    🚢
+                </div>
+
+            </div>
+
+            <div class="dm-stat-value">
+                {{ $totalDeployed }}
+            </div>
+
+            <div class="dm-stat-description">
+                Cadets with deployment records
+            </div>
 
         </div>
 
-        <div class="dm-header-icon">
-            🚢
+
+        <div class="dm-stat dm-stat-cyan">
+
+            <div class="dm-stat-top">
+
+                <div class="dm-stat-label">
+                    Ongoing
+                </div>
+
+                <div class="dm-stat-icon">
+                    ⚓
+                </div>
+
+            </div>
+
+            <div class="dm-stat-value">
+                {{ $ongoing }}
+            </div>
+
+            <div class="dm-stat-description">
+                Currently onboard training
+            </div>
+
+        </div>
+
+
+        <div class="dm-stat dm-stat-green">
+
+            <div class="dm-stat-top">
+
+                <div class="dm-stat-label">
+                    Completed
+                </div>
+
+                <div class="dm-stat-icon">
+                    ✓
+                </div>
+
+            </div>
+
+            <div class="dm-stat-value">
+                {{ $completed }}
+            </div>
+
+            <div class="dm-stat-description">
+                Successfully completed
+            </div>
+
+        </div>
+
+
+        <div class="dm-stat dm-stat-gray">
+
+            <div class="dm-stat-top">
+
+                <div class="dm-stat-label">
+                    Not Deployed
+                </div>
+
+                <div class="dm-stat-icon">
+                    📋
+                </div>
+
+            </div>
+
+            <div class="dm-stat-value">
+                {{ $notDeployed }}
+            </div>
+
+            <div class="dm-stat-description">
+                Awaiting deployment
+            </div>
+
         </div>
 
     </div>
 
 
-    {{-- =====================================================
-         AJAX CONTENT
-    ====================================================== --}}
+    {{-- =================================================
+         TABLE CARD
+    ================================================== --}}
 
-    <div id="deploymentPageContent">
+    <div
+        class="dm-table-card"
+        id="deploymentResults"
+    >
 
-        {{-- =================================================
-             STATISTICS
-        ================================================== --}}
+        <div class="dm-table-header">
 
-        <div class="dm-stats" id="deploymentStats">
+            <div class="dm-table-title">
 
-            <div class="dm-stat dm-stat-blue">
+                <div class="dm-table-title-main">
+                    <span class="dm-table-title-icon">▣</span>
 
-                <div class="dm-stat-top">
+                    <div>
+                        <strong>
+                            Cadet Deployment Records
+                        </strong>
 
-                    <div class="dm-stat-label">
-                        Total Deployed
+                        <span>
+                            Review and manage deployment information
+                        </span>
                     </div>
-
-                    <div class="dm-stat-icon">
-                        🚢
-                    </div>
-
-                </div>
-
-                <div class="dm-stat-value">
-                    {{ $totalDeployed }}
-                </div>
-
-                <div class="dm-stat-description">
-                    Cadets with deployment records
                 </div>
 
             </div>
 
-
-            <div class="dm-stat dm-stat-cyan">
-
-                <div class="dm-stat-top">
-
-                    <div class="dm-stat-label">
-                        Ongoing
-                    </div>
-
-                    <div class="dm-stat-icon">
-                        ⚓
-                    </div>
-
-                </div>
-
-                <div class="dm-stat-value">
-                    {{ $ongoing }}
-                </div>
-
-                <div class="dm-stat-description">
-                    Currently onboard training
-                </div>
-
-            </div>
-
-
-            <div class="dm-stat dm-stat-green">
-
-                <div class="dm-stat-top">
-
-                    <div class="dm-stat-label">
-                        Completed
-                    </div>
-
-                    <div class="dm-stat-icon">
-                        ✓
-                    </div>
-
-                </div>
-
-                <div class="dm-stat-value">
-                    {{ $completed }}
-                </div>
-
-                <div class="dm-stat-description">
-                    Successfully completed
-                </div>
-
-            </div>
-
-
-            <div class="dm-stat dm-stat-gray">
-
-                <div class="dm-stat-top">
-
-                    <div class="dm-stat-label">
-                        Not Deployed
-                    </div>
-
-                    <div class="dm-stat-icon">
-                        📋
-                    </div>
-
-                </div>
-
-                <div class="dm-stat-value">
-                    {{ $notDeployed }}
-                </div>
-
-                <div class="dm-stat-description">
-                    Awaiting deployment
-                </div>
-
+            <div class="dm-table-hint">
+                <span>↔</span>
+                Swipe or scroll to view all columns
             </div>
 
         </div>
 
 
         {{-- =================================================
-             TABLE CARD
+             TABLE WRAPPER
         ================================================== --}}
 
-        <div
-            class="dm-table-card"
-            id="deploymentResults"
-        >
+        <div class="dm-table-scroll">
 
-            <div class="dm-table-header">
+            <table class="dm-table">
 
-                <div class="dm-table-title">
+                <thead>
 
-                    <strong>
-                        Cadet Deployment Records
-                    </strong>
+                    <tr>
 
-                    <span>
-                        Review and manage deployment information
-                    </span>
+                        <th>TRB No.</th>
+                        <th>Name</th>
+                        <th>Course</th>
+                        <th>Batch</th>
+                        <th>Vessel</th>
+                        <th>Company</th>
+                        <th>Deployment Type</th>
+                        <th>Embarkation Place</th>
+                        <th>Embarkation Date</th>
+                        <th>Disembarkation Place</th>
+                        <th>Disembarkation Date</th>
+                        <th>Duration of Sea Service</th>
+                        <th>Progress</th>
+                        <th>Status</th>
+                        <th>Action</th>
 
-                </div>
+                    </tr>
 
-                <div class="dm-table-hint">
-                    ↔ Scroll horizontally to view all columns
-                </div>
-
-            </div>
-
-
-            <div class="dm-table-scroll">
-
-                <table class="dm-table">
-
-                    <thead>
-
-                        <tr>
-
-                            <th>TRB No.</th>
-                            <th>Name</th>
-                            <th>Course</th>
-                            <th>Batch</th>
-                            <th>Vessel</th>
-                            <th>Company</th>
-                            <th>Deployment Type</th>
-                            <th>Embarkation Place</th>
-                            <th>Embarkation Date</th>
-                            <th>Disembarkation Place</th>
-                            <th>Disembarkation Date</th>
-                            <th>Duration of Sea Service</th>
-                            <th>Progress</th>
-                            <th>Status</th>
-                            <th>Action</th>
-
-                        </tr>
-
-                    </thead>
+                </thead>
 
 
-                    <tbody>
+                <tbody>
 
-                    @forelse($cadets as $cadet)
+                @forelse($cadets as $cadet)
 
-                        @php
+                    @php
 
-                            $deployment =
-                                $cadet->deployment;
+                        $deployment = $cadet->deployment;
 
+                        $status = strtolower(
+                            trim(
+                                optional($deployment)->status
+                                ?? 'Not Deployed'
+                            )
+                        );
 
-                            $status =
-                                strtolower(
-                                    trim(
-                                        optional(
-                                            $deployment
-                                        )->status
-                                        ?? 'Not Deployed'
-                                    )
-                                );
+                        $percent = (int) (
+                            optional($deployment)->percentage
+                            ?? 0
+                        );
 
-
-                            $percent =
-                                (int) (
-                                    optional(
-                                        $deployment
-                                    )->percentage
-                                    ?? 0
-                                );
+                        $percent = max(
+                            0,
+                            min(100, $percent)
+                        );
 
 
-                            $percent =
-                                max(
-                                    0,
-                                    min(
-                                        100,
-                                        $percent
-                                    )
-                                );
+                        /*
+                        |--------------------------------------------------------------------------
+                        | RAW DEPLOYMENT DATES
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $rawEmbarkationDate =
+                            $deployment?->getRawOriginal(
+                                'date_deployed'
+                            );
+
+                        $rawDisembarkationDate =
+                            $deployment?->getRawOriginal(
+                                'date_disembarked'
+                            );
 
 
-                            /*
-                            |--------------------------------------------------------------------------
-                            | DURATION OF SEA SERVICE
-                            |--------------------------------------------------------------------------
-                            */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DURATION OF SEA SERVICE
+                        |--------------------------------------------------------------------------
+                        */
 
-                            $durationOfSeaService =
-                                null;
+                        $durationOfSeaService = null;
 
+                        if (
+                            $rawEmbarkationDate &&
+                            $rawDisembarkationDate
+                        ) {
 
-                            $rawEmbarkationDate =
-                                $deployment?->getRawOriginal(
-                                    'date_deployed'
-                                );
+                            try {
 
-
-                            $rawDisembarkationDate =
-                                $deployment?->getRawOriginal(
-                                    'date_disembarked'
-                                );
-
-
-                            if (
-                                $rawEmbarkationDate &&
-                                $rawDisembarkationDate
-                            ) {
-
-                                try {
-
-                                    $embarkDate =
-                                        \Carbon\Carbon::createFromFormat(
-                                            'Y-m-d',
-                                            substr(
-                                                (string) $rawEmbarkationDate,
-                                                0,
-                                                10
-                                            )
-                                        );
-
-
-                                    $disembarkDate =
-                                        \Carbon\Carbon::createFromFormat(
-                                            'Y-m-d',
-                                            substr(
-                                                (string) $rawDisembarkationDate,
-                                                0,
-                                                10
-                                            )
-                                        );
-
-
-                                    if (
-                                        $disembarkDate->greaterThanOrEqualTo(
-                                            $embarkDate
+                                $embarkDate =
+                                    \Carbon\Carbon::createFromFormat(
+                                        'Y-m-d',
+                                        substr(
+                                            (string) $rawEmbarkationDate,
+                                            0,
+                                            10
                                         )
-                                    ) {
+                                    );
 
-                                        $difference =
-                                            $embarkDate->diff(
-                                                $disembarkDate
-                                            );
+                                $disembarkDate =
+                                    \Carbon\Carbon::createFromFormat(
+                                        'Y-m-d',
+                                        substr(
+                                            (string) $rawDisembarkationDate,
+                                            0,
+                                            10
+                                        )
+                                    );
 
 
-                                        $months =
+                                if (
+                                    $disembarkDate->greaterThanOrEqualTo(
+                                        $embarkDate
+                                    )
+                                ) {
+
+                                    $difference =
+                                        $embarkDate->diff(
+                                            $disembarkDate
+                                        );
+
+                                    $months =
+                                        (
+                                            $difference->y * 12
+                                        )
+                                        +
+                                        $difference->m;
+
+                                    $days =
+                                        $difference->d;
+
+                                    $durationParts = [];
+
+
+                                    if ($months > 0) {
+
+                                        $durationParts[] =
+                                            $months .
+                                            ' ' .
                                             (
-                                                $difference->y *
-                                                12
-                                            )
-                                            +
-                                            $difference->m;
-
-
-                                        $days =
-                                            $difference->d;
-
-
-                                        $durationParts = [];
-
-
-                                        if ($months > 0) {
-
-                                            $durationParts[] =
-                                                $months . ' ' .
-                                                (
-                                                    $months === 1
-                                                        ? 'Month'
-                                                        : 'Months'
-                                                );
-
-                                        }
-
-
-                                        if ($days > 0) {
-
-                                            $durationParts[] =
-                                                $days . ' ' .
-                                                (
-                                                    $days === 1
-                                                        ? 'Day'
-                                                        : 'Days'
-                                                );
-
-                                        }
-
-
-                                        $durationOfSeaService =
-                                            !empty(
-                                                $durationParts
-                                            )
-                                                ? implode(
-                                                    ', ',
-                                                    $durationParts
-                                                )
-                                                : '0 Days';
+                                                $months === 1
+                                                    ? 'Month'
+                                                    : 'Months'
+                                            );
 
                                     }
 
-                                } catch (
-                                    \Throwable $e
-                                ) {
+
+                                    if ($days > 0) {
+
+                                        $durationParts[] =
+                                            $days .
+                                            ' ' .
+                                            (
+                                                $days === 1
+                                                    ? 'Day'
+                                                    : 'Days'
+                                            );
+
+                                    }
+
 
                                     $durationOfSeaService =
-                                        null;
+                                        !empty($durationParts)
+                                            ? implode(
+                                                ', ',
+                                                $durationParts
+                                            )
+                                            : '0 Days';
 
                                 }
 
+                            } catch (\Throwable $e) {
+
+                                $durationOfSeaService = null;
+
                             }
 
-                        @endphp
+                        }
 
 
-                        <tr>
+                        /*
+                        |--------------------------------------------------------------------------
+                        | FORMATTED DATES
+                        |--------------------------------------------------------------------------
+                        */
 
-                            {{-- TRB --}}
-
-                            <td>
-                                <strong>
-                                    {{ $cadet->trb_control_number }}
-                                </strong>
-                            </td>
+                        $formattedEmbarkationDate = null;
+                        $formattedDisembarkationDate = null;
 
 
-                            {{-- NAME --}}
+                        if ($rawEmbarkationDate) {
 
-                            <td>
+                            try {
+
+                                $formattedEmbarkationDate =
+                                    \Carbon\Carbon::createFromFormat(
+                                        'Y-m-d',
+                                        substr(
+                                            (string) $rawEmbarkationDate,
+                                            0,
+                                            10
+                                        )
+                                    )->format('M d, Y');
+
+                            } catch (\Throwable $e) {
+
+                                $formattedEmbarkationDate = null;
+
+                            }
+
+                        }
+
+
+                        if ($rawDisembarkationDate) {
+
+                            try {
+
+                                $formattedDisembarkationDate =
+                                    \Carbon\Carbon::createFromFormat(
+                                        'Y-m-d',
+                                        substr(
+                                            (string) $rawDisembarkationDate,
+                                            0,
+                                            10
+                                        )
+                                    )->format('M d, Y');
+
+                            } catch (\Throwable $e) {
+
+                                $formattedDisembarkationDate = null;
+
+                            }
+
+                        }
+
+                    @endphp
+
+
+                    <tr>
+
+                        {{-- TRB --}}
+
+                        <td>
+
+                            <strong class="dm-trb">
+                                {{ $cadet->trb_control_number }}
+                            </strong>
+
+                        </td>
+
+
+                        {{-- NAME --}}
+
+                        <td>
+
+                            <div class="dm-cadet-name">
                                 {{ $cadet->full_name }}
-                            </td>
+                            </div>
+
+                        </td>
 
 
-                            {{-- COURSE --}}
+                        {{-- COURSE --}}
 
-                            <td>
+                        <td>
+
+                            <span class="dm-course">
                                 {{ strtoupper($cadet->course) }}
-                            </td>
+                            </span>
+
+                        </td>
 
 
-                            {{-- BATCH --}}
+                        {{-- BATCH --}}
 
-                            <td>
+                        <td>
+
+                            <span class="dm-batch">
                                 {{
-                                    optional(
-                                        $cadet->batch
-                                    )->batch_year
+                                    optional($cadet->batch)->batch_year
                                     ?? 'No Batch'
                                 }}
-                            </td>
+                            </span>
 
+                        </td>
 
-                            {{-- VESSEL --}}
 
-                            <td>
-                                {{
-                                    $deployment->vessel_name
-                                    ?? '—'
-                                }}
-                            </td>
+                        {{-- VESSEL --}}
 
+                        <td>
 
-                            {{-- COMPANY --}}
+                            <span class="dm-cell-text">
+                                {{ $deployment?->vessel_name ?? '—' }}
+                            </span>
 
-                            <td>
-                                {{
-                                    $deployment->company_name
-                                    ?? '—'
-                                }}
-                            </td>
+                        </td>
 
 
-                            {{-- DEPLOYMENT TYPE --}}
+                        {{-- COMPANY --}}
 
-                            <td>
+                        <td>
 
-                                @if(
-                                    (
-                                        $deployment->deployment_type
-                                        ?? ''
-                                    )
-                                    === 'International'
-                                )
+                            <span class="dm-cell-text">
+                                {{ $deployment?->company_name ?? '—' }}
+                            </span>
 
-                                    <span
-                                        class="dm-badge dm-badge-blue"
-                                    >
-                                        🌍 International
-                                    </span>
+                        </td>
 
-                                @elseif(
-                                    (
-                                        $deployment->deployment_type
-                                        ?? ''
-                                    )
-                                    === 'Domestic'
-                                )
 
-                                    <span
-                                        class="dm-badge dm-badge-green"
-                                    >
-                                        🇵🇭 Domestic
-                                    </span>
+                        {{-- DEPLOYMENT TYPE --}}
 
-                                @else
+                        <td>
 
-                                    <span
-                                        class="dm-badge dm-badge-gray"
-                                    >
-                                        —
-                                    </span>
+                            @if(
+                                ($deployment?->deployment_type ?? '')
+                                === 'International'
+                            )
 
-                                @endif
-
-                            </td>
-
-
-                            {{-- EMBARKATION PLACE --}}
-
-                            <td>
-                                {{
-                                    $deployment->embarkation_place
-                                    ?? '—'
-                                }}
-                            </td>
-
-
-                            {{-- EMBARKATION DATE --}}
-
-                            <td
-                                data-date="{{
-                                    $deployment?->getRawOriginal(
-                                        'date_deployed'
-                                    ) ?? ''
-                                }}"
-                            >
-
-                                @php
-
-                                    $rawEmbarkationDate =
-                                        $deployment?->getRawOriginal(
-                                            'date_deployed'
-                                        );
-
-                                @endphp
-
-
-                                @if($rawEmbarkationDate)
-
-                                    {{
-                                        date(
-                                            'M d, Y',
-                                            strtotime(
-                                                substr(
-                                                    $rawEmbarkationDate,
-                                                    0,
-                                                    10
-                                                )
-                                            )
-                                        )
-                                    }}
-
-                                @else
-
-                                    —
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- DISEMBARKATION PLACE --}}
-
-                            <td>
-                                {{
-                                    $deployment->disembarkation_place
-                                    ?? '—'
-                                }}
-                            </td>
-
-
-                            {{-- DISEMBARKATION DATE --}}
-
-                            <td>
-
-                                @php
-
-                                    $rawDisembarkationDate =
-                                        $deployment?->getRawOriginal(
-                                            'date_disembarked'
-                                        );
-
-                                @endphp
-
-
-                                @if($rawDisembarkationDate)
-
-                                    {{
-                                        date(
-                                            'M d, Y',
-                                            strtotime(
-                                                substr(
-                                                    $rawDisembarkationDate,
-                                                    0,
-                                                    10
-                                                )
-                                            )
-                                        )
-                                    }}
-
-                                @else
-
-                                    —
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- DURATION --}}
-
-                            <td>
-
-                                @if(
-                                    $durationOfSeaService
-                                )
-
-                                    <strong
-                                        class="dm-sea-duration"
-                                    >
-                                        {{
-                                            $durationOfSeaService
-                                        }}
-                                    </strong>
-
-                                @else
-
-                                    —
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- PROGRESS --}}
-
-                            <td>
-
-                                <div class="dm-progress">
-
-                                    <div class="dm-progress-top">
-
-                                        <span>
-                                            Training Progress
-                                        </span>
-
-                                        <span
-                                            class="dm-progress-value"
-                                        >
-                                            {{ $percent }}%
-                                        </span>
-
-                                    </div>
-
-
-                                    <div
-                                        class="dm-progress-track"
-                                    >
-
-                                        <div
-                                            class="dm-progress-fill {{
-                                                $percent >= 100
-                                                    ? 'complete'
-                                                    : ''
-                                            }}"
-                                            style="
-                                                width: {{ $percent }}%;
-                                            "
-                                        ></div>
-
-                                    </div>
-
-                                </div>
-
-                            </td>
-
-
-                            {{-- STATUS --}}
-
-                            <td>
-
-                                @if(
-                                    $status === 'ongoing'
-                                )
-
-                                    <span
-                                        class="dm-badge dm-badge-blue"
-                                    >
-                                        ⚓ Ongoing
-                                    </span>
-
-                                @elseif(
-                                    $status === 'completed'
-                                )
-
-                                    <span
-                                        class="dm-badge dm-badge-green"
-                                    >
-                                        ✓ Completed
-                                    </span>
-
-                                @else
-
-                                    <span
-                                        class="dm-badge dm-badge-gray"
-                                    >
-                                        ○ Not Deployed
-                                    </span>
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- ACTION --}}
-
-                            <td>
-
-                                <button
-                                    type="button"
-                                    class="dm-view-btn"
-                                    onclick="openDeploymentModal(@js($cadet))"
-                                >
-                                    👁 View
-                                </button>
-
-                            </td>
-
-                        </tr>
-
-
-                    @empty
-
-                        <tr>
-
-                            <td
-                                colspan="15"
-                                class="dm-empty"
-                            >
-
-                                <div class="dm-empty-icon">
-                                    🚢
-                                </div>
-
-                                <strong>
-                                    No deployment records found
-                                </strong>
-
-                                <span>
-                                    There are currently no cadets matching the selected filters.
+                                <span class="dm-badge dm-badge-blue">
+                                    <span>🌍</span>
+                                    International
                                 </span>
 
-                            </td>
+                            @elseif(
+                                ($deployment?->deployment_type ?? '')
+                                === 'Domestic'
+                            )
 
-                        </tr>
+                                <span class="dm-badge dm-badge-green">
+                                    <span>🇵🇭</span>
+                                    Domestic
+                                </span>
 
-                    @endforelse
+                            @else
 
-                    </tbody>
+                                <span class="dm-badge dm-badge-gray">
+                                    —
+                                </span>
 
-                </table>
+                            @endif
 
-            </div>
-
-
-            {{-- =================================================
-                 PAGINATION
-            ================================================== --}}
-
-            @if($cadets->hasPages())
-
-                <div class="dm-pagination-wrapper">
-
-                    <div class="dm-pagination-info">
-
-                        Showing
-                        <strong>
-                            {{ $cadets->firstItem() }}
-                        </strong>
-
-                        to
-
-                        <strong>
-                            {{ $cadets->lastItem() }}
-                        </strong>
-
-                        of
-
-                        <strong>
-                            {{ $cadets->total() }}
-                        </strong>
-
-                        cadets
-
-                    </div>
+                        </td>
 
 
-                    <div class="dm-pagination-links">
+                        {{-- EMBARKATION PLACE --}}
 
-                        {{ $cadets->withQueryString()->links() }}
+                        <td>
 
-                    </div>
-
-                </div>
-
-            @endif
-
-        </div>
-
-    </div>
-
-
-    {{-- =====================================================
-         FILTER PANEL
-    ====================================================== --}}
-
-    <div class="dm-filter-panel">
-
-        <div class="dm-filter-header">
-
-            <div class="dm-filter-title">
-
-                <div class="dm-filter-title-icon">
-                    ⚙
-                </div>
-
-                Filters
-
-            </div>
-
-        </div>
-
-
-        <div class="dm-filter-grid">
-
-            {{-- COURSE --}}
-
-            <div class="dm-filter-dropdown">
-
-                <button
-                    type="button"
-                    class="dm-filter-button"
-                    onclick="toggleDMFilter(this, 'courseMenu')"
-                >
-
-                    <span>
-                        Courses
-                    </span>
-
-                    <span class="dm-filter-arrow">
-                        ▼
-                    </span>
-
-                </button>
-
-
-                <div
-                    id="courseMenu"
-                    class="dm-dropdown-menu"
-                >
-
-                    @foreach($courses as $course)
-
-                        <label
-                            class="dm-check-option"
-                        >
-
-                            <input
-                                type="checkbox"
-                                value="{{
-                                    strtolower(
-                                        trim(
-                                            $course->course
-                                        )
-                                    )
-                                }}"
-                            >
-
-                            <span>
-                                {{ $course->course }}
+                            <span class="dm-cell-text">
+                                {{
+                                    $deployment?->embarkation_place
+                                    ?? '—'
+                                }}
                             </span>
 
-                        </label>
-
-                    @endforeach
-
-                </div>
-
-            </div>
+                        </td>
 
 
-            {{-- BATCH --}}
+                        {{-- EMBARKATION DATE --}}
 
-            <div class="dm-filter-dropdown">
-
-                <button
-                    type="button"
-                    class="dm-filter-button"
-                    onclick="toggleDMFilter(this, 'batchMenu')"
-                >
-
-                    <span>
-                        Batches
-                    </span>
-
-                    <span class="dm-filter-arrow">
-                        ▼
-                    </span>
-
-                </button>
-
-
-                <div
-                    id="batchMenu"
-                    class="dm-dropdown-menu"
-                >
-
-                    @foreach($batches as $batch)
-
-                        <label
-                            class="dm-check-option"
+                        <td
+                            data-date="{{
+                                $rawEmbarkationDate ?? ''
+                            }}"
                         >
 
-                            <input
-                                type="checkbox"
-                                value="{{
-                                    strtolower(
-                                        $batch->batch_year
-                                    )
-                                }}"
-                            >
+                            @if($formattedEmbarkationDate)
 
-                            <span>
-                                {{ $batch->batch_year }}
+                                <span class="dm-date">
+                                    {{ $formattedEmbarkationDate }}
+                                </span>
+
+                            @else
+
+                                <span class="dm-empty-value">
+                                    —
+                                </span>
+
+                            @endif
+
+                        </td>
+
+
+                        {{-- DISEMBARKATION PLACE --}}
+
+                        <td>
+
+                            <span class="dm-cell-text">
+                                {{
+                                    $deployment?->disembarkation_place
+                                    ?? '—'
+                                }}
                             </span>
 
-                        </label>
-
-                    @endforeach
-
-                </div>
-
-            </div>
+                        </td>
 
 
-            {{-- STATUS --}}
+                        {{-- DISEMBARKATION DATE --}}
 
-            <div class="dm-filter-dropdown">
+                        <td>
 
-                <button
-                    type="button"
-                    class="dm-filter-button"
-                    onclick="toggleDMFilter(this, 'statusMenu')"
-                >
+                            @if($formattedDisembarkationDate)
 
-                    <span>
-                        Status
-                    </span>
+                                <span class="dm-date">
+                                    {{ $formattedDisembarkationDate }}
+                                </span>
 
-                    <span class="dm-filter-arrow">
-                        ▼
-                    </span>
+                            @else
 
-                </button>
+                                <span class="dm-empty-value">
+                                    —
+                                </span>
+
+                            @endif
+
+                        </td>
 
 
-                <div
-                    id="statusMenu"
-                    class="dm-dropdown-menu"
-                >
+                        {{-- DURATION --}}
 
-                    <label
-                        class="dm-check-option"
-                    >
+                        <td>
 
-                        <input
-                            type="checkbox"
-                            value="ongoing"
+                            @if($durationOfSeaService)
+
+                                <strong class="dm-sea-duration">
+                                    {{ $durationOfSeaService }}
+                                </strong>
+
+                            @else
+
+                                <span class="dm-empty-value">
+                                    —
+                                </span>
+
+                            @endif
+
+                        </td>
+
+
+                        {{-- PROGRESS --}}
+
+                        <td>
+
+                            <div class="dm-progress">
+
+                                <div class="dm-progress-top">
+
+                                    <span>
+                                        Training
+                                    </span>
+
+                                    <span class="dm-progress-value">
+                                        {{ $percent }}%
+                                    </span>
+
+                                </div>
+
+                                <div class="dm-progress-track">
+
+                                    <div
+                                        class="dm-progress-fill {{
+                                            $percent >= 100
+                                                ? 'complete'
+                                                : ''
+                                        }}"
+                                        style="width: {{ $percent }}%;"
+                                    ></div>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        {{-- STATUS --}}
+
+                        <td>
+
+                            @if($status === 'ongoing')
+
+                                <span class="dm-badge dm-badge-blue">
+                                    <span>⚓</span>
+                                    Ongoing
+                                </span>
+
+                            @elseif($status === 'completed')
+
+                                <span class="dm-badge dm-badge-green">
+                                    <span>✓</span>
+                                    Completed
+                                </span>
+
+                            @else
+
+                                <span class="dm-badge dm-badge-gray">
+                                    <span>○</span>
+                                    Not Deployed
+                                </span>
+
+                            @endif
+
+                        </td>
+
+
+                        {{-- ACTION --}}
+
+                        <td>
+
+                            <button
+                                type="button"
+                                class="dm-view-btn"
+                                onclick="openDeploymentModal(@js($cadet))"
+                            >
+                                <span>👁</span>
+                                View
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+
+                @empty
+
+                    <tr>
+
+                        <td
+                            colspan="15"
+                            class="dm-empty"
                         >
 
-                        <span>
-                            Ongoing
-                        </span>
+                            <div class="dm-empty-icon">
+                                🚢
+                            </div>
 
-                    </label>
+                            <strong>
+                                No deployment records found
+                            </strong>
 
+                            <span>
+                                There are currently no cadets matching
+                                the selected filters.
+                            </span>
 
-                    <label
-                        class="dm-check-option"
-                    >
+                        </td>
 
-                        <input
-                            type="checkbox"
-                            value="completed"
-                        >
+                    </tr>
 
-                        <span>
-                            Completed
-                        </span>
+                @endforelse
 
-                    </label>
+                </tbody>
 
-
-                    <label
-                        class="dm-check-option"
-                    >
-
-                        <input
-                            type="checkbox"
-                            value="not deployed"
-                        >
-
-                        <span>
-                            Not Deployed
-                        </span>
-
-                    </label>
-
-                </div>
-
-            </div>
-
-
-            {{-- SEARCH --}}
-
-            <div class="dm-filter-field">
-
-                <span class="dm-search-icon">
-                    🔍
-                </span>
-
-                <input
-                    type="text"
-                    id="searchInput"
-                    class="dm-search"
-                    placeholder="Search cadet, TRB, vessel..."
-                >
-
-            </div>
-
-
-            {{-- DATE FROM --}}
-
-            <div class="dm-filter-field">
-
-                <input
-                    type="date"
-                    id="dateFrom"
-                    class="dm-date-input"
-                    title="Deployment date from"
-                >
-
-            </div>
-
-
-            {{-- DATE TO --}}
-
-            <div class="dm-filter-field">
-
-                <input
-                    type="date"
-                    id="dateTo"
-                    class="dm-date-input"
-                    title="Deployment date to"
-                >
-
-            </div>
+            </table>
 
         </div>
+
+
+        {{-- =================================================
+             PAGINATION
+        ================================================== --}}
+
+        @if($cadets->hasPages())
+
+            <div class="dm-pagination-wrapper">
+
+                <div class="dm-pagination-info">
+
+                    Showing
+
+                    <strong>
+                        {{ $cadets->firstItem() }}
+                    </strong>
+
+                    to
+
+                    <strong>
+                        {{ $cadets->lastItem() }}
+                    </strong>
+
+                    of
+
+                    <strong>
+                        {{ $cadets->total() }}
+                    </strong>
+
+                    cadets
+
+                </div>
+
+
+                <div class="dm-pagination-links">
+
+                    {{ $cadets->withQueryString()->links() }}
+
+                </div>
+
+            </div>
+
+        @endif
 
     </div>
 
 </div>
 
 
+{{-- =====================================================
+     FILTER PANEL
+====================================================== --}}
+
+<div class="dm-filter-panel">
+
+    <div class="dm-filter-header">
+
+        <div class="dm-filter-title">
+
+            <div class="dm-filter-title-icon">
+                ⚙
+            </div>
+
+            <div>
+                <strong>Filters</strong>
+
+                <span>
+                    Refine deployment records
+                </span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="dm-clear-filters"
+            onclick="clearDeploymentFilters()"
+        >
+            Clear filters
+        </button>
+
+    </div>
+
+
+    <div class="dm-filter-grid">
+
+        {{-- COURSE --}}
+
+        <div class="dm-filter-dropdown">
+
+            <button
+                type="button"
+                class="dm-filter-button"
+                onclick="toggleDMFilter(this, 'courseMenu')"
+            >
+
+                <span>
+                    Courses
+                </span>
+
+                <span class="dm-filter-arrow">
+                    ▼
+                </span>
+
+            </button>
+
+
+            <div
+                id="courseMenu"
+                class="dm-dropdown-menu"
+            >
+
+                @foreach($courses as $course)
+
+                    <label class="dm-check-option">
+
+                        <input
+                            type="checkbox"
+                            value="{{
+                                strtolower(
+                                    trim(
+                                        $course->course
+                                    )
+                                )
+                            }}"
+                        >
+
+                        <span>
+                            {{ $course->course }}
+                        </span>
+
+                    </label>
+
+                @endforeach
+
+            </div>
+
+        </div>
+
+
+        {{-- BATCH --}}
+
+        <div class="dm-filter-dropdown">
+
+            <button
+                type="button"
+                class="dm-filter-button"
+                onclick="toggleDMFilter(this, 'batchMenu')"
+            >
+
+                <span>
+                    Batches
+                </span>
+
+                <span class="dm-filter-arrow">
+                    ▼
+                </span>
+
+            </button>
+
+
+            <div
+                id="batchMenu"
+                class="dm-dropdown-menu"
+            >
+
+                @foreach($batches as $batch)
+
+                    <label class="dm-check-option">
+
+                        <input
+                            type="checkbox"
+                            value="{{
+                                strtolower(
+                                    trim(
+                                        $batch->batch_year
+                                    )
+                                )
+                            }}"
+
+                        >
+
+                        <span>
+                            {{ $batch->batch_year }}
+                        </span>
+
+                    </label>
+
+                @endforeach
+
+            </div>
+
+        </div>
+
+
+        {{-- STATUS --}}
+
+        <div class="dm-filter-dropdown">
+
+            <button
+                type="button"
+                class="dm-filter-button"
+                onclick="toggleDMFilter(this, 'statusMenu')"
+            >
+
+                <span>
+                    Status
+                </span>
+
+                <span class="dm-filter-arrow">
+                    ▼
+                </span>
+
+            </button>
+
+
+            <div
+                id="statusMenu"
+                class="dm-dropdown-menu"
+            >
+
+                <label class="dm-check-option">
+
+                    <input
+                        type="checkbox"
+                        value="ongoing"
+                    >
+
+                    <span>
+                        Ongoing
+                    </span>
+
+                </label>
+
+
+                <label class="dm-check-option">
+
+                    <input
+                        type="checkbox"
+                        value="completed"
+                    >
+
+                    <span>
+                        Completed
+                    </span>
+
+                </label>
+
+
+                <label class="dm-check-option">
+
+                    <input
+                        type="checkbox"
+                        value="not deployed"
+                    >
+
+                    <span>
+                        Not Deployed
+                    </span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        {{-- SEARCH --}}
+
+        <div class="dm-filter-field">
+
+            <span class="dm-search-icon">
+                🔍
+            </span>
+
+            <input
+                type="text"
+                id="searchInput"
+                class="dm-search"
+                placeholder="Search cadet, TRB, vessel..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        {{-- DATE FROM --}}
+
+        <div class="dm-filter-field">
+
+            <label class="dm-date-label">
+                Deployment From
+            </label>
+
+            <input
+                type="date"
+                id="dateFrom"
+                class="dm-date-input"
+                title="Deployment date from"
+            >
+
+        </div>
+
+
+        {{-- DATE TO --}}
+
+        <div class="dm-filter-field">
+
+            <label class="dm-date-label">
+                Deployment To
+            </label>
+
+            <input
+                type="date"
+                id="dateTo"
+                class="dm-date-input"
+                title="Deployment date to"
+            >
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
 {{-- =========================================================
-     SUCCESS TOAST
+SUCCESS TOAST
 ========================================================= --}}
 
 <div
     id="successToast"
     class="dm-toast"
+    role="status"
+    aria-live="polite"
 >
 
-    <div class="dm-toast-icon">
-        ✓
-    </div>
+```
+<div class="dm-toast-icon">
+    ✓
+</div>
 
-    <div class="dm-toast-content">
+<div class="dm-toast-content">
 
-        <strong>
-            Deployment Updated
-        </strong>
+    <strong>
+        Deployment Updated
+    </strong>
 
-        <span>
-            Deployment information was successfully saved.
-        </span>
+    <span>
+        Deployment information was successfully saved.
+    </span>
 
-    </div>
+</div>
+```
 
 </div>
 
-
 {{-- =========================================================
-     DEPLOYMENT MODAL
+DEPLOYMENT MODAL
 ========================================================= --}}
 
 <div
     id="deploymentModal"
     class="dm-modal"
+    aria-hidden="true"
 >
 
-    <div class="dm-modal-card">
+```
+<div
+    class="dm-modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="deploymentModalTitle"
+>
 
-        <input
-            type="hidden"
-            id="modalId"
-        >
+    <input
+        type="hidden"
+        id="modalId"
+    >
 
 
-        {{-- HEADER --}}
+    {{-- HEADER --}}
 
-        <div class="dm-modal-header">
+    <div class="dm-modal-header">
 
-            <div class="dm-modal-title">
+        <div class="dm-modal-title">
 
-                <div class="dm-modal-title-icon">
-                    🚢
-                </div>
-
-                <div>
-
-                    <strong>
-                        Update Deployment
-                    </strong>
-
-                    <span>
-                        Manage cadet deployment information
-                    </span>
-
-                </div>
-
+            <div class="dm-modal-title-icon">
+                🚢
             </div>
 
+            <div>
 
-            <button
-                type="button"
-                class="dm-modal-close"
-                onclick="closeDeploymentModal()"
-            >
-                ×
-            </button>
+                <strong id="deploymentModalTitle">
+                    Update Deployment
+                </strong>
+
+                <span>
+                    Manage cadet deployment information
+                </span>
+
+            </div>
 
         </div>
 
 
-        {{-- BODY --}}
+        <button
+            type="button"
+            class="dm-modal-close"
+            onclick="closeDeploymentModal()"
+            aria-label="Close modal"
+        >
+            ×
+        </button>
 
-        <div class="dm-modal-body">
-
-            {{-- PROFILE --}}
-
-            <div class="dm-profile">
-
-                <img
-                    id="modalPhoto"
-                    src=""
-                    alt="Cadet Photo"
-                >
-
-                <div>
-
-                    <div
-                        id="modalName"
-                        class="dm-profile-name"
-                    ></div>
-
-                    <div class="dm-profile-meta">
-
-                        <span id="modalTRB"></span>
-
-                        <span>
-                            •
-                        </span>
-
-                        <span id="modalCourse"></span>
-
-                    </div>
-
-                </div>
-
-            </div>
+    </div>
 
 
-            {{-- VESSEL INFORMATION --}}
+    {{-- BODY --}}
 
-            <div class="dm-section">
+    <div class="dm-modal-body">
 
-                <div class="dm-section-title">
+        {{-- PROFILE --}}
 
-                    <div class="dm-section-number">
-                        01
-                    </div>
+        <div class="dm-profile">
 
-                    Vessel Information
+            <img
+                id="modalPhoto"
+                src="/images/default-avatar.png"
+                alt="Cadet Photo"
+                onerror="this.onerror=null;this.src='/images/default-avatar.png';"
+            >
 
-                </div>
+            <div>
 
+                <div
+                    id="modalName"
+                    class="dm-profile-name"
+                ></div>
 
-                <div class="dm-form-grid">
+                <div class="dm-profile-meta">
 
-                    <div class="dm-form-group">
+                    <span id="modalTRB"></span>
 
-                        <label class="dm-form-label">
-                            Vessel Name
-                        </label>
+                    <span>•</span>
 
-                        <input
-                            type="text"
-                            id="modalVessel"
-                            class="dm-form-input"
-                            placeholder="Enter vessel name"
-                        >
-
-                    </div>
-
-
-                    <div class="dm-form-group">
-
-                        <label class="dm-form-label">
-                            Company Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="modalCompany"
-                            class="dm-form-input"
-                            placeholder="Enter company name"
-                        >
-
-                    </div>
-
-
-                    <div class="dm-form-group full">
-
-                        <label class="dm-form-label">
-                            Deployment Type
-                        </label>
-
-                        <select
-                            id="modalDeploymentType"
-                            class="dm-form-select"
-                        >
-
-                            <option value="Domestic">
-                                Domestic
-                            </option>
-
-                            <option value="International">
-                                International
-                            </option>
-
-                        </select>
-
-                    </div>
+                    <span id="modalCourse"></span>
 
                 </div>
 
             </div>
 
+        </div>
 
-            <div class="dm-divider"></div>
 
+        {{-- VESSEL INFORMATION --}}
 
-            {{-- EMBARKATION --}}
+        <div class="dm-section">
 
-            <div class="dm-section">
+            <div class="dm-section-title">
 
-                <div class="dm-section-title">
-
-                    <div class="dm-section-number">
-                        02
-                    </div>
-
-                    Embarkation
-
+                <div class="dm-section-number">
+                    01
                 </div>
 
-
-                <div class="dm-form-grid">
-
-                    <div class="dm-form-group">
-
-                        <label class="dm-form-label">
-                            Embarkation Place
-                        </label>
-
-                        <input
-                            type="text"
-                            id="modalEmbarkPlace"
-                            class="dm-form-input"
-                            placeholder="Enter embarkation place"
-                        >
-
-                    </div>
-
-
-                    <div class="dm-form-group">
-
-                        <label class="dm-form-label">
-                            Embarkation Date
-                        </label>
-
-                        <input
-                            type="date"
-                            id="modalDeployed"
-                            class="dm-form-input"
-                        >
-
-                    </div>
-
-                </div>
+                Vessel Information
 
             </div>
 
 
-            <div class="dm-divider"></div>
+            <div class="dm-form-grid">
 
+                <div class="dm-form-group">
 
-            {{-- DISEMBARKATION --}}
+                    <label class="dm-form-label">
+                        Vessel Name
+                    </label>
 
-            <div class="dm-section">
-
-                <div class="dm-section-title">
-
-                    <div class="dm-section-number">
-                        03
-                    </div>
-
-                    Disembarkation
+                    <input
+                        type="text"
+                        id="modalVessel"
+                        class="dm-form-input"
+                        placeholder="Enter vessel name"
+                    >
 
                 </div>
 
 
-                <div class="dm-form-grid">
+                <div class="dm-form-group">
 
-                    <div class="dm-form-group">
+                    <label class="dm-form-label">
+                        Company Name
+                    </label>
 
-                        <label class="dm-form-label">
-                            Disembarkation Place
-                        </label>
-
-                        <input
-                            type="text"
-                            id="modalDisembarkPlace"
-                            class="dm-form-input"
-                            placeholder="Enter disembarkation place"
-                        >
-
-                    </div>
-
-
-                    <div class="dm-form-group">
-
-                        <label class="dm-form-label">
-                            Disembarkation Date
-                        </label>
-
-                        <input
-                            type="date"
-                            id="modalDisembarked"
-                            class="dm-form-input"
-                        >
-
-                    </div>
+                    <input
+                        type="text"
+                        id="modalCompany"
+                        class="dm-form-input"
+                        placeholder="Enter company name"
+                    >
 
                 </div>
 
@@ -1354,98 +1258,23 @@
                 <div class="dm-form-group full">
 
                     <label class="dm-form-label">
-                        Duration of Sea Service
+                        Deployment Type
                     </label>
 
-                    <div
-                        id="modalSeaServiceDuration"
-                        class="dm-sea-service-value"
+                    <select
+                        id="modalDeploymentType"
+                        class="dm-form-select"
                     >
-                        —
-                    </div>
 
-                </div>
+                        <option value="Domestic">
+                            Domestic
+                        </option>
 
-            </div>
+                        <option value="International">
+                            International
+                        </option>
 
-
-            <div class="dm-divider"></div>
-
-
-            {{-- STATUS --}}
-
-            <div class="dm-section">
-
-                <div class="dm-section-title">
-
-                    <div class="dm-section-number">
-                        04
-                    </div>
-
-                    Training Status
-
-                </div>
-
-
-                <div class="dm-form-grid">
-
-                    <div class="dm-form-group full">
-
-                        <label class="dm-form-label">
-                            Deployment Status
-                        </label>
-
-                        <select
-                            id="modalStatus"
-                            class="dm-form-select"
-                        >
-
-                            <option value="Not Deployed">
-                                Not Deployed
-                            </option>
-
-                            <option value="Ongoing">
-                                Ongoing
-                            </option>
-
-                            <option value="Completed">
-                                Completed
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-
-                <div class="dm-modal-progress">
-
-                    <div class="dm-modal-progress-top">
-
-                        <span>
-                            Training Progress
-                        </span>
-
-                        <span
-                            id="modalPercent"
-                            class="dm-modal-progress-percent"
-                        >
-                            0%
-                        </span>
-
-                    </div>
-
-
-                    <div class="dm-modal-progress-track">
-
-                        <div
-                            id="modalProgress"
-                            class="dm-modal-progress-fill"
-                            style="width:0%;"
-                        ></div>
-
-                    </div>
+                    </select>
 
                 </div>
 
@@ -1454,67 +1283,275 @@
         </div>
 
 
-        {{-- FOOTER --}}
-
-        <div class="dm-modal-footer">
-
-            <button
-                type="button"
-                class="dm-cancel-btn"
-                onclick="closeDeploymentModal()"
-            >
-                Cancel
-            </button>
+        <div class="dm-divider"></div>
 
 
-            <button
-                type="button"
-                id="saveDeploymentBtn"
-                class="dm-save-btn"
-                onclick="saveDeploymentChanges()"
-            >
-                Save Changes
-            </button>
+        {{-- EMBARKATION --}}
+
+        <div class="dm-section">
+
+            <div class="dm-section-title">
+
+                <div class="dm-section-number">
+                    02
+                </div>
+
+                Embarkation
+
+            </div>
+
+
+            <div class="dm-form-grid">
+
+                <div class="dm-form-group">
+
+                    <label class="dm-form-label">
+                        Embarkation Place
+                    </label>
+
+                    <input
+                        type="text"
+                        id="modalEmbarkPlace"
+                        class="dm-form-input"
+                        placeholder="Enter embarkation place"
+                    >
+
+                </div>
+
+
+                <div class="dm-form-group">
+
+                    <label class="dm-form-label">
+                        Embarkation Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="modalDeployed"
+                        class="dm-form-input"
+                    >
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="dm-divider"></div>
+
+
+        {{-- DISEMBARKATION --}}
+
+        <div class="dm-section">
+
+            <div class="dm-section-title">
+
+                <div class="dm-section-number">
+                    03
+                </div>
+
+                Disembarkation
+
+            </div>
+
+
+            <div class="dm-form-grid">
+
+                <div class="dm-form-group">
+
+                    <label class="dm-form-label">
+                        Disembarkation Place
+                    </label>
+
+                    <input
+                        type="text"
+                        id="modalDisembarkPlace"
+                        class="dm-form-input"
+                        placeholder="Enter disembarkation place"
+                    >
+
+                </div>
+
+
+                <div class="dm-form-group">
+
+                    <label class="dm-form-label">
+                        Disembarkation Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="modalDisembarked"
+                        class="dm-form-input"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="dm-form-group full">
+
+                <label class="dm-form-label">
+                    Duration of Sea Service
+                </label>
+
+                <div
+                    id="modalSeaServiceDuration"
+                    class="dm-sea-service-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="dm-divider"></div>
+
+
+        {{-- STATUS --}}
+
+        <div class="dm-section">
+
+            <div class="dm-section-title">
+
+                <div class="dm-section-number">
+                    04
+                </div>
+
+                Training Status
+
+            </div>
+
+
+            <div class="dm-form-grid">
+
+                <div class="dm-form-group full">
+
+                    <label class="dm-form-label">
+                        Deployment Status
+                    </label>
+
+                    <select
+                        id="modalStatus"
+                        class="dm-form-select"
+                    >
+
+                        <option value="Not Deployed">
+                            Not Deployed
+                        </option>
+
+                        <option value="Ongoing">
+                            Ongoing
+                        </option>
+
+                        <option value="Completed">
+                            Completed
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="dm-modal-progress">
+
+                <div class="dm-modal-progress-top">
+
+                    <span>
+                        Training Progress
+                    </span>
+
+                    <span
+                        id="modalPercent"
+                        class="dm-modal-progress-percent"
+                    >
+                        0%
+                    </span>
+
+                </div>
+
+
+                <div class="dm-modal-progress-track">
+
+                    <div
+                        id="modalProgress"
+                        class="dm-modal-progress-fill"
+                        style="width:0%;"
+                    ></div>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
 
+    {{-- FOOTER --}}
+
+    <div class="dm-modal-footer">
+
+        <button
+            type="button"
+            class="dm-cancel-btn"
+            onclick="closeDeploymentModal()"
+        >
+            Cancel
+        </button>
+
+
+        <button
+            type="button"
+            id="saveDeploymentBtn"
+            class="dm-save-btn"
+            onclick="saveDeploymentChanges()"
+        >
+            Save Changes
+        </button>
+
+    </div>
+
+</div>
+```
+
+</div>
 
 <script>
 /* =========================================================
    DEPLOYMENT MONITORING
-   AJAX FILTERING + PAGINATION
+   AJAX FILTERING + PAGINATION + MODAL
 ========================================================= */
 
 let deploymentRequest = null;
 let deploymentSearchTimer = null;
+let deploymentInitialized = false;
 
 
 /* =========================================================
    DOM READY
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+document.addEventListener("DOMContentLoaded", function () {
 
-        initializeDeploymentFilters();
+    initializeDeploymentFilters();
+    initializeDeploymentPagination();
+    initializeDeploymentDuration();
+    initializeDeploymentKeyboard();
+    initializeDeploymentDropdowns();
+    initializeDeploymentDragScroll();
 
-        initializeDeploymentPagination();
+    restoreDeploymentFiltersFromURL();
 
-        initializeDeploymentDuration();
+    deploymentInitialized = true;
 
-        initializeDeploymentKeyboard();
-
-        initializeDeploymentDropdowns();
-
-        initializeDeploymentDragScroll();
-
-    }
-);
+});
 
 
 /* =========================================================
@@ -1527,28 +1564,22 @@ function initializeDeploymentFilters() {
         .querySelectorAll(
             ".dm-dropdown-menu input[type='checkbox']"
         )
-        .forEach(
-            function (checkbox) {
+        .forEach(function (checkbox) {
 
-                checkbox.addEventListener(
-                    "change",
-                    function () {
+            checkbox.addEventListener(
+                "change",
+                function () {
 
-                        loadDeploymentResults(
-                            1
-                        );
+                    loadDeploymentResults(1);
 
-                    }
-                );
+                }
+            );
 
-            }
-        );
+        });
 
 
     const searchInput =
-        document.getElementById(
-            "searchInput"
-        );
+        document.getElementById("searchInput");
 
 
     if (searchInput) {
@@ -1563,16 +1594,11 @@ function initializeDeploymentFilters() {
 
 
                 deploymentSearchTimer =
-                    setTimeout(
-                        function () {
+                    setTimeout(function () {
 
-                            loadDeploymentResults(
-                                1
-                            );
+                        loadDeploymentResults(1);
 
-                        },
-                        400
-                    );
+                    }, 400);
 
             }
         );
@@ -1581,15 +1607,11 @@ function initializeDeploymentFilters() {
 
 
     const dateFrom =
-        document.getElementById(
-            "dateFrom"
-        );
+        document.getElementById("dateFrom");
 
 
     const dateTo =
-        document.getElementById(
-            "dateTo"
-        );
+        document.getElementById("dateTo");
 
 
     if (dateFrom) {
@@ -1598,9 +1620,7 @@ function initializeDeploymentFilters() {
             "change",
             function () {
 
-                loadDeploymentResults(
-                    1
-                );
+                loadDeploymentResults(1);
 
             }
         );
@@ -1614,9 +1634,7 @@ function initializeDeploymentFilters() {
             "change",
             function () {
 
-                loadDeploymentResults(
-                    1
-                );
+                loadDeploymentResults(1);
 
             }
         );
@@ -1638,75 +1656,49 @@ function getDeploymentFilterQuery() {
 
     /* COURSE */
 
-    const courses =
-        getDMCheckedValues(
-            "courseMenu"
-        );
-
-
-    courses.forEach(
-        function (course) {
+    getDMCheckedValues("courseMenu")
+        .forEach(function (course) {
 
             params.append(
                 "course[]",
                 course
             );
 
-        }
-    );
+        });
 
 
     /* BATCH */
 
-    const batches =
-        getDMCheckedValues(
-            "batchMenu"
-        );
-
-
-    batches.forEach(
-        function (batch) {
+    getDMCheckedValues("batchMenu")
+        .forEach(function (batch) {
 
             params.append(
                 "batch[]",
                 batch
             );
 
-        }
-    );
+        });
 
 
     /* STATUS */
 
-    const statuses =
-        getDMCheckedValues(
-            "statusMenu"
-        );
-
-
-    statuses.forEach(
-        function (status) {
+    getDMCheckedValues("statusMenu")
+        .forEach(function (status) {
 
             params.append(
                 "status[]",
                 status
             );
 
-        }
-    );
+        });
 
 
     /* SEARCH */
 
-    const searchInput =
+    const search =
         document.getElementById(
             "searchInput"
-        );
-
-
-    const search =
-        searchInput?.value
-            ?.trim() || "";
+        )?.value?.trim() || "";
 
 
     if (search) {
@@ -1764,26 +1756,24 @@ function getDeploymentFilterQuery() {
    GET CHECKED VALUES
 ========================================================= */
 
-function getDMCheckedValues(
-    menuId
-) {
+function getDMCheckedValues(menuId) {
 
     return Array.from(
         document.querySelectorAll(
             "#" +
             menuId +
-            " input:checked"
+            " input[type='checkbox']:checked"
         )
     )
-    .map(
-        function (checkbox) {
+    .map(function (checkbox) {
 
-            return checkbox.value
-                .toLowerCase()
-                .trim();
+        return String(
+            checkbox.value || ""
+        )
+        .toLowerCase()
+        .trim();
 
-        }
-    );
+    });
 
 }
 
@@ -1864,7 +1854,7 @@ function loadDeploymentResults(
     */
 
     results.classList.add(
-        "dm-loading"
+        "is-loading"
     );
 
 
@@ -1895,162 +1885,148 @@ function loadDeploymentResults(
         }
     )
 
-    .then(
-        function (response) {
+    .then(function (response) {
 
-            if (!response.ok) {
+        if (!response.ok) {
 
-                throw new Error(
-                    "Unable to load deployment records."
-                );
-
-            }
-
-
-            return response.text();
-
-        }
-    )
-
-    .then(
-        function (html) {
-
-            /*
-            |--------------------------------------------------------------------------
-            | Parse returned full Blade page.
-            |
-            | We DO NOT create another Blade file.
-            |--------------------------------------------------------------------------
-            */
-
-            const parser =
-                new DOMParser();
-
-
-            const documentHTML =
-                parser.parseFromString(
-                    html,
-                    "text/html"
-                );
-
-
-            const newResults =
-                documentHTML.getElementById(
-                    "deploymentResults"
-                );
-
-
-            const newStats =
-                documentHTML.getElementById(
-                    "deploymentStats"
-                );
-
-
-            if (!newResults) {
-
-                throw new Error(
-                    "Deployment results container was not found."
-                );
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Replace only the table card
-            |--------------------------------------------------------------------------
-            */
-
-            results.innerHTML =
-                newResults.innerHTML;
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Replace statistics
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                stats &&
-                newStats
-            ) {
-
-                stats.innerHTML =
-                    newStats.innerHTML;
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Browser URL
-            |--------------------------------------------------------------------------
-            */
-
-            if (pushHistory) {
-
-                window.history.pushState(
-                    {},
-                    "",
-                    url
-                );
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Reinitialize table drag scrolling
-            |--------------------------------------------------------------------------
-            */
-
-            initializeDeploymentDragScroll();
-
-        }
-    )
-
-    .catch(
-        function (error) {
-
-            if (
-                error.name ===
-                "AbortError"
-            ) {
-
-                return;
-
-            }
-
-
-            console.error(
-                "Deployment AJAX error:",
-                error
+            throw new Error(
+                "Unable to load deployment records."
             );
 
         }
-    )
-
-    .finally(
-        function () {
-
-            if (
-                deploymentRequest ===
-                controller
-            ) {
-
-                results.classList.remove(
-                    "dm-loading"
-                );
 
 
-                deploymentRequest =
-                    null;
+        return response.text();
 
-            }
+    })
+
+    .then(function (html) {
+
+        const parser =
+            new DOMParser();
+
+
+        const documentHTML =
+            parser.parseFromString(
+                html,
+                "text/html"
+            );
+
+
+        const newResults =
+            documentHTML.getElementById(
+                "deploymentResults"
+            );
+
+
+        const newStats =
+            documentHTML.getElementById(
+                "deploymentStats"
+            );
+
+
+        if (!newResults) {
+
+            throw new Error(
+                "Deployment results container was not found."
+            );
 
         }
-    );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Replace only table card contents
+        |--------------------------------------------------------------------------
+        */
+
+        results.innerHTML =
+            newResults.innerHTML;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Replace statistics
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            stats &&
+            newStats
+        ) {
+
+            stats.innerHTML =
+                newStats.innerHTML;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Browser URL
+        |--------------------------------------------------------------------------
+        */
+
+        if (pushHistory) {
+
+            window.history.pushState(
+                {
+                    deploymentPage: true
+                },
+                "",
+                url
+            );
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Reinitialize table-specific UI
+        |--------------------------------------------------------------------------
+        */
+
+        initializeDeploymentDragScroll();
+
+    })
+
+    .catch(function (error) {
+
+        if (
+            error.name ===
+            "AbortError"
+        ) {
+
+            return;
+
+        }
+
+
+        console.error(
+            "Deployment AJAX error:",
+            error
+        );
+
+    })
+
+    .finally(function () {
+
+        if (
+            deploymentRequest ===
+            controller
+        ) {
+
+            results.classList.remove(
+                "is-loading"
+            );
+
+
+            deploymentRequest =
+                null;
+
+        }
+
+    });
 
 }
 
@@ -2074,13 +2050,27 @@ function initializeDeploymentPagination() {
 
     /*
     |--------------------------------------------------------------------------
-    | EVENT DELEGATION
+    | Event delegation
     |--------------------------------------------------------------------------
     |
-    | Pagination links are replaced after every AJAX request.
-    | Therefore we listen on the parent container.
+    | This listener survives AJAX replacement because it belongs
+    | to #deploymentResults itself.
     |--------------------------------------------------------------------------
     */
+
+    if (
+        results.dataset.paginationInitialized ===
+        "true"
+    ) {
+
+        return;
+
+    }
+
+
+    results.dataset.paginationInitialized =
+        "true";
+
 
     results.addEventListener(
         "click",
@@ -2088,7 +2078,7 @@ function initializeDeploymentPagination() {
 
             const link =
                 event.target.closest(
-                    ".pagination a"
+                    ".dm-pagination-links a"
                 );
 
 
@@ -2135,6 +2125,61 @@ function initializeDeploymentPagination() {
 
 
 /* =========================================================
+   CLEAR FILTERS
+========================================================= */
+
+function clearDeploymentFilters() {
+
+    document
+        .querySelectorAll(
+            ".dm-dropdown-menu input[type='checkbox']"
+        )
+        .forEach(function (checkbox) {
+
+            checkbox.checked = false;
+
+        });
+
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const dateFrom =
+        document.getElementById(
+            "dateFrom"
+        );
+
+
+    const dateTo =
+        document.getElementById(
+            "dateTo"
+        );
+
+
+    if (searchInput) {
+        searchInput.value = "";
+    }
+
+
+    if (dateFrom) {
+        dateFrom.value = "";
+    }
+
+
+    if (dateTo) {
+        dateTo.value = "";
+    }
+
+
+    loadDeploymentResults(1);
+
+}
+
+
+/* =========================================================
    BROWSER BACK / FORWARD
 ========================================================= */
 
@@ -2144,10 +2189,15 @@ window.addEventListener(
 
         restoreDeploymentFiltersFromURL();
 
-        loadDeploymentResults(
+
+        const page =
             new URLSearchParams(
                 window.location.search
-            ).get("page") || 1,
+            ).get("page") || 1;
+
+
+        loadDeploymentResults(
+            page,
             false
         );
 
@@ -2183,16 +2233,14 @@ function restoreDeploymentFiltersFromURL() {
         .querySelectorAll(
             "#courseMenu input[type='checkbox']"
         )
-        .forEach(
-            function (checkbox) {
+        .forEach(function (checkbox) {
 
-                checkbox.checked =
-                    selectedCourses.includes(
-                        checkbox.value
-                    );
+            checkbox.checked =
+                selectedCourses.includes(
+                    checkbox.value
+                );
 
-            }
-        );
+        });
 
 
     /*
@@ -2211,16 +2259,14 @@ function restoreDeploymentFiltersFromURL() {
         .querySelectorAll(
             "#batchMenu input[type='checkbox']"
         )
-        .forEach(
-            function (checkbox) {
+        .forEach(function (checkbox) {
 
-                checkbox.checked =
-                    selectedBatches.includes(
-                        checkbox.value
-                    );
+            checkbox.checked =
+                selectedBatches.includes(
+                    checkbox.value
+                );
 
-            }
-        );
+        });
 
 
     /*
@@ -2239,16 +2285,14 @@ function restoreDeploymentFiltersFromURL() {
         .querySelectorAll(
             "#statusMenu input[type='checkbox']"
         )
-        .forEach(
-            function (checkbox) {
+        .forEach(function (checkbox) {
 
-                checkbox.checked =
-                    selectedStatuses.includes(
-                        checkbox.value
-                    );
+            checkbox.checked =
+                selectedStatuses.includes(
+                    checkbox.value
+                );
 
-            }
-        );
+        });
 
 
     /*
@@ -2334,6 +2378,11 @@ function toggleDMFilter(
         );
 
 
+    if (!dropdown) {
+        return;
+    }
+
+
     const isOpen =
         dropdown.classList.contains(
             "open"
@@ -2344,15 +2393,13 @@ function toggleDMFilter(
         .querySelectorAll(
             ".dm-filter-dropdown"
         )
-        .forEach(
-            function (item) {
+        .forEach(function (item) {
 
-                item.classList.remove(
-                    "open"
-                );
+            item.classList.remove(
+                "open"
+            );
 
-            }
-        );
+        });
 
 
     if (!isOpen) {
@@ -2362,6 +2409,56 @@ function toggleDMFilter(
         );
 
     }
+
+}
+
+
+/* =========================================================
+   CLOSE DROPDOWNS
+========================================================= */
+
+function initializeDeploymentDropdowns() {
+
+    if (
+        document.body.dataset.dmDropdownsInitialized ===
+        "true"
+    ) {
+
+        return;
+
+    }
+
+
+    document.body.dataset.dmDropdownsInitialized =
+        "true";
+
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !event.target.closest(
+                    ".dm-filter-dropdown"
+                )
+            ) {
+
+                document
+                    .querySelectorAll(
+                        ".dm-filter-dropdown"
+                    )
+                    .forEach(function (dropdown) {
+
+                        dropdown.classList.remove(
+                            "open"
+                        );
+
+                    });
+
+            }
+
+        }
+    );
 
 }
 
@@ -2432,50 +2529,10 @@ function initializeDeploymentKeyboard() {
 
 
 /* =========================================================
-   CLOSE DROPDOWNS
-========================================================= */
-
-function initializeDeploymentDropdowns() {
-
-    document.addEventListener(
-        "click",
-        function (event) {
-
-            if (
-                !event.target.closest(
-                    ".dm-filter-dropdown"
-                )
-            ) {
-
-                document
-                    .querySelectorAll(
-                        ".dm-filter-dropdown"
-                    )
-                    .forEach(
-                        function (dropdown) {
-
-                            dropdown.classList.remove(
-                                "open"
-                            );
-
-                        }
-                    );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================================================
    OPEN MODAL
 ========================================================= */
 
-function openDeploymentModal(
-    cadet
-) {
+function openDeploymentModal(cadet) {
 
     const modal =
         document.getElementById(
@@ -2483,8 +2540,24 @@ function openDeploymentModal(
         );
 
 
+    if (!modal) {
+        return;
+    }
+
+
     modal.classList.add(
         "show"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.classList.add(
+        "dm-modal-open"
     );
 
 
@@ -2518,12 +2591,31 @@ function openDeploymentModal(
         "—";
 
 
-    document.getElementById(
-        "modalPhoto"
-    ).src =
-        cadet.photo
-            ? `/storage/${cadet.photo}`
-            : "/images/default.png";
+    const modalPhoto =
+        document.getElementById(
+            "modalPhoto"
+        );
+
+
+    if (modalPhoto) {
+
+        modalPhoto.onerror =
+            function () {
+
+                this.onerror = null;
+
+                this.src =
+                    "/images/default-avatar.png";
+
+            };
+
+
+        modalPhoto.src =
+            cadet.photo
+                ? `/storage/${cadet.photo}`
+                : "/images/default-avatar.png";
+
+    }
 
 
     /*
@@ -2534,14 +2626,12 @@ function openDeploymentModal(
 
     document.getElementById(
         "modalVessel"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
         "modalCompany"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
@@ -2552,32 +2642,27 @@ function openDeploymentModal(
 
     document.getElementById(
         "modalEmbarkPlace"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
         "modalDeployed"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
         "modalDisembarkPlace"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
         "modalDisembarked"
-    ).value =
-        "";
+    ).value = "";
 
 
     document.getElementById(
         "modalSeaServiceDuration"
-    ).innerText =
-        "—";
+    ).innerText = "—";
 
 
     document.getElementById(
@@ -2586,9 +2671,7 @@ function openDeploymentModal(
         "Not Deployed";
 
 
-    updateModalProgress(
-        0
-    );
+    updateModalProgress(0);
 
 
     /*
@@ -2609,114 +2692,108 @@ function openDeploymentModal(
         }
     )
 
-    .then(
-        function (response) {
+    .then(function (response) {
 
-            if (!response.ok) {
+        if (!response.ok) {
 
-                throw new Error(
-                    "Failed to load deployment data."
-                );
-
-            }
-
-
-            return response.json();
-
-        }
-    )
-
-    .then(
-        function (data) {
-
-            const dep =
-                data.deployment ||
-                {};
-
-
-            document.getElementById(
-                "modalVessel"
-            ).value =
-                dep.vessel_name ??
-                "";
-
-
-            document.getElementById(
-                "modalCompany"
-            ).value =
-                dep.company_name ??
-                "";
-
-
-            document.getElementById(
-                "modalDeploymentType"
-            ).value =
-                dep.deployment_type ??
-                "Domestic";
-
-
-            document.getElementById(
-                "modalEmbarkPlace"
-            ).value =
-                dep.embarkation_place ??
-                "";
-
-
-            document.getElementById(
-                "modalDisembarkPlace"
-            ).value =
-                dep.disembarkation_place ??
-                "";
-
-
-            document.getElementById(
-                "modalDeployed"
-            ).value =
-                dep.date_deployed
-                    ? String(
-                        dep.date_deployed
-                    ).slice(0, 10)
-                    : "";
-
-
-            document.getElementById(
-                "modalDisembarked"
-            ).value =
-                dep.date_disembarked
-                    ? String(
-                        dep.date_disembarked
-                    ).slice(0, 10)
-                    : "";
-
-
-            calculateSeaServiceDuration();
-
-
-            document.getElementById(
-                "modalStatus"
-            ).value =
-                dep.status ??
-                "Not Deployed";
-
-
-            updateModalProgress(
-                dep.percentage ??
-                0
+            throw new Error(
+                "Failed to load deployment data."
             );
 
         }
-    )
 
-    .catch(
-        function (error) {
 
-            console.error(
-                "Deployment loading error:",
-                error
-            );
+        return response.json();
 
-        }
-    );
+    })
+
+    .then(function (data) {
+
+        const dep =
+            data.deployment ||
+            {};
+
+
+        document.getElementById(
+            "modalVessel"
+        ).value =
+            dep.vessel_name ??
+            "";
+
+
+        document.getElementById(
+            "modalCompany"
+        ).value =
+            dep.company_name ??
+            "";
+
+
+        document.getElementById(
+            "modalDeploymentType"
+        ).value =
+            dep.deployment_type ??
+            "Domestic";
+
+
+        document.getElementById(
+            "modalEmbarkPlace"
+        ).value =
+            dep.embarkation_place ??
+            "";
+
+
+        document.getElementById(
+            "modalDisembarkPlace"
+        ).value =
+            dep.disembarkation_place ??
+            "";
+
+
+        document.getElementById(
+            "modalDeployed"
+        ).value =
+            dep.date_deployed
+                ? String(
+                    dep.date_deployed
+                ).slice(0, 10)
+                : "";
+
+
+        document.getElementById(
+            "modalDisembarked"
+        ).value =
+            dep.date_disembarked
+                ? String(
+                    dep.date_disembarked
+                ).slice(0, 10)
+                : "";
+
+
+        calculateSeaServiceDuration();
+
+
+        document.getElementById(
+            "modalStatus"
+        ).value =
+            dep.status ??
+            "Not Deployed";
+
+
+        updateModalProgress(
+            dep.percentage ??
+            0
+        );
+
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Deployment loading error:",
+            error
+        );
+
+    });
 
 }
 
@@ -2759,6 +2836,10 @@ function calculateSeaServiceDuration() {
 
         output.innerText =
             "—";
+
+        output.classList.remove(
+            "invalid"
+        );
 
         return;
 
@@ -2811,9 +2892,18 @@ function calculateSeaServiceDuration() {
         output.innerText =
             "Invalid date range";
 
+        output.classList.add(
+            "invalid"
+        );
+
         return;
 
     }
+
+
+    output.classList.remove(
+        "invalid"
+    );
 
 
     let months =
@@ -2917,9 +3007,7 @@ function calculateSeaServiceDuration() {
    UPDATE MODAL PROGRESS
 ========================================================= */
 
-function updateModalProgress(
-    percent
-) {
+function updateModalProgress(percent) {
 
     percent =
         Number(percent) ||
@@ -2969,13 +3057,15 @@ function updateModalProgress(
 
     if (percent >= 100) {
 
-        progress.style.background =
-            "linear-gradient(90deg,#16a34a,#22c55e)";
+        progress.classList.add(
+            "complete"
+        );
 
     } else {
 
-        progress.style.background =
-            "linear-gradient(90deg,#6366f1,#8b5cf6)";
+        progress.classList.remove(
+            "complete"
+        );
 
     }
 
@@ -3001,6 +3091,17 @@ function closeDeploymentModal() {
 
     modal.classList.remove(
         "show"
+    );
+
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    document.body.classList.remove(
+        "dm-modal-open"
     );
 
 }
@@ -3110,9 +3211,7 @@ function saveDeploymentChanges() {
 
                 /*
                 |--------------------------------------------------------------------------
-                | IMPORTANT
-                |--------------------------------------------------------------------------
-                | Controller expects "company".
+                | Controller expects "company"
                 |--------------------------------------------------------------------------
                 */
 
@@ -3156,121 +3255,106 @@ function saveDeploymentChanges() {
         }
     )
 
-    .then(
-        function (response) {
+    .then(function (response) {
 
-            return response.json()
-                .then(
-                    function (data) {
+        return response.json()
+            .then(function (data) {
 
-                        if (!response.ok) {
+                if (!response.ok) {
 
-                            throw new Error(
-                                data.message ||
-                                "Unable to update deployment."
-                            );
+                    throw new Error(
+                        data.message ||
+                        "Unable to update deployment."
+                    );
 
-                        }
+                }
 
 
-                        return data;
+                return data;
 
-                    }
-                );
+            });
 
-        }
-    )
+    })
 
-    .then(
-        function (data) {
+    .then(function (data) {
 
-            if (!data.success) {
+        if (!data.success) {
 
-                throw new Error(
-                    data.message ||
-                    "Update failed."
-                );
-
-            }
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Close modal
-            |--------------------------------------------------------------------------
-            */
-
-            closeDeploymentModal();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Show success toast
-            |--------------------------------------------------------------------------
-            */
-
-            showDeploymentToast();
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | IMPORTANT
-            |--------------------------------------------------------------------------
-            |
-            | NO location.reload()
-            |
-            | Instead, reload only the AJAX results.
-            |--------------------------------------------------------------------------
-            */
-
-            const currentPage =
-                new URLSearchParams(
-                    window.location.search
-                ).get("page") || 1;
-
-
-            loadDeploymentResults(
-                currentPage,
-                false
+            throw new Error(
+                data.message ||
+                "Update failed."
             );
 
         }
-    )
-
-    .catch(
-        function (error) {
-
-            console.error(
-                "Deployment update error:",
-                error
-            );
 
 
-            alert(
-                error.message ||
-                "Unable to update deployment."
-            );
+        /*
+        |--------------------------------------------------------------------------
+        | Close modal
+        |--------------------------------------------------------------------------
+        */
 
-        }
-    )
-
-    .finally(
-        function () {
-
-            button.classList.remove(
-                "loading"
-            );
+        closeDeploymentModal();
 
 
-            button.innerText =
-                "Save Changes";
+        /*
+        |--------------------------------------------------------------------------
+        | Show toast
+        |--------------------------------------------------------------------------
+        */
+
+        showDeploymentToast();
 
 
-            button.disabled =
-                false;
+        /*
+        |--------------------------------------------------------------------------
+        | Refresh only AJAX results
+        |--------------------------------------------------------------------------
+        */
 
-        }
-    );
+        const currentPage =
+            new URLSearchParams(
+                window.location.search
+            ).get("page") || 1;
+
+
+        loadDeploymentResults(
+            currentPage,
+            false
+        );
+
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Deployment update error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Unable to update deployment."
+        );
+
+    })
+
+    .finally(function () {
+
+        button.classList.remove(
+            "loading"
+        );
+
+
+        button.innerText =
+            "Save Changes";
+
+
+        button.disabled =
+            false;
+
+    });
 
 }
 
@@ -3297,16 +3381,13 @@ function showDeploymentToast() {
     );
 
 
-    setTimeout(
-        function () {
+    setTimeout(function () {
 
-            toast.classList.remove(
-                "show"
-            );
+        toast.classList.remove(
+            "show"
+        );
 
-        },
-        2200
-    );
+    }, 2600);
 
 }
 
@@ -3323,116 +3404,121 @@ function initializeDeploymentDragScroll() {
         );
 
 
-    tables.forEach(
-        function (table) {
+    tables.forEach(function (table) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | Prevent duplicate listeners.
-            |--------------------------------------------------------------------------
-            */
+        if (
+            table.dataset.dragInitialized ===
+            "true"
+        ) {
 
-            if (
-                table.dataset.dragInitialized ===
-                "true"
-            ) {
-
-                return;
-
-            }
-
-
-            table.dataset.dragInitialized =
-                "true";
-
-
-            let isDown =
-                false;
-
-
-            let startX =
-                0;
-
-
-            let scrollLeft =
-                0;
-
-
-            table.addEventListener(
-                "mousedown",
-                function (event) {
-
-                    isDown =
-                        true;
-
-
-                    startX =
-                        event.pageX -
-                        table.offsetLeft;
-
-
-                    scrollLeft =
-                        table.scrollLeft;
-
-                }
-            );
-
-
-            table.addEventListener(
-                "mouseleave",
-                function () {
-
-                    isDown =
-                        false;
-
-                }
-            );
-
-
-            table.addEventListener(
-                "mouseup",
-                function () {
-
-                    isDown =
-                        false;
-
-                }
-            );
-
-
-            table.addEventListener(
-                "mousemove",
-                function (event) {
-
-                    if (!isDown) {
-                        return;
-                    }
-
-
-                    event.preventDefault();
-
-
-                    const x =
-                        event.pageX -
-                        table.offsetLeft;
-
-
-                    const walk =
-                        (
-                            x -
-                            startX
-                        ) * 1.5;
-
-
-                    table.scrollLeft =
-                        scrollLeft -
-                        walk;
-
-                }
-            );
+            return;
 
         }
-    );
+
+
+        table.dataset.dragInitialized =
+            "true";
+
+
+        let isDown = false;
+        let startX = 0;
+        let scrollLeft = 0;
+
+
+        table.addEventListener(
+            "mousedown",
+            function (event) {
+
+                if (
+                    event.target.closest(
+                        "button, input, select, a"
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                isDown = true;
+
+                table.classList.add(
+                    "is-dragging"
+                );
+
+
+                startX =
+                    event.pageX -
+                    table.offsetLeft;
+
+
+                scrollLeft =
+                    table.scrollLeft;
+
+            }
+        );
+
+
+        table.addEventListener(
+            "mouseleave",
+            function () {
+
+                isDown = false;
+
+                table.classList.remove(
+                    "is-dragging"
+                );
+
+            }
+        );
+
+
+        table.addEventListener(
+            "mouseup",
+            function () {
+
+                isDown = false;
+
+                table.classList.remove(
+                    "is-dragging"
+                );
+
+            }
+        );
+
+
+        table.addEventListener(
+            "mousemove",
+            function (event) {
+
+                if (!isDown) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+
+                const x =
+                    event.pageX -
+                    table.offsetLeft;
+
+
+                const walk =
+                    (
+                        x -
+                        startX
+                    ) * 1.5;
+
+
+                table.scrollLeft =
+                    scrollLeft -
+                    walk;
+
+            }
+        );
+
+    });
 
 }
 </script>
