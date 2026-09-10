@@ -6,1486 +6,1621 @@
 
 <div class="dm-page">
 
-```
-{{-- =====================================================
-     PAGE HEADER
-====================================================== --}}
+    {{-- =====================================================
+         PAGE HEADER
+    ====================================================== --}}
 
-<div class="dm-header">
+    <div class="dm-header">
 
-    <div class="dm-header-content">
+        <div class="dm-header-content">
 
-        <div class="dm-header-eyebrow">
-            <span class="dm-header-eyebrow-dot"></span>
-            ADMINISTRATION
-        </div>
-
-        <h1>
-            Deployment Monitoring
-        </h1>
-
-        <p>
-            Monitor cadet deployment information, vessel assignments,
-            progress, and training status.
-        </p>
-
-    </div>
-
-    <div class="dm-header-icon" aria-hidden="true">
-        🚢
-    </div>
-
-</div>
-
-
-{{-- =====================================================
-     AJAX CONTENT
-====================================================== --}}
-
-<div id="deploymentPageContent">
-
-    {{-- =================================================
-         STATISTICS
-    ================================================== --}}
-
-    <div class="dm-stats" id="deploymentStats">
-
-        <div class="dm-stat dm-stat-blue">
-
-            <div class="dm-stat-top">
-
-                <div class="dm-stat-label">
-                    Total Deployed
-                </div>
-
-                <div class="dm-stat-icon">
-                    🚢
-                </div>
-
+            <div class="dm-header-eyebrow">
+                <span class="dm-header-eyebrow-dot"></span>
+                ADMINISTRATION
             </div>
 
-            <div class="dm-stat-value">
-                {{ $totalDeployed }}
-            </div>
+            <h1>
+                Deployment Monitoring
+            </h1>
 
-            <div class="dm-stat-description">
-                Cadets with deployment records
-            </div>
+            <p>
+                Monitor cadet deployment information, vessel assignments,
+                progress, and training status.
+            </p>
 
         </div>
 
-
-        <div class="dm-stat dm-stat-cyan">
-
-            <div class="dm-stat-top">
-
-                <div class="dm-stat-label">
-                    Ongoing
-                </div>
-
-                <div class="dm-stat-icon">
-                    ⚓
-                </div>
-
-            </div>
-
-            <div class="dm-stat-value">
-                {{ $ongoing }}
-            </div>
-
-            <div class="dm-stat-description">
-                Currently onboard training
-            </div>
-
-        </div>
-
-
-        <div class="dm-stat dm-stat-green">
-
-            <div class="dm-stat-top">
-
-                <div class="dm-stat-label">
-                    Completed
-                </div>
-
-                <div class="dm-stat-icon">
-                    ✓
-                </div>
-
-            </div>
-
-            <div class="dm-stat-value">
-                {{ $completed }}
-            </div>
-
-            <div class="dm-stat-description">
-                Successfully completed
-            </div>
-
-        </div>
-
-
-        <div class="dm-stat dm-stat-gray">
-
-            <div class="dm-stat-top">
-
-                <div class="dm-stat-label">
-                    Not Deployed
-                </div>
-
-                <div class="dm-stat-icon">
-                    📋
-                </div>
-
-            </div>
-
-            <div class="dm-stat-value">
-                {{ $notDeployed }}
-            </div>
-
-            <div class="dm-stat-description">
-                Awaiting deployment
-            </div>
-
+        <div class="dm-header-icon" aria-hidden="true">
+            🚢
         </div>
 
     </div>
 
 
-    {{-- =================================================
-         TABLE CARD
-    ================================================== --}}
+    {{-- =====================================================
+         AJAX PAGE CONTENT
+         ORDER:
+         1. STATISTICS
+         2. FILTERS
+         3. TABLE
+    ====================================================== --}}
 
-    <div
-        class="dm-table-card"
-        id="deploymentResults"
-    >
+    <div id="deploymentPageContent">
 
-        <div class="dm-table-header">
+        {{-- =================================================
+             STATISTICS
+        ================================================== --}}
 
-            <div class="dm-table-title">
+        <div class="dm-stats" id="deploymentStats">
 
-                <div class="dm-table-title-main">
-                    <span class="dm-table-title-icon">▣</span>
+            <div class="dm-stat dm-stat-blue">
+
+                <div class="dm-stat-top">
+
+                    <div class="dm-stat-label">
+                        Total Deployed
+                    </div>
+
+                    <div class="dm-stat-icon">
+                        🚢
+                    </div>
+
+                </div>
+
+                <div class="dm-stat-value">
+                    {{ $totalDeployed }}
+                </div>
+
+                <div class="dm-stat-description">
+                    Cadets with deployment records
+                </div>
+
+            </div>
+
+
+            <div class="dm-stat dm-stat-cyan">
+
+                <div class="dm-stat-top">
+
+                    <div class="dm-stat-label">
+                        Ongoing
+                    </div>
+
+                    <div class="dm-stat-icon">
+                        ⚓
+                    </div>
+
+                </div>
+
+                <div class="dm-stat-value">
+                    {{ $ongoing }}
+                </div>
+
+                <div class="dm-stat-description">
+                    Currently onboard training
+                </div>
+
+            </div>
+
+
+            <div class="dm-stat dm-stat-green">
+
+                <div class="dm-stat-top">
+
+                    <div class="dm-stat-label">
+                        Completed
+                    </div>
+
+                    <div class="dm-stat-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+                <div class="dm-stat-value">
+                    {{ $completed }}
+                </div>
+
+                <div class="dm-stat-description">
+                    Successfully completed
+                </div>
+
+            </div>
+
+
+            <div class="dm-stat dm-stat-gray">
+
+                <div class="dm-stat-top">
+
+                    <div class="dm-stat-label">
+                        Not Deployed
+                    </div>
+
+                    <div class="dm-stat-icon">
+                        📋
+                    </div>
+
+                </div>
+
+                <div class="dm-stat-value">
+                    {{ $notDeployed }}
+                </div>
+
+                <div class="dm-stat-description">
+                    Awaiting deployment
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- =================================================
+             FILTER PANEL
+             IMPORTANT:
+             THIS IS NOW DIRECTLY BELOW THE STAT CARDS
+        ================================================== --}}
+
+        <div class="dm-filter-panel">
+
+            <div class="dm-filter-header">
+
+                <div class="dm-filter-title">
+
+                    <div class="dm-filter-title-icon">
+                        ⚙
+                    </div>
 
                     <div>
                         <strong>
-                            Cadet Deployment Records
+                            Filters
                         </strong>
 
                         <span>
-                            Review and manage deployment information
+                            Refine deployment records
                         </span>
                     </div>
+
                 </div>
+
+
+                <button
+                    type="button"
+                    class="dm-clear-filters"
+                    onclick="clearDeploymentFilters()"
+                >
+                    Clear filters
+                </button>
 
             </div>
 
-            <div class="dm-table-hint">
-                <span>↔</span>
-                Swipe or scroll to view all columns
+
+            <div class="dm-filter-grid">
+
+                {{-- =================================================
+                     COURSE
+                ================================================== --}}
+
+                <div class="dm-filter-dropdown">
+
+                    <button
+                        type="button"
+                        class="dm-filter-button"
+                        onclick="toggleDMFilter(this, 'courseMenu')"
+                    >
+
+                        <span>
+                            Courses
+                        </span>
+
+                        <span class="dm-filter-arrow">
+                            ▼
+                        </span>
+
+                    </button>
+
+
+                    <div
+                        id="courseMenu"
+                        class="dm-dropdown-menu"
+                    >
+
+                        @foreach($courses as $course)
+
+                            <label class="dm-check-option">
+
+                                <input
+                                    type="checkbox"
+                                    value="{{ strtolower(trim($course->course)) }}"
+                                >
+
+                                <span>
+                                    {{ $course->course }}
+                                </span>
+
+                            </label>
+
+                        @endforeach
+
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                     BATCH
+                ================================================== --}}
+
+                <div class="dm-filter-dropdown">
+
+                    <button
+                        type="button"
+                        class="dm-filter-button"
+                        onclick="toggleDMFilter(this, 'batchMenu')"
+                    >
+
+                        <span>
+                            Batches
+                        </span>
+
+                        <span class="dm-filter-arrow">
+                            ▼
+                        </span>
+
+                    </button>
+
+
+                    <div
+                        id="batchMenu"
+                        class="dm-dropdown-menu"
+                    >
+
+                        @foreach($batches as $batch)
+
+                            <label class="dm-check-option">
+
+                                <input
+                                    type="checkbox"
+                                    value="{{ strtolower(trim($batch->batch_year)) }}"
+                                >
+
+                                <span>
+                                    {{ $batch->batch_year }}
+                                </span>
+
+                            </label>
+
+                        @endforeach
+
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                     STATUS
+                ================================================== --}}
+
+                <div class="dm-filter-dropdown">
+
+                    <button
+                        type="button"
+                        class="dm-filter-button"
+                        onclick="toggleDMFilter(this, 'statusMenu')"
+                    >
+
+                        <span>
+                            Status
+                        </span>
+
+                        <span class="dm-filter-arrow">
+                            ▼
+                        </span>
+
+                    </button>
+
+
+                    <div
+                        id="statusMenu"
+                        class="dm-dropdown-menu"
+                    >
+
+                        <label class="dm-check-option">
+
+                            <input
+                                type="checkbox"
+                                value="ongoing"
+                            >
+
+                            <span>
+                                Ongoing
+                            </span>
+
+                        </label>
+
+
+                        <label class="dm-check-option">
+
+                            <input
+                                type="checkbox"
+                                value="completed"
+                            >
+
+                            <span>
+                                Completed
+                            </span>
+
+                        </label>
+
+
+                        <label class="dm-check-option">
+
+                            <input
+                                type="checkbox"
+                                value="not deployed"
+                            >
+
+                            <span>
+                                Not Deployed
+                            </span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+
+                {{-- =================================================
+                     SEARCH
+                ================================================== --}}
+
+                <div class="dm-filter-field">
+
+                    <span class="dm-search-icon">
+                        🔍
+                    </span>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="dm-search"
+                        placeholder="Search cadet, TRB, vessel..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                {{-- =================================================
+                     DATE FROM
+                ================================================== --}}
+
+                <div class="dm-filter-field">
+
+                    <label class="dm-date-label">
+                        Deployment From
+                    </label>
+
+                    <input
+                        type="date"
+                        id="dateFrom"
+                        class="dm-date-input"
+                        title="Deployment date from"
+                    >
+
+                </div>
+
+
+                {{-- =================================================
+                     DATE TO
+                ================================================== --}}
+
+                <div class="dm-filter-field">
+
+                    <label class="dm-date-label">
+                        Deployment To
+                    </label>
+
+                    <input
+                        type="date"
+                        id="dateTo"
+                        class="dm-date-input"
+                        title="Deployment date to"
+                    >
+
+                </div>
+
             </div>
 
         </div>
 
 
         {{-- =================================================
-             TABLE WRAPPER
+             TABLE / AJAX RESULTS
+             THIS NOW COMES AFTER THE FILTERS
         ================================================== --}}
 
-        <div class="dm-table-scroll">
+        <div
+            class="dm-table-card"
+            id="deploymentResults"
+        >
 
-            <table class="dm-table">
+            <div class="dm-table-header">
 
-                <thead>
+                <div class="dm-table-title">
 
-                    <tr>
+                    <div class="dm-table-title-main">
 
-                        <th>TRB No.</th>
-                        <th>Name</th>
-                        <th>Course</th>
-                        <th>Batch</th>
-                        <th>Vessel</th>
-                        <th>Company</th>
-                        <th>Deployment Type</th>
-                        <th>Embarkation Place</th>
-                        <th>Embarkation Date</th>
-                        <th>Disembarkation Place</th>
-                        <th>Disembarkation Date</th>
-                        <th>Duration of Sea Service</th>
-                        <th>Progress</th>
-                        <th>Status</th>
-                        <th>Action</th>
+                        <span class="dm-table-title-icon">
+                            ▣
+                        </span>
 
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                @forelse($cadets as $cadet)
-
-                    @php
-
-                        $deployment = $cadet->deployment;
-
-                        $status = strtolower(
-                            trim(
-                                optional($deployment)->status
-                                ?? 'Not Deployed'
-                            )
-                        );
-
-                        $percent = (int) (
-                            optional($deployment)->percentage
-                            ?? 0
-                        );
-
-                        $percent = max(
-                            0,
-                            min(100, $percent)
-                        );
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | RAW DEPLOYMENT DATES
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $rawEmbarkationDate =
-                            $deployment?->getRawOriginal(
-                                'date_deployed'
-                            );
-
-                        $rawDisembarkationDate =
-                            $deployment?->getRawOriginal(
-                                'date_disembarked'
-                            );
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | DURATION OF SEA SERVICE
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $durationOfSeaService = null;
-
-                        if (
-                            $rawEmbarkationDate &&
-                            $rawDisembarkationDate
-                        ) {
-
-                            try {
-
-                                $embarkDate =
-                                    \Carbon\Carbon::createFromFormat(
-                                        'Y-m-d',
-                                        substr(
-                                            (string) $rawEmbarkationDate,
-                                            0,
-                                            10
-                                        )
-                                    );
-
-                                $disembarkDate =
-                                    \Carbon\Carbon::createFromFormat(
-                                        'Y-m-d',
-                                        substr(
-                                            (string) $rawDisembarkationDate,
-                                            0,
-                                            10
-                                        )
-                                    );
-
-
-                                if (
-                                    $disembarkDate->greaterThanOrEqualTo(
-                                        $embarkDate
-                                    )
-                                ) {
-
-                                    $difference =
-                                        $embarkDate->diff(
-                                            $disembarkDate
-                                        );
-
-                                    $months =
-                                        (
-                                            $difference->y * 12
-                                        )
-                                        +
-                                        $difference->m;
-
-                                    $days =
-                                        $difference->d;
-
-                                    $durationParts = [];
-
-
-                                    if ($months > 0) {
-
-                                        $durationParts[] =
-                                            $months .
-                                            ' ' .
-                                            (
-                                                $months === 1
-                                                    ? 'Month'
-                                                    : 'Months'
-                                            );
-
-                                    }
-
-
-                                    if ($days > 0) {
-
-                                        $durationParts[] =
-                                            $days .
-                                            ' ' .
-                                            (
-                                                $days === 1
-                                                    ? 'Day'
-                                                    : 'Days'
-                                            );
-
-                                    }
-
-
-                                    $durationOfSeaService =
-                                        !empty($durationParts)
-                                            ? implode(
-                                                ', ',
-                                                $durationParts
-                                            )
-                                            : '0 Days';
-
-                                }
-
-                            } catch (\Throwable $e) {
-
-                                $durationOfSeaService = null;
-
-                            }
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | FORMATTED DATES
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $formattedEmbarkationDate = null;
-                        $formattedDisembarkationDate = null;
-
-
-                        if ($rawEmbarkationDate) {
-
-                            try {
-
-                                $formattedEmbarkationDate =
-                                    \Carbon\Carbon::createFromFormat(
-                                        'Y-m-d',
-                                        substr(
-                                            (string) $rawEmbarkationDate,
-                                            0,
-                                            10
-                                        )
-                                    )->format('M d, Y');
-
-                            } catch (\Throwable $e) {
-
-                                $formattedEmbarkationDate = null;
-
-                            }
-
-                        }
-
-
-                        if ($rawDisembarkationDate) {
-
-                            try {
-
-                                $formattedDisembarkationDate =
-                                    \Carbon\Carbon::createFromFormat(
-                                        'Y-m-d',
-                                        substr(
-                                            (string) $rawDisembarkationDate,
-                                            0,
-                                            10
-                                        )
-                                    )->format('M d, Y');
-
-                            } catch (\Throwable $e) {
-
-                                $formattedDisembarkationDate = null;
-
-                            }
-
-                        }
-
-                    @endphp
-
-
-                    <tr>
-
-                        {{-- TRB --}}
-
-                        <td>
-
-                            <strong class="dm-trb">
-                                {{ $cadet->trb_control_number }}
-                            </strong>
-
-                        </td>
-
-
-                        {{-- NAME --}}
-
-                        <td>
-
-                            <div class="dm-cadet-name">
-                                {{ $cadet->full_name }}
-                            </div>
-
-                        </td>
-
-
-                        {{-- COURSE --}}
-
-                        <td>
-
-                            <span class="dm-course">
-                                {{ strtoupper($cadet->course) }}
-                            </span>
-
-                        </td>
-
-
-                        {{-- BATCH --}}
-
-                        <td>
-
-                            <span class="dm-batch">
-                                {{
-                                    optional($cadet->batch)->batch_year
-                                    ?? 'No Batch'
-                                }}
-                            </span>
-
-                        </td>
-
-
-                        {{-- VESSEL --}}
-
-                        <td>
-
-                            <span class="dm-cell-text">
-                                {{ $deployment?->vessel_name ?? '—' }}
-                            </span>
-
-                        </td>
-
-
-                        {{-- COMPANY --}}
-
-                        <td>
-
-                            <span class="dm-cell-text">
-                                {{ $deployment?->company_name ?? '—' }}
-                            </span>
-
-                        </td>
-
-
-                        {{-- DEPLOYMENT TYPE --}}
-
-                        <td>
-
-                            @if(
-                                ($deployment?->deployment_type ?? '')
-                                === 'International'
-                            )
-
-                                <span class="dm-badge dm-badge-blue">
-                                    <span>🌍</span>
-                                    International
-                                </span>
-
-                            @elseif(
-                                ($deployment?->deployment_type ?? '')
-                                === 'Domestic'
-                            )
-
-                                <span class="dm-badge dm-badge-green">
-                                    <span>🇵🇭</span>
-                                    Domestic
-                                </span>
-
-                            @else
-
-                                <span class="dm-badge dm-badge-gray">
-                                    —
-                                </span>
-
-                            @endif
-
-                        </td>
-
-
-                        {{-- EMBARKATION PLACE --}}
-
-                        <td>
-
-                            <span class="dm-cell-text">
-                                {{
-                                    $deployment?->embarkation_place
-                                    ?? '—'
-                                }}
-                            </span>
-
-                        </td>
-
-
-                        {{-- EMBARKATION DATE --}}
-
-                        <td
-                            data-date="{{
-                                $rawEmbarkationDate ?? ''
-                            }}"
-                        >
-
-                            @if($formattedEmbarkationDate)
-
-                                <span class="dm-date">
-                                    {{ $formattedEmbarkationDate }}
-                                </span>
-
-                            @else
-
-                                <span class="dm-empty-value">
-                                    —
-                                </span>
-
-                            @endif
-
-                        </td>
-
-
-                        {{-- DISEMBARKATION PLACE --}}
-
-                        <td>
-
-                            <span class="dm-cell-text">
-                                {{
-                                    $deployment?->disembarkation_place
-                                    ?? '—'
-                                }}
-                            </span>
-
-                        </td>
-
-
-                        {{-- DISEMBARKATION DATE --}}
-
-                        <td>
-
-                            @if($formattedDisembarkationDate)
-
-                                <span class="dm-date">
-                                    {{ $formattedDisembarkationDate }}
-                                </span>
-
-                            @else
-
-                                <span class="dm-empty-value">
-                                    —
-                                </span>
-
-                            @endif
-
-                        </td>
-
-
-                        {{-- DURATION --}}
-
-                        <td>
-
-                            @if($durationOfSeaService)
-
-                                <strong class="dm-sea-duration">
-                                    {{ $durationOfSeaService }}
-                                </strong>
-
-                            @else
-
-                                <span class="dm-empty-value">
-                                    —
-                                </span>
-
-                            @endif
-
-                        </td>
-
-
-                        {{-- PROGRESS --}}
-
-                        <td>
-
-                            <div class="dm-progress">
-
-                                <div class="dm-progress-top">
-
-                                    <span>
-                                        Training
-                                    </span>
-
-                                    <span class="dm-progress-value">
-                                        {{ $percent }}%
-                                    </span>
-
-                                </div>
-
-                                <div class="dm-progress-track">
-
-                                    <div
-                                        class="dm-progress-fill {{
-                                            $percent >= 100
-                                                ? 'complete'
-                                                : ''
-                                        }}"
-                                        style="width: {{ $percent }}%;"
-                                    ></div>
-
-                                </div>
-
-                            </div>
-
-                        </td>
-
-
-                        {{-- STATUS --}}
-
-                        <td>
-
-                            @if($status === 'ongoing')
-
-                                <span class="dm-badge dm-badge-blue">
-                                    <span>⚓</span>
-                                    Ongoing
-                                </span>
-
-                            @elseif($status === 'completed')
-
-                                <span class="dm-badge dm-badge-green">
-                                    <span>✓</span>
-                                    Completed
-                                </span>
-
-                            @else
-
-                                <span class="dm-badge dm-badge-gray">
-                                    <span>○</span>
-                                    Not Deployed
-                                </span>
-
-                            @endif
-
-                        </td>
-
-
-                        {{-- ACTION --}}
-
-                        <td>
-
-                            <button
-                                type="button"
-                                class="dm-view-btn"
-                                onclick="openDeploymentModal(@js($cadet))"
-                            >
-                                <span>👁</span>
-                                View
-                            </button>
-
-                        </td>
-
-                    </tr>
-
-
-                @empty
-
-                    <tr>
-
-                        <td
-                            colspan="15"
-                            class="dm-empty"
-                        >
-
-                            <div class="dm-empty-icon">
-                                🚢
-                            </div>
+                        <div>
 
                             <strong>
-                                No deployment records found
+                                Cadet Deployment Records
                             </strong>
 
                             <span>
-                                There are currently no cadets matching
-                                the selected filters.
+                                Review and manage deployment information
                             </span>
 
-                        </td>
+                        </div>
 
-                    </tr>
-
-                @endforelse
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        {{-- =================================================
-             PAGINATION
-        ================================================== --}}
-
-        @if($cadets->hasPages())
-
-            <div class="dm-pagination-wrapper">
-
-                <div class="dm-pagination-info">
-
-                    Showing
-
-                    <strong>
-                        {{ $cadets->firstItem() }}
-                    </strong>
-
-                    to
-
-                    <strong>
-                        {{ $cadets->lastItem() }}
-                    </strong>
-
-                    of
-
-                    <strong>
-                        {{ $cadets->total() }}
-                    </strong>
-
-                    cadets
+                    </div>
 
                 </div>
 
 
-                <div class="dm-pagination-links">
+                <div class="dm-table-hint">
 
-                    {{ $cadets->withQueryString()->links() }}
+                    <span>
+                        ↔
+                    </span>
+
+                    Swipe or scroll to view all columns
 
                 </div>
 
             </div>
 
-        @endif
 
-    </div>
+            {{-- =================================================
+                 TABLE WRAPPER
+            ================================================== --}}
 
-</div>
+            <div class="dm-table-scroll">
+
+                <table class="dm-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                TRB No.
+                            </th>
+
+                            <th>
+                                Name
+                            </th>
+
+                            <th>
+                                Course
+                            </th>
+
+                            <th>
+                                Batch
+                            </th>
+
+                            <th>
+                                Vessel
+                            </th>
+
+                            <th>
+                                Company
+                            </th>
+
+                            <th>
+                                Deployment Type
+                            </th>
+
+                            <th>
+                                Embarkation Place
+                            </th>
+
+                            <th>
+                                Embarkation Date
+                            </th>
+
+                            <th>
+                                Disembarkation Place
+                            </th>
+
+                            <th>
+                                Disembarkation Date
+                            </th>
+
+                            <th>
+                                Duration of Sea Service
+                            </th>
+
+                            <th>
+                                Progress
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
 
 
-{{-- =====================================================
-     FILTER PANEL
-====================================================== --}}
+                    <tbody>
 
-<div class="dm-filter-panel">
+                        @forelse($cadets as $cadet)
 
-    <div class="dm-filter-header">
+                            @php
 
-        <div class="dm-filter-title">
+                                $deployment = $cadet->deployment;
 
-            <div class="dm-filter-title-icon">
-                ⚙
-            </div>
-
-            <div>
-                <strong>Filters</strong>
-
-                <span>
-                    Refine deployment records
-                </span>
-            </div>
-
-        </div>
-
-        <button
-            type="button"
-            class="dm-clear-filters"
-            onclick="clearDeploymentFilters()"
-        >
-            Clear filters
-        </button>
-
-    </div>
-
-
-    <div class="dm-filter-grid">
-
-        {{-- COURSE --}}
-
-        <div class="dm-filter-dropdown">
-
-            <button
-                type="button"
-                class="dm-filter-button"
-                onclick="toggleDMFilter(this, 'courseMenu')"
-            >
-
-                <span>
-                    Courses
-                </span>
-
-                <span class="dm-filter-arrow">
-                    ▼
-                </span>
-
-            </button>
-
-
-            <div
-                id="courseMenu"
-                class="dm-dropdown-menu"
-            >
-
-                @foreach($courses as $course)
-
-                    <label class="dm-check-option">
-
-                        <input
-                            type="checkbox"
-                            value="{{
-                                strtolower(
+                                $status = strtolower(
                                     trim(
-                                        $course->course
+                                        optional($deployment)->status
+                                        ?? 'Not Deployed'
                                     )
-                                )
-                            }}"
-                        >
+                                );
 
-                        <span>
-                            {{ $course->course }}
-                        </span>
+                                $percent = (int) (
+                                    optional($deployment)->percentage
+                                    ?? 0
+                                );
 
-                    </label>
-
-                @endforeach
-
-            </div>
-
-        </div>
+                                $percent = max(
+                                    0,
+                                    min(100, $percent)
+                                );
 
 
-        {{-- BATCH --}}
+                                /*
+                                |--------------------------------------------------------------------------
+                                | RAW DEPLOYMENT DATES
+                                |--------------------------------------------------------------------------
+                                */
 
-        <div class="dm-filter-dropdown">
+                                $rawEmbarkationDate =
+                                    $deployment?->getRawOriginal(
+                                        'date_deployed'
+                                    );
 
-            <button
-                type="button"
-                class="dm-filter-button"
-                onclick="toggleDMFilter(this, 'batchMenu')"
-            >
-
-                <span>
-                    Batches
-                </span>
-
-                <span class="dm-filter-arrow">
-                    ▼
-                </span>
-
-            </button>
+                                $rawDisembarkationDate =
+                                    $deployment?->getRawOriginal(
+                                        'date_disembarked'
+                                    );
 
 
-            <div
-                id="batchMenu"
-                class="dm-dropdown-menu"
-            >
+                                /*
+                                |--------------------------------------------------------------------------
+                                | DURATION OF SEA SERVICE
+                                |--------------------------------------------------------------------------
+                                */
 
-                @foreach($batches as $batch)
+                                $durationOfSeaService = null;
 
-                    <label class="dm-check-option">
+                                if (
+                                    $rawEmbarkationDate &&
+                                    $rawDisembarkationDate
+                                ) {
 
-                        <input
-                            type="checkbox"
-                            value="{{
-                                strtolower(
-                                    trim(
-                                        $batch->batch_year
+                                    try {
+
+                                        $embarkDate =
+                                            \Carbon\Carbon::createFromFormat(
+                                                'Y-m-d',
+                                                substr(
+                                                    (string) $rawEmbarkationDate,
+                                                    0,
+                                                    10
+                                                )
+                                            );
+
+                                        $disembarkDate =
+                                            \Carbon\Carbon::createFromFormat(
+                                                'Y-m-d',
+                                                substr(
+                                                    (string) $rawDisembarkationDate,
+                                                    0,
+                                                    10
+                                                )
+                                            );
+
+
+                                        if (
+                                            $disembarkDate->greaterThanOrEqualTo(
+                                                $embarkDate
+                                            )
+                                        ) {
+
+                                            $difference =
+                                                $embarkDate->diff(
+                                                    $disembarkDate
+                                                );
+
+                                            $months =
+                                                (
+                                                    $difference->y * 12
+                                                )
+                                                +
+                                                $difference->m;
+
+                                            $days =
+                                                $difference->d;
+
+                                            $durationParts = [];
+
+
+                                            if ($months > 0) {
+
+                                                $durationParts[] =
+                                                    $months .
+                                                    ' ' .
+                                                    (
+                                                        $months === 1
+                                                            ? 'Month'
+                                                            : 'Months'
+                                                    );
+
+                                            }
+
+
+                                            if ($days > 0) {
+
+                                                $durationParts[] =
+                                                    $days .
+                                                    ' ' .
+                                                    (
+                                                        $days === 1
+                                                            ? 'Day'
+                                                            : 'Days'
+                                                    );
+
+                                            }
+
+
+                                            $durationOfSeaService =
+                                                !empty($durationParts)
+                                                    ? implode(
+                                                        ', ',
+                                                        $durationParts
+                                                    )
+                                                    : '0 Days';
+
+                                        }
+
+                                    } catch (\Throwable $e) {
+
+                                        $durationOfSeaService = null;
+
+                                    }
+
+                                }
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | FORMATTED DATES
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $formattedEmbarkationDate = null;
+
+                                $formattedDisembarkationDate = null;
+
+
+                                if ($rawEmbarkationDate) {
+
+                                    try {
+
+                                        $formattedEmbarkationDate =
+                                            \Carbon\Carbon::createFromFormat(
+                                                'Y-m-d',
+                                                substr(
+                                                    (string) $rawEmbarkationDate,
+                                                    0,
+                                                    10
+                                                )
+                                            )->format('M d, Y');
+
+                                    } catch (\Throwable $e) {
+
+                                        $formattedEmbarkationDate = null;
+
+                                    }
+
+                                }
+
+
+                                if ($rawDisembarkationDate) {
+
+                                    try {
+
+                                        $formattedDisembarkationDate =
+                                            \Carbon\Carbon::createFromFormat(
+                                                'Y-m-d',
+                                                substr(
+                                                    (string) $rawDisembarkationDate,
+                                                    0,
+                                                    10
+                                                )
+                                            )->format('M d, Y');
+
+                                    } catch (\Throwable $e) {
+
+                                        $formattedDisembarkationDate = null;
+
+                                    }
+
+                                }
+
+                            @endphp
+
+
+                            <tr>
+
+                                {{-- TRB --}}
+
+                                <td>
+
+                                    <strong class="dm-trb">
+                                        {{ $cadet->trb_control_number }}
+                                    </strong>
+
+                                </td>
+
+
+                                {{-- NAME --}}
+
+                                <td>
+
+                                    <div class="dm-cadet-name">
+                                        {{ $cadet->full_name }}
+                                    </div>
+
+                                </td>
+
+
+                                {{-- COURSE --}}
+
+                                <td>
+
+                                    <span class="dm-course">
+                                        {{ strtoupper($cadet->course) }}
+                                    </span>
+
+                                </td>
+
+
+                                {{-- BATCH --}}
+
+                                <td>
+
+                                    <span class="dm-batch">
+
+                                        {{
+                                            optional($cadet->batch)->batch_year
+                                            ?? 'No Batch'
+                                        }}
+
+                                    </span>
+
+                                </td>
+
+
+                                {{-- VESSEL --}}
+
+                                <td>
+
+                                    <span class="dm-cell-text">
+
+                                        {{
+                                            $deployment?->vessel_name
+                                            ?? '—'
+                                        }}
+
+                                    </span>
+
+                                </td>
+
+
+                                {{-- COMPANY --}}
+
+                                <td>
+
+                                    <span class="dm-cell-text">
+
+                                        {{
+                                            $deployment?->company_name
+                                            ?? '—'
+                                        }}
+
+                                    </span>
+
+                                </td>
+
+
+                                {{-- DEPLOYMENT TYPE --}}
+
+                                <td>
+
+                                    @if(
+                                        ($deployment?->deployment_type ?? '')
+                                        === 'International'
                                     )
-                                )
-                            }}"
 
-                        >
+                                        <span class="dm-badge dm-badge-blue">
 
-                        <span>
-                            {{ $batch->batch_year }}
-                        </span>
+                                            <span>
+                                                🌍
+                                            </span>
 
-                    </label>
+                                            International
 
-                @endforeach
+                                        </span>
+
+                                    @elseif(
+                                        ($deployment?->deployment_type ?? '')
+                                        === 'Domestic'
+                                    )
+
+                                        <span class="dm-badge dm-badge-green">
+
+                                            <span>
+                                                🇵🇭
+                                            </span>
+
+                                            Domestic
+
+                                        </span>
+
+                                    @else
+
+                                        <span class="dm-badge dm-badge-gray">
+                                            —
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- EMBARKATION PLACE --}}
+
+                                <td>
+
+                                    <span class="dm-cell-text">
+
+                                        {{
+                                            $deployment?->embarkation_place
+                                            ?? '—'
+                                        }}
+
+                                    </span>
+
+                                </td>
+
+
+                                {{-- EMBARKATION DATE --}}
+
+                                <td
+                                    data-date="{{ $rawEmbarkationDate ?? '' }}"
+                                >
+
+                                    @if($formattedEmbarkationDate)
+
+                                        <span class="dm-date">
+                                            {{ $formattedEmbarkationDate }}
+                                        </span>
+
+                                    @else
+
+                                        <span class="dm-empty-value">
+                                            —
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- DISEMBARKATION PLACE --}}
+
+                                <td>
+
+                                    <span class="dm-cell-text">
+
+                                        {{
+                                            $deployment?->disembarkation_place
+                                            ?? '—'
+                                        }}
+
+                                    </span>
+
+                                </td>
+
+
+                                {{-- DISEMBARKATION DATE --}}
+
+                                <td>
+
+                                    @if($formattedDisembarkationDate)
+
+                                        <span class="dm-date">
+                                            {{ $formattedDisembarkationDate }}
+                                        </span>
+
+                                    @else
+
+                                        <span class="dm-empty-value">
+                                            —
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- DURATION --}}
+
+                                <td>
+
+                                    @if($durationOfSeaService)
+
+                                        <strong class="dm-sea-duration">
+                                            {{ $durationOfSeaService }}
+                                        </strong>
+
+                                    @else
+
+                                        <span class="dm-empty-value">
+                                            —
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- PROGRESS --}}
+
+                                <td>
+
+                                    <div class="dm-progress">
+
+                                        <div class="dm-progress-top">
+
+                                            <span>
+                                                Training
+                                            </span>
+
+                                            <span class="dm-progress-value">
+                                                {{ $percent }}%
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="dm-progress-track">
+
+                                            <div
+                                                class="dm-progress-fill {{ $percent >= 100 ? 'complete' : '' }}"
+                                                style="width: {{ $percent }}%;"
+                                            ></div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                {{-- STATUS --}}
+
+                                <td>
+
+                                    @if($status === 'ongoing')
+
+                                        <span class="dm-badge dm-badge-blue">
+
+                                            <span>
+                                                ⚓
+                                            </span>
+
+                                            Ongoing
+
+                                        </span>
+
+                                    @elseif($status === 'completed')
+
+                                        <span class="dm-badge dm-badge-green">
+
+                                            <span>
+                                                ✓
+                                            </span>
+
+                                            Completed
+
+                                        </span>
+
+                                    @else
+
+                                        <span class="dm-badge dm-badge-gray">
+
+                                            <span>
+                                                ○
+                                            </span>
+
+                                            Not Deployed
+
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- ACTION --}}
+
+                                <td>
+
+                                    <button
+                                        type="button"
+                                        class="dm-view-btn"
+                                        onclick="openDeploymentModal(@js($cadet))"
+                                    >
+
+                                        <span>
+                                            👁
+                                        </span>
+
+                                        View
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+
+                        @empty
+
+                            <tr>
+
+                                <td
+                                    colspan="15"
+                                    class="dm-empty"
+                                >
+
+                                    <div class="dm-empty-icon">
+                                        🚢
+                                    </div>
+
+                                    <strong>
+                                        No deployment records found
+                                    </strong>
+
+                                    <span>
+                                        There are currently no cadets matching
+                                        the selected filters.
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        @endforelse
+
+                    </tbody>
+
+                </table>
 
             </div>
 
-        </div>
+
+            {{-- =================================================
+                 PAGINATION
+            ================================================== --}}
+
+            @if($cadets->hasPages())
+
+                <div class="dm-pagination-wrapper">
+
+                    <div class="dm-pagination-info">
+
+                        Showing
+
+                        <strong>
+                            {{ $cadets->firstItem() }}
+                        </strong>
+
+                        to
+
+                        <strong>
+                            {{ $cadets->lastItem() }}
+                        </strong>
+
+                        of
+
+                        <strong>
+                            {{ $cadets->total() }}
+                        </strong>
+
+                        cadets
+
+                    </div>
 
 
-        {{-- STATUS --}}
+                    <div class="dm-pagination-links">
 
-        <div class="dm-filter-dropdown">
+                        {{ $cadets->withQueryString()->links() }}
 
-            <button
-                type="button"
-                class="dm-filter-button"
-                onclick="toggleDMFilter(this, 'statusMenu')"
-            >
+                    </div>
 
-                <span>
-                    Status
-                </span>
+                </div>
 
-                <span class="dm-filter-arrow">
-                    ▼
-                </span>
-
-            </button>
-
-
-            <div
-                id="statusMenu"
-                class="dm-dropdown-menu"
-            >
-
-                <label class="dm-check-option">
-
-                    <input
-                        type="checkbox"
-                        value="ongoing"
-                    >
-
-                    <span>
-                        Ongoing
-                    </span>
-
-                </label>
-
-
-                <label class="dm-check-option">
-
-                    <input
-                        type="checkbox"
-                        value="completed"
-                    >
-
-                    <span>
-                        Completed
-                    </span>
-
-                </label>
-
-
-                <label class="dm-check-option">
-
-                    <input
-                        type="checkbox"
-                        value="not deployed"
-                    >
-
-                    <span>
-                        Not Deployed
-                    </span>
-
-                </label>
-
-            </div>
-
-        </div>
-
-
-        {{-- SEARCH --}}
-
-        <div class="dm-filter-field">
-
-            <span class="dm-search-icon">
-                🔍
-            </span>
-
-            <input
-                type="text"
-                id="searchInput"
-                class="dm-search"
-                placeholder="Search cadet, TRB, vessel..."
-                autocomplete="off"
-            >
-
-        </div>
-
-
-        {{-- DATE FROM --}}
-
-        <div class="dm-filter-field">
-
-            <label class="dm-date-label">
-                Deployment From
-            </label>
-
-            <input
-                type="date"
-                id="dateFrom"
-                class="dm-date-input"
-                title="Deployment date from"
-            >
-
-        </div>
-
-
-        {{-- DATE TO --}}
-
-        <div class="dm-filter-field">
-
-            <label class="dm-date-label">
-                Deployment To
-            </label>
-
-            <input
-                type="date"
-                id="dateTo"
-                class="dm-date-input"
-                title="Deployment date to"
-            >
+            @endif
 
         </div>
 
     </div>
 
-</div>
-```
 
-</div>
+    {{-- =========================================================
+         SUCCESS TOAST
+    ========================================================== --}}
 
-{{-- =========================================================
-SUCCESS TOAST
-========================================================= --}}
-
-<div
-    id="successToast"
-    class="dm-toast"
-    role="status"
-    aria-live="polite"
->
-
-```
-<div class="dm-toast-icon">
-    ✓
-</div>
-
-<div class="dm-toast-content">
-
-    <strong>
-        Deployment Updated
-    </strong>
-
-    <span>
-        Deployment information was successfully saved.
-    </span>
-
-</div>
-```
-
-</div>
-
-{{-- =========================================================
-DEPLOYMENT MODAL
-========================================================= --}}
-
-<div
-    id="deploymentModal"
-    class="dm-modal"
-    aria-hidden="true"
->
-
-```
-<div
-    class="dm-modal-card"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="deploymentModalTitle"
->
-
-    <input
-        type="hidden"
-        id="modalId"
+    <div
+        id="successToast"
+        class="dm-toast"
+        role="status"
+        aria-live="polite"
     >
 
-
-    {{-- HEADER --}}
-
-    <div class="dm-modal-header">
-
-        <div class="dm-modal-title">
-
-            <div class="dm-modal-title-icon">
-                🚢
-            </div>
-
-            <div>
-
-                <strong id="deploymentModalTitle">
-                    Update Deployment
-                </strong>
-
-                <span>
-                    Manage cadet deployment information
-                </span>
-
-            </div>
-
+        <div class="dm-toast-icon">
+            ✓
         </div>
 
+        <div class="dm-toast-content">
 
-        <button
-            type="button"
-            class="dm-modal-close"
-            onclick="closeDeploymentModal()"
-            aria-label="Close modal"
-        >
-            ×
-        </button>
+            <strong>
+                Deployment Updated
+            </strong>
+
+            <span>
+                Deployment information was successfully saved.
+            </span>
+
+        </div>
 
     </div>
 
 
-    {{-- BODY --}}
+    {{-- =========================================================
+         DEPLOYMENT MODAL
+    ========================================================== --}}
 
-    <div class="dm-modal-body">
+    <div
+        id="deploymentModal"
+        class="dm-modal"
+        aria-hidden="true"
+    >
 
-        {{-- PROFILE --}}
+        <div
+            class="dm-modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="deploymentModalTitle"
+        >
 
-        <div class="dm-profile">
-
-            <img
-                id="modalPhoto"
-                src="/images/default-avatar.png"
-                alt="Cadet Photo"
-                onerror="this.onerror=null;this.src='/images/default-avatar.png';"
+            <input
+                type="hidden"
+                id="modalId"
             >
 
-            <div>
 
-                <div
-                    id="modalName"
-                    class="dm-profile-name"
-                ></div>
+            {{-- HEADER --}}
 
-                <div class="dm-profile-meta">
+            <div class="dm-modal-header">
 
-                    <span id="modalTRB"></span>
+                <div class="dm-modal-title">
 
-                    <span>•</span>
+                    <div class="dm-modal-title-icon">
+                        🚢
+                    </div>
 
-                    <span id="modalCourse"></span>
+                    <div>
 
-                </div>
+                        <strong id="deploymentModalTitle">
+                            Update Deployment
+                        </strong>
 
-            </div>
+                        <span>
+                            Manage cadet deployment information
+                        </span>
 
-        </div>
-
-
-        {{-- VESSEL INFORMATION --}}
-
-        <div class="dm-section">
-
-            <div class="dm-section-title">
-
-                <div class="dm-section-number">
-                    01
-                </div>
-
-                Vessel Information
-
-            </div>
-
-
-            <div class="dm-form-grid">
-
-                <div class="dm-form-group">
-
-                    <label class="dm-form-label">
-                        Vessel Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="modalVessel"
-                        class="dm-form-input"
-                        placeholder="Enter vessel name"
-                    >
+                    </div>
 
                 </div>
 
 
-                <div class="dm-form-group">
-
-                    <label class="dm-form-label">
-                        Company Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="modalCompany"
-                        class="dm-form-input"
-                        placeholder="Enter company name"
-                    >
-
-                </div>
-
-
-                <div class="dm-form-group full">
-
-                    <label class="dm-form-label">
-                        Deployment Type
-                    </label>
-
-                    <select
-                        id="modalDeploymentType"
-                        class="dm-form-select"
-                    >
-
-                        <option value="Domestic">
-                            Domestic
-                        </option>
-
-                        <option value="International">
-                            International
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="dm-divider"></div>
-
-
-        {{-- EMBARKATION --}}
-
-        <div class="dm-section">
-
-            <div class="dm-section-title">
-
-                <div class="dm-section-number">
-                    02
-                </div>
-
-                Embarkation
-
-            </div>
-
-
-            <div class="dm-form-grid">
-
-                <div class="dm-form-group">
-
-                    <label class="dm-form-label">
-                        Embarkation Place
-                    </label>
-
-                    <input
-                        type="text"
-                        id="modalEmbarkPlace"
-                        class="dm-form-input"
-                        placeholder="Enter embarkation place"
-                    >
-
-                </div>
-
-
-                <div class="dm-form-group">
-
-                    <label class="dm-form-label">
-                        Embarkation Date
-                    </label>
-
-                    <input
-                        type="date"
-                        id="modalDeployed"
-                        class="dm-form-input"
-                    >
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="dm-divider"></div>
-
-
-        {{-- DISEMBARKATION --}}
-
-        <div class="dm-section">
-
-            <div class="dm-section-title">
-
-                <div class="dm-section-number">
-                    03
-                </div>
-
-                Disembarkation
-
-            </div>
-
-
-            <div class="dm-form-grid">
-
-                <div class="dm-form-group">
-
-                    <label class="dm-form-label">
-                        Disembarkation Place
-                    </label>
-
-                    <input
-                        type="text"
-                        id="modalDisembarkPlace"
-                        class="dm-form-input"
-                        placeholder="Enter disembarkation place"
-                    >
-
-                </div>
-
-
-                <div class="dm-form-group">
-
-                    <label class="dm-form-label">
-                        Disembarkation Date
-                    </label>
-
-                    <input
-                        type="date"
-                        id="modalDisembarked"
-                        class="dm-form-input"
-                    >
-
-                </div>
-
-            </div>
-
-
-            <div class="dm-form-group full">
-
-                <label class="dm-form-label">
-                    Duration of Sea Service
-                </label>
-
-                <div
-                    id="modalSeaServiceDuration"
-                    class="dm-sea-service-value"
+                <button
+                    type="button"
+                    class="dm-modal-close"
+                    onclick="closeDeploymentModal()"
+                    aria-label="Close modal"
                 >
-                    —
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="dm-divider"></div>
-
-
-        {{-- STATUS --}}
-
-        <div class="dm-section">
-
-            <div class="dm-section-title">
-
-                <div class="dm-section-number">
-                    04
-                </div>
-
-                Training Status
+                    ×
+                </button>
 
             </div>
 
 
-            <div class="dm-form-grid">
+            {{-- BODY --}}
 
-                <div class="dm-form-group full">
+            <div class="dm-modal-body">
 
-                    <label class="dm-form-label">
-                        Deployment Status
-                    </label>
+                {{-- PROFILE --}}
 
-                    <select
-                        id="modalStatus"
-                        class="dm-form-select"
+                <div class="dm-profile">
+
+                    <img
+                        id="modalPhoto"
+                        src="/images/default-avatar.png"
+                        alt="Cadet Photo"
+                        onerror="this.onerror=null;this.src='/images/default-avatar.png';"
                     >
 
-                        <option value="Not Deployed">
-                            Not Deployed
-                        </option>
 
-                        <option value="Ongoing">
-                            Ongoing
-                        </option>
+                    <div>
 
-                        <option value="Completed">
-                            Completed
-                        </option>
+                        <div
+                            id="modalName"
+                            class="dm-profile-name"
+                        ></div>
 
-                    </select>
+
+                        <div class="dm-profile-meta">
+
+                            <span id="modalTRB"></span>
+
+                            <span>
+                                •
+                            </span>
+
+                            <span id="modalCourse"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- VESSEL INFORMATION --}}
+
+                <div class="dm-section">
+
+                    <div class="dm-section-title">
+
+                        <div class="dm-section-number">
+                            01
+                        </div>
+
+                        Vessel Information
+
+                    </div>
+
+
+                    <div class="dm-form-grid">
+
+                        <div class="dm-form-group">
+
+                            <label class="dm-form-label">
+                                Vessel Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="modalVessel"
+                                class="dm-form-input"
+                                placeholder="Enter vessel name"
+                            >
+
+                        </div>
+
+
+                        <div class="dm-form-group">
+
+                            <label class="dm-form-label">
+                                Company Name
+                            </label>
+
+                            <input
+                                type="text"
+                                id="modalCompany"
+                                class="dm-form-input"
+                                placeholder="Enter company name"
+                            >
+
+                        </div>
+
+
+                        <div class="dm-form-group full">
+
+                            <label class="dm-form-label">
+                                Deployment Type
+                            </label>
+
+                            <select
+                                id="modalDeploymentType"
+                                class="dm-form-select"
+                            >
+
+                                <option value="Domestic">
+                                    Domestic
+                                </option>
+
+                                <option value="International">
+                                    International
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dm-divider"></div>
+
+
+                {{-- EMBARKATION --}}
+
+                <div class="dm-section">
+
+                    <div class="dm-section-title">
+
+                        <div class="dm-section-number">
+                            02
+                        </div>
+
+                        Embarkation
+
+                    </div>
+
+
+                    <div class="dm-form-grid">
+
+                        <div class="dm-form-group">
+
+                            <label class="dm-form-label">
+                                Embarkation Place
+                            </label>
+
+                            <input
+                                type="text"
+                                id="modalEmbarkPlace"
+                                class="dm-form-input"
+                                placeholder="Enter embarkation place"
+                            >
+
+                        </div>
+
+
+                        <div class="dm-form-group">
+
+                            <label class="dm-form-label">
+                                Embarkation Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="modalDeployed"
+                                class="dm-form-input"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dm-divider"></div>
+
+
+                {{-- DISEMBARKATION --}}
+
+                <div class="dm-section">
+
+                    <div class="dm-section-title">
+
+                        <div class="dm-section-number">
+                            03
+                        </div>
+
+                        Disembarkation
+
+                    </div>
+
+
+                    <div class="dm-form-grid">
+
+                        <div class="dm-form-group">
+
+                            <label class="dm-form-label">
+                                Disembarkation Place
+                            </label>
+
+                            <input
+                                type="text"
+                                id="modalDisembarkPlace"
+                                class="dm-form-input"
+                                placeholder="Enter disembarkation place"
+                            >
+
+                        </div>
+
+
+                        <div class="dm-form-group">
+
+                            <label class="dm-form-label">
+                                Disembarkation Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="modalDisembarked"
+                                class="dm-form-input"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dm-form-group full">
+
+                        <label class="dm-form-label">
+                            Duration of Sea Service
+                        </label>
+
+                        <div
+                            id="modalSeaServiceDuration"
+                            class="dm-sea-service-value"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dm-divider"></div>
+
+
+                {{-- STATUS --}}
+
+                <div class="dm-section">
+
+                    <div class="dm-section-title">
+
+                        <div class="dm-section-number">
+                            04
+                        </div>
+
+                        Training Status
+
+                    </div>
+
+
+                    <div class="dm-form-grid">
+
+                        <div class="dm-form-group full">
+
+                            <label class="dm-form-label">
+                                Deployment Status
+                            </label>
+
+                            <select
+                                id="modalStatus"
+                                class="dm-form-select"
+                            >
+
+                                <option value="Not Deployed">
+                                    Not Deployed
+                                </option>
+
+                                <option value="Ongoing">
+                                    Ongoing
+                                </option>
+
+                                <option value="Completed">
+                                    Completed
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="dm-modal-progress">
+
+                        <div class="dm-modal-progress-top">
+
+                            <span>
+                                Training Progress
+                            </span>
+
+                            <span
+                                id="modalPercent"
+                                class="dm-modal-progress-percent"
+                            >
+                                0%
+                            </span>
+
+                        </div>
+
+
+                        <div class="dm-modal-progress-track">
+
+                            <div
+                                id="modalProgress"
+                                class="dm-modal-progress-fill"
+                                style="width:0%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <div class="dm-modal-progress">
+            {{-- FOOTER --}}
 
-                <div class="dm-modal-progress-top">
+            <div class="dm-modal-footer">
 
-                    <span>
-                        Training Progress
-                    </span>
-
-                    <span
-                        id="modalPercent"
-                        class="dm-modal-progress-percent"
-                    >
-                        0%
-                    </span>
-
-                </div>
+                <button
+                    type="button"
+                    class="dm-cancel-btn"
+                    onclick="closeDeploymentModal()"
+                >
+                    Cancel
+                </button>
 
 
-                <div class="dm-modal-progress-track">
-
-                    <div
-                        id="modalProgress"
-                        class="dm-modal-progress-fill"
-                        style="width:0%;"
-                    ></div>
-
-                </div>
+                <button
+                    type="button"
+                    id="saveDeploymentBtn"
+                    class="dm-save-btn"
+                    onclick="saveDeploymentChanges()"
+                >
+                    Save Changes
+                </button>
 
             </div>
 
@@ -1493,37 +1628,11 @@ DEPLOYMENT MODAL
 
     </div>
 
-
-    {{-- FOOTER --}}
-
-    <div class="dm-modal-footer">
-
-        <button
-            type="button"
-            class="dm-cancel-btn"
-            onclick="closeDeploymentModal()"
-        >
-            Cancel
-        </button>
-
-
-        <button
-            type="button"
-            id="saveDeploymentBtn"
-            class="dm-save-btn"
-            onclick="saveDeploymentChanges()"
-        >
-            Save Changes
-        </button>
-
-    </div>
-
 </div>
-```
 
-</div>
 
 <script>
+
 /* =========================================================
    DEPLOYMENT MONITORING
    AJAX FILTERING + PAGINATION + MODAL
@@ -1531,7 +1640,6 @@ DEPLOYMENT MODAL
 
 let deploymentRequest = null;
 let deploymentSearchTimer = null;
-let deploymentInitialized = false;
 
 
 /* =========================================================
@@ -1541,15 +1649,18 @@ let deploymentInitialized = false;
 document.addEventListener("DOMContentLoaded", function () {
 
     initializeDeploymentFilters();
+
     initializeDeploymentPagination();
+
     initializeDeploymentDuration();
+
     initializeDeploymentKeyboard();
+
     initializeDeploymentDropdowns();
+
     initializeDeploymentDragScroll();
 
     restoreDeploymentFiltersFromURL();
-
-    deploymentInitialized = true;
 
 });
 
@@ -1654,7 +1765,11 @@ function getDeploymentFilterQuery() {
         new URLSearchParams();
 
 
-    /* COURSE */
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE
+    |--------------------------------------------------------------------------
+    */
 
     getDMCheckedValues("courseMenu")
         .forEach(function (course) {
@@ -1667,7 +1782,11 @@ function getDeploymentFilterQuery() {
         });
 
 
-    /* BATCH */
+    /*
+    |--------------------------------------------------------------------------
+    | BATCH
+    |--------------------------------------------------------------------------
+    */
 
     getDMCheckedValues("batchMenu")
         .forEach(function (batch) {
@@ -1680,7 +1799,11 @@ function getDeploymentFilterQuery() {
         });
 
 
-    /* STATUS */
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS
+    |--------------------------------------------------------------------------
+    */
 
     getDMCheckedValues("statusMenu")
         .forEach(function (status) {
@@ -1693,7 +1816,11 @@ function getDeploymentFilterQuery() {
         });
 
 
-    /* SEARCH */
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
 
     const search =
         document.getElementById(
@@ -1711,7 +1838,11 @@ function getDeploymentFilterQuery() {
     }
 
 
-    /* DATE FROM */
+    /*
+    |--------------------------------------------------------------------------
+    | DATE FROM
+    |--------------------------------------------------------------------------
+    */
 
     const dateFrom =
         document.getElementById(
@@ -1729,7 +1860,11 @@ function getDeploymentFilterQuery() {
     }
 
 
-    /* DATE TO */
+    /*
+    |--------------------------------------------------------------------------
+    | DATE TO
+    |--------------------------------------------------------------------------
+    */
 
     const dateTo =
         document.getElementById(
@@ -1806,7 +1941,7 @@ function loadDeploymentResults(
 
     /*
     |--------------------------------------------------------------------------
-    | Cancel previous request
+    | CANCEL PREVIOUS REQUEST
     |--------------------------------------------------------------------------
     */
 
@@ -1827,7 +1962,7 @@ function loadDeploymentResults(
 
     /*
     |--------------------------------------------------------------------------
-    | Build URL
+    | BUILD URL
     |--------------------------------------------------------------------------
     */
 
@@ -1849,7 +1984,7 @@ function loadDeploymentResults(
 
     /*
     |--------------------------------------------------------------------------
-    | Loading state
+    | LOADING STATE
     |--------------------------------------------------------------------------
     */
 
@@ -1936,7 +2071,7 @@ function loadDeploymentResults(
 
         /*
         |--------------------------------------------------------------------------
-        | Replace only table card contents
+        | REPLACE ONLY TABLE RESULTS
         |--------------------------------------------------------------------------
         */
 
@@ -1946,7 +2081,7 @@ function loadDeploymentResults(
 
         /*
         |--------------------------------------------------------------------------
-        | Replace statistics
+        | UPDATE STATISTICS
         |--------------------------------------------------------------------------
         */
 
@@ -1963,7 +2098,7 @@ function loadDeploymentResults(
 
         /*
         |--------------------------------------------------------------------------
-        | Browser URL
+        | UPDATE BROWSER URL
         |--------------------------------------------------------------------------
         */
 
@@ -1982,7 +2117,7 @@ function loadDeploymentResults(
 
         /*
         |--------------------------------------------------------------------------
-        | Reinitialize table-specific UI
+        | REINITIALIZE TABLE UI
         |--------------------------------------------------------------------------
         */
 
@@ -2047,16 +2182,6 @@ function initializeDeploymentPagination() {
         return;
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Event delegation
-    |--------------------------------------------------------------------------
-    |
-    | This listener survives AJAX replacement because it belongs
-    | to #deploymentResults itself.
-    |--------------------------------------------------------------------------
-    */
 
     if (
         results.dataset.paginationInitialized ===
@@ -2160,17 +2285,23 @@ function clearDeploymentFilters() {
 
 
     if (searchInput) {
+
         searchInput.value = "";
+
     }
 
 
     if (dateFrom) {
+
         dateFrom.value = "";
+
     }
 
 
     if (dateTo) {
+
         dateTo.value = "";
+
     }
 
 
@@ -2620,7 +2751,7 @@ function openDeploymentModal(cadet) {
 
     /*
     |--------------------------------------------------------------------------
-    | RESET
+    | RESET FORM
     |--------------------------------------------------------------------------
     */
 
@@ -2662,7 +2793,8 @@ function openDeploymentModal(cadet) {
 
     document.getElementById(
         "modalSeaServiceDuration"
-    ).innerText = "—";
+    ).innerText =
+        "—";
 
 
     document.getElementById(
@@ -3211,7 +3343,7 @@ function saveDeploymentChanges() {
 
                 /*
                 |--------------------------------------------------------------------------
-                | Controller expects "company"
+                | CONTROLLER EXPECTS "company"
                 |--------------------------------------------------------------------------
                 */
 
@@ -3290,7 +3422,7 @@ function saveDeploymentChanges() {
 
         /*
         |--------------------------------------------------------------------------
-        | Close modal
+        | CLOSE MODAL
         |--------------------------------------------------------------------------
         */
 
@@ -3299,7 +3431,7 @@ function saveDeploymentChanges() {
 
         /*
         |--------------------------------------------------------------------------
-        | Show toast
+        | SHOW SUCCESS TOAST
         |--------------------------------------------------------------------------
         */
 
@@ -3308,7 +3440,7 @@ function saveDeploymentChanges() {
 
         /*
         |--------------------------------------------------------------------------
-        | Refresh only AJAX results
+        | REFRESH ONLY RESULTS
         |--------------------------------------------------------------------------
         */
 
@@ -3421,7 +3553,9 @@ function initializeDeploymentDragScroll() {
 
 
         let isDown = false;
+
         let startX = 0;
+
         let scrollLeft = 0;
 
 
@@ -3441,6 +3575,7 @@ function initializeDeploymentDragScroll() {
 
 
                 isDown = true;
+
 
                 table.classList.add(
                     "is-dragging"
@@ -3465,6 +3600,7 @@ function initializeDeploymentDragScroll() {
 
                 isDown = false;
 
+
                 table.classList.remove(
                     "is-dragging"
                 );
@@ -3478,6 +3614,7 @@ function initializeDeploymentDragScroll() {
             function () {
 
                 isDown = false;
+
 
                 table.classList.remove(
                     "is-dragging"
@@ -3521,6 +3658,7 @@ function initializeDeploymentDragScroll() {
     });
 
 }
+
 </script>
 
 @endsection
