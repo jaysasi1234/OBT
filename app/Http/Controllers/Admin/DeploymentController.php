@@ -12,81 +12,498 @@ use App\Models\CadetOnboardRequirement;
 
 class DeploymentController extends Controller
 {
-    // =========================
-    // INDEX
-    // =========================
-    public function index()
-    {
-        $cadets = Cadet::with(['batch', 'deployment'])
-            ->select(
-                'id',
-                'trb_control_number',
-                'full_name',
-                'course',
-                'batch_id',
-                'verification_status',
-                'photo'
-            )
-            ->orderBy('full_name')
-            ->get();
+// =========================
+// INDEX
+// =========================
+public function index(Request $request)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | BASE CADET QUERY
+    |--------------------------------------------------------------------------
+    |
+    | We paginate the cadets instead of loading every record with ->get().
+    | This gives us 25 records per page.
+    |
+    */
 
-        $stats = Deployment::selectRaw("
-            COUNT(*) as total,
-            SUM(CASE WHEN status = 'Ongoing' THEN 1 ELSE 0 END) as ongoing,
-            SUM(CASE WHEN status = 'Completed' THEN 1 ELSE 0 END) as completed,
-            SUM(CASE WHEN status = 'Not Deployed' THEN 1 ELSE 0 END) as not_deployed
-        ")->first();
+    $query = Cadet::with(['batch', 'deployment'])
+        ->select(
+            'id',
+            'trb_control_number',
+            'full_name',
+            'course',
+            'batch_id',
+            'verification_status',
+            'photo'
+        );
 
-        $totalCadets = $stats->total ?? 0;
-        $ongoing = $stats->ongoing ?? 0;
-        $completed = $stats->completed ?? 0;
-        $notDeployed = $stats->not_deployed ?? 0;
 
-        $verified = Cadet::where(
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE FILTER
+    |--------------------------------------------------------------------------
+    |
+    | Supports multiple selected courses:
+    |
+    | course[]=bsmt
+    | course[]=bsm
+    |
+    */
+
+    if ($request->filled('course')) {
+
+        $courses = $request->input('course');
+
+        if (!is_array($courses)) {
+            $courses = [$courses];
+        }
+
+        $courses = collect($courses)
+            ->map(function ($course) {
+                return strtolower(trim($course));
+            })
+            ->filter()
+            ->values()
+            ->toArray();
+
+
+        if (!empty($courses)) {
+
+            $query->whereIn(
+                \Illuminate\Support\Facades\DB::raw(
+                    'LOWER(course)'
+                ),
+                $courses
+            );
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATCH FILTER
+    |--------------------------------------------------------------------------
+    |
+    | The filter contains batch_year values.
+    |
+    | Example:
+    | batch[]=2025
+    | batch[]=2026
+    |
+    */
+
+    if ($request->filled('batch')) {
+
+        $batches = $request->input('batch');
+
+        if (!is_array($batches)) {
+            $batches = [$batches];
+        }
+
+        $batches = collect($batches)
+            ->map(function ($batch) {
+                return strtolower(trim($batch));
+            })
+            ->filter()
+            ->values()
+            ->toArray();
+
+
+        if (!empty($batches)) {
+
+            $query->whereHas(
+                'batch',
+                function ($batchQuery) use ($batches) {
+
+                    $batchQuery->whereIn(
+                        \Illuminate\Support\Facades\DB::raw(
+                            'LOWER(batch_year)'
+                        ),
+                        $batches
+                    );
+
+                }
+            );
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUS FILTER
+    |--------------------------------------------------------------------------
+    |
+    | Supports multiple statuses at the same time.
+    |
+    | ongoing
+    | completed
+    | not deployed
+    |
+    */
+
+    if ($request->filled('status')) {
+
+        $statuses = $request->input('status');
+
+        if (!is_array($statuses)) {
+            $statuses = [$statuses];
+        }
+
+        $statuses = collect($statuses)
+            ->map(function ($status) {
+                return strtolower(trim($status));
+            })
+            ->filter()
+            ->values()
+            ->toArray();
+
+
+        if (!empty($statuses)) {
+
+            $query->where(function ($statusQuery) use ($statuses) {
+
+                foreach ($statuses as $status) {
+
+                    if ($status === 'ongoing') {
+
+                        $statusQuery->orWhereHas(
+                            'deployment',
+                            function ($deploymentQuery) {
+
+                                $deploymentQuery->where(
+                                    'status',
+                                    'Ongoing'
+                                );
+
+                            }
+                        );
+
+                    }
+
+
+                    elseif ($status === 'completed') {
+
+                        $statusQuery->orWhereHas(
+                            'deployment',
+                            function ($deploymentQuery) {
+
+                                $deploymentQuery->where(
+                                    'status',
+                                    'Completed'
+                                );
+
+                            }
+                        );
+
+                    }
+
+
+                    elseif ($status === 'not deployed') {
+
+                        $statusQuery->orWhereDoesntHave(
+                            'deployment'
+                        );
+
+                    }
+
+                }
+
+            });
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    |
+    | Searches:
+    |
+    | - Cadet name
+    | - TRB number
+    | - Course
+    | - Vessel
+    | - Company
+    |
+    */
+
+    if ($request->filled('search')) {
+
+        $search =
+            trim(
+                $request->input('search')
+            );
+
+
+        if ($search !== '') {
+
+            $query->where(function ($searchQuery) use ($search) {
+
+                $searchQuery
+
+                    ->where(
+                        'full_name',
+                        'like',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        'trb_control_number',
+                        'like',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        'course',
+                        'like',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhereHas(
+                        'deployment',
+                        function ($deploymentQuery) use ($search) {
+
+                            $deploymentQuery
+                                ->where(
+                                    'vessel_name',
+                                    'like',
+                                    '%' . $search . '%'
+                                )
+
+                                ->orWhere(
+                                    'company_name',
+                                    'like',
+                                    '%' . $search . '%'
+                                );
+
+                        }
+                    );
+
+            });
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATE FROM FILTER
+    |--------------------------------------------------------------------------
+    |
+    | Filters using the deployment/embarkation date.
+    |
+    */
+
+    if ($request->filled('date_from')) {
+
+        $dateFrom =
+            $request->input('date_from');
+
+
+        $query->whereHas(
+            'deployment',
+            function ($deploymentQuery) use ($dateFrom) {
+
+                $deploymentQuery->whereDate(
+                    'date_deployed',
+                    '>=',
+                    $dateFrom
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | DATE TO FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('date_to')) {
+
+        $dateTo =
+            $request->input('date_to');
+
+
+        $query->whereHas(
+            'deployment',
+            function ($deploymentQuery) use ($dateTo) {
+
+                $deploymentQuery->whereDate(
+                    'date_deployed',
+                    '<=',
+                    $dateTo
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    |
+    | IMPORTANT:
+    | 25 records per page.
+    |
+    | withQueryString() keeps the active filters when moving
+    | between pagination pages.
+    |
+    */
+
+    $cadets = $query
+        ->orderBy('full_name')
+        ->paginate(25)
+        ->withQueryString();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATISTICS
+    |--------------------------------------------------------------------------
+    */
+
+    $stats = Deployment::selectRaw("
+        COUNT(*) as total,
+        SUM(
+            CASE
+                WHEN status = 'Ongoing'
+                THEN 1
+                ELSE 0
+            END
+        ) as ongoing,
+
+        SUM(
+            CASE
+                WHEN status = 'Completed'
+                THEN 1
+                ELSE 0
+            END
+        ) as completed,
+
+        SUM(
+            CASE
+                WHEN status = 'Not Deployed'
+                THEN 1
+                ELSE 0
+            END
+        ) as not_deployed
+    ")->first();
+
+
+    $totalCadets =
+        $stats->total ?? 0;
+
+
+    $ongoing =
+        $stats->ongoing ?? 0;
+
+
+    $completed =
+        $stats->completed ?? 0;
+
+
+    $notDeployed =
+        $stats->not_deployed ?? 0;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | VERIFICATION COUNTS
+    |--------------------------------------------------------------------------
+    */
+
+    $verified =
+        Cadet::where(
             'verification_status',
             'Verified'
         )->count();
 
-        $pending = Cadet::where(
+
+    $pending =
+        Cadet::where(
             'verification_status',
             'Pending'
         )->count();
 
-        $deficient = Cadet::where(
+
+    $deficient =
+        Cadet::where(
             'verification_status',
             'Deficiency'
         )->count();
 
-        $totalDeployed = $ongoing + $completed;
 
-        $batches = Batch::orderBy(
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL DEPLOYED
+    |--------------------------------------------------------------------------
+    */
+
+    $totalDeployed =
+        $ongoing + $completed;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILTER OPTIONS
+    |--------------------------------------------------------------------------
+    */
+
+    $batches =
+        Batch::orderBy(
             'batch_year',
             'desc'
         )->get();
 
-        $courses = Cadet::select('course')
+
+    $courses =
+        Cadet::select('course')
+            ->whereNotNull('course')
+            ->where('course', '!=', '')
             ->distinct()
             ->orderBy('course')
             ->get();
 
-        return view(
-            'admin.deployment.index',
-            compact(
-                'cadets',
-                'totalCadets',
-                'ongoing',
-                'completed',
-                'notDeployed',
-                'totalDeployed',
-                'verified',
-                'pending',
-                'deficient',
-                'batches',
-                'courses'
-            )
-        );
-    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RETURN VIEW
+    |--------------------------------------------------------------------------
+    */
+
+    return view(
+        'admin.deployment.index',
+        compact(
+            'cadets',
+            'totalCadets',
+            'ongoing',
+            'completed',
+            'notDeployed',
+            'totalDeployed',
+            'verified',
+            'pending',
+            'deficient',
+            'batches',
+            'courses'
+        )
+    );
+}
 
     // =========================
     // SHOW DEPLOYMENT
