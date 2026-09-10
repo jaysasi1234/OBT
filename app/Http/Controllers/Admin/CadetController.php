@@ -188,7 +188,7 @@ public function index(Request $request)
 
     $cadets = $query
         ->orderBy('full_name')
-        ->paginate(50)
+        ->paginate(25)
         ->withQueryString();
 
     /*
