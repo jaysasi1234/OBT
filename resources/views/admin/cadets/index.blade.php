@@ -742,6 +742,54 @@
 
         </div>
 
+{{-- =====================================================
+             PAGINATION
+        ====================================================== --}}
+
+        <div
+            class="pagination-wrapper"
+            id="cadetPagination"
+        >
+
+            <div
+                class="pagination-info"
+                id="paginationInfo"
+            >
+                Showing 1–50 of 50 records
+            </div>
+
+
+            <div class="pagination-controls">
+
+                <button
+                    type="button"
+                    class="pagination-btn"
+                    id="prevPage"
+                    aria-label="Previous page"
+                >
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+
+
+                <div
+                    class="pagination-pages"
+                    id="paginationPages"
+                ></div>
+
+
+                <button
+                    type="button"
+                    class="pagination-btn"
+                    id="nextPage"
+                    aria-label="Next page"
+                >
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
@@ -1735,6 +1783,12 @@
     const DEFAULT_PHOTO =
         'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
+    const ROWS_PER_PAGE = 50;
+
+    let currentPage = 1;
+
+    let filteredRows = [];
+
 
     /* =====================================================
        ELEMENTS
@@ -1773,6 +1827,21 @@
     const editForm =
         document.getElementById('editCadetForm');
 
+    const pagination =
+        document.getElementById('cadetPagination');
+
+    const paginationInfo =
+        document.getElementById('paginationInfo');
+
+    const paginationPages =
+        document.getElementById('paginationPages');
+
+    const prevPage =
+        document.getElementById('prevPage');
+
+    const nextPage =
+        document.getElementById('nextPage');
+
 
     /* =====================================================
        NORMALIZATION
@@ -1809,254 +1878,822 @@
     }
 
 
-    /* =====================================================
-       FILTER TABLE
-    ===================================================== */
+/* =====================================================
+   FILTER + PAGINATION
+===================================================== */
 
-    function filterTable() {
+function filterTable(resetPage = true) {
 
-        if (!table) {
-            return;
-        }
+    if (!table) {
+        return;
+    }
 
-        const selectedCourse =
-            normalize(courseFilter?.value);
 
-        const selectedBatch =
-            normalize(batchFilter?.value);
+    /*
+     * When a filter/search changes:
+     *
+     * - go back to page 1
+     * - DO NOT clear the filters
+     */
 
-        const selectedVerification =
-            normalize(verificationFilter?.value);
+    if (resetPage) {
+        currentPage = 1;
+    }
 
-        const selectedDeployment =
-            normalize(deploymentFilter?.value);
 
-        const search =
-            String(searchInput?.value ?? '')
-                .trim()
+    const selectedCourse =
+        normalize(
+            courseFilter?.value
+        );
+
+
+    const selectedBatch =
+        normalize(
+            batchFilter?.value
+        );
+
+
+    const selectedVerification =
+        normalize(
+            verificationFilter?.value
+        );
+
+
+    const selectedDeployment =
+        normalize(
+            deploymentFilter?.value
+        );
+
+
+    const search =
+        String(
+            searchInput?.value ?? ''
+        )
+            .trim()
+            .toLowerCase();
+
+
+    const rows =
+        Array.from(
+            table.querySelectorAll(
+                'tbody tr.cadet-row'
+            )
+        );
+
+
+    /*
+     * =====================================================
+     * FIND ALL MATCHING CADETS
+     * =====================================================
+     */
+
+    filteredRows = rows.filter(row => {
+
+        const rowCourse =
+            normalize(
+                row.dataset.course
+            );
+
+
+        const rowBatch =
+            normalize(
+                row.dataset.batch
+            );
+
+
+        const rowVerification =
+            normalize(
+                row.dataset.verification
+            );
+
+
+        const rowDeployment =
+            normalize(
+                row.dataset.deployment
+            );
+
+
+        const rowText =
+            row.innerText
                 .toLowerCase();
 
 
-        let total = 0;
-        let active = 0;
-        let deployed = 0;
-        let notDeployed = 0;
+        const matchCourse =
+            !selectedCourse ||
+            rowCourse === selectedCourse;
 
 
-        const rows =
-            table.querySelectorAll(
-                'tbody tr.cadet-row'
-            );
+        const matchBatch =
+            !selectedBatch ||
+            rowBatch === selectedBatch;
 
 
-        rows.forEach(row => {
-
-            const rowCourse =
-                normalize(
-                    row.dataset.course
-                );
-
-            const rowBatch =
-                normalize(
-                    row.dataset.batch
-                );
-
-            const rowVerification =
-                normalize(
-                    row.dataset.verification
-                );
-
-            const rowDeployment =
-                normalize(
-                    row.dataset.deployment
-                );
-
-            const rowText =
-                row.innerText
-                    .toLowerCase();
+        const matchVerification =
+            !selectedVerification ||
+            rowVerification === selectedVerification;
 
 
-            const matchCourse =
-                !selectedCourse ||
-                rowCourse === selectedCourse;
+        const matchDeployment =
+            !selectedDeployment ||
+            rowDeployment === selectedDeployment;
 
 
-            const matchBatch =
-                !selectedBatch ||
-                rowBatch === selectedBatch;
+        const matchSearch =
+            !search ||
+            rowText.includes(search);
 
 
-            const matchVerification =
-                !selectedVerification ||
-                rowVerification === selectedVerification;
+        return (
+            matchCourse &&
+            matchBatch &&
+            matchVerification &&
+            matchDeployment &&
+            matchSearch
+        );
+
+    });
 
 
-            const matchDeployment =
-                !selectedDeployment ||
-                rowDeployment === selectedDeployment;
+    /*
+     * =====================================================
+     * TOTAL PAGES
+     * =====================================================
+     */
+
+    const total =
+        filteredRows.length;
 
 
-            const matchSearch =
-                !search ||
-                rowText.includes(search);
+    const totalPages =
+        Math.max(
+            1,
+            Math.ceil(
+                total / ROWS_PER_PAGE
+            )
+        );
 
 
-            const visible =
-                matchCourse &&
-                matchBatch &&
-                matchVerification &&
-                matchDeployment &&
-                matchSearch;
+    /*
+     * If filtering causes the current page
+     * to disappear, move to the last valid page.
+     */
+
+    if (
+        currentPage > totalPages
+    ) {
+
+        currentPage =
+            totalPages;
+
+    }
 
 
-            row.hidden = !visible;
+    /*
+     * =====================================================
+     * HIDE EVERY ROW
+     * =====================================================
+     */
+
+    rows.forEach(row => {
+
+        row.hidden = true;
+
+    });
 
 
-            if (!visible) {
-                return;
-            }
+    /*
+     * =====================================================
+     * SHOW ONLY 50 ROWS FOR CURRENT PAGE
+     * =====================================================
+     */
+
+    const startIndex =
+        (currentPage - 1) *
+        ROWS_PER_PAGE;
 
 
-            total++;
+    const endIndex =
+        Math.min(
+            startIndex + ROWS_PER_PAGE,
+            total
+        );
 
 
-            if (
-                row.dataset.active === '1'
-            ) {
-                active++;
-            }
+    for (
+        let i = startIndex;
+        i < endIndex;
+        i++
+    ) {
+
+        filteredRows[i].hidden =
+            false;
+
+    }
 
 
-            if (
-                rowDeployment === 'ongoing' ||
-                rowDeployment === 'completed'
-            ) {
-                deployed++;
-            }
+    /*
+     * =====================================================
+     * UPDATE STATISTICS
+     * =====================================================
+     */
+
+    let active = 0;
+
+    let deployed = 0;
+
+    let notDeployed = 0;
 
 
-            if (
-                rowDeployment === 'not_deployed'
-            ) {
-                notDeployed++;
-            }
+    filteredRows.forEach(row => {
 
-        });
+        if (
+            row.dataset.active === '1'
+        ) {
 
+            active++;
 
-        const totalCard =
-            document.getElementById(
-                'totalCadetsCard'
-            );
-
-        const activeCard =
-            document.getElementById(
-                'activeCadetsCard'
-            );
-
-        const deployedCard =
-            document.getElementById(
-                'deployedCadetsCard'
-            );
-
-        const notDeployedCard =
-            document.getElementById(
-                'notDeployedCard'
-            );
-
-
-        if (totalCard) {
-            totalCard.innerText = total;
-        }
-
-        if (activeCard) {
-            activeCard.innerText = active;
-        }
-
-        if (deployedCard) {
-            deployedCard.innerText = deployed;
-        }
-
-        if (notDeployedCard) {
-            notDeployedCard.innerText =
-                notDeployed;
         }
 
 
-        if (resultCount) {
+        const deployment =
+            normalize(
+                row.dataset.deployment
+            );
 
-            resultCount.innerText =
-                `${total} ${
-                    total === 1
-                        ? 'Record'
-                        : 'Records'
-                }`;
+
+        if (
+            deployment === 'ongoing' ||
+            deployment === 'completed'
+        ) {
+
+            deployed++;
+
+        }
+
+
+        if (
+            deployment === 'not_deployed'
+        ) {
+
+            notDeployed++;
+
+        }
+
+    });
+
+
+    const totalCard =
+        document.getElementById(
+            'totalCadetsCard'
+        );
+
+
+    const activeCard =
+        document.getElementById(
+            'activeCadetsCard'
+        );
+
+
+    const deployedCard =
+        document.getElementById(
+            'deployedCadetsCard'
+        );
+
+
+    const notDeployedCard =
+        document.getElementById(
+            'notDeployedCard'
+        );
+
+
+    if (totalCard) {
+
+        totalCard.innerText =
+            total;
+
+    }
+
+
+    if (activeCard) {
+
+        activeCard.innerText =
+            active;
+
+    }
+
+
+    if (deployedCard) {
+
+        deployedCard.innerText =
+            deployed;
+
+    }
+
+
+    if (notDeployedCard) {
+
+        notDeployedCard.innerText =
+            notDeployed;
+
+    }
+
+
+    /*
+     * =====================================================
+     * RESULT COUNT
+     * =====================================================
+     */
+
+    if (resultCount) {
+
+        resultCount.innerText =
+            `${total} ${
+                total === 1
+                    ? 'Record'
+                    : 'Records'
+            }`;
+
+    }
+
+
+    /*
+     * =====================================================
+     * UPDATE PAGINATION
+     * =====================================================
+     */
+
+    renderPagination(
+        total,
+        totalPages,
+        startIndex,
+        endIndex
+    );
+
+}
+
+
+/* =====================================================
+   RENDER PAGINATION
+===================================================== */
+
+function renderPagination(
+    total,
+    totalPages,
+    startIndex,
+    endIndex
+) {
+
+    if (!pagination) {
+        return;
+    }
+
+
+    /*
+     * No records = hide pagination
+     */
+
+    if (total === 0) {
+
+        pagination.style.display =
+            'none';
+
+        return;
+
+    }
+
+
+    pagination.style.display =
+        'flex';
+
+
+    /*
+     * =====================================================
+     * SHOWING 1–50 OF 241 RECORDS
+     * =====================================================
+     */
+
+    if (paginationInfo) {
+
+        paginationInfo.innerText =
+            `Showing ${
+                startIndex + 1
+            }–${
+                endIndex
+            } of ${
+                total
+            } ${
+                total === 1
+                    ? 'record'
+                    : 'records'
+            }`;
+
+    }
+
+
+    /*
+     * =====================================================
+     * PREVIOUS BUTTON
+     * =====================================================
+     */
+
+    if (prevPage) {
+
+        prevPage.disabled =
+            currentPage === 1;
+
+    }
+
+
+    /*
+     * =====================================================
+     * NEXT BUTTON
+     * =====================================================
+     */
+
+    if (nextPage) {
+
+        nextPage.disabled =
+            currentPage === totalPages;
+
+    }
+
+
+    /*
+     * =====================================================
+     * PAGE NUMBERS
+     * =====================================================
+     */
+
+    if (!paginationPages) {
+        return;
+    }
+
+
+    paginationPages.innerHTML =
+        '';
+
+
+    const maxPages = 5;
+
+
+    let startPage =
+        Math.max(
+            1,
+            currentPage -
+            Math.floor(maxPages / 2)
+        );
+
+
+    let endPage =
+        Math.min(
+            totalPages,
+            startPage + maxPages - 1
+        );
+
+
+    if (
+        endPage - startPage + 1 <
+        maxPages
+    ) {
+
+        startPage =
+            Math.max(
+                1,
+                endPage - maxPages + 1
+            );
+
+    }
+
+
+    /*
+     * FIRST PAGE
+     */
+
+    if (startPage > 1) {
+
+        createPageButton(1);
+
+
+        if (startPage > 2) {
+
+            createEllipsis();
 
         }
 
     }
 
 
+    /*
+     * PAGE NUMBERS
+     */
+
+    for (
+        let page = startPage;
+        page <= endPage;
+        page++
+    ) {
+
+        createPageButton(page);
+
+    }
+
+
+    /*
+     * LAST PAGE
+     */
+
+    if (
+        endPage < totalPages
+    ) {
+
+        if (
+            endPage < totalPages - 1
+        ) {
+
+            createEllipsis();
+
+        }
+
+
+        createPageButton(
+            totalPages
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE PAGE BUTTON
+===================================================== */
+
+function createPageButton(page) {
+
+    const button =
+        document.createElement(
+            'button'
+        );
+
+
+    button.type = 'button';
+
+
+    button.className =
+        'pagination-page';
+
+
+    button.innerText =
+        page;
+
+
+    if (
+        page === currentPage
+    ) {
+
+        button.classList.add(
+            'active'
+        );
+
+    }
+
+
+    button.addEventListener(
+        'click',
+        function () {
+
+            /*
+             * IMPORTANT:
+             *
+             * Changing page does NOT
+             * clear any filter.
+             */
+
+            currentPage =
+                page;
+
+
+            filterTable(
+                false
+            );
+
+        }
+    );
+
+
+    paginationPages.appendChild(
+        button
+    );
+
+}
+
+
+/* =====================================================
+   ELLIPSIS
+===================================================== */
+
+function createEllipsis() {
+
+    const span =
+        document.createElement(
+            'span'
+        );
+
+
+    span.className =
+        'pagination-ellipsis';
+
+
+    span.innerText =
+        '…';
+
+
+    paginationPages.appendChild(
+        span
+    );
+
+}
+
+
+/* =====================================================
+   PREVIOUS PAGE
+===================================================== */
+
+prevPage?.addEventListener(
+    'click',
+    function () {
+
+        if (
+            currentPage <= 1
+        ) {
+
+            return;
+
+        }
+
+
+        currentPage--;
+
+
+        /*
+         * false means:
+         * KEEP ALL CURRENT FILTERS
+         */
+
+        filterTable(false);
+
+    }
+);
+
+
+/* =====================================================
+   NEXT PAGE
+===================================================== */
+
+nextPage?.addEventListener(
+    'click',
+    function () {
+
+        const totalPages =
+            Math.max(
+                1,
+                Math.ceil(
+                    filteredRows.length /
+                    ROWS_PER_PAGE
+                )
+            );
+
+
+        if (
+            currentPage >= totalPages
+        ) {
+
+            return;
+
+        }
+
+
+        currentPage++;
+
+
+        /*
+         * false means:
+         * KEEP ALL CURRENT FILTERS
+         */
+
+        filterTable(false);
+
+    }
+);
+
     /* =====================================================
        FILTER EVENTS
     ===================================================== */
 
-    deploymentFilter?.addEventListener(
-        'change',
-        filterTable
-    );
+deploymentFilter?.addEventListener(
+    'change',
+    function () {
 
-    courseFilter?.addEventListener(
-        'change',
-        filterTable
-    );
+        currentPage = 1;
 
-    batchFilter?.addEventListener(
-        'change',
-        filterTable
-    );
+        filterTable(false);
 
-    verificationFilter?.addEventListener(
-        'change',
-        filterTable
-    );
-
-    searchInput?.addEventListener(
-        'input',
-        filterTable
-    );
+    }
+);
 
 
-    clearFilters?.addEventListener(
-        'click',
-        function () {
+courseFilter?.addEventListener(
+    'change',
+    function () {
 
-            if (courseFilter) {
-                courseFilter.value = '';
-            }
+        currentPage = 1;
 
-            if (batchFilter) {
-                batchFilter.value = '';
-            }
+        filterTable(false);
 
-            if (deploymentFilter) {
-                deploymentFilter.value = '';
-            }
+    }
+);
 
-            if (verificationFilter) {
-                verificationFilter.value = '';
-            }
 
-            if (searchInput) {
-                searchInput.value = '';
-            }
+batchFilter?.addEventListener(
+    'change',
+    function () {
 
-            filterTable();
+        currentPage = 1;
 
-            searchInput?.focus();
+        filterTable(false);
 
+    }
+);
+
+
+verificationFilter?.addEventListener(
+    'change',
+    function () {
+
+        currentPage = 1;
+
+        filterTable(false);
+
+    }
+);
+
+
+searchInput?.addEventListener(
+    'input',
+    function () {
+
+        currentPage = 1;
+
+        filterTable(false);
+
+    }
+);
+
+
+clearFilters?.addEventListener(
+    'click',
+    function () {
+
+        if (courseFilter) {
+            courseFilter.value = '';
         }
-    );
+
+
+        if (batchFilter) {
+            batchFilter.value = '';
+        }
+
+
+        if (deploymentFilter) {
+            deploymentFilter.value = '';
+        }
+
+
+        if (verificationFilter) {
+            verificationFilter.value = '';
+        }
+
+
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
+
+        /*
+         * Clear button intentionally
+         * returns to page 1.
+         */
+
+        currentPage = 1;
+
+
+        filterTable(false);
+
+
+        searchInput?.focus();
+
+    }
+);
 
 
     /* =====================================================

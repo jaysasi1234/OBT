@@ -2331,6 +2331,147 @@ tbody td {
         rgba(37, 99, 235, 0.38);
 }
 
+/* =========================================================
+   CADET PAGINATION
+========================================================= */
+
+.pagination-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 18px 22px;
+    border-top: 1px solid rgba(148, 163, 184, 0.12);
+    background: rgba(255, 255, 255, 0.02);
+    box-sizing: border-box;
+}
+
+.pagination-info {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.pagination-pages {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination-btn,
+.pagination-page {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled),
+.pagination-page:hover {
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.4);
+    color: #ffffff;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.pagination-page.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.pagination-ellipsis {
+    min-width: 24px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #64748b;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PAGINATION MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .pagination-wrapper {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .pagination-info {
+        text-align: center;
+    }
+
+    .pagination-controls {
+        justify-content: center;
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .pagination-wrapper {
+        padding: 12px;
+    }
+
+    .pagination-controls {
+        gap: 4px;
+    }
+
+    .pagination-pages {
+        gap: 3px;
+    }
+
+    .pagination-btn,
+    .pagination-page {
+        min-width: 32px;
+        height: 32px;
+        padding: 0 7px;
+        font-size: 12px;
+    }
+
+}
 
 /* =========================================================
    LARGE TABLET / SMALL LAPTOP
