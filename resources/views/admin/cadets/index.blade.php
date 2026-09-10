@@ -512,9 +512,9 @@
                              * PHOTO
                              */
 
-                            $photoUrl = $cadet->photo
-                                ? asset('storage/' . $cadet->photo)
-                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+                                $photoUrl = $cadet->photo
+                                    ? asset('storage/' . $cadet->photo)
+                                    : asset('images/default-avatar.png');
 
                         @endphp
 
@@ -1738,8 +1738,8 @@
        CONSTANTS
     ========================================================== */
 
-    const DEFAULT_PHOTO =
-        'https://cdn-icons-png.flaticon.com/512/3135/3135713.png';
+        const DEFAULT_PHOTO =
+            "{{ asset('images/default-avatar.png') }}";
 
 
     /* =========================================================
@@ -2026,12 +2026,6 @@ async function applyFilters() {
         );
 
 
-        /*
-         * Reconnect pagination click
-         * handling after table replacement.
-         */
-
-        initializePagination();
 
 
     }
@@ -2214,39 +2208,25 @@ clearFilters?.addEventListener(
    AJAX PAGINATION
 ========================================================= */
 
-function initializePagination() {
+cadetResults?.addEventListener(
+    'click',
+    function (event) {
 
-    const paginationLinks =
-        document.querySelectorAll(
-            '#cadetResults .pagination-links a'
-        );
-
-
-    paginationLinks.forEach(
-        function (link) {
-
-            link.addEventListener(
-                'click',
-                function (event) {
-
-                    event.preventDefault();
-
-
-                    const pageUrl =
-                        link.href;
-
-
-                    loadPaginationPage(
-                        pageUrl
-                    );
-
-                }
+        const link =
+            event.target.closest(
+                '.pagination-links a'
             );
 
+        if (!link) {
+            return;
         }
-    );
 
-}
+        event.preventDefault();
+
+        loadPaginationPage(link.href);
+
+    }
+);
 
 
 /* =========================================================
@@ -2360,12 +2340,6 @@ async function loadPaginationPage(
         );
 
 
-        /*
-         * Re-bind pagination buttons.
-         */
-
-        initializePagination();
-
 
         /*
          * Scroll smoothly to the table.
@@ -2404,13 +2378,6 @@ async function loadPaginationPage(
     }
 
 }
-
-
-/* =========================================================
-   INITIALIZE PAGINATION
-========================================================= */
-
-initializePagination();
 
 
 /* =========================================================
