@@ -373,11 +373,14 @@
     </div>
 
 
-    {{-- =========================================================
-         TABLE PANEL
-    ========================================================== --}}
+{{-- =========================================================
+     TABLE PANEL
+========================================================= --}}
 
-    <div class="table-panel">
+<div class="table-panel">
+
+    {{-- AJAX RESULTS CONTAINER --}}
+    <div id="cadetResults">
 
         <div class="table-header">
 
@@ -448,7 +451,11 @@
                              */
 
                             $verificationRaw = strtolower(
-                                trim($cadet->verification_status_label ?? $cadet->verification_status ?? '')
+                                trim(
+                                    $cadet->verification_status_label
+                                    ?? $cadet->verification_status
+                                    ?? ''
+                                )
                             );
 
                             $verification = match ($verificationRaw) {
@@ -476,7 +483,9 @@
                              */
 
                             $deployRaw = strtolower(
-                                trim($cadet->deployment->status ?? '')
+                                trim(
+                                    $cadet->deployment->status ?? ''
+                                )
                             );
 
                             $deploy = match ($deployRaw) {
@@ -760,7 +769,6 @@
     </div>
 
 </div>
-
 
 
 {{-- =========================================================
@@ -1800,170 +1808,680 @@
     }
 
 
-    /* =========================================================
-       SERVER-SIDE FILTERING
-    ========================================================== */
+/* =========================================================
+   AJAX SERVER-SIDE FILTERING
+========================================================= */
 
-    function applyFilters() {
-
-        const params =
-            new URLSearchParams();
+const cadetResults =
+    document.getElementById('cadetResults');
 
 
-        const course =
-            courseFilter?.value?.trim() || '';
+let searchTimer = null;
 
-        const batch =
-            batchFilter?.value?.trim() || '';
-
-        const deployment =
-            deploymentFilter?.value?.trim() || '';
-
-        const verification =
-            verificationFilter?.value?.trim() || '';
-
-        const search =
-            searchInput?.value?.trim() || '';
+let filterRequest = null;
 
 
-        if (course) {
-            params.set('course', course);
-        }
+/* =========================================================
+   GET CURRENT FILTERS
+========================================================= */
 
-        if (batch) {
-            params.set('batch', batch);
-        }
+function getFilterParams() {
 
-        if (deployment) {
-            params.set('deployment', deployment);
-        }
-
-        if (verification) {
-            params.set('verification', verification);
-        }
-
-        if (search) {
-            params.set('search', search);
-        }
+    const params = new URLSearchParams();
 
 
-        /*
-         * ALWAYS REMOVE PAGE
-         *
-         * When a filter changes:
-         *
-         * page=5 + course=BSMT
-         *
-         * becomes:
-         *
-         * course=BSMT
-         *
-         * so Laravel starts at page 1.
-         */
+    const course =
+        courseFilter?.value?.trim() || '';
 
-        params.delete('page');
+    const batch =
+        batchFilter?.value?.trim() || '';
 
+    const deployment =
+        deploymentFilter?.value?.trim() || '';
 
-        const queryString =
-            params.toString();
+    const verification =
+        verificationFilter?.value?.trim() || '';
+
+    const search =
+        searchInput?.value?.trim() || '';
 
 
-        const url =
-            window.location.pathname +
-            (
-                queryString
-                    ? '?' + queryString
-                    : ''
-            );
+    if (course) {
+        params.set('course', course);
+    }
+
+    if (batch) {
+        params.set('batch', batch);
+    }
+
+    if (deployment) {
+        params.set('deployment', deployment);
+    }
+
+    if (verification) {
+        params.set('verification', verification);
+    }
+
+    if (search) {
+        params.set('search', search);
+    }
 
 
-        window.location.href = url;
+    /*
+     * Every new filter starts from page 1.
+     */
+
+    params.delete('page');
+
+
+    return params;
+
+}
+
+
+/* =========================================================
+   APPLY FILTERS WITHOUT PAGE REFRESH
+========================================================= */
+
+async function applyFilters() {
+
+    if (!cadetResults) {
+        return;
+    }
+
+
+    const params =
+        getFilterParams();
+
+
+    const queryString =
+        params.toString();
+
+
+    const url =
+        window.location.pathname +
+        (
+            queryString
+                ? '?' + queryString
+                : ''
+        );
+
+
+    /*
+     * Cancel previous request if the user
+     * changes filters quickly.
+     */
+
+    if (filterRequest) {
+
+        filterRequest.abort();
 
     }
 
 
-    /* =========================================================
-       FILTER EVENTS
-    ========================================================== */
+    filterRequest =
+        new AbortController();
 
-    courseFilter?.addEventListener(
-        'change',
-        applyFilters
-    );
 
-    batchFilter?.addEventListener(
-        'change',
-        applyFilters
-    );
+    /*
+     * Loading state
+     */
 
-    deploymentFilter?.addEventListener(
-        'change',
-        applyFilters
-    );
-
-    verificationFilter?.addEventListener(
-        'change',
-        applyFilters
+    cadetResults.classList.add(
+        'is-loading'
     );
 
 
-    /* =========================================================
-       SEARCH
-    ========================================================== */
+    try {
 
-    let searchTimer = null;
+        const response =
+            await fetch(
+                url,
+                {
+                    method: 'GET',
 
+                    headers: {
+                        'X-Requested-With':
+                            'XMLHttpRequest',
 
-    searchInput?.addEventListener(
-        'input',
-        function () {
-
-            clearTimeout(searchTimer);
-
-
-            searchTimer =
-                setTimeout(
-                    function () {
-                        applyFilters();
+                        'Accept':
+                            'text/html'
                     },
-                    500
-                );
+
+                    signal:
+                        filterRequest.signal
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                'Failed to load filtered cadets.'
+            );
+
+        }
+
+
+        const html =
+            await response.text();
+
+
+        /*
+         * Convert returned Laravel page
+         * into a temporary document.
+         */
+
+        const parser =
+            new DOMParser();
+
+
+        const documentHTML =
+            parser.parseFromString(
+                html,
+                'text/html'
+            );
+
+
+        /*
+         * Find the same AJAX container
+         * from Laravel's response.
+         */
+
+        const newResults =
+            documentHTML.getElementById(
+                'cadetResults'
+            );
+
+
+        if (!newResults) {
+
+            throw new Error(
+                'Cadet results container not found.'
+            );
+
+        }
+
+
+        /*
+         * Replace ONLY the results.
+         *
+         * The whole page does NOT reload.
+         */
+
+        cadetResults.innerHTML =
+            newResults.innerHTML;
+
+
+        /*
+         * Update browser URL without refresh.
+         */
+
+        window.history.pushState(
+            {
+                filters: true
+            },
+            '',
+            url
+        );
+
+
+        /*
+         * Reconnect pagination click
+         * handling after table replacement.
+         */
+
+        initializePagination();
+
+
+    }
+    catch (error) {
+
+        /*
+         * Ignore AbortController errors.
+         */
+
+        if (
+            error.name !==
+            'AbortError'
+        ) {
+
+            console.error(
+                'Cadet filter error:',
+                error
+            );
+
+        }
+
+    }
+    finally {
+
+        cadetResults.classList.remove(
+            'is-loading'
+        );
+
+        filterRequest = null;
+
+    }
+
+}
+
+
+/* =========================================================
+   FILTER EVENTS
+========================================================= */
+
+courseFilter?.addEventListener(
+    'change',
+    function () {
+
+        applyFilters();
+
+    }
+);
+
+
+batchFilter?.addEventListener(
+    'change',
+    function () {
+
+        applyFilters();
+
+    }
+);
+
+
+deploymentFilter?.addEventListener(
+    'change',
+    function () {
+
+        applyFilters();
+
+    }
+);
+
+
+verificationFilter?.addEventListener(
+    'change',
+    function () {
+
+        applyFilters();
+
+    }
+);
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+searchInput?.addEventListener(
+    'input',
+    function () {
+
+        clearTimeout(
+            searchTimer
+        );
+
+
+        searchTimer =
+            setTimeout(
+                function () {
+
+                    applyFilters();
+
+                },
+                400
+            );
+
+    }
+);
+
+
+/* =========================================================
+   SEARCH ENTER
+========================================================= */
+
+searchInput?.addEventListener(
+    'keydown',
+    function (event) {
+
+        if (
+            event.key === 'Enter'
+        ) {
+
+            event.preventDefault();
+
+
+            clearTimeout(
+                searchTimer
+            );
+
+
+            applyFilters();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CLEAR FILTERS
+========================================================= */
+
+clearFilters?.addEventListener(
+    'click',
+    function () {
+
+        /*
+         * Reset visible controls.
+         */
+
+        if (courseFilter) {
+            courseFilter.value = '';
+        }
+
+        if (batchFilter) {
+            batchFilter.value = '';
+        }
+
+        if (deploymentFilter) {
+            deploymentFilter.value = '';
+        }
+
+        if (verificationFilter) {
+            verificationFilter.value = '';
+        }
+
+        if (searchInput) {
+            searchInput.value = '';
+        }
+
+
+        /*
+         * Reload results through AJAX,
+         * NOT through window.location.href.
+         */
+
+        applyFilters();
+
+    }
+);
+
+
+/* =========================================================
+   AJAX PAGINATION
+========================================================= */
+
+function initializePagination() {
+
+    const paginationLinks =
+        document.querySelectorAll(
+            '#cadetResults .pagination-links a'
+        );
+
+
+    paginationLinks.forEach(
+        function (link) {
+
+            link.addEventListener(
+                'click',
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    const pageUrl =
+                        link.href;
+
+
+                    loadPaginationPage(
+                        pageUrl
+                    );
+
+                }
+            );
 
         }
     );
 
+}
 
-    searchInput?.addEventListener(
-        'keydown',
-        function (event) {
 
-            if (event.key === 'Enter') {
+/* =========================================================
+   LOAD PAGINATION WITHOUT REFRESH
+========================================================= */
 
-                event.preventDefault();
+async function loadPaginationPage(
+    pageUrl
+) {
 
-                clearTimeout(searchTimer);
+    if (!cadetResults) {
+        return;
+    }
 
-                applyFilters();
 
-            }
+    if (filterRequest) {
 
-        }
+        filterRequest.abort();
+
+    }
+
+
+    filterRequest =
+        new AbortController();
+
+
+    cadetResults.classList.add(
+        'is-loading'
     );
 
 
-    /* =========================================================
-       CLEAR FILTERS
-    ========================================================== */
+    try {
 
-    clearFilters?.addEventListener(
-        'click',
-        function () {
+        const response =
+            await fetch(
+                pageUrl,
+                {
+                    method: 'GET',
 
-            window.location.href =
-                window.location.pathname;
+                    headers: {
+                        'X-Requested-With':
+                            'XMLHttpRequest',
+
+                        'Accept':
+                            'text/html'
+                    },
+
+                    signal:
+                        filterRequest.signal
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                'Failed to load pagination.'
+            );
 
         }
-    );
+
+
+        const html =
+            await response.text();
+
+
+        const parser =
+            new DOMParser();
+
+
+        const documentHTML =
+            parser.parseFromString(
+                html,
+                'text/html'
+            );
+
+
+        const newResults =
+            documentHTML.getElementById(
+                'cadetResults'
+            );
+
+
+        if (!newResults) {
+
+            throw new Error(
+                'Cadet results container not found.'
+            );
+
+        }
+
+
+        /*
+         * Replace table + pagination only.
+         */
+
+        cadetResults.innerHTML =
+            newResults.innerHTML;
+
+
+        /*
+         * Update browser URL.
+         */
+
+        window.history.pushState(
+            {
+                filters: true
+            },
+            '',
+            pageUrl
+        );
+
+
+        /*
+         * Re-bind pagination buttons.
+         */
+
+        initializePagination();
+
+
+        /*
+         * Scroll smoothly to the table.
+         */
+
+        cadetResults.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+
+    }
+    catch (error) {
+
+        if (
+            error.name !==
+            'AbortError'
+        ) {
+
+            console.error(
+                'Pagination error:',
+                error
+            );
+
+        }
+
+    }
+    finally {
+
+        cadetResults.classList.remove(
+            'is-loading'
+        );
+
+        filterRequest = null;
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE PAGINATION
+========================================================= */
+
+initializePagination();
+
+
+/* =========================================================
+   BROWSER BACK / FORWARD
+========================================================= */
+
+window.addEventListener(
+    'popstate',
+    function () {
+
+        /*
+         * Read filters from the URL.
+         */
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        if (courseFilter) {
+
+            courseFilter.value =
+                params.get('course') || '';
+
+        }
+
+
+        if (batchFilter) {
+
+            batchFilter.value =
+                params.get('batch') || '';
+
+        }
+
+
+        if (deploymentFilter) {
+
+            deploymentFilter.value =
+                params.get('deployment') || '';
+
+        }
+
+
+        if (verificationFilter) {
+
+            verificationFilter.value =
+                params.get('verification') || '';
+
+        }
+
+
+        if (searchInput) {
+
+            searchInput.value =
+                params.get('search') || '';
+
+        }
+
+
+        /*
+         * Load the corresponding page
+         * without refreshing.
+         */
+
+        loadPaginationPage(
+            window.location.href
+        );
+
+    }
+);
 
 
     /* =========================================================
