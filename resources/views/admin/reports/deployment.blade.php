@@ -776,64 +776,6 @@
 
 
         <!-- =====================================================
-                            ANALYTICS
-        ====================================================== -->
-
-        <div class="analytics-header">
-
-            <div>
-
-                <h3 class="analytics-title">
-                    Deployment Analytics
-                </h3>
-
-                <p class="analytics-subtitle">
-                    Visual overview of cadet deployment distribution.
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="chart-grid">
-
-            <!-- =================================================
-                                    PIE CHART
-            ================================================== -->
-
-            <div class="chart-card">
-
-                <div class="chart-card-header">
-
-                    <div>
-
-                        <h4>
-                            Deployment Distribution
-                        </h4>
-
-                        <small>
-                            Percentage of all cadets
-                        </small>
-
-                    </div>
-
-                    <div class="chart-icon">
-                        🥧
-                    </div>
-
-                </div>
-
-                <div class="chart-body">
-
-                    <canvas id="pieChart"></canvas>
-
-                </div>
-
-            </div>
-
-
-        <!-- =====================================================
                             REPORT ACTIONS
         ====================================================== -->
 
