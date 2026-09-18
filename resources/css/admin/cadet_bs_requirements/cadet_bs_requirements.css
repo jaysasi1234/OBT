@@ -844,16 +844,24 @@ body{
 ========================================================= */
 
 #bsRequirementsResults{
+
     position:relative;
+
     transition:opacity .2s ease;
 }
 
 #bsRequirementsResults.is-loading{
+
     opacity:.55;
+
     pointer-events:none;
 }
 
-/* Loading overlay */
+
+/* =========================================================
+   LOADING OVERLAY
+========================================================= */
+
 #bsRequirementsResults.is-loading::before{
 
     content:"";
@@ -869,7 +877,11 @@ body{
     z-index:99;
 }
 
-/* Centered spinner */
+
+/* =========================================================
+   CENTERED LOADING SPINNER
+========================================================= */
+
 #bsRequirementsResults.is-loading::after{
 
     content:"";
@@ -901,6 +913,11 @@ body{
     z-index:100;
 }
 
+
+/* =========================================================
+   SPINNER ANIMATION
+========================================================= */
+
 @keyframes bsLoadingSpin{
 
     to{
@@ -909,12 +926,6 @@ body{
 
     }
 
-}
-
-@keyframes bsLoadingSpin{
-    to{
-        transform:rotate(360deg);
-    }
 }
 
 
