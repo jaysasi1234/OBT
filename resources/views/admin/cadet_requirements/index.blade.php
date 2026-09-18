@@ -476,9 +476,6 @@
 
     </div>
 
-</div>
-
-
 {{-- =====================================================
      PAGINATION
 ====================================================== --}}
@@ -521,6 +518,8 @@
     </div>
 
 @endif
+
+</div>
 
 {{-- =========================================================
      CHECKLIST MODAL
@@ -2315,103 +2314,6 @@ function previewAttachment(url) {
 
 }
 
-
-/* =========================================================
-   SEARCH + FILTER
-========================================================= */
-
-function filterCadets() {
-
-    const search =
-        document
-            .getElementById('searchCadet')
-            .value
-            .toLowerCase()
-            .trim();
-
-
-    const batch =
-        document
-            .getElementById('batchFilter')
-            .value;
-
-
-    const course =
-        document
-            .getElementById('courseFilter')
-            .value
-            .toLowerCase();
-
-
-    const deployment =
-        document
-            .getElementById('deploymentFilter')
-            .value
-            .toLowerCase();
-
-
-    document
-        .querySelectorAll(
-            '.table tbody tr[data-cadet-id]'
-        )
-        .forEach(row => {
-
-            const rowName =
-                row.dataset.name || '';
-
-
-            const rowBatch =
-                row.dataset.batch || '';
-
-
-            const rowCourse =
-                row.dataset.course || '';
-
-
-            const rowDeployment =
-                row.dataset.deployment || '';
-
-
-            const matchSearch =
-                rowName.includes(search);
-
-
-            const matchBatch =
-                !batch ||
-                rowBatch === batch;
-
-
-            const matchCourse =
-                !course ||
-                rowCourse === course;
-
-
-            const matchDeployment =
-                !deployment ||
-                rowDeployment === deployment;
-
-
-            if (
-                matchSearch &&
-                matchBatch &&
-                matchCourse &&
-                matchDeployment
-            ) {
-
-                row.style.display = '';
-
-            }
-
-            else {
-
-                row.style.display = 'none';
-
-            }
-
-        });
-
-}
-
 /* =========================================================
    SERVER-SIDE SEARCH + FILTER
    AJAX / NO FULL PAGE REFRESH
@@ -3225,14 +3127,15 @@ function filterCadets() {
     |--------------------------------------------------------------------------
     */
 
-    window.addEventListener(
-        'popstate',
-        function () {
+        window.addEventListener(
+            'popstate',
+            function () {
 
-            window.location.reload();
+                window.location.href =
+                    window.location.href;
 
-        }
-    );
+            }
+        );
 
 })();
 

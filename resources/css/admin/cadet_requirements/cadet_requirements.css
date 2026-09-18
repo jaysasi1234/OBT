@@ -1265,6 +1265,81 @@ body {
 
 
 /* =========================================================
+   TABLE AJAX LOADING TRANSITION
+========================================================= */
+
+.card {
+    position: relative;
+}
+
+.card.is-loading {
+    pointer-events: none;
+}
+
+.card.is-loading .table-responsive {
+    opacity: .45;
+    transform: translateY(3px);
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
+}
+
+.card.is-loading::before {
+    content: "";
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    width: 40px;
+    height: 40px;
+
+    margin-left: -20px;
+    margin-top: -20px;
+
+    border-radius: 50%;
+
+    border: 3px solid rgba(147, 197, 253, .20);
+    border-top-color: #60a5fa;
+
+    animation: requirementsTableSpinner .7s linear infinite;
+
+    z-index: 100;
+}
+
+.card.is-loading::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(7, 21, 47, .30);
+
+    border-radius: 17px;
+
+    backdrop-filter: blur(2px);
+
+    z-index: 90;
+
+    pointer-events: none;
+}
+
+@keyframes requirementsTableSpinner {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+
+}
+
+
+/* =========================================================
    STATUS BADGES
 ========================================================= */
 
