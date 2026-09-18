@@ -198,39 +198,46 @@
     </div>
 
 
-    <!-- =====================================================
-         FILTER PANEL
-    ====================================================== -->
+<!-- =====================================================
+     FILTER PANEL
+====================================================== -->
 
-    <div class="vm-filter-panel">
+<div class="vm-filter-panel">
 
-        <div class="vm-filter-header">
+    <div class="vm-filter-header">
 
-            <div class="vm-filter-title">
+        <div class="vm-filter-title">
 
-                <div class="vm-filter-title-icon">
-                    ⚙
-                </div>
-
-                Filters
-
+            <div class="vm-filter-title-icon">
+                ⚙
             </div>
 
-            <button
-                type="button"
-                class="vm-clear"
-                onclick="clearFilters()"
-            >
-                Clear filters
-            </button>
+            Filters
 
         </div>
 
+        <a
+            href="{{ route('admin.verification.index') }}"
+            class="vm-clear"
+        >
+            Clear filters
+        </a>
+
+    </div>
+
+
+    <form
+        method="GET"
+        action="{{ route('admin.verification.index') }}"
+        id="verificationFilterForm"
+    >
 
         <div class="vm-filters">
 
 
-            <!-- COURSE -->
+            <!-- =================================================
+                 COURSE
+            ================================================== -->
 
             <div class="vm-dropdown">
 
@@ -252,7 +259,7 @@
                             id="courseCount"
                             class="vm-dropdown-count"
                         >
-                            0
+                            {{ count((array) request('course', [])) }}
                         </span>
 
                     </span>
@@ -271,12 +278,19 @@
 
                     @foreach($courses as $course)
 
+                        @php
+                            $selectedCourses =
+                                (array) request('course', []);
+                        @endphp
+
                         <label class="vm-option">
 
                             <input
                                 type="checkbox"
-                                value="{{ strtolower(trim($course->course)) }}"
-                                onchange="filter()"
+                                name="course[]"
+                                value="{{ $course->course }}"
+                                {{ in_array($course->course, $selectedCourses) ? 'checked' : '' }}
+                                onchange="submitFilters()"
                             >
 
                             <span>
@@ -292,7 +306,9 @@
             </div>
 
 
-            <!-- BATCH -->
+            <!-- =================================================
+                 BATCH
+            ================================================== -->
 
             <div class="vm-dropdown">
 
@@ -314,7 +330,7 @@
                             id="batchCount"
                             class="vm-dropdown-count"
                         >
-                            0
+                            {{ count((array) request('batch', [])) }}
                         </span>
 
                     </span>
@@ -333,12 +349,19 @@
 
                     @foreach($batches as $batch)
 
+                        @php
+                            $selectedBatches =
+                                (array) request('batch', []);
+                        @endphp
+
                         <label class="vm-option">
 
                             <input
                                 type="checkbox"
-                                value="{{ strtolower($batch->batch_year) }}"
-                                onchange="filter()"
+                                name="batch[]"
+                                value="{{ $batch->batch_year }}"
+                                {{ in_array((string) $batch->batch_year, array_map('strval', $selectedBatches)) ? 'checked' : '' }}
+                                onchange="submitFilters()"
                             >
 
                             <span>
@@ -354,7 +377,9 @@
             </div>
 
 
-            <!-- VERIFICATION -->
+            <!-- =================================================
+                 VERIFICATION
+            ================================================== -->
 
             <div class="vm-dropdown">
 
@@ -376,7 +401,7 @@
                             id="statusCount"
                             class="vm-dropdown-count"
                         >
-                            0
+                            {{ count((array) request('verification', [])) }}
                         </span>
 
                     </span>
@@ -393,12 +418,19 @@
                     class="vm-dropdown-menu"
                 >
 
+                    @php
+                        $selectedVerification =
+                            (array) request('verification', []);
+                    @endphp
+
                     <label class="vm-option">
 
                         <input
                             type="checkbox"
+                            name="verification[]"
                             value="verified"
-                            onchange="filter()"
+                            {{ in_array('verified', $selectedVerification) ? 'checked' : '' }}
+                            onchange="submitFilters()"
                         >
 
                         <span>
@@ -412,8 +444,10 @@
 
                         <input
                             type="checkbox"
+                            name="verification[]"
                             value="pending"
-                            onchange="filter()"
+                            {{ in_array('pending', $selectedVerification) ? 'checked' : '' }}
+                            onchange="submitFilters()"
                         >
 
                         <span>
@@ -427,7 +461,9 @@
             </div>
 
 
-            <!-- BS STATUS -->
+            <!-- =================================================
+                 BS STATUS
+            ================================================== -->
 
             <div class="vm-dropdown">
 
@@ -449,7 +485,7 @@
                             id="bsCount"
                             class="vm-dropdown-count"
                         >
-                            0
+                            {{ count((array) request('bs_status', [])) }}
                         </span>
 
                     </span>
@@ -466,12 +502,19 @@
                     class="vm-dropdown-menu"
                 >
 
+                    @php
+                        $selectedBS =
+                            (array) request('bs_status', []);
+                    @endphp
+
                     <label class="vm-option">
 
                         <input
                             type="checkbox"
+                            name="bs_status[]"
                             value="qualified"
-                            onchange="filter()"
+                            {{ in_array('qualified', $selectedBS) ? 'checked' : '' }}
+                            onchange="submitFilters()"
                         >
 
                         <span>
@@ -485,8 +528,10 @@
 
                         <input
                             type="checkbox"
+                            name="bs_status[]"
                             value="not qualified"
-                            onchange="filter()"
+                            {{ in_array('not qualified', $selectedBS) ? 'checked' : '' }}
+                            onchange="submitFilters()"
                         >
 
                         <span>
@@ -500,7 +545,9 @@
             </div>
 
 
-            <!-- SEARCH -->
+            <!-- =================================================
+                 SEARCH
+            ================================================== -->
 
             <div class="vm-search">
 
@@ -510,25 +557,32 @@
 
                 <input
                     type="text"
+                    name="search"
                     id="search"
+                    value="{{ request('search') }}"
                     placeholder="Search by name or TRB number..."
                     autocomplete="off"
                 >
 
-                <button
-                    type="button"
-                    id="searchClear"
-                    class="vm-search-clear"
-                    onclick="clearSearch()"
-                >
-                    ×
-                </button>
+                @if(request('search'))
+
+                    <a
+                        href="{{ route('admin.verification.index', request()->except('search', 'page')) }}"
+                        class="vm-search-clear show"
+                    >
+                        ×
+                    </a>
+
+                @endif
 
             </div>
 
         </div>
 
-    </div>
+    </form>
+
+</div>
+
 
 
     <!-- =====================================================
@@ -553,7 +607,7 @@
                 id="recordCount"
                 class="vm-record-count"
             >
-                {{ count($cadets) }} records
+                {{ $cadets->total() }} records
             </div>
 
         </div>
@@ -813,8 +867,51 @@
 
     </div>
 
-</div>
 
+    <!-- =====================================================
+         PAGINATION
+    ====================================================== -->
+
+    @if($cadets->hasPages())
+
+        <div class="vm-pagination">
+
+            <div class="vm-pagination-info">
+
+                Showing
+
+                <strong>
+                    {{ $cadets->firstItem() }}
+                </strong>
+
+                to
+
+                <strong>
+                    {{ $cadets->lastItem() }}
+                </strong>
+
+                of
+
+                <strong>
+                    {{ $cadets->total() }}
+                </strong>
+
+                cadets
+
+            </div>
+
+
+            <div class="vm-pagination-links">
+
+                {{ $cadets->withQueryString()->links() }}
+
+            </div>
+
+        </div>
+
+    @endif
+
+</div>
 
 <script>
 
@@ -822,7 +919,7 @@
    DROPDOWNS
 ========================================================= */
 
-function toggleDropdown(id, button){
+function toggleDropdown(id, button) {
 
     const menu =
         document.getElementById(id);
@@ -849,7 +946,7 @@ function toggleDropdown(id, button){
         });
 
 
-    if(!isOpen){
+    if (!isOpen) {
 
         menu.classList.add('show');
 
@@ -866,9 +963,9 @@ function toggleDropdown(id, button){
 
 document.addEventListener(
     'click',
-    function(e){
+    function (e) {
 
-        if(!e.target.closest('.vm-dropdown')){
+        if (!e.target.closest('.vm-dropdown')) {
 
             document
                 .querySelectorAll('.vm-dropdown-menu')
@@ -894,250 +991,36 @@ document.addEventListener(
 
 
 /* =========================================================
-   CHECKED VALUES
+   SUBMIT FILTERS
 ========================================================= */
 
-function getChecked(id){
-
-    return Array.from(
-
-        document.querySelectorAll(
-            `#${id} input:checked`
-        )
-
-    ).map(input =>
-
-        input.value
-            .toLowerCase()
-            .trim()
-
-    );
-
-}
-
-
-/* =========================================================
-   FILTER
-========================================================= */
-
-function filter(){
-
-    const courses =
-        getChecked('courseMenu');
-
-    const batches =
-        getChecked('batchMenu');
-
-    const statuses =
-        getChecked('statusMenu');
-
-    const bsStatuses =
-        getChecked('bsMenu');
-
-    const search =
-        document
-            .getElementById('search')
-            .value
-            .toLowerCase()
-            .trim();
-
-
-    let visible = 0;
-
-
-    document
-        .querySelectorAll('tbody tr')
-        .forEach(row => {
-
-            /*
-             * Ignore empty-state row
-             */
-
-            if(row.querySelector('.vm-empty')){
-
-                return;
-
-            }
-
-
-            const trb =
-                row.children[0]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const name =
-                row.children[1]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const course =
-                row.children[2]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const batch =
-                row.children[3]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const verification =
-                row.children[5]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const bs =
-                row.children[6]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const matchCourse =
-                courses.length === 0 ||
-                courses.includes(course);
-
-
-            const matchBatch =
-                batches.length === 0 ||
-                batches.includes(batch);
-
-
-            const matchVerification =
-                statuses.length === 0 ||
-                statuses.includes(verification);
-
-
-            const matchBS =
-                bsStatuses.length === 0 ||
-                bsStatuses.includes(bs);
-
-
-            const matchSearch =
-                search === '' ||
-                name.includes(search) ||
-                trb.includes(search);
-
-
-            const show =
-                matchCourse &&
-                matchBatch &&
-                matchVerification &&
-                matchBS &&
-                matchSearch;
-
-
-            row.style.display =
-                show ? '' : 'none';
-
-
-            if(show){
-
-                visible++;
-
-            }
-
-        });
-
-
-    updateFilterCounts();
-
-    updateRecordCount(visible);
-
-}
-
-
-/* =========================================================
-   FILTER COUNTS
-========================================================= */
-
-function updateFilterCounts(){
-
-    updateCount(
-        'courseMenu',
-        'courseCount'
-    );
-
-    updateCount(
-        'batchMenu',
-        'batchCount'
-    );
-
-    updateCount(
-        'statusMenu',
-        'statusCount'
-    );
-
-    updateCount(
-        'bsMenu',
-        'bsCount'
-    );
-
-}
-
-
-function updateCount(menuId, countId){
-
-    const checked =
-        document.querySelectorAll(
-            `#${menuId} input:checked`
+function submitFilters() {
+
+    const form =
+        document.getElementById(
+            'verificationFilterForm'
         );
 
 
-    const count =
-        document.getElementById(countId);
+    /*
+    |---------------------------------------------------------
+    | Always return to page 1 when changing filters.
+    |---------------------------------------------------------
+    */
 
+    const page =
+        form.querySelector(
+            'input[name="page"]'
+        );
 
-    const button =
-        count.closest('.vm-dropdown')
-            .querySelector(
-                '.vm-dropdown-button'
-            );
+    if (page) {
 
-
-    if(checked.length > 0){
-
-        count.innerText =
-            checked.length;
-
-        count.classList.add('show');
-
-        button.classList.add('active');
-
-    }else{
-
-        count.classList.remove('show');
-
-        button.classList.remove('active');
+        page.remove();
 
     }
 
-}
 
-
-/* =========================================================
-   RECORD COUNT
-========================================================= */
-
-function updateRecordCount(count){
-
-    const element =
-        document.getElementById(
-            'recordCount'
-        );
-
-
-    element.innerText =
-        `${count} ${count === 1 ? 'record' : 'records'}`;
+    form.submit();
 
 }
 
@@ -1150,109 +1033,34 @@ const searchInput =
     document.getElementById('search');
 
 
-const searchClear =
-    document.getElementById('searchClear');
+if (searchInput) {
+
+    let searchTimer;
 
 
-searchInput.addEventListener(
-    'input',
-    function(){
+    searchInput.addEventListener(
+        'input',
+        function () {
 
-        searchClear.classList.toggle(
-            'show',
-            this.value.length > 0
-        );
-
-
-        filter();
-
-    }
-);
-
-
-/* =========================================================
-   CLEAR SEARCH
-========================================================= */
-
-function clearSearch(){
-
-    searchInput.value = '';
-
-    searchClear.classList.remove(
-        'show'
-    );
-
-    filter();
-
-    searchInput.focus();
-
-}
-
-
-/* =========================================================
-   CLEAR ALL FILTERS
-========================================================= */
-
-function clearFilters(){
-
-    document
-        .querySelectorAll(
-            '.vm-dropdown-menu input[type="checkbox"]'
-        )
-        .forEach(input => {
-
-            input.checked = false;
-
-        });
-
-
-    searchInput.value = '';
-
-    searchClear.classList.remove(
-        'show'
-    );
-
-
-    filter();
-
-}
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
-
-document.addEventListener(
-    'DOMContentLoaded',
-    function(){
-
-        updateFilterCounts();
-
-
-        const rows =
-            document.querySelectorAll(
-                'tbody tr'
+            clearTimeout(
+                searchTimer
             );
 
 
-        let count = 0;
+            searchTimer =
+                setTimeout(
+                    function () {
 
+                        submitFilters();
 
-        rows.forEach(row => {
+                    },
+                    500
+                );
 
-            if(!row.querySelector('.vm-empty')){
+        }
+    );
 
-                count++;
-
-            }
-
-        });
-
-
-        updateRecordCount(count);
-
-    }
-);
+}
 
 </script>
 
