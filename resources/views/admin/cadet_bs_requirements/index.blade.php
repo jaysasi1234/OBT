@@ -775,18 +775,6 @@ function updateSubmission(id, status){
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const form = document.getElementById("filterForm");
-
-    if (!form) {
-        return;
-    }
-
-    const search = form.querySelector('input[name="search"]');
-
-    const selects = form.querySelectorAll(
-        'select.filter-control'
-    );
-
     let searchTimer = null;
 
 
@@ -796,11 +784,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function buildFilterUrl() {
 
-        const params = new URLSearchParams(
-            new FormData(form)
-        );
+        const form =
+            document.getElementById("filterForm");
 
-        // Remove empty values
+        if (!form) {
+            return window.location.href;
+        }
+
+        const params =
+            new URLSearchParams(
+                new FormData(form)
+            );
+
+
+        // Remove empty filters
         [...params.entries()].forEach(
             ([key, value]) => {
 
@@ -811,11 +808,19 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         );
 
-        const queryString = params.toString();
+
+        const baseUrl =
+            form.action ||
+            window.location.pathname;
+
+
+        const queryString =
+            params.toString();
+
 
         return queryString
-            ? `${form.action || window.location.pathname}?${queryString}`
-            : form.action || window.location.pathname;
+            ? `${baseUrl}?${queryString}`
+            : baseUrl;
     }
 
 
@@ -823,40 +828,60 @@ document.addEventListener("DOMContentLoaded", function () {
     // LOAD RESULTS
     // =====================================================
 
-    async function loadResults(url, pushState = true) {
+    async function loadResults(
+        url,
+        pushState = true
+    ) {
 
-        const results = document.getElementById(
-            "bsRequirementsResults"
-        );
+        const results =
+            document.getElementById(
+                "bsRequirementsResults"
+            );
+
 
         if (!results) {
             return;
         }
 
-        results.classList.add("is-loading");
+
+        results.classList.add(
+            "is-loading"
+        );
 
 
         try {
 
-            const response = await fetch(url, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Accept": "text/html"
-                }
-            });
+            const response =
+                await fetch(
+                    url,
+                    {
+                        headers: {
+                            "X-Requested-With":
+                                "XMLHttpRequest",
+
+                            "Accept":
+                                "text/html"
+                        }
+                    }
+                );
 
 
             if (!response.ok) {
+
                 throw new Error(
                     `HTTP ${response.status}`
                 );
+
             }
 
 
-            const html = await response.text();
+            const html =
+                await response.text();
 
 
-            const parser = new DOMParser();
+            const parser =
+                new DOMParser();
+
 
             const documentHTML =
                 parser.parseFromString(
@@ -872,28 +897,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             if (!newResults) {
+
                 throw new Error(
                     "BS requirements results container was not found."
                 );
+
             }
 
 
-            results.replaceWith(newResults);
-
-
-            // -------------------------------------------------
-            // UPDATE FILTER VALUES
-            // -------------------------------------------------
-
-            syncFiltersFromUrl(
-                new URL(url, window.location.origin)
+            // Replace ONLY the results
+            results.replaceWith(
+                newResults
             );
 
 
-            // -------------------------------------------------
-            // UPDATE BROWSER URL
-            // -------------------------------------------------
+            // Update filters
+            syncFiltersFromUrl(
+                new URL(
+                    url,
+                    window.location.origin
+                )
+            );
 
+
+            // Update browser URL
             if (pushState) {
 
                 window.history.pushState(
@@ -901,13 +928,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     "",
                     url
                 );
+
             }
 
 
-            // -------------------------------------------------
-            // RE-BIND PAGINATION
-            // -------------------------------------------------
-
+            // Rebind pagination
             bindPagination();
 
 
@@ -925,57 +950,73 @@ document.addEventListener("DOMContentLoaded", function () {
                     "bsRequirementsResults"
                 );
 
+
             if (currentResults) {
 
                 currentResults.classList.remove(
                     "is-loading"
                 );
+
             }
+
         }
+
     }
 
 
     // =====================================================
-    // SYNC FILTERS
+    // SYNC FILTER VALUES
     // =====================================================
 
     function syncFiltersFromUrl(url) {
 
-        const searchInput =
+        const search =
             document.querySelector(
-                'input[name="search"]'
-            );
-
-        const courseSelect =
-            document.querySelector(
-                'select[name="course"]'
-            );
-
-        const batchSelect =
-            document.querySelector(
-                'select[name="batch"]'
+                '#filterForm input[name="search"]'
             );
 
 
-        if (searchInput) {
+        const course =
+            document.querySelector(
+                '#filterForm select[name="course"]'
+            );
 
-            searchInput.value =
-                url.searchParams.get("search") || "";
+
+        const batch =
+            document.querySelector(
+                '#filterForm select[name="batch"]'
+            );
+
+
+        if (search) {
+
+            search.value =
+                url.searchParams.get(
+                    "search"
+                ) || "";
+
         }
 
 
-        if (courseSelect) {
+        if (course) {
 
-            courseSelect.value =
-                url.searchParams.get("course") || "";
+            course.value =
+                url.searchParams.get(
+                    "course"
+                ) || "";
+
         }
 
 
-        if (batchSelect) {
+        if (batch) {
 
-            batchSelect.value =
-                url.searchParams.get("batch") || "";
+            batch.value =
+                url.searchParams.get(
+                    "batch"
+                ) || "";
+
         }
+
     }
 
 
@@ -985,28 +1026,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function bindPagination() {
 
-        const paginationLinks =
+        const links =
             document.querySelectorAll(
                 "#bsRequirementsResults .pagination-wrapper a"
             );
 
 
-        paginationLinks.forEach(link => {
+        links.forEach(
+            link => {
 
-            link.addEventListener(
-                "click",
-                function (e) {
+                link.addEventListener(
+                    "click",
+                    function (e) {
 
-                    e.preventDefault();
+                        e.preventDefault();
 
-                    loadResults(
-                        link.href,
-                        true
-                    );
-                }
-            );
 
-        });
+                        loadResults(
+                            link.href,
+                            true
+                        );
+
+                    }
+                );
+
+            }
+        );
+
     }
 
 
@@ -1014,16 +1060,26 @@ document.addEventListener("DOMContentLoaded", function () {
     // SEARCH
     // =====================================================
 
-    if (search) {
+    document.addEventListener(
+        "input",
+        function (e) {
 
-        search.addEventListener(
-            "input",
-            function () {
+            if (
+                !e.target.matches(
+                    '#filterForm input[name="search"]'
+                )
+            ) {
+                return;
+            }
 
-                clearTimeout(searchTimer);
+
+            clearTimeout(
+                searchTimer
+            );
 
 
-                searchTimer = setTimeout(
+            searchTimer =
+                setTimeout(
                     function () {
 
                         loadResults(
@@ -1034,61 +1090,80 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                     400
                 );
-            }
-        );
-    }
+
+        }
+    );
 
 
     // =====================================================
-    // COURSE + BATCH FILTER
+    // COURSE / BATCH
     // =====================================================
 
-    selects.forEach(select => {
+    document.addEventListener(
+        "change",
+        function (e) {
 
-        select.addEventListener(
-            "change",
-            function () {
-
-                loadResults(
-                    buildFilterUrl(),
-                    true
-                );
-
+            if (
+                !e.target.matches(
+                    "#filterForm select.filter-control"
+                )
+            ) {
+                return;
             }
-        );
 
-    });
+
+            loadResults(
+                buildFilterUrl(),
+                true
+            );
+
+        }
+    );
 
 
     // =====================================================
     // ENTER KEY
     // =====================================================
 
-    if (search) {
+    document.addEventListener(
+        "keydown",
+        function (e) {
 
-        search.addEventListener(
-            "keydown",
-            function (e) {
-
-                if (e.key === "Enter") {
-
-                    e.preventDefault();
-
-                    clearTimeout(searchTimer);
-
-                    loadResults(
-                        buildFilterUrl(),
-                        true
-                    );
-                }
-
+            if (
+                e.key !== "Enter"
+            ) {
+                return;
             }
-        );
-    }
+
+
+            if (
+                !e.target.matches(
+                    '#filterForm input[name="search"]'
+                )
+            ) {
+                return;
+            }
+
+
+            e.preventDefault();
+
+
+            clearTimeout(
+                searchTimer
+            );
+
+
+            loadResults(
+                buildFilterUrl(),
+                true
+            );
+
+        }
+    );
 
 
     // =====================================================
-    // BROWSER BACK / FORWARD
+    // BACK / FORWARD
     // =====================================================
 
     window.addEventListener(
@@ -1105,10 +1180,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =====================================================
-    // INITIAL PAGINATION BINDING
+    // INITIAL PAGINATION
     // =====================================================
 
     bindPagination();
 
 });
+</script>
 @endsection
