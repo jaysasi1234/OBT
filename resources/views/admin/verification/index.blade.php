@@ -579,12 +579,13 @@
 
             </div>
 
-            <div
-                id="recordCount"
-                class="vm-record-count"
-            >
-                {{ count($cadets) }} records
-            </div>
+<div
+    id="recordCount"
+    class="vm-record-count"
+>
+    {{ $cadets->total() }}
+    {{ $cadets->total() === 1 ? 'record' : 'records' }}
+</div>
 
         </div>
 
@@ -791,17 +792,21 @@
                         <!-- ACTION -->
 
                         <td>
-
-                            <a
-                                href="{{ route('admin.verification.show', $cadet->id) }}"
-                                class="vm-view-btn"
-                            >
-
-                                👁
-
-                                View
-
-                            </a>
+<a
+    href="{{ route('admin.verification.show', [
+        'id' => $cadet->id,
+        'course' => request('course'),
+        'batch' => request('batch'),
+        'verification_status' => request('verification_status'),
+        'bs_status' => request('bs_status'),
+        'search' => request('search'),
+        'page' => request('page'),
+    ]) }}"
+    class="vm-view-btn"
+>
+    👁
+    View
+</a>
 
                         </td>
 
@@ -841,10 +846,54 @@
 
         </div>
 
+
+        <!-- =================================================
+             PAGINATION
+        ================================================== -->
+
+        @if($cadets->hasPages())
+
+            <div class="vm-pagination">
+
+                <div class="vm-pagination-info">
+
+                    Showing
+
+                    <strong>
+                        {{ $cadets->firstItem() }}
+                    </strong>
+
+                    to
+
+                    <strong>
+                        {{ $cadets->lastItem() }}
+                    </strong>
+
+                    of
+
+                    <strong>
+                        {{ $cadets->total() }}
+                    </strong>
+
+                    records
+
+                </div>
+
+
+                <div class="vm-pagination-links">
+
+                    {{ $cadets->onEachSide(1)->links() }}
+
+                </div>
+
+            </div>
+
+        @endif
+
+
     </div>
 
-</div>
-
+</div>{{ count($cadets) }} records
 
 <script>
 
@@ -924,250 +973,35 @@ document.addEventListener(
 
 
 /* =========================================================
-   CHECKED VALUES
+   SUBMIT FILTERS
 ========================================================= */
 
-function getChecked(id){
-
-    return Array.from(
-
-        document.querySelectorAll(
-            `#${id} input:checked`
-        )
-
-    ).map(input =>
-
-        input.value
-            .toLowerCase()
-            .trim()
-
-    );
-
-}
-
-
-/* =========================================================
-   FILTER
-========================================================= */
-
-function filter(){
-
-    const courses =
-        getChecked('courseMenu');
-
-    const batches =
-        getChecked('batchMenu');
-
-    const statuses =
-        getChecked('statusMenu');
-
-    const bsStatuses =
-        getChecked('bsMenu');
-
-    const search =
-        document
-            .getElementById('search')
-            .value
-            .toLowerCase()
-            .trim();
-
-
-    let visible = 0;
-
-
-    document
-        .querySelectorAll('tbody tr')
-        .forEach(row => {
-
-            /*
-             * Ignore empty-state row
-             */
-
-            if(row.querySelector('.vm-empty')){
-
-                return;
-
-            }
-
-
-            const trb =
-                row.children[0]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const name =
-                row.children[1]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const course =
-                row.children[2]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const batch =
-                row.children[3]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const verification =
-                row.children[5]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const bs =
-                row.children[6]
-                    .innerText
-                    .toLowerCase()
-                    .trim();
-
-
-            const matchCourse =
-                courses.length === 0 ||
-                courses.includes(course);
-
-
-            const matchBatch =
-                batches.length === 0 ||
-                batches.includes(batch);
-
-
-            const matchVerification =
-                statuses.length === 0 ||
-                statuses.includes(verification);
-
-
-            const matchBS =
-                bsStatuses.length === 0 ||
-                bsStatuses.includes(bs);
-
-
-            const matchSearch =
-                search === '' ||
-                name.includes(search) ||
-                trb.includes(search);
-
-
-            const show =
-                matchCourse &&
-                matchBatch &&
-                matchVerification &&
-                matchBS &&
-                matchSearch;
-
-
-            row.style.display =
-                show ? '' : 'none';
-
-
-            if(show){
-
-                visible++;
-
-            }
-
-        });
-
-
-    updateFilterCounts();
-
-    updateRecordCount(visible);
-
-}
-
-
-/* =========================================================
-   FILTER COUNTS
-========================================================= */
-
-function updateFilterCounts(){
-
-    updateCount(
-        'courseMenu',
-        'courseCount'
-    );
-
-    updateCount(
-        'batchMenu',
-        'batchCount'
-    );
-
-    updateCount(
-        'statusMenu',
-        'statusCount'
-    );
-
-    updateCount(
-        'bsMenu',
-        'bsCount'
-    );
-
-}
-
-
-function updateCount(menuId, countId){
-
-    const checked =
-        document.querySelectorAll(
-            `#${menuId} input:checked`
+function submitVerificationFilters(){
+
+    const form =
+        document.getElementById(
+            'verificationFilterForm'
         );
 
 
-    const count =
-        document.getElementById(countId);
+    /*
+     * Always return to page 1 when changing filters.
+     */
+
+    let pageInput =
+        form.querySelector(
+            'input[name="page"]'
+        );
 
 
-    const button =
-        count.closest('.vm-dropdown')
-            .querySelector(
-                '.vm-dropdown-button'
-            );
+    if(pageInput){
 
-
-    if(checked.length > 0){
-
-        count.innerText =
-            checked.length;
-
-        count.classList.add('show');
-
-        button.classList.add('active');
-
-    }else{
-
-        count.classList.remove('show');
-
-        button.classList.remove('active');
+        pageInput.remove();
 
     }
 
-}
 
-
-/* =========================================================
-   RECORD COUNT
-========================================================= */
-
-function updateRecordCount(count){
-
-    const element =
-        document.getElementById(
-            'recordCount'
-        );
-
-
-    element.innerText =
-        `${count} ${count === 1 ? 'record' : 'records'}`;
+    form.submit();
 
 }
 
@@ -1180,73 +1014,144 @@ const searchInput =
     document.getElementById('search');
 
 
-const searchClear =
-    document.getElementById('searchClear');
+if(searchInput){
+
+    let searchTimer;
 
 
-searchInput.addEventListener(
-    'input',
+    searchInput.addEventListener(
+        'input',
+        function(){
+
+            clearTimeout(searchTimer);
+
+
+            searchTimer =
+                setTimeout(function(){
+
+                    const form =
+                        document.getElementById(
+                            'verificationFilterForm'
+                        );
+
+
+                    /*
+                     * Do not keep an old pagination page
+                     * when searching.
+                     */
+
+                    let pageInput =
+                        form.querySelector(
+                            'input[name="page"]'
+                        );
+
+
+                    if(pageInput){
+
+                        pageInput.remove();
+
+                    }
+
+
+                    form.submit();
+
+                }, 500);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZE FILTER COUNTS
+========================================================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
     function(){
 
-        searchClear.classList.toggle(
-            'show',
-            this.value.length > 0
+        updateFilterCount(
+            'courseCount',
+            '{{ request('course') }}'
         );
 
 
-        filter();
+        updateFilterCount(
+            'batchCount',
+            '{{ request('batch') }}'
+        );
+
+
+        updateFilterCount(
+            'statusCount',
+            '{{ request('verification_status') }}'
+        );
+
+
+        updateFilterCount(
+            'bsCount',
+            '{{ request('bs_status') }}'
+        );
 
     }
 );
 
 
 /* =========================================================
-   CLEAR SEARCH
+   FILTER COUNT
 ========================================================= */
 
-function clearSearch(){
+function updateFilterCount(
+    elementId,
+    value
+){
 
-    searchInput.value = '';
+    const element =
+        document.getElementById(elementId);
 
-    searchClear.classList.remove(
-        'show'
-    );
 
-    filter();
+    if(!element){
 
-    searchInput.focus();
+        return;
+
+    }
+
+
+    const button =
+        element.closest('.vm-dropdown')
+            ?.querySelector(
+                '.vm-dropdown-button'
+            );
+
+
+    if(value){
+
+        element.innerText = '1';
+
+        element.classList.add('show');
+
+        if(button){
+
+            button.classList.add('active');
+
+        }
+
+    }else{
+
+        element.innerText = '0';
+
+        element.classList.remove('show');
+
+        if(button){
+
+            button.classList.remove('active');
+
+        }
+
+    }
 
 }
-
-
-/* =========================================================
-   CLEAR ALL FILTERS
-========================================================= */
-
-function clearFilters(){
-
-    document
-        .querySelectorAll(
-            '.vm-dropdown-menu input[type="checkbox"]'
-        )
-        .forEach(input => {
-
-            input.checked = false;
-
-        });
-
-
-    searchInput.value = '';
-
-    searchClear.classList.remove(
-        'show'
-    );
-
-
-    filter();
-
-}
-
 
 /* =========================================================
    INITIALIZE
