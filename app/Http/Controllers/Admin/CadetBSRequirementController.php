@@ -20,14 +20,22 @@ class CadetBSRequirementController extends Controller
 
     public function index(Request $request)
     {
-        $query = Cadet::with([
-            'batch',
-            'deployment',
-            'bsRequirements.requirement',
-        ])
-        ->whereHas('deployment', function ($q) {
-            $q->where('status', 'Completed');
-        });
+        /*
+        |--------------------------------------------------------------------------
+        | BASE QUERY
+        |--------------------------------------------------------------------------
+        | Only cadets with Completed deployment are shown.
+        */
+
+        $query = Cadet::query()
+            ->with([
+                'batch',
+                'deployment',
+                'bsRequirements.requirement',
+            ])
+            ->whereHas('deployment', function ($q) {
+                $q->where('status', 'Completed');
+            });
 
         // =====================================================
         // SEARCH
@@ -35,17 +43,29 @@ class CadetBSRequirementController extends Controller
 
         if ($request->filled('search')) {
 
-            $query->where(function ($q) use ($request) {
+            $search = trim($request->input('search'));
+
+            $query->where(function ($q) use ($search) {
 
                 $q->where(
                     'full_name',
                     'like',
-                    '%' . $request->search . '%'
+                    '%' . $search . '%'
                 )
                 ->orWhere(
                     'trb_control_number',
                     'like',
-                    '%' . $request->search . '%'
+                    '%' . $search . '%'
+                )
+                ->orWhere(
+                    'course',
+                    'like',
+                    '%' . $search . '%'
+                )
+                ->orWhere(
+                    'rank',
+                    'like',
+                    '%' . $search . '%'
                 );
 
             });
@@ -59,7 +79,7 @@ class CadetBSRequirementController extends Controller
 
             $query->where(
                 'course',
-                $request->course
+                $request->input('course')
             );
         }
 
@@ -71,39 +91,75 @@ class CadetBSRequirementController extends Controller
 
             $query->where(
                 'batch_id',
-                $request->batch
+                $request->input('batch')
             );
         }
 
         // =====================================================
-        // GET CADETS
+        // TOTAL REQUIREMENTS
+        // =====================================================
+
+        $totalRequirements = BSRequirement::count();
+
+        // =====================================================
+        // SUMMARY STATISTICS
+        // =====================================================
+        /*
+        |--------------------------------------------------------------------------
+        | IMPORTANT:
+        | We calculate the statistics from the FULL FILTERED RESULT,
+        | not only the current pagination page.
+        |--------------------------------------------------------------------------
+        */
+
+        $summaryCadets = (clone $query)
+            ->with([
+                'bsRequirements:id,cadet_id,status,attachment',
+            ])
+            ->get();
+
+        $totalCadets = $summaryCadets->count();
+
+        $requirementsSubmitted = $summaryCadets->sum(
+            fn ($cadet) =>
+                $cadet->bsRequirements->count()
+        );
+
+        $pendingCadets = $summaryCadets->filter(
+            fn ($cadet) =>
+                $cadet->bsRequirements->count() < $totalRequirements
+        )->count();
+
+        $completedCadets = $summaryCadets->filter(
+            fn ($cadet) =>
+                $cadet->bsRequirements->count() == $totalRequirements
+        )->count();
+
+        // =====================================================
+        // PAGINATION
         // =====================================================
 
         $cadets = $query
-            ->get()
-            ->sortBy(function ($cadet) {
-
-                return strtolower(
-                    $cadet->full_name
-                );
-
-            })
-            ->values();
+            ->orderBy('full_name')
+            ->paginate(25)
+            ->withQueryString();
 
         // =====================================================
         // FILTER DATA
         // =====================================================
 
-        $batches = Batch::orderBy(
-            'batch_year'
-        )->get();
+        $batches = Batch::orderBy('batch_year', 'desc')
+            ->get();
 
-        $courses = Cadet::select('course')
+        $courses = Cadet::whereHas('deployment', function ($q) {
+                $q->where('status', 'Completed');
+            })
+            ->select('course')
+            ->whereNotNull('course')
+            ->where('course', '!=', '')
             ->distinct()
             ->orderBy('course')
             ->pluck('course');
-
-        $totalRequirements = BSRequirement::count();
 
         // =====================================================
         // VIEW
@@ -115,7 +171,11 @@ class CadetBSRequirementController extends Controller
                 'cadets',
                 'totalRequirements',
                 'courses',
-                'batches'
+                'batches',
+                'totalCadets',
+                'requirementsSubmitted',
+                'pendingCadets',
+                'completedCadets'
             )
         );
     }
@@ -149,18 +209,10 @@ class CadetBSRequirementController extends Controller
         CadetBSRequirement $submission
     ) {
 
-        // =====================================================
-        // VALIDATION
-        // =====================================================
-
         $request->validate([
-            'status' =>
-                'required|in:Approved,Rejected',
-
-            'remarks' =>
-                'nullable|string|max:500',
+            'status' => 'required|in:Approved,Rejected',
+            'remarks' => 'nullable|string|max:500',
         ]);
-
 
         // =====================================================
         // LOAD RELATIONSHIPS
@@ -172,58 +224,42 @@ class CadetBSRequirementController extends Controller
         ]);
 
         $cadet = $submission->cadet;
-
         $requirement = $submission->requirement;
-
 
         // =====================================================
         // SAFETY CHECK
         // =====================================================
 
         if (!$cadet) {
-
             return response()->json([
                 'success' => false,
                 'message' => 'Cadet could not be found.',
             ], 404);
         }
 
-
         if (!$requirement) {
-
             return response()->json([
                 'success' => false,
                 'message' => 'BS requirement could not be found.',
             ], 404);
         }
 
-
         // =====================================================
-        // CHECK PREVIOUS STATUS
+        // PREVIOUS STATUS
         // =====================================================
 
         $previousStatus = $submission->status;
-
 
         // =====================================================
         // UPDATE SUBMISSION
         // =====================================================
 
         $submission->update([
-            'status' =>
-                $request->status,
-
-            'remarks' =>
-                $request->remarks,
+            'status' => $request->status,
+            'remarks' => $request->remarks,
         ]);
 
-
-        // =====================================================
-        // REFRESH
-        // =====================================================
-
         $submission->refresh();
-
 
         // =====================================================
         // UPDATE CADET BS STATUS
@@ -233,45 +269,29 @@ class CadetBSRequirementController extends Controller
             'bsRequirements',
         ]);
 
-        $totalBS =
-            $cadet->bsRequirements->count();
+        $totalBS = $cadet->bsRequirements->count();
 
-        $approvedBS =
-            $cadet->bsRequirements
-                ->where(
-                    'status',
-                    'Approved'
-                )
-                ->count();
-
+        $approvedBS = $cadet->bsRequirements
+            ->where('status', 'Approved')
+            ->count();
 
         if (
             $totalBS > 0 &&
             $approvedBS === $totalBS
         ) {
 
-            $cadet->bs_status =
-                'Qualified';
+            $cadet->bs_status = 'Qualified';
 
         } else {
 
-            $cadet->bs_status =
-                'Not Qualified';
+            $cadet->bs_status = 'Not Qualified';
         }
 
-
         $cadet->save();
-
 
         // =====================================================
         // SEND NOTIFICATION
         // =====================================================
-
-        /*
-        |--------------------------------------------------------------------------
-        | Only notify when the status actually changes.
-        |--------------------------------------------------------------------------
-        */
 
         if (
             $previousStatus !== $request->status
@@ -292,9 +312,8 @@ class CadetBSRequirementController extends Controller
             }
         }
 
-
         // =====================================================
-        // REALTIME BS EVENT
+        // REALTIME EVENT
         // =====================================================
 
         broadcast(
@@ -303,31 +322,17 @@ class CadetBSRequirementController extends Controller
             )
         )->toOthers();
 
-
         // =====================================================
         // RESPONSE
         // =====================================================
 
         return response()->json([
-
-            'success' =>
-                true,
-
-            'id' =>
-                $submission->id,
-
-            'status' =>
-                $submission->status,
-
-            'remarks' =>
-                $submission->remarks,
-
-            'cadet_id' =>
-                $cadet->id,
-
-            'bs_status' =>
-                $cadet->bs_status,
-
+            'success' => true,
+            'id' => $submission->id,
+            'status' => $submission->status,
+            'remarks' => $submission->remarks,
+            'cadet_id' => $cadet->id,
+            'bs_status' => $cadet->bs_status,
         ]);
     }
 
@@ -343,8 +348,7 @@ class CadetBSRequirementController extends Controller
         // =====================================================
 
         if (
-            $cadet->bs_status ===
-            'Legacy Qualified'
+            $cadet->bs_status === 'Legacy Qualified'
         ) {
 
             return back()->with(
@@ -353,16 +357,13 @@ class CadetBSRequirementController extends Controller
             );
         }
 
-
         // =====================================================
         // UPDATE CADET STATUS
         // =====================================================
 
         $cadet->update([
-            'bs_status' =>
-                'Legacy Qualified',
+            'bs_status' => 'Legacy Qualified',
         ]);
-
 
         // =====================================================
         // LOAD USER
@@ -372,14 +373,11 @@ class CadetBSRequirementController extends Controller
 
         $user = $cadet->user;
 
-
         // =====================================================
         // GET ALL BS REQUIREMENTS
         // =====================================================
 
-        $requirements =
-            BSRequirement::all();
-
+        $requirements = BSRequirement::all();
 
         // =====================================================
         // APPROVE ALL REQUIREMENTS
@@ -387,32 +385,27 @@ class CadetBSRequirementController extends Controller
 
         foreach ($requirements as $requirement) {
 
-            $submission =
-                CadetBSRequirement::firstOrCreate(
+            CadetBSRequirement::firstOrCreate(
 
-                    [
-                        'cadet_id' =>
-                            $cadet->id,
+                [
+                    'cadet_id' => $cadet->id,
 
-                        'b_s_requirement_id' =>
-                            $requirement->id,
-                    ],
+                    'b_s_requirement_id' =>
+                        $requirement->id,
+                ],
 
-                    [
-                        'status' =>
-                            'Approved',
+                [
+                    'status' => 'Approved',
 
-                        'remarks' =>
-                            'Legacy Graduate',
+                    'remarks' =>
+                        'Legacy Graduate',
 
-                        'attachment' =>
-                            null,
+                    'attachment' => null,
 
-                        'submitted_at' =>
-                            Carbon::now(),
-                    ]
-                );
-
+                    'submitted_at' =>
+                        Carbon::now(),
+                ]
+            );
 
             // =================================================
             // NOTIFY CADET
@@ -430,7 +423,6 @@ class CadetBSRequirementController extends Controller
                 );
             }
         }
-
 
         // =====================================================
         // SUCCESS

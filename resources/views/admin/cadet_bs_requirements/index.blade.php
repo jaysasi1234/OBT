@@ -28,76 +28,55 @@
 
 </div>
 
+<div id="bsRequirementsResults">
+
 <div class="stats-grid">
 
     <div class="stat-card blue">
-
         <div class="stat-icon">
             <i class="fa-solid fa-users"></i>
         </div>
 
         <div>
-
             <h4>Total Cadets</h4>
-
-            <h2>{{ $cadets->count() }}</h2>
-
+            <h2>{{ $totalCadets }}</h2>
         </div>
-
     </div>
 
-    <div class="stat-card green">
 
+    <div class="stat-card green">
         <div class="stat-icon">
             <i class="fa-solid fa-file-circle-check"></i>
         </div>
 
         <div>
-
             <h4>Requirements Submitted</h4>
-
-            <h2>
-                {{ $cadets->sum(fn($c)=>$c->bsRequirements->count()) }}
-            </h2>
-
+            <h2>{{ $requirementsSubmitted }}</h2>
         </div>
-
     </div>
 
-    <div class="stat-card orange">
 
+    <div class="stat-card orange">
         <div class="stat-icon">
             <i class="fa-solid fa-hourglass-half"></i>
         </div>
 
         <div>
-
             <h4>Pending Cadets</h4>
-
-            <h2>
-                {{ $cadets->filter(fn($c)=>$c->bsRequirements->count() < $totalRequirements)->count() }}
-            </h2>
-
+            <h2>{{ $pendingCadets }}</h2>
         </div>
-
     </div>
 
-    <div class="stat-card purple">
 
+    <div class="stat-card purple">
         <div class="stat-icon">
             <i class="fa-solid fa-circle-check"></i>
         </div>
 
         <div>
-
             <h4>Completed</h4>
-
-            <h2>
-                {{ $cadets->filter(fn($c)=>$c->bsRequirements->count()==$totalRequirements)->count() }}
-            </h2>
-
+            <h2>{{ $completedCadets }}</h2>
         </div>
-
     </div>
 
 </div>
@@ -138,24 +117,20 @@
 
                 <select
                     name="course"
-                    class="filter-control">
-
+                    class="filter-control"
+                >
                     <option value="">
                         All Courses
                     </option>
 
                     @foreach($courses as $course)
-
                         <option
                             value="{{ $course }}"
-                            {{ request('course')==$course ? 'selected' : '' }}>
-
+                            {{ request('course') == $course ? 'selected' : '' }}
+                        >
                             {{ $course }}
-
                         </option>
-
                     @endforeach
-
                 </select>
 
             </div>
@@ -169,24 +144,20 @@
 
                 <select
                     name="batch"
-                    class="filter-control">
-
+                    class="filter-control"
+                >
                     <option value="">
                         All Batches
                     </option>
 
                     @foreach($batches as $batch)
-
                         <option
                             value="{{ $batch->id }}"
-                            {{ request('batch')==$batch->id ? 'selected' : '' }}>
-
+                            {{ request('batch') == $batch->id ? 'selected' : '' }}
+                        >
                             {{ $batch->batch_year }}
-
                         </option>
-
                     @endforeach
-
                 </select>
 
             </div>
@@ -259,7 +230,9 @@
 
                 <tr>
 
-                    <td>{{ $loop->iteration }}</td>
+                    <td>
+                        {{ $cadets->firstItem() + $loop->index }}
+                    </td>
 
                     <td>{{ $cadet->trb_control_number }}</td>
 
@@ -333,8 +306,13 @@
         </table>
 
     </div>
+    @if($cadets->hasPages())
 
-</div>
+        <div class="pagination-wrapper">
+            {{ $cadets->withQueryString()->links() }}
+        </div>
+
+    @endif
 
 
 {{-- Hidden Modal Contents --}}
@@ -660,23 +638,29 @@
 
 </div>
 <script>
-function openModal(id,name){
+function openModal(id, name) {
 
+    const source =
+        document.getElementById("cadet-" + id);
+
+    if (!source) {
+        console.error(
+            "Cadet modal content not found:",
+            id
+        );
+
+        return;
+    }
 
     document.getElementById("bsModal")
-        .style.display="flex";
+        .style.display = "flex";
 
     document.getElementById("cadetName")
-        .innerHTML=name;
+        .textContent = name;
 
     document.getElementById("modalBody")
-        .innerHTML =
-        document.getElementById(
-            "cadet-"+id
-        ).innerHTML;
+        .innerHTML = source.innerHTML;
 }
-
-
 
 function closeModal(){
 
@@ -760,48 +744,342 @@ function updateSubmission(id, status){
     }
 }
 
-// ================================
-// AUTO FILTER
-// ================================
-
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.getElementById("filterForm");
 
-    const search =
-        document.querySelector('input[name="search"]');
+    if (!form) {
+        return;
+    }
 
-    const selects =
-        document.querySelectorAll(".filter-control");
+    const search = form.querySelector('input[name="search"]');
 
-    // Search while typing
-    search.addEventListener("keyup", function(){
+    const selects = form.querySelectorAll(
+        'select.filter-control'
+    );
 
-        clearTimeout(window.searchTimer);
+    let searchTimer = null;
 
-        window.searchTimer = setTimeout(function(){
 
-            form.submit();
+    // =====================================================
+    // BUILD FILTER URL
+    // =====================================================
 
-        },400);
+    function buildFilterUrl() {
 
-    });
+        const params = new URLSearchParams(
+            new FormData(form)
+        );
 
-    // Auto submit dropdowns
-    selects.forEach(function(item){
+        // Remove empty values
+        [...params.entries()].forEach(
+            ([key, value]) => {
 
-        if(item.tagName==="SELECT"){
+                if (!value.trim()) {
+                    params.delete(key);
+                }
 
-            item.addEventListener("change",function(){
+            }
+        );
 
-                form.submit();
+        const queryString = params.toString();
 
-            });
+        return queryString
+            ? `${form.action || window.location.pathname}?${queryString}`
+            : form.action || window.location.pathname;
+    }
 
+
+    // =====================================================
+    // LOAD RESULTS
+    // =====================================================
+
+    async function loadResults(url, pushState = true) {
+
+        const results = document.getElementById(
+            "bsRequirementsResults"
+        );
+
+        if (!results) {
+            return;
         }
 
+        results.classList.add("is-loading");
+
+
+        try {
+
+            const response = await fetch(url, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "text/html"
+                }
+            });
+
+
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP ${response.status}`
+                );
+            }
+
+
+            const html = await response.text();
+
+
+            const parser = new DOMParser();
+
+            const documentHTML =
+                parser.parseFromString(
+                    html,
+                    "text/html"
+                );
+
+
+            const newResults =
+                documentHTML.getElementById(
+                    "bsRequirementsResults"
+                );
+
+
+            if (!newResults) {
+                throw new Error(
+                    "BS requirements results container was not found."
+                );
+            }
+
+
+            results.replaceWith(newResults);
+
+
+            // -------------------------------------------------
+            // UPDATE FILTER VALUES
+            // -------------------------------------------------
+
+            syncFiltersFromUrl(
+                new URL(url, window.location.origin)
+            );
+
+
+            // -------------------------------------------------
+            // UPDATE BROWSER URL
+            // -------------------------------------------------
+
+            if (pushState) {
+
+                window.history.pushState(
+                    {},
+                    "",
+                    url
+                );
+            }
+
+
+            // -------------------------------------------------
+            // RE-BIND PAGINATION
+            // -------------------------------------------------
+
+            bindPagination();
+
+
+        } catch (error) {
+
+            console.error(
+                "BS Requirements AJAX Error:",
+                error
+            );
+
+        } finally {
+
+            const currentResults =
+                document.getElementById(
+                    "bsRequirementsResults"
+                );
+
+            if (currentResults) {
+
+                currentResults.classList.remove(
+                    "is-loading"
+                );
+            }
+        }
+    }
+
+
+    // =====================================================
+    // SYNC FILTERS
+    // =====================================================
+
+    function syncFiltersFromUrl(url) {
+
+        const searchInput =
+            document.querySelector(
+                'input[name="search"]'
+            );
+
+        const courseSelect =
+            document.querySelector(
+                'select[name="course"]'
+            );
+
+        const batchSelect =
+            document.querySelector(
+                'select[name="batch"]'
+            );
+
+
+        if (searchInput) {
+
+            searchInput.value =
+                url.searchParams.get("search") || "";
+        }
+
+
+        if (courseSelect) {
+
+            courseSelect.value =
+                url.searchParams.get("course") || "";
+        }
+
+
+        if (batchSelect) {
+
+            batchSelect.value =
+                url.searchParams.get("batch") || "";
+        }
+    }
+
+
+    // =====================================================
+    // PAGINATION
+    // =====================================================
+
+    function bindPagination() {
+
+        const paginationLinks =
+            document.querySelectorAll(
+                "#bsRequirementsResults .pagination-wrapper a"
+            );
+
+
+        paginationLinks.forEach(link => {
+
+            link.addEventListener(
+                "click",
+                function (e) {
+
+                    e.preventDefault();
+
+                    loadResults(
+                        link.href,
+                        true
+                    );
+                }
+            );
+
+        });
+    }
+
+
+    // =====================================================
+    // SEARCH
+    // =====================================================
+
+    if (search) {
+
+        search.addEventListener(
+            "input",
+            function () {
+
+                clearTimeout(searchTimer);
+
+
+                searchTimer = setTimeout(
+                    function () {
+
+                        loadResults(
+                            buildFilterUrl(),
+                            true
+                        );
+
+                    },
+                    400
+                );
+            }
+        );
+    }
+
+
+    // =====================================================
+    // COURSE + BATCH FILTER
+    // =====================================================
+
+    selects.forEach(select => {
+
+        select.addEventListener(
+            "change",
+            function () {
+
+                loadResults(
+                    buildFilterUrl(),
+                    true
+                );
+
+            }
+        );
+
     });
 
+
+    // =====================================================
+    // ENTER KEY
+    // =====================================================
+
+    if (search) {
+
+        search.addEventListener(
+            "keydown",
+            function (e) {
+
+                if (e.key === "Enter") {
+
+                    e.preventDefault();
+
+                    clearTimeout(searchTimer);
+
+                    loadResults(
+                        buildFilterUrl(),
+                        true
+                    );
+                }
+
+            }
+        );
+    }
+
+
+    // =====================================================
+    // BROWSER BACK / FORWARD
+    // =====================================================
+
+    window.addEventListener(
+        "popstate",
+        function () {
+
+            loadResults(
+                window.location.href,
+                false
+            );
+
+        }
+    );
+
+
+    // =====================================================
+    // INITIAL PAGINATION BINDING
+    // =====================================================
+
+    bindPagination();
+
 });
-</script>
 @endsection
