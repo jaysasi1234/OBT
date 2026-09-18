@@ -438,41 +438,90 @@
 
                     @forelse($grouped as $group)
 
-                        @php
+                            @php
 
-                            $total = $group['total'];
+                                /*
+                                |--------------------------------------------------------------------------
+                                | GROUP TOTAL
+                                |--------------------------------------------------------------------------
+                                */
 
-                            $completed = collect($group['cadets'])
-                                ->where('status', 'Completed')
-                                ->count();
+                                $total = $group['total'];
 
-                            $ongoing = collect($group['cadets'])
-                                ->where('status', 'Ongoing')
-                                ->count();
 
-                            $not = collect($group['cadets'])
-                                ->where('status', 'Not Deployed')
-                                ->count();
+                                /*
+                                |--------------------------------------------------------------------------
+                                | DEPLOYMENT STATUS COUNTS
+                                |--------------------------------------------------------------------------
+                                |
+                                | These values are already correctly calculated by
+                                | ReportController::buildDeploymentData().
+                                |
+                                */
 
-                            $deployed = $completed + $ongoing;
+                                $completed = $group['completed'];
 
-                            $deploymentPercent = $total
-                                ? round(($deployed / $total) * 100, 1)
-                                : 0;
+                                $ongoing = $group['ongoing'];
 
-                            $completedPercent = $total
-                                ? round(($completed / $total) * 100, 1)
-                                : 0;
+                                $not = $group['not'];
 
-                            $ongoingPercent = $total
-                                ? round(($ongoing / $total) * 100, 1)
-                                : 0;
 
-                            $notPercent = $total
-                                ? round(($not / $total) * 100, 1)
-                                : 0;
+                                /*
+                                |--------------------------------------------------------------------------
+                                | TOTAL DEPLOYED
+                                |--------------------------------------------------------------------------
+                                |
+                                | Deployed = Completed + Ongoing
+                                |
+                                */
 
-                        @endphp
+                                $deployed = $completed + $ongoing;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | DEPLOYMENT PERCENTAGE
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $deploymentPercent = $total > 0
+                                    ? round(($deployed / $total) * 100, 1)
+                                    : 0;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | COMPLETED PERCENTAGE
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $completedPercent = $total > 0
+                                    ? round(($completed / $total) * 100, 1)
+                                    : 0;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | ONGOING PERCENTAGE
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $ongoingPercent = $total > 0
+                                    ? round(($ongoing / $total) * 100, 1)
+                                    : 0;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | NOT DEPLOYED PERCENTAGE
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $notPercent = $total > 0
+                                    ? round(($not / $total) * 100, 1)
+                                    : 0;
+
+                            @endphp
 
 
                         <tr>
