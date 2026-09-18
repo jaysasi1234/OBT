@@ -48,7 +48,7 @@
             <div>
 
                 <h3 id="totalCadetsCount">
-                    {{ $cadets->count() }}
+                    {{ $totalCadets }}
                 </h3>
 
                 <span>
@@ -72,15 +72,7 @@
 
                 <h3 id="approvedRequirementsCount">
 
-                    {{
-                        $cadets->sum(function ($cadet) {
-
-                            return $cadet->onboardRequirements
-                                ->where('status', 'Approved')
-                                ->count();
-
-                        })
-                    }}
+                    {{ $approvedRequirements }}
 
                 </h3>
 
@@ -105,15 +97,7 @@
 
                 <h3 id="pendingRequirementsCount">
 
-                    {{
-                        $cadets->sum(function ($cadet) {
-
-                            return $cadet->onboardRequirements
-                                ->where('status', 'Pending')
-                                ->count();
-
-                        })
-                    }}
+                    {{ $pendingRequirements }}
 
                 </h3>
 
@@ -138,15 +122,7 @@
 
                 <h3 id="rejectedRequirementsCount">
 
-                    {{
-                        $cadets->sum(function ($cadet) {
-
-                            return $cadet->onboardRequirements
-                                ->where('status', 'Rejected')
-                                ->count();
-
-                        })
-                    }}
+                    {{ $rejectedRequirements }}
 
                 </h3>
 
@@ -315,12 +291,6 @@
                         |
                         */
 
-                        $totalRequirements =
-                            \App\Models\OnboardRequirement::where(
-                                'is_active',
-                                true
-                            )->count();
-
 
                         /*
                         |--------------------------------------------------------------------------
@@ -389,7 +359,7 @@
                     >
 
                         <td>
-                            {{ $loop->iteration }}
+                            {{ $cadets->firstItem() + $loop->index }}
                         </td>
 
 
@@ -508,6 +478,49 @@
 
 </div>
 
+
+{{-- =====================================================
+     PAGINATION
+====================================================== --}}
+
+@if($cadets->hasPages())
+
+    <div class="pagination-wrapper">
+
+        <div class="pagination-info">
+
+            Showing
+
+            <strong>
+                {{ $cadets->firstItem() }}
+            </strong>
+
+            to
+
+            <strong>
+                {{ $cadets->lastItem() }}
+            </strong>
+
+            of
+
+            <strong>
+                {{ $cadets->total() }}
+            </strong>
+
+            deployed cadets
+
+        </div>
+
+
+        <div class="pagination-links">
+
+            {{ $cadets->withQueryString()->links() }}
+
+        </div>
+
+    </div>
+
+@endif
 
 {{-- =========================================================
      CHECKLIST MODAL
@@ -2399,53 +2412,829 @@ function filterCadets() {
 
 }
 
-
 /* =========================================================
-   SEARCH LISTENER
+   SERVER-SIDE SEARCH + FILTER
+   AJAX / NO FULL PAGE REFRESH
 ========================================================= */
 
-document
-    .getElementById('searchCadet')
-    ?.addEventListener(
+(function () {
+
+    'use strict';
+
+
+    const searchInput =
+        document.getElementById('searchCadet');
+
+    const batchFilter =
+        document.getElementById('batchFilter');
+
+    const courseFilter =
+        document.getElementById('courseFilter');
+
+    const deploymentFilter =
+        document.getElementById('deploymentFilter');
+
+
+    const tableCard =
+        document.querySelector('.card');
+
+
+    let filterTimer = null;
+
+    let filterRequest = null;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BUILD FILTER URL
+    |--------------------------------------------------------------------------
+    */
+
+    function buildFilterUrl() {
+
+        const params =
+            new URLSearchParams();
+
+
+        const search =
+            searchInput?.value.trim() || '';
+
+        const batch =
+            batchFilter?.value || '';
+
+        const course =
+            courseFilter?.value || '';
+
+        const deployment =
+            deploymentFilter?.value || '';
+
+
+        if (search !== '') {
+
+            params.set(
+                'search',
+                search
+            );
+
+        }
+
+
+        if (batch !== '') {
+
+            params.set(
+                'batch',
+                batch
+            );
+
+        }
+
+
+        if (course !== '') {
+
+            params.set(
+                'course',
+                course
+            );
+
+        }
+
+
+        if (deployment !== '') {
+
+            params.set(
+                'deployment',
+                deployment
+            );
+
+        }
+
+
+        const queryString =
+            params.toString();
+
+
+        return (
+            window.location.pathname +
+            (
+                queryString
+                    ? '?' + queryString
+                    : ''
+            )
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOADING EFFECT
+    |--------------------------------------------------------------------------
+    */
+
+    function showTableLoading() {
+
+        if (!tableCard) {
+
+            return;
+
+        }
+
+
+        tableCard.classList.add(
+            'is-loading'
+        );
+
+    }
+
+
+    function hideTableLoading() {
+
+        if (!tableCard) {
+
+            return;
+
+        }
+
+
+        tableCard.classList.remove(
+            'is-loading'
+        );
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD FILTERED RESULTS
+    |--------------------------------------------------------------------------
+    */
+
+    async function applyServerFilters() {
+
+        const url =
+            buildFilterUrl();
+
+
+        if (filterRequest) {
+
+            filterRequest.abort();
+
+        }
+
+
+        filterRequest =
+            new AbortController();
+
+
+        showTableLoading();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: 'GET',
+
+                        headers: {
+
+                            'X-Requested-With':
+                                'XMLHttpRequest',
+
+                            'Accept':
+                                'text/html'
+
+                        },
+
+                        signal:
+                            filterRequest.signal
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'Failed to load cadet requirements.'
+                );
+
+            }
+
+
+            const html =
+                await response.text();
+
+
+            const parser =
+                new DOMParser();
+
+
+            const documentHTML =
+                parser.parseFromString(
+                    html,
+                    'text/html'
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | GET NEW TABLE
+            |--------------------------------------------------------------------------
+            */
+
+            const newCard =
+                documentHTML.querySelector(
+                    '.card'
+                );
+
+
+            const newPagination =
+                documentHTML.querySelector(
+                    '.pagination-wrapper'
+                );
+
+
+            if (!newCard) {
+
+                throw new Error(
+                    'Cadet requirement table not found.'
+                );
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | REPLACE TABLE
+            |--------------------------------------------------------------------------
+            */
+
+            const currentCard =
+                document.querySelector(
+                    '.card'
+                );
+
+
+            if (currentCard) {
+
+                currentCard.outerHTML =
+                    newCard.outerHTML;
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | REPLACE PAGINATION
+            |--------------------------------------------------------------------------
+            */
+
+            const currentPagination =
+                document.querySelector(
+                    '.pagination-wrapper'
+                );
+
+
+            if (currentPagination) {
+
+                if (newPagination) {
+
+                    currentPagination.outerHTML =
+                        newPagination.outerHTML;
+
+                }
+
+                else {
+
+                    currentPagination.remove();
+
+                }
+
+            }
+
+            else if (newPagination) {
+
+                const card =
+                    document.querySelector(
+                        '.card'
+                    );
+
+                if (card) {
+
+                    card.insertAdjacentHTML(
+                        'afterend',
+                        newPagination.outerHTML
+                    );
+
+                }
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE URL
+            |--------------------------------------------------------------------------
+            */
+
+            window.history.pushState(
+                {
+                    cadetRequirementFilters:
+                        true
+                },
+                '',
+                url
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE SUMMARY CARDS
+            |--------------------------------------------------------------------------
+            */
+
+            updateSummaryFromDocument(
+                documentHTML
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | REBIND PAGINATION
+            |--------------------------------------------------------------------------
+            */
+
+            bindPagination();
+
+
+        }
+
+        catch (error) {
+
+            if (
+                error.name !==
+                'AbortError'
+            ) {
+
+                console.error(
+                    'Cadet requirement filter error:',
+                    error
+                );
+
+            }
+
+        }
+
+        finally {
+
+            hideTableLoading();
+
+            filterRequest = null;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UPDATE SUMMARY CARDS
+    |--------------------------------------------------------------------------
+    */
+
+    function updateSummaryFromDocument(
+        documentHTML
+    ) {
+
+        const ids = [
+
+            'totalCadetsCount',
+
+            'approvedRequirementsCount',
+
+            'pendingRequirementsCount',
+
+            'rejectedRequirementsCount'
+
+        ];
+
+
+        ids.forEach(function (id) {
+
+            const current =
+                document.getElementById(id);
+
+            const incoming =
+                documentHTML.getElementById(id);
+
+
+            if (
+                current &&
+                incoming
+            ) {
+
+                current.textContent =
+                    incoming.textContent.trim();
+
+            }
+
+        });
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    */
+
+    function bindPagination() {
+
+        document
+            .querySelectorAll(
+                '.pagination-links a'
+            )
+            .forEach(function (link) {
+
+                link.addEventListener(
+                    'click',
+                    function (event) {
+
+                        event.preventDefault();
+
+                        loadPagination(
+                            link.href
+                        );
+
+                    }
+                );
+
+            });
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD PAGINATION PAGE
+    |--------------------------------------------------------------------------
+    */
+
+    async function loadPagination(
+        pageUrl
+    ) {
+
+        if (filterRequest) {
+
+            filterRequest.abort();
+
+        }
+
+
+        filterRequest =
+            new AbortController();
+
+
+        showTableLoading();
+
+
+        try {
+
+            const response =
+                await fetch(
+                    pageUrl,
+                    {
+                        method: 'GET',
+
+                        headers: {
+
+                            'X-Requested-With':
+                                'XMLHttpRequest',
+
+                            'Accept':
+                                'text/html'
+
+                        },
+
+                        signal:
+                            filterRequest.signal
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'Failed to load pagination.'
+                );
+
+            }
+
+
+            const html =
+                await response.text();
+
+
+            const parser =
+                new DOMParser();
+
+
+            const documentHTML =
+                parser.parseFromString(
+                    html,
+                    'text/html'
+                );
+
+
+            const newCard =
+                documentHTML.querySelector(
+                    '.card'
+                );
+
+
+            const newPagination =
+                documentHTML.querySelector(
+                    '.pagination-wrapper'
+                );
+
+
+            if (!newCard) {
+
+                throw new Error(
+                    'Table not found.'
+                );
+
+            }
+
+
+            const currentCard =
+                document.querySelector(
+                    '.card'
+                );
+
+
+            if (currentCard) {
+
+                currentCard.outerHTML =
+                    newCard.outerHTML;
+
+            }
+
+
+            const currentPagination =
+                document.querySelector(
+                    '.pagination-wrapper'
+                );
+
+
+            if (currentPagination) {
+
+                if (newPagination) {
+
+                    currentPagination.outerHTML =
+                        newPagination.outerHTML;
+
+                }
+
+                else {
+
+                    currentPagination.remove();
+
+                }
+
+            }
+
+            else if (newPagination) {
+
+                const card =
+                    document.querySelector(
+                        '.card'
+                    );
+
+                if (card) {
+
+                    card.insertAdjacentHTML(
+                        'afterend',
+                        newPagination.outerHTML
+                    );
+
+                }
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE SUMMARY
+            |--------------------------------------------------------------------------
+            */
+
+            updateSummaryFromDocument(
+                documentHTML
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UPDATE URL
+            |--------------------------------------------------------------------------
+            */
+
+            window.history.pushState(
+                {
+                    cadetRequirementPagination:
+                        true
+                },
+                '',
+                pageUrl
+            );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | REBIND PAGINATION
+            |--------------------------------------------------------------------------
+            */
+
+            bindPagination();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RETURN TO TABLE
+            |--------------------------------------------------------------------------
+            */
+
+            document
+                .querySelector('.card')
+                ?.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+        }
+
+        catch (error) {
+
+            if (
+                error.name !==
+                'AbortError'
+            ) {
+
+                console.error(
+                    'Pagination error:',
+                    error
+                );
+
+            }
+
+        }
+
+        finally {
+
+            hideTableLoading();
+
+            filterRequest = null;
+
+        }
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+
+    searchInput?.addEventListener(
         'input',
-        filterCadets
+        function () {
+
+            clearTimeout(
+                filterTimer
+            );
+
+
+            filterTimer =
+                setTimeout(
+                    function () {
+
+                        applyServerFilters();
+
+                    },
+                    400
+                );
+
+        }
     );
 
 
-/* =========================================================
-   BATCH LISTENER
-========================================================= */
+    /*
+    |--------------------------------------------------------------------------
+    | ENTER KEY
+    |--------------------------------------------------------------------------
+    */
 
-document
-    .getElementById('batchFilter')
-    ?.addEventListener(
+    searchInput?.addEventListener(
+        'keydown',
+        function (event) {
+
+            if (
+                event.key === 'Enter'
+            ) {
+
+                event.preventDefault();
+
+                clearTimeout(
+                    filterTimer
+                );
+
+                applyServerFilters();
+
+            }
+
+        }
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATCH
+    |--------------------------------------------------------------------------
+    */
+
+    batchFilter?.addEventListener(
         'change',
-        filterCadets
+        function () {
+
+            applyServerFilters();
+
+        }
     );
 
 
-/* =========================================================
-   COURSE LISTENER
-========================================================= */
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE
+    |--------------------------------------------------------------------------
+    */
 
-document
-    .getElementById('courseFilter')
-    ?.addEventListener(
+    courseFilter?.addEventListener(
         'change',
-        filterCadets
+        function () {
+
+            applyServerFilters();
+
+        }
     );
 
 
-/* =========================================================
-   DEPLOYMENT LISTENER
-========================================================= */
+    /*
+    |--------------------------------------------------------------------------
+    | DEPLOYMENT
+    |--------------------------------------------------------------------------
+    */
 
-document
-    .getElementById('deploymentFilter')
-    ?.addEventListener(
+    deploymentFilter?.addEventListener(
         'change',
-        filterCadets
+        function () {
+
+            applyServerFilters();
+
+        }
     );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | INITIAL PAGINATION BINDING
+    |--------------------------------------------------------------------------
+    */
+
+    bindPagination();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BROWSER BACK / FORWARD
+    |--------------------------------------------------------------------------
+    */
+
+    window.addEventListener(
+        'popstate',
+        function () {
+
+            window.location.reload();
+
+        }
+    );
+
+})();
 
 
 /* =========================================================

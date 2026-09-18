@@ -12,237 +12,288 @@ use App\Notifications\OnboardRequirementStatusNotification;
 
 class CadetRequirementController extends Controller
 {
-    // =========================================================
-    // INDEX
-    // =========================================================
+// =========================================================
+// INDEX
+// =========================================================
 
-    public function index()
-    {
-        $cadets = Cadet::with([
-            'batch',
-            'deployment',
-            'onboardRequirements.requirement'
-        ])
-        ->whereHas('deployment', function ($q) {
-            $q->whereIn('status', ['Ongoing', 'Completed']);
-        })
-        ->orderBy('full_name', 'asc')
-        ->get();
+public function index(Request $request)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | BASE QUERY
+    |--------------------------------------------------------------------------
+    | Only deployed cadets with Ongoing or Completed deployment.
+    */
 
-        $batches = Batch::orderBy(
-            'batch_year',
-            'desc'
-        )->get();
+    $query = Cadet::with([
+        'batch',
+        'deployment',
+        'onboardRequirements.requirement'
+    ])
+    ->whereHas('deployment', function ($q) {
+        $q->whereIn('status', [
+            'Ongoing',
+            'Completed',
+        ]);
+    });
 
-        $courses = Cadet::select('course')
-            ->distinct()
-            ->orderBy('course')
-            ->get();
 
-        return view(
-            'admin.cadet_requirements.index',
-            compact(
-                'cadets',
-                'batches',
-                'courses'
+    /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('search')) {
+
+        $search = trim($request->input('search'));
+
+        $query->where(function ($q) use ($search) {
+
+            $q->where(
+                'full_name',
+                'like',
+                '%' . $search . '%'
             )
+
+            ->orWhere(
+                'trb_control_number',
+                'like',
+                '%' . $search . '%'
+            )
+
+            ->orWhere(
+                'course',
+                'like',
+                '%' . $search . '%'
+            )
+
+            ->orWhere(
+                'rank',
+                'like',
+                '%' . $search . '%'
+            );
+        });
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATCH FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('batch')) {
+
+        $query->whereHas('batch', function ($q) use ($request) {
+
+            $q->where(
+                'batch_year',
+                $request->input('batch')
+            );
+
+        });
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if ($request->filled('course')) {
+
+        $query->where(
+            'course',
+            $request->input('course')
         );
     }
 
 
-    // =========================================================
-    // SHOW
-    // =========================================================
+    /*
+    |--------------------------------------------------------------------------
+    | DEPLOYMENT FILTER
+    |--------------------------------------------------------------------------
+    */
 
-    public function show(Cadet $cadet)
-    {
-        $cadet->load([
-            'deployment',
-            'onboardRequirements.requirement'
-        ]);
+    if ($request->filled('deployment')) {
 
-        return response()->json($cadet);
-    }
+        $deployment = strtolower(
+            trim($request->input('deployment'))
+        );
 
+        if ($deployment === 'ongoing') {
 
-    // =========================================================
-    // UPDATE REQUIREMENT STATUS
-    // =========================================================
+            $query->whereHas('deployment', function ($q) {
 
-    public function update(
-        Request $request,
-        CadetOnboardRequirement $requirement
-    ) {
-
-        // =====================================================
-        // VALIDATION
-        // =====================================================
-
-        $validated = $request->validate([
-            'status' => [
-                'required',
-                'in:Submitted,Approved,Rejected'
-            ],
-
-            'remarks' => [
-                'nullable',
-                'string',
-                'max:500'
-            ],
-        ]);
-
-
-        // =====================================================
-        // LOAD RELATIONSHIPS
-        // =====================================================
-
-        $requirement->load([
-            'cadet.user',
-            'requirement'
-        ]);
-
-
-        $cadet = $requirement->cadet;
-
-        $onboardRequirement =
-            $requirement->requirement;
-
-
-        // =====================================================
-        // SAFETY CHECK
-        // =====================================================
-
-        if (!$cadet) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Cadet could not be found.',
-            ], 404);
-        }
-
-
-        if (!$onboardRequirement) {
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Onboard requirement could not be found.',
-            ], 404);
-        }
-
-
-        // =====================================================
-        // PREVIOUS STATUS
-        // =====================================================
-
-        $previousStatus =
-            $requirement->status;
-
-
-        // =====================================================
-        // UPDATE STATUS
-        // =====================================================
-
-        $requirement->status =
-            $validated['status'];
-
-
-        // =====================================================
-        // APPROVAL INFORMATION
-        // =====================================================
-
-        if (
-            $validated['status'] === 'Approved'
-        ) {
-
-            $requirement->approved_at =
-                now();
-
-            $requirement->approved_by =
-                Auth::id();
-
-        } else {
-
-            $requirement->approved_at =
-                null;
-
-            $requirement->approved_by =
-                null;
-        }
-
-
-        // =====================================================
-        // REMARKS
-        // =====================================================
-
-        $requirement->remarks =
-            $validated['remarks']
-            ?? $requirement->remarks;
-
-
-        // =====================================================
-        // SAVE
-        // =====================================================
-
-        $requirement->save();
-
-
-        // =====================================================
-        // NOTIFY CADET
-        // =====================================================
-
-        /*
-        |--------------------------------------------------------------------------
-        | Only notify the cadet when the status actually changes.
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            $previousStatus !==
-            $validated['status']
-        ) {
-
-            $user = $cadet->user;
-
-            if ($user) {
-
-                $user->notify(
-                    new OnboardRequirementStatusNotification(
-                        $cadet,
-                        $onboardRequirement,
-                        $validated['status'],
-                        $requirement->remarks
-                    )
+                $q->where(
+                    'status',
+                    'Ongoing'
                 );
-            }
+
+            });
+
         }
 
+        elseif ($deployment === 'completed') {
 
-        // =====================================================
-        // RESPONSE
-        // =====================================================
+            $query->whereHas('deployment', function ($q) {
 
-        return response()->json([
+                $q->where(
+                    'status',
+                    'Completed'
+                );
 
-            'success' =>
-                true,
-
-            'id' =>
-                $requirement->id,
-
-            'status' =>
-                $requirement->status,
-
-            'remarks' =>
-                $requirement->remarks,
-
-            'approved_at' =>
-                $requirement->approved_at
-                    ? $requirement->approved_at
-                        ->format('M d, Y h:i A')
-                    : null,
-
-        ]);
+            });
+        }
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | TOTAL ACTIVE MASTER REQUIREMENTS
+    |--------------------------------------------------------------------------
+    */
+
+    $totalRequirements =
+        \App\Models\OnboardRequirement::where(
+            'is_active',
+            true
+        )->count();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    |
+    | Same approach as Cadet Management.
+    |
+    | 25 records per page.
+    | withQueryString() keeps:
+    |
+    | search
+    | batch
+    | course
+    | deployment
+    |
+    | when moving between pages.
+    */
+
+    $cadets = $query
+        ->orderBy(
+            'full_name',
+            'asc'
+        )
+        ->paginate(25)
+        ->withQueryString();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | BATCH FILTER OPTIONS
+    |--------------------------------------------------------------------------
+    */
+
+    $batches = Batch::orderBy(
+        'batch_year',
+        'desc'
+    )->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | COURSE FILTER OPTIONS
+    |--------------------------------------------------------------------------
+    */
+
+    $courses = Cadet::select('course')
+        ->whereNotNull('course')
+        ->where(
+            'course',
+            '!=',
+            ''
+        )
+        ->distinct()
+        ->orderBy('course')
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUMMARY COUNTS
+    |--------------------------------------------------------------------------
+    |
+    | These are calculated from the filtered dataset, not only
+    | the current 25-record page.
+    |
+    */
+
+    $summaryCadets = (clone $query)
+        ->with([
+            'onboardRequirements'
+        ])
+        ->get();
+
+
+    $totalCadets =
+        $summaryCadets->count();
+
+
+    $approvedRequirements =
+        $summaryCadets->sum(function ($cadet) {
+
+            return $cadet
+                ->onboardRequirements
+                ->where('status', 'Approved')
+                ->count();
+
+        });
+
+
+    $pendingRequirements =
+        $summaryCadets->sum(function ($cadet) {
+
+            return $cadet
+                ->onboardRequirements
+                ->where('status', 'Pending')
+                ->count();
+
+        });
+
+
+    $rejectedRequirements =
+        $summaryCadets->sum(function ($cadet) {
+
+            return $cadet
+                ->onboardRequirements
+                ->where('status', 'Rejected')
+                ->count();
+
+        });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | RETURN VIEW
+    |--------------------------------------------------------------------------
+    */
+
+    return view(
+        'admin.cadet_requirements.index',
+        compact(
+            'cadets',
+            'batches',
+            'courses',
+            'totalRequirements',
+            'totalCadets',
+            'approvedRequirements',
+            'pendingRequirements',
+            'rejectedRequirements'
+        )
+    );
+}
 
 // =========================================================
 // APPROVE ALL ONBOARD REQUIREMENTS AS LEGACY
