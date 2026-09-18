@@ -589,25 +589,26 @@
          TABLE
     ====================================================== -->
 
+<div id="verificationResults">
+
     <div class="vm-table-wrapper">
 
         <div class="vm-table-top">
 
             <div class="vm-table-title">
-
                 <span>
                     👥
                 </span>
 
                 Cadet Verification Records
-
             </div>
 
             <div
                 id="recordCount"
                 class="vm-record-count"
             >
-                {{ $cadets->total() }} records
+                {{ $cadets->total() }}
+                {{ $cadets->total() == 1 ? 'record' : 'records' }}
             </div>
 
         </div>
@@ -620,23 +621,14 @@
                 <thead>
 
                     <tr>
-
                         <th>TRB</th>
-
                         <th>Name</th>
-
                         <th>Course</th>
-
                         <th>Batch</th>
-
                         <th>Requirements</th>
-
                         <th>Verification</th>
-
                         <th>BS Status</th>
-
                         <th>Action</th>
-
                     </tr>
 
                 </thead>
@@ -644,220 +636,193 @@
 
                 <tbody>
 
-                @forelse($cadets as $cadet)
+                    @forelse($cadets as $cadet)
 
-                    @php
+                        @php
 
-                        $required =
-                            $cadet->required_documents_count ?? 0;
+                            $required =
+                                $cadet->required_documents_count ?? 0;
 
-                        $approved =
-                            $cadet->approved_documents_count ?? 0;
+                            $approved =
+                                $cadet->approved_documents_count ?? 0;
 
-                        $progress =
-                            $required > 0
-                                ? min(
-                                    100,
-                                    ($approved / $required) * 100
-                                )
-                                : 0;
+                            $progress =
+                                $required > 0
+                                    ? min(
+                                        100,
+                                        ($approved / $required) * 100
+                                    )
+                                    : 0;
 
-                        $isVerified =
-                            $required > 0 &&
-                            $approved == $required;
+                            $isVerified =
+                                $required > 0 &&
+                                $approved == $required;
 
-                        $bsRequired =
-                            $cadet->bs_required_count ?? 0;
+                            $bsRequired =
+                                $cadet->bs_required_count ?? 0;
 
-                        $bsCompleted =
-                            $cadet->bs_completed_count ?? 0;
+                            $bsCompleted =
+                                $cadet->bs_completed_count ?? 0;
 
-                        $isBSQualified =
-                            $bsRequired > 0 &&
-                            $bsCompleted == $bsRequired;
+                            $isBSQualified =
+                                $bsRequired > 0 &&
+                                $bsCompleted == $bsRequired;
 
-                    @endphp
-
-
-                    <tr>
-
-                        <!-- TRB -->
-
-                        <td>
-
-                            <span class="vm-trb">
-                                {{ $cadet->trb_control_number }}
-                            </span>
-
-                        </td>
+                        @endphp
 
 
-                        <!-- NAME -->
+                        <tr>
 
-                        <td>
-
-                            <span class="vm-name">
-                                {{ $cadet->full_name }}
-                            </span>
-
-                        </td>
+                            <td>
+                                <span class="vm-trb">
+                                    {{ $cadet->trb_control_number }}
+                                </span>
+                            </td>
 
 
-                        <!-- COURSE -->
-
-                        <td>
-                            {{ $cadet->course }}
-                        </td>
-
-
-                        <!-- BATCH -->
-
-                        <td>
-                            {{ optional($cadet->batch)->batch_year ?? '—' }}
-                        </td>
+                            <td>
+                                <span class="vm-name">
+                                    {{ $cadet->full_name }}
+                                </span>
+                            </td>
 
 
-                        <!-- REQUIREMENTS -->
+                            <td>
+                                {{ $cadet->course }}
+                            </td>
 
-                        <td>
 
-                            <div class="vm-requirement">
+                            <td>
+                                {{ optional($cadet->batch)->batch_year ?? '—' }}
+                            </td>
 
-                                <div class="vm-progress-top">
 
-                                    <span>
-                                        Completion
-                                    </span>
+                            <td>
 
-                                    <span class="vm-progress-number">
+                                <div class="vm-requirement">
 
-                                        {{ $approved }}
-                                        /
-                                        {{ $required }}
+                                    <div class="vm-progress-top">
 
-                                    </span>
+                                        <span>
+                                            Completion
+                                        </span>
+
+                                        <span class="vm-progress-number">
+                                            {{ $approved }}/{{ $required }}
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="vm-progress-track">
+
+                                        <div
+                                            class="vm-progress-fill"
+                                            style="width:{{ $progress }}%"
+                                        ></div>
+
+                                    </div>
 
                                 </div>
 
-
-                                <div class="vm-progress-track">
-
-                                    <div
-                                        class="vm-progress-fill"
-                                        style="width:{{ $progress }}%"
-                                    ></div>
-
-                                </div>
-
-                            </div>
-
-                        </td>
+                            </td>
 
 
-                        <!-- VERIFICATION -->
+                            <td>
 
-                        <td>
+                                @if($isVerified)
 
-                            @if($isVerified)
+                                    <span class="vm-status verified">
 
-                                <span class="vm-status verified">
+                                        <span class="vm-status-dot"></span>
 
-                                    <span class="vm-status-dot"></span>
+                                        Verified
 
-                                    Verified
+                                    </span>
 
-                                </span>
+                                @else
 
-                            @else
+                                    <span class="vm-status pending">
 
-                                <span class="vm-status pending">
+                                        <span class="vm-status-dot"></span>
 
-                                    <span class="vm-status-dot"></span>
+                                        Pending
 
-                                    Pending
+                                    </span>
 
-                                </span>
+                                @endif
 
-                            @endif
-
-                        </td>
+                            </td>
 
 
-                        <!-- BS STATUS -->
+                            <td>
 
-                        <td>
+                                @if($isBSQualified)
 
-                            @if($isBSQualified)
+                                    <span class="vm-status qualified">
 
-                                <span class="vm-status qualified">
+                                        <span class="vm-status-dot"></span>
 
-                                    <span class="vm-status-dot"></span>
+                                        Qualified
 
-                                    Qualified
+                                    </span>
 
-                                </span>
+                                @else
 
-                            @else
+                                    <span class="vm-status not-qualified">
 
-                                <span class="vm-status not-qualified">
+                                        <span class="vm-status-dot"></span>
 
-                                    <span class="vm-status-dot"></span>
+                                        Not Qualified
 
-                                    Not Qualified
+                                    </span>
 
-                                </span>
+                                @endif
 
-                            @endif
-
-                        </td>
+                            </td>
 
 
-                        <!-- ACTION -->
+                            <td>
 
-                        <td>
+                                <a
+                                    href="{{ route('admin.verification.show', $cadet->id) }}"
+                                    class="vm-view-btn"
+                                >
+                                    👁
+                                    View
+                                </a>
 
-                            <a
-                                href="{{ route('admin.verification.show', $cadet->id) }}"
-                                class="vm-view-btn"
+                            </td>
+
+                        </tr>
+
+                    @empty
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="vm-empty"
                             >
 
-                                👁
+                                <div class="vm-empty-icon">
+                                    📋
+                                </div>
 
-                                View
+                                <strong>
+                                    No verification records found
+                                </strong>
 
-                            </a>
+                                <span>
+                                    There are currently no cadets matching
+                                    the available records.
+                                </span>
 
-                        </td>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                @empty
-
-                    <tr>
-
-                        <td
-                            colspan="8"
-                            class="vm-empty"
-                        >
-
-                            <div class="vm-empty-icon">
-                                📋
-                            </div>
-
-                            <strong>
-                                No verification records found
-                            </strong>
-
-                            <span>
-                                There are currently no cadets matching
-                                the available records.
-                            </span>
-
-                        </td>
-
-                    </tr>
-
-                @endforelse
+                    @endforelse
 
                 </tbody>
 
@@ -868,9 +833,9 @@
     </div>
 
 
-    <!-- =====================================================
+    {{-- =====================================================
          PAGINATION
-    ====================================================== -->
+    ====================================================== --}}
 
     @if($cadets->hasPages())
 
@@ -915,152 +880,993 @@
 
 <script>
 
-/* =========================================================
-   DROPDOWNS
-========================================================= */
+(function () {
 
-function toggleDropdown(id, button) {
-
-    const menu =
-        document.getElementById(id);
-
-    const isOpen =
-        menu.classList.contains('show');
+    'use strict';
 
 
-    document
-        .querySelectorAll('.vm-dropdown-menu')
-        .forEach(item => {
+    /* =========================================================
+       ELEMENTS
+    ========================================================== */
 
-            item.classList.remove('show');
-
-        });
-
-
-    document
-        .querySelectorAll('.vm-dropdown-button')
-        .forEach(item => {
-
-            item.classList.remove('open');
-
-        });
-
-
-    if (!isOpen) {
-
-        menu.classList.add('show');
-
-        button.classList.add('open');
-
-    }
-
-}
-
-
-/* =========================================================
-   CLOSE DROPDOWNS
-========================================================= */
-
-document.addEventListener(
-    'click',
-    function (e) {
-
-        if (!e.target.closest('.vm-dropdown')) {
-
-            document
-                .querySelectorAll('.vm-dropdown-menu')
-                .forEach(menu => {
-
-                    menu.classList.remove('show');
-
-                });
-
-
-            document
-                .querySelectorAll('.vm-dropdown-button')
-                .forEach(button => {
-
-                    button.classList.remove('open');
-
-                });
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   SUBMIT FILTERS
-========================================================= */
-
-function submitFilters() {
-
-    const form =
+    const filterForm =
         document.getElementById(
             'verificationFilterForm'
         );
 
-
-    /*
-    |---------------------------------------------------------
-    | Always return to page 1 when changing filters.
-    |---------------------------------------------------------
-    */
-
-    const page =
-        form.querySelector(
-            'input[name="page"]'
+    const verificationResults =
+        document.getElementById(
+            'verificationResults'
         );
 
-    if (page) {
-
-        page.remove();
-
-    }
-
-
-    form.submit();
-
-}
+    const searchInput =
+        document.getElementById(
+            'search'
+        );
 
 
-/* =========================================================
-   SEARCH
-========================================================= */
+    /* =========================================================
+       REQUEST CONTROL
+    ========================================================== */
 
-const searchInput =
-    document.getElementById('search');
+    let filterRequest = null;
 
-
-if (searchInput) {
-
-    let searchTimer;
+    let searchTimer = null;
 
 
-    searchInput.addEventListener(
-        'input',
-        function () {
+    /* =========================================================
+       DROPDOWNS
+    ========================================================== */
 
-            clearTimeout(
-                searchTimer
-            );
+    window.toggleDropdown = function (
+        id,
+        button
+    ) {
+
+        const menu =
+            document.getElementById(id);
+
+        if (!menu) {
+            return;
+        }
 
 
-            searchTimer =
-                setTimeout(
-                    function () {
+        const isOpen =
+            menu.classList.contains('show');
 
-                        submitFilters();
 
-                    },
-                    500
-                );
+        /*
+         * Close every dropdown first.
+         */
+
+        document
+            .querySelectorAll(
+                '.vm-dropdown-menu'
+            )
+            .forEach(function (item) {
+
+                item.classList.remove('show');
+
+            });
+
+
+        document
+            .querySelectorAll(
+                '.vm-dropdown-button'
+            )
+            .forEach(function (item) {
+
+                item.classList.remove('open');
+
+            });
+
+
+        /*
+         * Open selected dropdown.
+         */
+
+        if (!isOpen) {
+
+            menu.classList.add('show');
+
+            button.classList.add('open');
+
+        }
+
+    };
+
+
+    /* =========================================================
+       CLOSE DROPDOWNS WHEN CLICKING OUTSIDE
+    ========================================================== */
+
+    document.addEventListener(
+        'click',
+        function (event) {
+
+            if (
+                !event.target.closest(
+                    '.vm-dropdown'
+                )
+            ) {
+
+                document
+                    .querySelectorAll(
+                        '.vm-dropdown-menu'
+                    )
+                    .forEach(function (menu) {
+
+                        menu.classList.remove(
+                            'show'
+                        );
+
+                    });
+
+
+                document
+                    .querySelectorAll(
+                        '.vm-dropdown-button'
+                    )
+                    .forEach(function (button) {
+
+                        button.classList.remove(
+                            'open'
+                        );
+
+                    });
+
+            }
 
         }
     );
 
-}
+
+    /* =========================================================
+       GET FILTER PARAMETERS
+    ========================================================== */
+
+    function getFilterParams() {
+
+        const params =
+            new URLSearchParams();
+
+
+        if (!filterForm) {
+            return params;
+        }
+
+
+        /*
+         * IMPORTANT:
+         *
+         * FormData automatically preserves
+         * multiple values such as:
+         *
+         * course[]=BSMT
+         * course[]=BSMARE
+         */
+
+        const formData =
+            new FormData(filterForm);
+
+
+        for (
+            const [
+                key,
+                value
+            ]
+            of formData.entries()
+        ) {
+
+            const cleanValue =
+                String(value).trim();
+
+
+            /*
+             * Ignore empty values.
+             */
+
+            if (
+                cleanValue === ''
+            ) {
+                continue;
+            }
+
+
+            /*
+             * Always start filtering
+             * from page 1.
+             */
+
+            if (
+                key === 'page'
+            ) {
+                continue;
+            }
+
+
+            params.append(
+                key,
+                cleanValue
+            );
+
+        }
+
+
+        return params;
+
+    }
+
+
+    /* =========================================================
+       BUILD URL
+    ========================================================== */
+
+    function buildFilterUrl() {
+
+        const params =
+            getFilterParams();
+
+
+        const queryString =
+            params.toString();
+
+
+        return (
+            window.location.pathname +
+            (
+                queryString
+                    ? '?' + queryString
+                    : ''
+            )
+        );
+
+    }
+
+
+    /* =========================================================
+       UPDATE DROPDOWN COUNTS
+    ========================================================== */
+
+    function updateFilterCounts() {
+
+        const courseCount =
+            document.querySelectorAll(
+                'input[name="course[]"]:checked'
+            ).length;
+
+
+        const batchCount =
+            document.querySelectorAll(
+                'input[name="batch[]"]:checked'
+            ).length;
+
+
+        const verificationCount =
+            document.querySelectorAll(
+                'input[name="verification[]"]:checked'
+            ).length;
+
+
+        const bsCount =
+            document.querySelectorAll(
+                'input[name="bs_status[]"]:checked'
+            ).length;
+
+
+        const courseCounter =
+            document.getElementById(
+                'courseCount'
+            );
+
+        const batchCounter =
+            document.getElementById(
+                'batchCount'
+            );
+
+        const verificationCounter =
+            document.getElementById(
+                'statusCount'
+            );
+
+        const bsCounter =
+            document.getElementById(
+                'bsCount'
+            );
+
+
+        if (courseCounter) {
+
+            courseCounter.textContent =
+                courseCount;
+
+        }
+
+
+        if (batchCounter) {
+
+            batchCounter.textContent =
+                batchCount;
+
+        }
+
+
+        if (verificationCounter) {
+
+            verificationCounter.textContent =
+                verificationCount;
+
+        }
+
+
+        if (bsCounter) {
+
+            bsCounter.textContent =
+                bsCount;
+
+        }
+
+    }
+
+
+    /* =========================================================
+       LOAD FILTERED RESULTS
+       WITHOUT PAGE REFRESH
+    ========================================================== */
+
+    async function applyFilters() {
+
+        if (
+            !verificationResults
+        ) {
+
+            return;
+
+        }
+
+
+        const url =
+            buildFilterUrl();
+
+
+        /*
+         * Cancel previous request.
+         */
+
+        if (filterRequest) {
+
+            filterRequest.abort();
+
+        }
+
+
+        filterRequest =
+            new AbortController();
+
+
+        /*
+         * Loading state.
+         */
+
+        verificationResults.classList.add(
+            'is-loading'
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: 'GET',
+
+                        headers: {
+
+                            'X-Requested-With':
+                                'XMLHttpRequest',
+
+                            'Accept':
+                                'text/html'
+
+                        },
+
+                        signal:
+                            filterRequest.signal
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'Failed to load verification records.'
+                );
+
+            }
+
+
+            const html =
+                await response.text();
+
+
+            /*
+             * Convert returned HTML
+             * into a temporary document.
+             */
+
+            const parser =
+                new DOMParser();
+
+
+            const documentHTML =
+                parser.parseFromString(
+                    html,
+                    'text/html'
+                );
+
+
+            /*
+             * Find AJAX container
+             * inside Laravel response.
+             */
+
+            const newResults =
+                documentHTML.getElementById(
+                    'verificationResults'
+                );
+
+
+            if (!newResults) {
+
+                throw new Error(
+                    'Verification results container not found.'
+                );
+
+            }
+
+
+            /*
+             * Replace ONLY the results.
+             *
+             * The page itself does NOT reload.
+             */
+
+            verificationResults.innerHTML =
+                newResults.innerHTML;
+
+
+            /*
+             * Update browser URL
+             * without refreshing.
+             */
+
+            window.history.pushState(
+                {
+                    verificationFilters: true
+                },
+                '',
+                url
+            );
+
+
+            /*
+             * Refresh filter counters.
+             */
+
+            updateFilterCounts();
+
+
+        }
+        catch (error) {
+
+            /*
+             * Ignore cancelled requests.
+             */
+
+            if (
+                error.name !==
+                'AbortError'
+            ) {
+
+                console.error(
+                    'Verification filter error:',
+                    error
+                );
+
+            }
+
+        }
+        finally {
+
+            verificationResults.classList.remove(
+                'is-loading'
+            );
+
+            filterRequest = null;
+
+        }
+
+    }
+
+
+    /* =========================================================
+       FILTER CHECKBOX EVENTS
+    ========================================================== */
+
+    document.addEventListener(
+        'change',
+        function (event) {
+
+            const checkbox =
+                event.target.closest(
+                    'input[type="checkbox"]'
+                );
+
+
+            if (!checkbox) {
+                return;
+            }
+
+
+            /*
+             * Only process Verification filters.
+             */
+
+            const isVerificationFilter =
+                checkbox.name === 'course[]' ||
+                checkbox.name === 'batch[]' ||
+                checkbox.name === 'verification[]' ||
+                checkbox.name === 'bs_status[]';
+
+
+            if (!isVerificationFilter) {
+                return;
+            }
+
+
+            updateFilterCounts();
+
+            applyFilters();
+
+        }
+    );
+
+
+    /* =========================================================
+       SEARCH
+    ========================================================== */
+
+    if (searchInput) {
+
+        searchInput.addEventListener(
+            'input',
+            function () {
+
+                clearTimeout(
+                    searchTimer
+                );
+
+
+                searchTimer =
+                    setTimeout(
+                        function () {
+
+                            applyFilters();
+
+                        },
+                        400
+                    );
+
+            }
+        );
+
+
+        /*
+         * Search immediately on Enter.
+         */
+
+        searchInput.addEventListener(
+            'keydown',
+            function (event) {
+
+                if (
+                    event.key === 'Enter'
+                ) {
+
+                    event.preventDefault();
+
+
+                    clearTimeout(
+                        searchTimer
+                    );
+
+
+                    applyFilters();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       PAGINATION
+       WITHOUT PAGE REFRESH
+    ========================================================== */
+
+    verificationResults?.addEventListener(
+        'click',
+        function (event) {
+
+            const link =
+                event.target.closest(
+                    '.vm-pagination-links a'
+                );
+
+
+            if (!link) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            loadPaginationPage(
+                link.href
+            );
+
+        }
+    );
+
+
+    /* =========================================================
+       LOAD PAGINATION PAGE
+    ========================================================== */
+
+    async function loadPaginationPage(
+        pageUrl
+    ) {
+
+        if (
+            !verificationResults
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+         * Cancel previous request.
+         */
+
+        if (filterRequest) {
+
+            filterRequest.abort();
+
+        }
+
+
+        filterRequest =
+            new AbortController();
+
+
+        verificationResults.classList.add(
+            'is-loading'
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    pageUrl,
+                    {
+                        method: 'GET',
+
+                        headers: {
+
+                            'X-Requested-With':
+                                'XMLHttpRequest',
+
+                            'Accept':
+                                'text/html'
+
+                        },
+
+                        signal:
+                            filterRequest.signal
+
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    'Failed to load verification pagination.'
+                );
+
+            }
+
+
+            const html =
+                await response.text();
+
+
+            const parser =
+                new DOMParser();
+
+
+            const documentHTML =
+                parser.parseFromString(
+                    html,
+                    'text/html'
+                );
+
+
+            const newResults =
+                documentHTML.getElementById(
+                    'verificationResults'
+                );
+
+
+            if (!newResults) {
+
+                throw new Error(
+                    'Verification results container not found.'
+                );
+
+            }
+
+
+            /*
+             * Replace table + pagination.
+             */
+
+            verificationResults.innerHTML =
+                newResults.innerHTML;
+
+
+            /*
+             * Update URL.
+             */
+
+            window.history.pushState(
+                {
+                    verificationFilters: true
+                },
+                '',
+                pageUrl
+            );
+
+
+            /*
+             * Keep the page position
+             * around the table.
+             */
+
+            verificationResults.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+
+        }
+        catch (error) {
+
+            if (
+                error.name !==
+                'AbortError'
+            ) {
+
+                console.error(
+                    'Verification pagination error:',
+                    error
+                );
+
+            }
+
+        }
+        finally {
+
+            verificationResults.classList.remove(
+                'is-loading'
+            );
+
+            filterRequest = null;
+
+        }
+
+    }
+
+
+    /* =========================================================
+       BROWSER BACK / FORWARD
+    ========================================================== */
+
+    window.addEventListener(
+        'popstate',
+        function () {
+
+            /*
+             * Reload the results using
+             * the current URL.
+             */
+
+            loadPaginationPage(
+                window.location.href
+            );
+
+
+            /*
+             * Synchronize checkboxes
+             * with URL.
+             */
+
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+
+            document
+                .querySelectorAll(
+                    'input[name="course[]"]'
+                )
+                .forEach(function (checkbox) {
+
+                    checkbox.checked =
+                        params
+                            .getAll('course[]')
+                            .includes(
+                                checkbox.value
+                            );
+
+                });
+
+
+            document
+                .querySelectorAll(
+                    'input[name="batch[]"]'
+                )
+                .forEach(function (checkbox) {
+
+                    checkbox.checked =
+                        params
+                            .getAll('batch[]')
+                            .includes(
+                                checkbox.value
+                            );
+
+                });
+
+
+            document
+                .querySelectorAll(
+                    'input[name="verification[]"]'
+                )
+                .forEach(function (checkbox) {
+
+                    checkbox.checked =
+                        params
+                            .getAll('verification[]')
+                            .includes(
+                                checkbox.value
+                            );
+
+                });
+
+
+            document
+                .querySelectorAll(
+                    'input[name="bs_status[]"]'
+                )
+                .forEach(function (checkbox) {
+
+                    checkbox.checked =
+                        params
+                            .getAll('bs_status[]')
+                            .includes(
+                                checkbox.value
+                            );
+
+                });
+
+
+            if (searchInput) {
+
+                searchInput.value =
+                    params.get('search') || '';
+
+            }
+
+
+            updateFilterCounts();
+
+        }
+    );
+
+
+    /* =========================================================
+       CLEAR FILTERS
+    ========================================================== */
+
+    const clearButton =
+        document.querySelector(
+            '.vm-clear'
+        );
+
+
+    if (clearButton) {
+
+        clearButton.addEventListener(
+            'click',
+            function (event) {
+
+                event.preventDefault();
+
+
+                /*
+                 * Uncheck all filters.
+                 */
+
+                document
+                    .querySelectorAll(
+                        'input[type="checkbox"]'
+                    )
+                    .forEach(function (checkbox) {
+
+                        checkbox.checked = false;
+
+                    });
+
+
+                /*
+                 * Clear search.
+                 */
+
+                if (searchInput) {
+
+                    searchInput.value = '';
+
+                }
+
+
+                updateFilterCounts();
+
+
+                /*
+                 * Load first page
+                 * through AJAX.
+                 */
+
+                const clearUrl =
+                    clearButton.href;
+
+
+                loadPaginationPage(
+                    clearUrl
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE COUNTERS
+    ========================================================== */
+
+    updateFilterCounts();
+
+})();
 
 </script>
 
