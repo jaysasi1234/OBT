@@ -9,7 +9,6 @@ use App\Models\Document;
 use Illuminate\Http\Request;
 use App\Notifications\VerificationRequirementStatusNotification;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class VerificationController extends Controller
 {
@@ -19,11 +18,11 @@ class VerificationController extends Controller
 
     public function index(Request $request)
     {
-        $query = Cadet::with('batch')
-            ->withCount([
-                'documents',
-                'bsRequirements'
-            ])
+        $query = Cadet::with([
+            'batch',
+            'documents',
+            'bsRequirements'
+        ])
         ->orderByRaw('LOWER(full_name) ASC');
 
 
@@ -31,7 +30,7 @@ class VerificationController extends Controller
         // FILTERS
         // =====================================================
 
-        if ($request->filled('course')) {
+        if ($request->course) {
 
             $query->where(
                 'course',
@@ -40,7 +39,7 @@ class VerificationController extends Controller
         }
 
 
-        if ($request->filled('batch')) {
+        if ($request->batch) {
 
             $query->whereHas(
                 'batch',
@@ -50,65 +49,44 @@ class VerificationController extends Controller
                         'batch_year',
                         $request->batch
                     );
-
                 }
             );
         }
 
 
-        /*
-         * Verification filter
-         *
-         * IMPORTANT:
-         * Verification status is calculated from the documents,
-         * so we apply this filter AFTER the calculations below.
-         */
+        if ($request->verification_status) {
 
-
-        /*
-         * BS status filter
-         *
-         * IMPORTANT:
-         * BS status is also calculated from BS requirements,
-         * so we apply this filter AFTER the calculations below.
-         */
-
-
-        // =====================================================
-        // SEARCH
-        // =====================================================
-
-        if ($request->filled('search')) {
-
-            $search = trim($request->search);
-
-            $query->where(function ($q) use ($search) {
-
-                $q->where(
-                    'full_name',
-                    'like',
-                    "%{$search}%"
-                )
-
-                ->orWhere(
-                    'trb_control_number',
-                    'like',
-                    "%{$search}%"
-                );
-
-            });
+            $query->where(
+                'verification_status',
+                $request->verification_status
+            );
         }
 
 
-        // =====================================================
-        // GET FILTERED BASE RECORDS
-        // =====================================================
+        if ($request->bs_status) {
 
-        $allCadets = $query->get();
+            $query->where(
+                'bs_status',
+                $request->bs_status
+            );
+        }
+
+
+        if ($request->search) {
+
+            $query->where(
+                'full_name',
+                'like',
+                "%{$request->search}%"
+            );
+        }
+
+
+        $cadets = $query->get();
 
 
         // =====================================================
-        // TOTAL SYSTEM REQUIREMENTS
+        // TOTAL REQUIREMENTS
         // =====================================================
 
         $totalRequirements = Document::count();
@@ -118,8 +96,7 @@ class VerificationController extends Controller
         // CALCULATE EACH CADET
         // =====================================================
 
-        foreach ($allCadets as $cadet) {
-
+        foreach ($cadets as $cadet) {
 
             // -------------------------------------------------
             // VERIFICATION
@@ -141,15 +118,19 @@ class VerificationController extends Controller
                 $approved;
 
 
-            $isVerified =
+            if (
                 $totalRequirements > 0 &&
-                $approved == $totalRequirements;
+                $approved == $totalRequirements
+            ) {
 
+                $cadet->verification_status =
+                    'Verified';
 
-            $cadet->verification_status =
-                $isVerified
-                    ? 'Verified'
-                    : 'Pending';
+            } else {
+
+                $cadet->verification_status =
+                    'Pending';
+            }
 
 
             // -------------------------------------------------
@@ -180,15 +161,19 @@ class VerificationController extends Controller
                 $completedBS;
 
 
-            $isBSQualified =
+            if (
                 $totalBS > 0 &&
-                $completedBS == $totalBS;
+                $completedBS == $totalBS
+            ) {
 
+                $cadet->bs_status =
+                    'Qualified';
 
-            $cadet->bs_status =
-                $isBSQualified
-                    ? 'Qualified'
-                    : 'Not Qualified';
+            } else {
+
+                $cadet->bs_status =
+                    'Not Qualified';
+            }
 
 
             // -------------------------------------------------
@@ -201,61 +186,15 @@ class VerificationController extends Controller
 
 
         // =====================================================
-        // APPLY CALCULATED VERIFICATION FILTER
-        // =====================================================
-
-        if ($request->filled('verification_status')) {
-
-            $verificationStatus =
-                strtolower(
-                    trim($request->verification_status)
-                );
-
-
-            $allCadets =
-                $allCadets->filter(function ($cadet) use ($verificationStatus) {
-
-                    return strtolower(
-                        $cadet->verification_status
-                    ) === $verificationStatus;
-
-                });
-        }
-
-
-        // =====================================================
-        // APPLY CALCULATED BS STATUS FILTER
-        // =====================================================
-
-        if ($request->filled('bs_status')) {
-
-            $bsStatus =
-                strtolower(
-                    trim($request->bs_status)
-                );
-
-
-            $allCadets =
-                $allCadets->filter(function ($cadet) use ($bsStatus) {
-
-                    return strtolower(
-                        $cadet->bs_status
-                    ) === $bsStatus;
-
-                });
-        }
-
-
-        // =====================================================
         // STATISTICS
         // =====================================================
 
         $verificationTotal =
-            $allCadets->count();
+            $cadets->count();
 
 
         $completed =
-            $allCadets
+            $cadets
                 ->where(
                     'verification_status',
                     'Verified'
@@ -264,7 +203,7 @@ class VerificationController extends Controller
 
 
         $incomplete =
-            $allCadets
+            $cadets
                 ->where(
                     'verification_status',
                     'Pending'
@@ -273,76 +212,31 @@ class VerificationController extends Controller
 
 
         $qualified =
-            $allCadets
+            $cadets
                 ->where(
-                    'bs_status',
-                    'Qualified'
+                    'verification_status',
+                    'Verified'
                 )
                 ->count();
 
 
         $notQualified =
-            $allCadets
+            $cadets
                 ->where(
-                    'bs_status',
-                    'Not Qualified'
+                    'verification_status',
+                    'Pending'
                 )
                 ->count();
-
-
-        // =====================================================
-        // MANUAL PAGINATION
-        // =====================================================
-        /*
-         * We calculate verification and BS status in PHP,
-         * therefore normal query->paginate() cannot be used
-         * after those calculations.
-         *
-         * This creates a Laravel paginator from the calculated
-         * collection.
-         */
-
-        $perPage = 25;
-
-        $currentPage =
-            LengthAwarePaginator::resolveCurrentPage();
-
-        $currentPageItems =
-            $allCadets
-                ->slice(
-                    ($currentPage - 1) * $perPage,
-                    $perPage
-                )
-                ->values();
-
-
-        $cadets =
-            new LengthAwarePaginator(
-                $currentPageItems,
-                $allCadets->count(),
-                $perPage,
-                $currentPage,
-                [
-                    'path' =>
-                        LengthAwarePaginator::resolveCurrentPath(),
-
-                    'query' =>
-                        $request->query()
-                ]
-            );
 
 
         // =====================================================
         // FILTER DATA
         // =====================================================
 
-        $courses =
-            Cadet::select('course')
-                ->whereNotNull('course')
-                ->where('course', '!=', '')
-                ->distinct()
-                ->orderBy('course')
-                ->get();
+        $courses = Cadet::select('course')
+            ->distinct()
+            ->orderBy('course')
+            ->get();
 
 
         $batches =
@@ -351,10 +245,6 @@ class VerificationController extends Controller
                 'desc'
             )->get();
 
-
-        // =====================================================
-        // RETURN VIEW
-        // =====================================================
 
         return view(
             'admin.verification.index',
@@ -376,7 +266,7 @@ class VerificationController extends Controller
     // SHOW
     // =========================================================
 
-    public function show(Request $request, int $id)
+    public function show(int $id)
     {
         $cadet = Cadet::with([
             'batch',
@@ -412,28 +302,6 @@ class VerificationController extends Controller
                 : 0;
 
 
-        /*
-         * Preserve the filters from the verification page.
-         *
-         * Example:
-         *
-         * ?course=bsmt
-         * &batch=2025
-         * &verification_status=verified
-         * &bs_status=qualified
-         * &search=john
-         */
-
-        $filters = $request->only([
-            'course',
-            'batch',
-            'verification_status',
-            'bs_status',
-            'search',
-            'page'
-        ]);
-
-
         return view(
             'admin.verification.show',
             compact(
@@ -441,8 +309,7 @@ class VerificationController extends Controller
                 'documents',
                 'totalDocs',
                 'approvedDocs',
-                'progress',
-                'filters'
+                'progress'
             )
         );
     }
@@ -470,7 +337,6 @@ class VerificationController extends Controller
 
             'remarks' =>
                 'nullable|string',
-
         ]);
 
 
@@ -486,6 +352,7 @@ class VerificationController extends Controller
 
         // =====================================================
         // GET DOCUMENT
+        // IMPORTANT: fixes your undefined $document error
         // =====================================================
 
         $document =
@@ -530,9 +397,6 @@ class VerificationController extends Controller
 
                     'submitted_at' =>
                         now(),
-
-                    'remarks' =>
-                        $request->remarks ?? null,
 
                 ]
             );
@@ -616,15 +480,7 @@ class VerificationController extends Controller
         }
 
 
-        // =====================================================
-        // REDIRECT BACK WITH FILTERS
-        // =====================================================
-
-        return redirect()
-            ->route(
-                'admin.verification.index',
-                $this->getFilterParameters($request)
-            )
+        return back()
             ->with(
                 'success',
                 'Verification requirement updated successfully.'
@@ -633,91 +489,79 @@ class VerificationController extends Controller
 
 
     // =========================================================
-    // APPROVE ALL LEGACY DOCUMENTS
-    // =========================================================
+// APPROVE ALL LEGACY DOCUMENTS
+// =========================================================
 
-    public function approveLegacy(Request $request)
-    {
-        $request->validate([
-            'cadet_id' =>
-                'required|exists:cadets,id',
-        ]);
+public function approveLegacy(Request $request)
+{
+    $request->validate([
+        'cadet_id' => 'required|exists:cadets,id',
+    ]);
 
+    // =====================================================
+    // GET CADET
+    // =====================================================
 
-        // =====================================================
-        // GET CADET
-        // =====================================================
+    $cadet = Cadet::findOrFail(
+        $request->cadet_id
+    );
 
-        $cadet =
-            Cadet::findOrFail(
-                $request->cadet_id
-            );
+    // =====================================================
+    // GET ALL SYSTEM DOCUMENT REQUIREMENTS
+    // =====================================================
 
+    $documents = Document::all();
 
-        // =====================================================
-        // GET ALL SYSTEM DOCUMENT REQUIREMENTS
-        // =====================================================
+    // =====================================================
+    // APPROVE EVERYTHING AS LEGACY
+    // =====================================================
 
-        $documents =
-            Document::all();
+    DB::transaction(function () use ($cadet, $documents) {
 
+        foreach ($documents as $document) {
 
-        // =====================================================
-        // APPROVE EVERYTHING AS LEGACY
-        // =====================================================
+            $cadet->documents()->syncWithoutDetaching([
 
-        DB::transaction(function () use ($cadet, $documents) {
+                $document->id => [
 
-            foreach ($documents as $document) {
+                    'status' =>
+                        'Approved',
 
-                $cadet->documents()
-                    ->syncWithoutDetaching([
+                    'remarks' =>
+                        'Approved as legacy document. No digital upload required.',
 
-                        $document->id => [
+                    'submitted_at' =>
+                        now(),
 
-                            'status' =>
-                                'Approved',
+                ]
 
-                            'remarks' =>
-                                'Approved as legacy document. No digital upload required.',
+            ]);
+        }
 
-                            'submitted_at' =>
-                                now(),
+        // =================================================
+        // MARK CADET AS VERIFIED
+        // =================================================
 
-                        ]
+        $cadet->verification_status =
+            'Verified';
 
-                    ]);
-            }
+        $cadet->save();
+    });
 
+    // =====================================================
+    // REDIRECT
+    // =====================================================
 
-            // =================================================
-            // MARK CADET AS VERIFIED
-            // =================================================
-
-            $cadet->verification_status =
-                'Verified';
-
-
-            $cadet->save();
-
-        });
-
-
-        // =====================================================
-        // REDIRECT BACK TO INDEX WITH FILTERS
-        // =====================================================
-
-        return redirect()
-            ->route(
-                'admin.verification.index',
-                $this->getFilterParameters($request)
-            )
-            ->with(
-                'success',
-                'All verification requirements have been approved as legacy documents.'
-            );
-    }
-
+    return redirect()
+        ->route(
+            'admin.verification.show',
+            $cadet->id
+        )
+        ->with(
+            'success',
+            'All verification requirements have been approved as legacy documents.'
+        );
+}
 
     // =========================================================
     // UPDATE STATUS
@@ -738,7 +582,6 @@ class VerificationController extends Controller
 
             'remarks' =>
                 'nullable|string',
-
         ]);
 
 
@@ -773,9 +616,6 @@ class VerificationController extends Controller
 
                     'status' =>
                         $request->status,
-
-                    'remarks' =>
-                        $request->remarks ?? null,
 
                 ]
             );
@@ -860,46 +700,10 @@ class VerificationController extends Controller
         }
 
 
-        // =====================================================
-        // REDIRECT TO INDEX WITH FILTERS
-        // =====================================================
-
-        return redirect()
-            ->route(
-                'admin.verification.index',
-                $this->getFilterParameters($request)
-            )
+        return back()
             ->with(
                 'success',
                 'Verification status updated successfully.'
             );
-    }
-
-
-    // =========================================================
-    // FILTER PARAMETERS
-    // =========================================================
-
-    private function getFilterParameters(Request $request): array
-    {
-        return array_filter(
-
-            $request->only([
-                'course',
-                'batch',
-                'verification_status',
-                'bs_status',
-                'search',
-                'page'
-            ]),
-
-            function ($value) {
-
-                return $value !== null &&
-                       $value !== '';
-
-            }
-
-        );
     }
 }

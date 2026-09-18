@@ -197,368 +197,338 @@
 
     </div>
 
-<!-- =====================================================
-     FILTER PANEL
-====================================================== -->
 
-<form
-    method="GET"
-    action="{{ route('admin.verification.index') }}"
-    id="verificationFilterForm"
-    class="vm-filter-panel"
->
+    <!-- =====================================================
+         FILTER PANEL
+    ====================================================== -->
 
-    <div class="vm-filter-header">
+    <div class="vm-filter-panel">
 
-        <div class="vm-filter-title">
+        <div class="vm-filter-header">
 
-            <div class="vm-filter-title-icon">
-                ⚙
+            <div class="vm-filter-title">
+
+                <div class="vm-filter-title-icon">
+                    ⚙
+                </div>
+
+                Filters
+
             </div>
 
-            Filters
+            <button
+                type="button"
+                class="vm-clear"
+                onclick="clearFilters()"
+            >
+                Clear filters
+            </button>
 
         </div>
 
 
-        <a
-            href="{{ route('admin.verification.index') }}"
-            class="vm-clear"
-        >
-            Clear filters
-        </a>
-
-    </div>
+        <div class="vm-filters">
 
 
-    <div class="vm-filters">
+            <!-- COURSE -->
 
+            <div class="vm-dropdown">
 
-        <!-- =================================================
-             COURSE
-        ================================================== -->
+                <button
+                    type="button"
+                    class="vm-dropdown-button"
+                    onclick="toggleDropdown('courseMenu', this)"
+                >
 
-        <div class="vm-dropdown">
+                    <span class="vm-dropdown-label">
 
-            <button
-                type="button"
-                class="vm-dropdown-button"
-                onclick="toggleDropdown('courseMenu', this)"
-            >
+                        🎓
 
-                <span class="vm-dropdown-label">
+                        <span>
+                            Courses
+                        </span>
 
-                    🎓
+                        <span
+                            id="courseCount"
+                            class="vm-dropdown-count"
+                        >
+                            0
+                        </span>
 
-                    <span>
-                        Courses
                     </span>
 
-                    <span
-                        id="courseCount"
-                        class="vm-dropdown-count"
-                    >
-                        {{ request('course') ? 1 : 0 }}
+                    <span class="vm-chevron">
+                        ▼
                     </span>
 
-                </span>
-
-                <span class="vm-chevron">
-                    ▼
-                </span>
-
-            </button>
+                </button>
 
 
-            <div
-                id="courseMenu"
-                class="vm-dropdown-menu"
-            >
+                <div
+                    id="courseMenu"
+                    class="vm-dropdown-menu"
+                >
 
-                @foreach($courses as $course)
+                    @foreach($courses as $course)
+
+                        <label class="vm-option">
+
+                            <input
+                                type="checkbox"
+                                value="{{ strtolower(trim($course->course)) }}"
+                                onchange="filter()"
+                            >
+
+                            <span>
+                                {{ $course->course }}
+                            </span>
+
+                        </label>
+
+                    @endforeach
+
+                </div>
+
+            </div>
+
+
+            <!-- BATCH -->
+
+            <div class="vm-dropdown">
+
+                <button
+                    type="button"
+                    class="vm-dropdown-button"
+                    onclick="toggleDropdown('batchMenu', this)"
+                >
+
+                    <span class="vm-dropdown-label">
+
+                        📅
+
+                        <span>
+                            Batch
+                        </span>
+
+                        <span
+                            id="batchCount"
+                            class="vm-dropdown-count"
+                        >
+                            0
+                        </span>
+
+                    </span>
+
+                    <span class="vm-chevron">
+                        ▼
+                    </span>
+
+                </button>
+
+
+                <div
+                    id="batchMenu"
+                    class="vm-dropdown-menu"
+                >
+
+                    @foreach($batches as $batch)
+
+                        <label class="vm-option">
+
+                            <input
+                                type="checkbox"
+                                value="{{ strtolower($batch->batch_year) }}"
+                                onchange="filter()"
+                            >
+
+                            <span>
+                                {{ $batch->batch_year }}
+                            </span>
+
+                        </label>
+
+                    @endforeach
+
+                </div>
+
+            </div>
+
+
+            <!-- VERIFICATION -->
+
+            <div class="vm-dropdown">
+
+                <button
+                    type="button"
+                    class="vm-dropdown-button"
+                    onclick="toggleDropdown('statusMenu', this)"
+                >
+
+                    <span class="vm-dropdown-label">
+
+                        🛡️
+
+                        <span>
+                            Verification
+                        </span>
+
+                        <span
+                            id="statusCount"
+                            class="vm-dropdown-count"
+                        >
+                            0
+                        </span>
+
+                    </span>
+
+                    <span class="vm-chevron">
+                        ▼
+                    </span>
+
+                </button>
+
+
+                <div
+                    id="statusMenu"
+                    class="vm-dropdown-menu"
+                >
 
                     <label class="vm-option">
 
                         <input
-                            type="radio"
-                            name="course"
-                            value="{{ $course->course }}"
-                            onchange="submitVerificationFilters()"
-                            {{ request('course') == $course->course ? 'checked' : '' }}
+                            type="checkbox"
+                            value="verified"
+                            onchange="filter()"
                         >
 
                         <span>
-                            {{ $course->course }}
+                            Verified
                         </span>
 
                     </label>
 
-                @endforeach
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             BATCH
-        ================================================== -->
-
-        <div class="vm-dropdown">
-
-            <button
-                type="button"
-                class="vm-dropdown-button"
-                onclick="toggleDropdown('batchMenu', this)"
-            >
-
-                <span class="vm-dropdown-label">
-
-                    📅
-
-                    <span>
-                        Batch
-                    </span>
-
-                    <span
-                        id="batchCount"
-                        class="vm-dropdown-count"
-                    >
-                        {{ request('batch') ? 1 : 0 }}
-                    </span>
-
-                </span>
-
-                <span class="vm-chevron">
-                    ▼
-                </span>
-
-            </button>
-
-
-            <div
-                id="batchMenu"
-                class="vm-dropdown-menu"
-            >
-
-                @foreach($batches as $batch)
 
                     <label class="vm-option">
 
                         <input
-                            type="radio"
-                            name="batch"
-                            value="{{ $batch->batch_year }}"
-                            onchange="submitVerificationFilters()"
-                            {{ request('batch') == $batch->batch_year ? 'checked' : '' }}
+                            type="checkbox"
+                            value="pending"
+                            onchange="filter()"
                         >
 
                         <span>
-                            {{ $batch->batch_year }}
+                            Pending
                         </span>
 
                     </label>
 
-                @endforeach
+                </div>
 
             </div>
 
-        </div>
 
+            <!-- BS STATUS -->
 
-        <!-- =================================================
-             VERIFICATION
-        ================================================== -->
+            <div class="vm-dropdown">
 
-        <div class="vm-dropdown">
+                <button
+                    type="button"
+                    class="vm-dropdown-button"
+                    onclick="toggleDropdown('bsMenu', this)"
+                >
 
-            <button
-                type="button"
-                class="vm-dropdown-button"
-                onclick="toggleDropdown('statusMenu', this)"
-            >
+                    <span class="vm-dropdown-label">
 
-                <span class="vm-dropdown-label">
+                        🎓
 
-                    🛡️
+                        <span>
+                            BS Status
+                        </span>
 
-                    <span>
-                        Verification
+                        <span
+                            id="bsCount"
+                            class="vm-dropdown-count"
+                        >
+                            0
+                        </span>
+
                     </span>
 
-                    <span
-                        id="statusCount"
-                        class="vm-dropdown-count"
-                    >
-                        {{ request('verification_status') ? 1 : 0 }}
+                    <span class="vm-chevron">
+                        ▼
                     </span>
 
-                </span>
-
-                <span class="vm-chevron">
-                    ▼
-                </span>
-
-            </button>
+                </button>
 
 
-            <div
-                id="statusMenu"
-                class="vm-dropdown-menu"
-            >
+                <div
+                    id="bsMenu"
+                    class="vm-dropdown-menu"
+                >
 
-                <label class="vm-option">
+                    <label class="vm-option">
 
-                    <input
-                        type="radio"
-                        name="verification_status"
-                        value="Verified"
-                        onchange="submitVerificationFilters()"
-                        {{ request('verification_status') == 'Verified' ? 'checked' : '' }}
-                    >
+                        <input
+                            type="checkbox"
+                            value="qualified"
+                            onchange="filter()"
+                        >
 
-                    <span>
-                        Verified
-                    </span>
+                        <span>
+                            Qualified
+                        </span>
 
-                </label>
+                    </label>
 
 
-                <label class="vm-option">
+                    <label class="vm-option">
 
-                    <input
-                        type="radio"
-                        name="verification_status"
-                        value="Pending"
-                        onchange="submitVerificationFilters()"
-                        {{ request('verification_status') == 'Pending' ? 'checked' : '' }}
-                    >
+                        <input
+                            type="checkbox"
+                            value="not qualified"
+                            onchange="filter()"
+                        >
 
-                    <span>
-                        Pending
-                    </span>
+                        <span>
+                            Not Qualified
+                        </span>
 
-                </label>
+                    </label>
+
+                </div>
 
             </div>
 
-        </div>
 
+            <!-- SEARCH -->
 
-        <!-- =================================================
-             BS STATUS
-        ================================================== -->
+            <div class="vm-search">
 
-        <div class="vm-dropdown">
-
-            <button
-                type="button"
-                class="vm-dropdown-button"
-                onclick="toggleDropdown('bsMenu', this)"
-            >
-
-                <span class="vm-dropdown-label">
-
-                    🎓
-
-                    <span>
-                        BS Status
-                    </span>
-
-                    <span
-                        id="bsCount"
-                        class="vm-dropdown-count"
-                    >
-                        {{ request('bs_status') ? 1 : 0 }}
-                    </span>
-
+                <span class="vm-search-icon">
+                    🔎
                 </span>
 
-                <span class="vm-chevron">
-                    ▼
-                </span>
+                <input
+                    type="text"
+                    id="search"
+                    placeholder="Search by name or TRB number..."
+                    autocomplete="off"
+                >
 
-            </button>
-
-
-            <div
-                id="bsMenu"
-                class="vm-dropdown-menu"
-            >
-
-                <label class="vm-option">
-
-                    <input
-                        type="radio"
-                        name="bs_status"
-                        value="Qualified"
-                        onchange="submitVerificationFilters()"
-                        {{ request('bs_status') == 'Qualified' ? 'checked' : '' }}
-                    >
-
-                    <span>
-                        Qualified
-                    </span>
-
-                </label>
-
-
-                <label class="vm-option">
-
-                    <input
-                        type="radio"
-                        name="bs_status"
-                        value="Not Qualified"
-                        onchange="submitVerificationFilters()"
-                        {{ request('bs_status') == 'Not Qualified' ? 'checked' : '' }}
-                    >
-
-                    <span>
-                        Not Qualified
-                    </span>
-
-                </label>
+                <button
+                    type="button"
+                    id="searchClear"
+                    class="vm-search-clear"
+                    onclick="clearSearch()"
+                >
+                    ×
+                </button>
 
             </div>
-
-        </div>
-
-
-        <!-- =================================================
-             SEARCH
-        ================================================== -->
-
-        <div class="vm-search">
-
-            <span class="vm-search-icon">
-                🔎
-            </span>
-
-
-            <input
-                type="text"
-                name="search"
-                id="search"
-                value="{{ request('search') }}"
-                placeholder="Search by name or TRB number..."
-                autocomplete="off"
-            >
-
-
-            <button
-                type="submit"
-                class="vm-search-clear"
-                id="searchClear"
-            >
-                ×
-            </button>
 
         </div>
 
     </div>
-
-</form>
-
 
 
     <!-- =====================================================
@@ -579,13 +549,12 @@
 
             </div>
 
-<div
-    id="recordCount"
-    class="vm-record-count"
->
-    {{ $cadets->total() }}
-    {{ $cadets->total() === 1 ? 'record' : 'records' }}
-</div>
+            <div
+                id="recordCount"
+                class="vm-record-count"
+            >
+                {{ count($cadets) }} records
+            </div>
 
         </div>
 
@@ -792,21 +761,17 @@
                         <!-- ACTION -->
 
                         <td>
-<a
-    href="{{ route('admin.verification.show', [
-        'id' => $cadet->id,
-        'course' => request('course'),
-        'batch' => request('batch'),
-        'verification_status' => request('verification_status'),
-        'bs_status' => request('bs_status'),
-        'search' => request('search'),
-        'page' => request('page'),
-    ]) }}"
-    class="vm-view-btn"
->
-    👁
-    View
-</a>
+
+                            <a
+                                href="{{ route('admin.verification.show', $cadet->id) }}"
+                                class="vm-view-btn"
+                            >
+
+                                👁
+
+                                View
+
+                            </a>
 
                         </td>
 
@@ -846,54 +811,10 @@
 
         </div>
 
-
-        <!-- =================================================
-             PAGINATION
-        ================================================== -->
-
-        @if($cadets->hasPages())
-
-            <div class="vm-pagination">
-
-                <div class="vm-pagination-info">
-
-                    Showing
-
-                    <strong>
-                        {{ $cadets->firstItem() }}
-                    </strong>
-
-                    to
-
-                    <strong>
-                        {{ $cadets->lastItem() }}
-                    </strong>
-
-                    of
-
-                    <strong>
-                        {{ $cadets->total() }}
-                    </strong>
-
-                    records
-
-                </div>
-
-
-                <div class="vm-pagination-links">
-
-                    {{ $cadets->onEachSide(1)->links() }}
-
-                </div>
-
-            </div>
-
-        @endif
-
-
     </div>
 
-</div>{{ count($cadets) }} records
+</div>
+
 
 <script>
 
@@ -973,35 +894,250 @@ document.addEventListener(
 
 
 /* =========================================================
-   SUBMIT FILTERS
+   CHECKED VALUES
 ========================================================= */
 
-function submitVerificationFilters(){
+function getChecked(id){
 
-    const form =
-        document.getElementById(
-            'verificationFilterForm'
+    return Array.from(
+
+        document.querySelectorAll(
+            `#${id} input:checked`
+        )
+
+    ).map(input =>
+
+        input.value
+            .toLowerCase()
+            .trim()
+
+    );
+
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+function filter(){
+
+    const courses =
+        getChecked('courseMenu');
+
+    const batches =
+        getChecked('batchMenu');
+
+    const statuses =
+        getChecked('statusMenu');
+
+    const bsStatuses =
+        getChecked('bsMenu');
+
+    const search =
+        document
+            .getElementById('search')
+            .value
+            .toLowerCase()
+            .trim();
+
+
+    let visible = 0;
+
+
+    document
+        .querySelectorAll('tbody tr')
+        .forEach(row => {
+
+            /*
+             * Ignore empty-state row
+             */
+
+            if(row.querySelector('.vm-empty')){
+
+                return;
+
+            }
+
+
+            const trb =
+                row.children[0]
+                    .innerText
+                    .toLowerCase()
+                    .trim();
+
+
+            const name =
+                row.children[1]
+                    .innerText
+                    .toLowerCase()
+                    .trim();
+
+
+            const course =
+                row.children[2]
+                    .innerText
+                    .toLowerCase()
+                    .trim();
+
+
+            const batch =
+                row.children[3]
+                    .innerText
+                    .toLowerCase()
+                    .trim();
+
+
+            const verification =
+                row.children[5]
+                    .innerText
+                    .toLowerCase()
+                    .trim();
+
+
+            const bs =
+                row.children[6]
+                    .innerText
+                    .toLowerCase()
+                    .trim();
+
+
+            const matchCourse =
+                courses.length === 0 ||
+                courses.includes(course);
+
+
+            const matchBatch =
+                batches.length === 0 ||
+                batches.includes(batch);
+
+
+            const matchVerification =
+                statuses.length === 0 ||
+                statuses.includes(verification);
+
+
+            const matchBS =
+                bsStatuses.length === 0 ||
+                bsStatuses.includes(bs);
+
+
+            const matchSearch =
+                search === '' ||
+                name.includes(search) ||
+                trb.includes(search);
+
+
+            const show =
+                matchCourse &&
+                matchBatch &&
+                matchVerification &&
+                matchBS &&
+                matchSearch;
+
+
+            row.style.display =
+                show ? '' : 'none';
+
+
+            if(show){
+
+                visible++;
+
+            }
+
+        });
+
+
+    updateFilterCounts();
+
+    updateRecordCount(visible);
+
+}
+
+
+/* =========================================================
+   FILTER COUNTS
+========================================================= */
+
+function updateFilterCounts(){
+
+    updateCount(
+        'courseMenu',
+        'courseCount'
+    );
+
+    updateCount(
+        'batchMenu',
+        'batchCount'
+    );
+
+    updateCount(
+        'statusMenu',
+        'statusCount'
+    );
+
+    updateCount(
+        'bsMenu',
+        'bsCount'
+    );
+
+}
+
+
+function updateCount(menuId, countId){
+
+    const checked =
+        document.querySelectorAll(
+            `#${menuId} input:checked`
         );
 
 
-    /*
-     * Always return to page 1 when changing filters.
-     */
-
-    let pageInput =
-        form.querySelector(
-            'input[name="page"]'
-        );
+    const count =
+        document.getElementById(countId);
 
 
-    if(pageInput){
+    const button =
+        count.closest('.vm-dropdown')
+            .querySelector(
+                '.vm-dropdown-button'
+            );
 
-        pageInput.remove();
+
+    if(checked.length > 0){
+
+        count.innerText =
+            checked.length;
+
+        count.classList.add('show');
+
+        button.classList.add('active');
+
+    }else{
+
+        count.classList.remove('show');
+
+        button.classList.remove('active');
 
     }
 
+}
 
-    form.submit();
+
+/* =========================================================
+   RECORD COUNT
+========================================================= */
+
+function updateRecordCount(count){
+
+    const element =
+        document.getElementById(
+            'recordCount'
+        );
+
+
+    element.innerText =
+        `${count} ${count === 1 ? 'record' : 'records'}`;
 
 }
 
@@ -1014,144 +1150,73 @@ const searchInput =
     document.getElementById('search');
 
 
-if(searchInput){
-
-    let searchTimer;
-
-
-    searchInput.addEventListener(
-        'input',
-        function(){
-
-            clearTimeout(searchTimer);
+const searchClear =
+    document.getElementById('searchClear');
 
 
-            searchTimer =
-                setTimeout(function(){
-
-                    const form =
-                        document.getElementById(
-                            'verificationFilterForm'
-                        );
-
-
-                    /*
-                     * Do not keep an old pagination page
-                     * when searching.
-                     */
-
-                    let pageInput =
-                        form.querySelector(
-                            'input[name="page"]'
-                        );
-
-
-                    if(pageInput){
-
-                        pageInput.remove();
-
-                    }
-
-
-                    form.submit();
-
-                }, 500);
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-   INITIALIZE FILTER COUNTS
-========================================================= */
-
-document.addEventListener(
-    'DOMContentLoaded',
+searchInput.addEventListener(
+    'input',
     function(){
 
-        updateFilterCount(
-            'courseCount',
-            '{{ request('course') }}'
+        searchClear.classList.toggle(
+            'show',
+            this.value.length > 0
         );
 
 
-        updateFilterCount(
-            'batchCount',
-            '{{ request('batch') }}'
-        );
-
-
-        updateFilterCount(
-            'statusCount',
-            '{{ request('verification_status') }}'
-        );
-
-
-        updateFilterCount(
-            'bsCount',
-            '{{ request('bs_status') }}'
-        );
+        filter();
 
     }
 );
 
 
 /* =========================================================
-   FILTER COUNT
+   CLEAR SEARCH
 ========================================================= */
 
-function updateFilterCount(
-    elementId,
-    value
-){
+function clearSearch(){
 
-    const element =
-        document.getElementById(elementId);
+    searchInput.value = '';
 
+    searchClear.classList.remove(
+        'show'
+    );
 
-    if(!element){
+    filter();
 
-        return;
-
-    }
-
-
-    const button =
-        element.closest('.vm-dropdown')
-            ?.querySelector(
-                '.vm-dropdown-button'
-            );
-
-
-    if(value){
-
-        element.innerText = '1';
-
-        element.classList.add('show');
-
-        if(button){
-
-            button.classList.add('active');
-
-        }
-
-    }else{
-
-        element.innerText = '0';
-
-        element.classList.remove('show');
-
-        if(button){
-
-            button.classList.remove('active');
-
-        }
-
-    }
+    searchInput.focus();
 
 }
+
+
+/* =========================================================
+   CLEAR ALL FILTERS
+========================================================= */
+
+function clearFilters(){
+
+    document
+        .querySelectorAll(
+            '.vm-dropdown-menu input[type="checkbox"]'
+        )
+        .forEach(input => {
+
+            input.checked = false;
+
+        });
+
+
+    searchInput.value = '';
+
+    searchClear.classList.remove(
+        'show'
+    );
+
+
+    filter();
+
+}
+
 
 /* =========================================================
    INITIALIZE

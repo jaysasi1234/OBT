@@ -383,20 +383,6 @@
 
     @csrf
 
-    @foreach($filters as $key => $value)
-
-    @if($value !== null && $value !== '')
-
-        <input
-            type="hidden"
-            name="{{ $key }}"
-            value="{{ $value }}"
-        >
-
-    @endif
-
-@endforeach
-
     <input
         type="hidden"
         name="cadet_id"
