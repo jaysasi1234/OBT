@@ -11,26 +11,154 @@
 @vite(['resources/css/admin/cadet_bs_requirements/cadet_bs_requirements.css'])
 
 <div class="page">
-    
 
-<div class="page-header">
+    <div class="page-header">
 
-    <div>
-        <h2>
-            <i class="fa-solid fa-graduation-cap"></i>
-            Cadet BS Requirements
-        </h2>
+        <div>
+            <h2>
+                <i class="fa-solid fa-graduation-cap"></i>
+                Cadet BS Requirements
+            </h2>
 
-        <p>
-            Review BS completion requirements submitted by cadets.
-        </p>
+            <p>
+                Review BS completion requirements submitted by cadets.
+            </p>
+        </div>
+
     </div>
 
-</div>
 
-<div id="bsRequirementsResults">
+    {{-- =====================================================
+         FILTERS
+    ====================================================== --}}
 
-<div class="stats-grid">
+    <div class="filter-card">
+
+        <div class="filter-title">
+
+            <i class="fa-solid fa-filter"></i>
+
+            <h3>Filter Cadets</h3>
+
+        </div>
+
+        <form
+            method="GET"
+            action="{{ route('admin.cadet.bs.index') }}"
+            id="filterForm"
+        >
+
+            <div class="filter-row">
+
+                {{-- Search --}}
+                <div class="filter-group">
+
+                    <label>
+                        Search Cadet
+                    </label>
+
+                    <input
+                        type="text"
+                        name="search"
+                        class="filter-control"
+                        placeholder="Search Name or TRB Number..."
+                        value="{{ request('search') }}"
+                    >
+
+                </div>
+
+
+                {{-- Course --}}
+                <div class="filter-group">
+
+                    <label>
+                        Course
+                    </label>
+
+                    <select
+                        name="course"
+                        class="filter-control"
+                    >
+
+                        <option value="">
+                            All Courses
+                        </option>
+
+                        @foreach($courses as $course)
+
+                            <option
+                                value="{{ $course }}"
+                                {{ request('course') == $course ? 'selected' : '' }}
+                            >
+                                {{ $course }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+                {{-- Batch --}}
+                <div class="filter-group">
+
+                    <label>
+                        Batch
+                    </label>
+
+                    <select
+                        name="batch"
+                        class="filter-control"
+                    >
+
+                        <option value="">
+                            All Batches
+                        </option>
+
+                        @foreach($batches as $batch)
+
+                            <option
+                                value="{{ $batch->id }}"
+                                {{ request('batch') == $batch->id ? 'selected' : '' }}
+                            >
+                                {{ $batch->batch_year }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+
+                {{-- Reset --}}
+                <div class="filter-actions">
+
+                    <a
+                        href="{{ route('admin.cadet.bs.index') }}"
+                        class="btn btn-reset"
+                    >
+                        <i class="fa-solid fa-rotate-right"></i>
+                        Reset
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    {{-- =====================================================
+         AJAX RESULTS START HERE
+    ====================================================== --}}
+
+    <div id="bsRequirementsResults">
+
+        <div class="stats-grid">
 
     <div class="stat-card blue">
         <div class="stat-icon">
@@ -78,105 +206,6 @@
             <h2>{{ $completedCadets }}</h2>
         </div>
     </div>
-
-</div>
-
-<div class="filter-card">
-
-    <div class="filter-title">
-        <i class="fa-solid fa-filter"></i>
-        <h3>Filter Cadets</h3>
-    </div>
-
-    <form method="GET" id="filterForm">
-
-        <div class="filter-row">
-
-            {{-- Search --}}
-            <div class="filter-group">
-
-                <label>
-                    Search Cadet
-                </label>
-
-                <input
-                    type="text"
-                    name="search"
-                    class="filter-control"
-                    placeholder="Search Name or TRB Number..."
-                    value="{{ request('search') }}">
-
-            </div>
-
-            {{-- Course --}}
-            <div class="filter-group">
-
-                <label>
-                    Course
-                </label>
-
-                <select
-                    name="course"
-                    class="filter-control"
-                >
-                    <option value="">
-                        All Courses
-                    </option>
-
-                    @foreach($courses as $course)
-                        <option
-                            value="{{ $course }}"
-                            {{ request('course') == $course ? 'selected' : '' }}
-                        >
-                            {{ $course }}
-                        </option>
-                    @endforeach
-                </select>
-
-            </div>
-
-            {{-- Batch --}}
-            <div class="filter-group">
-
-                <label>
-                    Batch
-                </label>
-
-                <select
-                    name="batch"
-                    class="filter-control"
-                >
-                    <option value="">
-                        All Batches
-                    </option>
-
-                    @foreach($batches as $batch)
-                        <option
-                            value="{{ $batch->id }}"
-                            {{ request('batch') == $batch->id ? 'selected' : '' }}
-                        >
-                            {{ $batch->batch_year }}
-                        </option>
-                    @endforeach
-                </select>
-
-            </div>
-
-            <div class="filter-actions">
-
-                <a href="{{ route('admin.cadet.bs.index') }}"
-                class="btn btn-reset">
-
-                    <i class="fa-solid fa-rotate-right"></i>
-                    Reset
-
-                </a>
-
-            </div>
-
-        </div>
-
-    </form>
 
 </div>
 
