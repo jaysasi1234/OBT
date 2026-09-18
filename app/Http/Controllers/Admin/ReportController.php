@@ -633,16 +633,29 @@ private function buildDeploymentSummary($cadets)
             | CCI / AOU
             |--------------------------------------------------------------------------
             |
-            | These remain zero because no CCI/AOU field has been identified
-            | in the supplied Cadet model structure.
+            | CCI = Total Cadets
+            | AOU = Cadets Not Deployed
+            |
+            | "Not Deployed" includes:
+            | 1. Cadet has no deployment record
+            | 2. Cadet has a deployment record with status "Not Deployed"
             |
             */
 
-            $bsmtCci = 0;
-            $bsmtAou = 0;
+            $bsmtCci = $bsmt->count();
 
-            $bsmareCci = 0;
-            $bsmareAou = 0;
+            $bsmtAou = $bsmt->filter(function ($cadet) {
+                return !$cadet->deployment ||
+                    $cadet->deployment?->status === 'Not Deployed';
+            })->count();
+
+
+            $bsmareCci = $bsmare->count();
+
+            $bsmareAou = $bsmare->filter(function ($cadet) {
+                return !$cadet->deployment ||
+                    $cadet->deployment?->status === 'Not Deployed';
+            })->count();
 
 
             /*

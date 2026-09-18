@@ -383,7 +383,7 @@
                     </div>
 
                     <h3>
-                        Requirements Settings
+                        Before OBT Requirements
                     </h3>
 
                     <p>
@@ -427,7 +427,7 @@
                     </div>
 
                     <h3>
-                        Onboard Requirements
+                        During OBT Requirements
                     </h3>
 
                     <p>
@@ -471,7 +471,7 @@
                     </div>
 
                     <h3>
-                        BS Requirements
+                        After OBT Requirements
                     </h3>
 
                     <p>
