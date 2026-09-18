@@ -19,21 +19,43 @@ class VerificationController extends Controller
 
 public function index(Request $request)
 {
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL SYSTEM REQUIREMENTS
-    |--------------------------------------------------------------------------
-    */
+    // =========================================================
+    // TOTAL SYSTEM REQUIREMENTS
+    // =========================================================
 
     $totalRequirements = Document::count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | BASE QUERY
-    |--------------------------------------------------------------------------
-    | Same pagination approach as CadetController.
-    */
+    // =========================================================
+    // GET FILTER VALUES
+    // =========================================================
+
+    $coursesFilter = $request->input('course', []);
+    $batchesFilter = $request->input('batch', []);
+    $verificationFilter = $request->input('verification', []);
+    $bsStatusFilter = $request->input('bs_status', []);
+
+    // Make sure everything is an array
+    $coursesFilter = is_array($coursesFilter)
+        ? array_filter($coursesFilter)
+        : [$coursesFilter];
+
+    $batchesFilter = is_array($batchesFilter)
+        ? array_filter($batchesFilter)
+        : [$batchesFilter];
+
+    $verificationFilter = is_array($verificationFilter)
+        ? array_filter($verificationFilter)
+        : [$verificationFilter];
+
+    $bsStatusFilter = is_array($bsStatusFilter)
+        ? array_filter($bsStatusFilter)
+        : [$bsStatusFilter];
+
+
+    // =========================================================
+    // BASE QUERY
+    // =========================================================
 
     $query = Cadet::with([
         'batch',
@@ -46,23 +68,12 @@ public function index(Request $request)
     // COURSE FILTER
     // =========================================================
 
-    if ($request->filled('course')) {
+    if (!empty($coursesFilter)) {
 
-        $courses = $request->input('course');
-
-        if (!is_array($courses)) {
-            $courses = [$courses];
-        }
-
-        $courses = array_filter($courses);
-
-        if (!empty($courses)) {
-
-            $query->whereIn(
-                'course',
-                $courses
-            );
-        }
+        $query->whereIn(
+            'course',
+            $coursesFilter
+        );
     }
 
 
@@ -70,44 +81,30 @@ public function index(Request $request)
     // BATCH FILTER
     // =========================================================
 
-    if ($request->filled('batch')) {
+    if (!empty($batchesFilter)) {
 
-        $batches = $request->input('batch');
+        $query->whereHas(
+            'batch',
+            function ($q) use ($batchesFilter) {
 
-        if (!is_array($batches)) {
-            $batches = [$batches];
-        }
-
-        $batches = array_filter($batches);
-
-        if (!empty($batches)) {
-
-            $query->whereHas(
-                'batch',
-                function ($q) use ($batches) {
-
-                    $q->whereIn(
-                        'batch_year',
-                        $batches
-                    );
-
-                }
-            );
-        }
+                $q->whereIn(
+                    'batch_year',
+                    $batchesFilter
+                );
+            }
+        );
     }
 
 
     // =========================================================
-    // SEARCH
+    // SEARCH FILTER
     // =========================================================
 
     if ($request->filled('search')) {
 
-        $search =
-            trim(
-                $request->input('search')
-            );
-
+        $search = trim(
+            $request->input('search')
+        );
 
         if ($search !== '') {
 
@@ -129,32 +126,298 @@ public function index(Request $request)
                     'course',
                     'like',
                     '%' . $search . '%'
-                );
+                )
 
+                ->orWhere(
+                    'rank',
+                    'like',
+                    '%' . $search . '%'
+                );
             });
         }
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | ORDER
-    |--------------------------------------------------------------------------
-    */
+    // =========================================================
+    // VERIFICATION FILTER
+    // =========================================================
+    //
+    // IMPORTANT:
+    // Verification status is based on the SAME calculation
+    // used in the Blade:
+    //
+    // Approved Documents == Total Required Documents
+    //
+    // Therefore:
+    //
+    // verified = all required documents approved
+    // pending  = not all required documents approved
+    //
+    // =========================================================
 
-    $query->orderByRaw(
-        'LOWER(full_name) ASC'
+    if (!empty($verificationFilter)) {
+
+        $query->where(function ($q) use (
+            $verificationFilter,
+            $totalRequirements
+        ) {
+
+            // -------------------------------------------------
+            // VERIFIED
+            // -------------------------------------------------
+
+            if (
+                in_array(
+                    'verified',
+                    $verificationFilter,
+                    true
+                )
+            ) {
+
+                if ($totalRequirements > 0) {
+
+                    $q->whereHas(
+                        'documents',
+                        function ($documentQuery) {
+
+                            $documentQuery->wherePivot(
+                                'status',
+                                'Approved'
+                            );
+                        },
+                        '=',
+                        $totalRequirements
+                    );
+                }
+            }
+
+
+            // -------------------------------------------------
+            // PENDING
+            // -------------------------------------------------
+
+            if (
+                in_array(
+                    'pending',
+                    $verificationFilter,
+                    true
+                )
+            ) {
+
+                if ($totalRequirements > 0) {
+
+                    $q->orWhereHas(
+                        'documents',
+                        function ($documentQuery) {
+
+                            $documentQuery->wherePivot(
+                                'status',
+                                'Approved'
+                            );
+                        },
+                        '<',
+                        $totalRequirements
+                    );
+                } else {
+
+                    $q->orWhereDoesntHave(
+                        'documents'
+                    );
+                }
+            }
+        });
+    }
+
+
+    // =========================================================
+    // BS STATUS FILTER
+    // =========================================================
+    //
+    // Qualified:
+    // ALL BS requirements are Approved or Completed.
+    //
+    // Not Qualified:
+    // At least one BS requirement is not Approved/Completed
+    // OR there are no BS requirements.
+    //
+    // =========================================================
+
+    if (!empty($bsStatusFilter)) {
+
+        /*
+        |---------------------------------------------------------
+        | IMPORTANT
+        |---------------------------------------------------------
+        |
+        | BS requirements can differ per cadet.
+        |
+        | Because of that, we cannot simply compare against one
+        | global BS requirement count.
+        |
+        | We therefore collect the cadet IDs that match the
+        | requested BS status first.
+        |
+        */
+
+        $bsCadetQuery = Cadet::with([
+            'bsRequirements',
+        ]);
+
+        // Apply the SAME basic filters
+        // to the BS status calculation.
+
+        if (!empty($coursesFilter)) {
+
+            $bsCadetQuery->whereIn(
+                'course',
+                $coursesFilter
+            );
+        }
+
+        if (!empty($batchesFilter)) {
+
+            $bsCadetQuery->whereHas(
+                'batch',
+                function ($q) use ($batchesFilter) {
+
+                    $q->whereIn(
+                        'batch_year',
+                        $batchesFilter
+                    );
+                }
+            );
+        }
+
+        if ($request->filled('search')) {
+
+            $search = trim(
+                $request->input('search')
+            );
+
+            if ($search !== '') {
+
+                $bsCadetQuery->where(function ($q) use ($search) {
+
+                    $q->where(
+                        'full_name',
+                        'like',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        'trb_control_number',
+                        'like',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        'course',
+                        'like',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        'rank',
+                        'like',
+                        '%' . $search . '%'
+                    );
+                });
+            }
+        }
+
+
+        $bsCadets = $bsCadetQuery->get();
+
+
+        $matchingBSIds = [];
+
+
+        foreach ($bsCadets as $bsCadet) {
+
+            $totalBS =
+                $bsCadet->bsRequirements->count();
+
+            $completedBS =
+                $bsCadet->bsRequirements
+                    ->whereIn(
+                        'status',
+                        [
+                            'Approved',
+                            'Completed',
+                        ]
+                    )
+                    ->count();
+
+
+            $isQualified =
+                $totalBS > 0 &&
+                $completedBS >= $totalBS;
+
+
+            // -------------------------------------------------
+            // QUALIFIED
+            // -------------------------------------------------
+
+            if (
+                in_array(
+                    'qualified',
+                    $bsStatusFilter,
+                    true
+                )
+                &&
+                $isQualified
+            ) {
+
+                $matchingBSIds[] =
+                    $bsCadet->id;
+            }
+
+
+            // -------------------------------------------------
+            // NOT QUALIFIED
+            // -------------------------------------------------
+
+            if (
+                in_array(
+                    'not qualified',
+                    $bsStatusFilter,
+                    true
+                )
+                &&
+                !$isQualified
+            ) {
+
+                $matchingBSIds[] =
+                    $bsCadet->id;
+            }
+        }
+
+
+        /*
+        |---------------------------------------------------------
+        | Apply matching BS IDs to main query
+        |---------------------------------------------------------
+        */
+
+        $query->whereIn(
+            'id',
+            array_unique($matchingBSIds)
+        );
+    }
+
+
+    // =========================================================
+    // ORDER
+    // =========================================================
+
+    $query->orderBy(
+        'full_name'
     );
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | PAGINATION
-    |--------------------------------------------------------------------------
-    | EXACTLY LIKE YOUR CADET CONTROLLER
-    |
-    | Only 25 cadets are loaded at a time.
-    */
+    // =========================================================
+    // PAGINATION
+    // =========================================================
 
     $cadets = $query
         ->paginate(25)
@@ -162,16 +425,14 @@ public function index(Request $request)
 
 
     // =========================================================
-    // CALCULATE CURRENT PAGE
+    // CALCULATE STATUS FOR CURRENT PAGE
     // =========================================================
 
     foreach ($cadets as $cadet) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | VERIFICATION REQUIREMENTS
-        |--------------------------------------------------------------------------
-        */
+        // -----------------------------------------------------
+        // VERIFICATION
+        // -----------------------------------------------------
 
         $approved =
             $cadet->documents
@@ -205,11 +466,9 @@ public function index(Request $request)
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | BS REQUIREMENTS
-        |--------------------------------------------------------------------------
-        */
+        // -----------------------------------------------------
+        // BS STATUS
+        // -----------------------------------------------------
 
         $totalBS =
             $cadet->bsRequirements->count();
@@ -250,11 +509,9 @@ public function index(Request $request)
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | PROGRESS
-        |--------------------------------------------------------------------------
-        */
+        // -----------------------------------------------------
+        // DOCUMENT PROGRESS
+        // -----------------------------------------------------
 
         $cadet->doc_progress =
             "{$approved}/{$totalRequirements}";
@@ -264,14 +521,17 @@ public function index(Request $request)
     // =========================================================
     // STATISTICS
     // =========================================================
-    /*
-    | IMPORTANT:
-    | These statistics use ALL cadets matching the basic
-    | course/batch/search filters, not only the 25 displayed.
-    |
-    | Verification and BS checkbox filters are intentionally
-    | applied after calculating the statuses.
-    */
+    //
+    // Statistics use the same BASIC filters:
+    //
+    // Course
+    // Batch
+    // Search
+    //
+    // The status filters are not used for the statistics
+    // themselves because the cards represent the breakdown.
+    //
+    // =========================================================
 
     $statisticsQuery = Cadet::with([
         'documents',
@@ -283,23 +543,12 @@ public function index(Request $request)
     // COURSE
     // ---------------------------------------------------------
 
-    if ($request->filled('course')) {
+    if (!empty($coursesFilter)) {
 
-        $courses = $request->input('course');
-
-        if (!is_array($courses)) {
-            $courses = [$courses];
-        }
-
-        $courses = array_filter($courses);
-
-        if (!empty($courses)) {
-
-            $statisticsQuery->whereIn(
-                'course',
-                $courses
-            );
-        }
+        $statisticsQuery->whereIn(
+            'course',
+            $coursesFilter
+        );
     }
 
 
@@ -307,30 +556,18 @@ public function index(Request $request)
     // BATCH
     // ---------------------------------------------------------
 
-    if ($request->filled('batch')) {
+    if (!empty($batchesFilter)) {
 
-        $batches = $request->input('batch');
+        $statisticsQuery->whereHas(
+            'batch',
+            function ($q) use ($batchesFilter) {
 
-        if (!is_array($batches)) {
-            $batches = [$batches];
-        }
-
-        $batches = array_filter($batches);
-
-        if (!empty($batches)) {
-
-            $statisticsQuery->whereHas(
-                'batch',
-                function ($q) use ($batches) {
-
-                    $q->whereIn(
-                        'batch_year',
-                        $batches
-                    );
-
-                }
-            );
-        }
+                $q->whereIn(
+                    'batch_year',
+                    $batchesFilter
+                );
+            }
+        );
     }
 
 
@@ -340,11 +577,9 @@ public function index(Request $request)
 
     if ($request->filled('search')) {
 
-        $search =
-            trim(
-                $request->input('search')
-            );
-
+        $search = trim(
+            $request->input('search')
+        );
 
         if ($search !== '') {
 
@@ -366,26 +601,28 @@ public function index(Request $request)
                     'course',
                     'like',
                     '%' . $search . '%'
-                );
+                )
 
+                ->orWhere(
+                    'rank',
+                    'like',
+                    '%' . $search . '%'
+                );
             });
         }
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | GET STATISTICS RECORDS
-    |--------------------------------------------------------------------------
-    */
-
     $statisticsCadets =
         $statisticsQuery->get();
 
 
+    // ---------------------------------------------------------
+    // INITIAL COUNTERS
+    // ---------------------------------------------------------
+
     $verificationTotal =
         $statisticsCadets->count();
-
 
     $completed = 0;
 
@@ -396,16 +633,17 @@ public function index(Request $request)
     $notQualified = 0;
 
 
+    // ---------------------------------------------------------
+    // CALCULATE STATISTICS
+    // ---------------------------------------------------------
+
     foreach (
-        $statisticsCadets
-        as $statCadet
+        $statisticsCadets as $statCadet
     ) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | VERIFICATION
-        |--------------------------------------------------------------------------
-        */
+        // -----------------------------------------------------
+        // VERIFICATION
+        // -----------------------------------------------------
 
         $approved =
             $statCadet->documents
@@ -429,11 +667,9 @@ public function index(Request $request)
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | BS
-        |--------------------------------------------------------------------------
-        */
+        // -----------------------------------------------------
+        // BS
+        // -----------------------------------------------------
 
         $totalBS =
             $statCadet->bsRequirements->count();
@@ -466,7 +702,7 @@ public function index(Request $request)
 
 
     // =========================================================
-    // FILTER DATA
+    // COURSE FILTER OPTIONS
     // =========================================================
 
     $courses =
@@ -481,6 +717,10 @@ public function index(Request $request)
             ->orderBy('course')
             ->get();
 
+
+    // =========================================================
+    // BATCH FILTER OPTIONS
+    // =========================================================
 
     $batches =
         Batch::orderBy(
@@ -507,7 +747,6 @@ public function index(Request $request)
         )
     );
 }
-
 
     // =========================================================
     // SHOW
