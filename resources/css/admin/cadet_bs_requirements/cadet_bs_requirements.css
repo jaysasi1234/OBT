@@ -825,6 +825,165 @@ body{
 
 
 /* =========================================================
+   AJAX FILTER LOADING STATE
+========================================================= */
+
+#bsRequirementsResults{
+    position:relative;
+    transition:opacity .2s ease;
+}
+
+#bsRequirementsResults.is-loading{
+    opacity:.55;
+    pointer-events:none;
+}
+
+#bsRequirementsResults.is-loading::after{
+    content:"";
+    position:absolute;
+    top:20px;
+    right:20px;
+
+    width:22px;
+    height:22px;
+
+    border:3px solid rgba(96,165,250,.20);
+    border-top-color:#60a5fa;
+
+    border-radius:50%;
+
+    animation:bsLoadingSpin .7s linear infinite;
+
+    z-index:100;
+}
+
+@keyframes bsLoadingSpin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.pagination-wrapper{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    margin-top:20px;
+
+    padding:18px 0;
+}
+
+.pagination-wrapper nav{
+
+    display:flex;
+
+    justify-content:center;
+
+    width:100%;
+}
+
+.pagination-wrapper nav > div:first-child{
+
+    color:#8fa7c6;
+
+    font-size:12px;
+}
+
+.pagination-wrapper nav > div:last-child{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+}
+
+.pagination-wrapper a,
+.pagination-wrapper span{
+
+    min-width:38px;
+
+    height:38px;
+
+    padding:0 12px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:9px;
+
+    border:1px solid rgba(96,165,250,.12);
+
+    background:#102750;
+
+    color:#cbdcf3;
+
+    text-decoration:none;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    transition:.2s ease;
+}
+
+.pagination-wrapper a:hover{
+
+    background:#28518a;
+
+    border-color:rgba(96,165,250,.30);
+
+    color:#ffffff;
+
+    transform:translateY(-1px);
+}
+
+.pagination-wrapper span[aria-current="page"]{
+
+    background:
+        linear-gradient(
+            135deg,
+            #3b82f6,
+            #1d4ed8
+        );
+
+    border-color:rgba(96,165,250,.40);
+
+    color:#ffffff;
+
+    box-shadow:
+        0 5px 14px rgba(37,99,235,.22);
+}
+
+.pagination-wrapper span[aria-disabled="true"]{
+
+    opacity:.4;
+
+    cursor:not-allowed;
+
+    background:#0b1d3a;
+
+}
+
+.pagination-wrapper svg{
+
+    width:16px;
+
+    height:16px;
+}
+
+/* =========================================================
    ATTACHMENT CARD
 ========================================================= */
 
@@ -1776,6 +1935,32 @@ body{
         min-width:0;
 
         width:100%;
+    }
+
+    .pagination-wrapper{
+
+    overflow-x:auto;
+
+    justify-content:flex-start;
+
+    padding-bottom:5px;
+    }
+
+    .pagination-wrapper nav{
+
+        min-width:max-content;
+
+        justify-content:flex-start;
+    }
+
+    .pagination-wrapper a,
+    .pagination-wrapper span{
+
+        min-width:36px;
+
+        height:36px;
+
+        padding:0 10px;
     }
 }
 

@@ -338,7 +338,7 @@
     @if($cadets->hasPages())
 
         <div class="pagination-wrapper">
-            {{ $cadets->withQueryString()->links() }}
+            {{ $cadets->links() }}
         </div>
 
     @endif
@@ -583,53 +583,48 @@
 
                 </tr>
 
-            @empty
+                    @empty
 
-                <tr>
+                        <tr>
 
-                    <td colspan="5" class="text-center">
+                            <td colspan="6" class="text-center">
 
-                        @if($cadet->bsRequirements->count() == 0)
+                                <p class="mb-3">
+                                    No requirement submitted yet.
+                                </p>
 
-<tr>
-    <td colspan="6" class="text-center">
+                                @if($cadet->bs_status != 'Legacy Qualified')
 
-        <p class="mb-3">
-            No requirement submitted yet.
-        </p>
+                                    <form
+                                        action="{{ route('admin.cadet.bs.legacy', $cadet->id) }}"
+                                        method="POST"
+                                    >
 
-        @if($cadet->bs_status != 'Legacy Qualified')
+                                        @csrf
+                                        @method('PUT')
 
-            <form action="{{ route('admin.cadet.bs.legacy', $cadet->id) }}"
-                  method="POST">
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success"
+                                        >
+                                            🎓 Approve Legacy
+                                        </button>
 
-                @csrf
-                @method('PUT')
+                                    </form>
 
-                <button class="btn btn-success">
-                    🎓 Approve Legacy 
-                </button>
+                                @else
 
-            </form>
+                                    <span class="badge success">
+                                        BS Qualified (Legacy)
+                                    </span>
 
-        @else
+                                @endif
 
-            <span class="badge success">
-                BS Qualified (Legacy)
-            </span>
+                            </td>
 
-        @endif
+                        </tr>
 
-    </td>
-</tr>
-
-@endif
-
-                    </td>
-
-                </tr>
-
-            @endforelse
+                    @endforelse
 
             </tbody>
 
