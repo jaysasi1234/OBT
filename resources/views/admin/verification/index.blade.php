@@ -197,338 +197,368 @@
 
     </div>
 
+<!-- =====================================================
+     FILTER PANEL
+====================================================== -->
 
-    <!-- =====================================================
-         FILTER PANEL
-    ====================================================== -->
+<form
+    method="GET"
+    action="{{ route('admin.verification.index') }}"
+    id="verificationFilterForm"
+    class="vm-filter-panel"
+>
 
-    <div class="vm-filter-panel">
+    <div class="vm-filter-header">
 
-        <div class="vm-filter-header">
+        <div class="vm-filter-title">
 
-            <div class="vm-filter-title">
-
-                <div class="vm-filter-title-icon">
-                    ⚙
-                </div>
-
-                Filters
-
+            <div class="vm-filter-title-icon">
+                ⚙
             </div>
+
+            Filters
+
+        </div>
+
+
+        <a
+            href="{{ route('admin.verification.index') }}"
+            class="vm-clear"
+        >
+            Clear filters
+        </a>
+
+    </div>
+
+
+    <div class="vm-filters">
+
+
+        <!-- =================================================
+             COURSE
+        ================================================== -->
+
+        <div class="vm-dropdown">
 
             <button
                 type="button"
-                class="vm-clear"
-                onclick="clearFilters()"
+                class="vm-dropdown-button"
+                onclick="toggleDropdown('courseMenu', this)"
             >
-                Clear filters
+
+                <span class="vm-dropdown-label">
+
+                    🎓
+
+                    <span>
+                        Courses
+                    </span>
+
+                    <span
+                        id="courseCount"
+                        class="vm-dropdown-count"
+                    >
+                        {{ request('course') ? 1 : 0 }}
+                    </span>
+
+                </span>
+
+                <span class="vm-chevron">
+                    ▼
+                </span>
+
+            </button>
+
+
+            <div
+                id="courseMenu"
+                class="vm-dropdown-menu"
+            >
+
+                @foreach($courses as $course)
+
+                    <label class="vm-option">
+
+                        <input
+                            type="radio"
+                            name="course"
+                            value="{{ $course->course }}"
+                            onchange="submitVerificationFilters()"
+                            {{ request('course') == $course->course ? 'checked' : '' }}
+                        >
+
+                        <span>
+                            {{ $course->course }}
+                        </span>
+
+                    </label>
+
+                @endforeach
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             BATCH
+        ================================================== -->
+
+        <div class="vm-dropdown">
+
+            <button
+                type="button"
+                class="vm-dropdown-button"
+                onclick="toggleDropdown('batchMenu', this)"
+            >
+
+                <span class="vm-dropdown-label">
+
+                    📅
+
+                    <span>
+                        Batch
+                    </span>
+
+                    <span
+                        id="batchCount"
+                        class="vm-dropdown-count"
+                    >
+                        {{ request('batch') ? 1 : 0 }}
+                    </span>
+
+                </span>
+
+                <span class="vm-chevron">
+                    ▼
+                </span>
+
+            </button>
+
+
+            <div
+                id="batchMenu"
+                class="vm-dropdown-menu"
+            >
+
+                @foreach($batches as $batch)
+
+                    <label class="vm-option">
+
+                        <input
+                            type="radio"
+                            name="batch"
+                            value="{{ $batch->batch_year }}"
+                            onchange="submitVerificationFilters()"
+                            {{ request('batch') == $batch->batch_year ? 'checked' : '' }}
+                        >
+
+                        <span>
+                            {{ $batch->batch_year }}
+                        </span>
+
+                    </label>
+
+                @endforeach
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             VERIFICATION
+        ================================================== -->
+
+        <div class="vm-dropdown">
+
+            <button
+                type="button"
+                class="vm-dropdown-button"
+                onclick="toggleDropdown('statusMenu', this)"
+            >
+
+                <span class="vm-dropdown-label">
+
+                    🛡️
+
+                    <span>
+                        Verification
+                    </span>
+
+                    <span
+                        id="statusCount"
+                        class="vm-dropdown-count"
+                    >
+                        {{ request('verification_status') ? 1 : 0 }}
+                    </span>
+
+                </span>
+
+                <span class="vm-chevron">
+                    ▼
+                </span>
+
+            </button>
+
+
+            <div
+                id="statusMenu"
+                class="vm-dropdown-menu"
+            >
+
+                <label class="vm-option">
+
+                    <input
+                        type="radio"
+                        name="verification_status"
+                        value="Verified"
+                        onchange="submitVerificationFilters()"
+                        {{ request('verification_status') == 'Verified' ? 'checked' : '' }}
+                    >
+
+                    <span>
+                        Verified
+                    </span>
+
+                </label>
+
+
+                <label class="vm-option">
+
+                    <input
+                        type="radio"
+                        name="verification_status"
+                        value="Pending"
+                        onchange="submitVerificationFilters()"
+                        {{ request('verification_status') == 'Pending' ? 'checked' : '' }}
+                    >
+
+                    <span>
+                        Pending
+                    </span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             BS STATUS
+        ================================================== -->
+
+        <div class="vm-dropdown">
+
+            <button
+                type="button"
+                class="vm-dropdown-button"
+                onclick="toggleDropdown('bsMenu', this)"
+            >
+
+                <span class="vm-dropdown-label">
+
+                    🎓
+
+                    <span>
+                        BS Status
+                    </span>
+
+                    <span
+                        id="bsCount"
+                        class="vm-dropdown-count"
+                    >
+                        {{ request('bs_status') ? 1 : 0 }}
+                    </span>
+
+                </span>
+
+                <span class="vm-chevron">
+                    ▼
+                </span>
+
+            </button>
+
+
+            <div
+                id="bsMenu"
+                class="vm-dropdown-menu"
+            >
+
+                <label class="vm-option">
+
+                    <input
+                        type="radio"
+                        name="bs_status"
+                        value="Qualified"
+                        onchange="submitVerificationFilters()"
+                        {{ request('bs_status') == 'Qualified' ? 'checked' : '' }}
+                    >
+
+                    <span>
+                        Qualified
+                    </span>
+
+                </label>
+
+
+                <label class="vm-option">
+
+                    <input
+                        type="radio"
+                        name="bs_status"
+                        value="Not Qualified"
+                        onchange="submitVerificationFilters()"
+                        {{ request('bs_status') == 'Not Qualified' ? 'checked' : '' }}
+                    >
+
+                    <span>
+                        Not Qualified
+                    </span>
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SEARCH
+        ================================================== -->
+
+        <div class="vm-search">
+
+            <span class="vm-search-icon">
+                🔎
+            </span>
+
+
+            <input
+                type="text"
+                name="search"
+                id="search"
+                value="{{ request('search') }}"
+                placeholder="Search by name or TRB number..."
+                autocomplete="off"
+            >
+
+
+            <button
+                type="submit"
+                class="vm-search-clear"
+                id="searchClear"
+            >
+                ×
             </button>
 
         </div>
 
-
-        <div class="vm-filters">
-
-
-            <!-- COURSE -->
-
-            <div class="vm-dropdown">
-
-                <button
-                    type="button"
-                    class="vm-dropdown-button"
-                    onclick="toggleDropdown('courseMenu', this)"
-                >
-
-                    <span class="vm-dropdown-label">
-
-                        🎓
-
-                        <span>
-                            Courses
-                        </span>
-
-                        <span
-                            id="courseCount"
-                            class="vm-dropdown-count"
-                        >
-                            0
-                        </span>
-
-                    </span>
-
-                    <span class="vm-chevron">
-                        ▼
-                    </span>
-
-                </button>
-
-
-                <div
-                    id="courseMenu"
-                    class="vm-dropdown-menu"
-                >
-
-                    @foreach($courses as $course)
-
-                        <label class="vm-option">
-
-                            <input
-                                type="checkbox"
-                                value="{{ strtolower(trim($course->course)) }}"
-                                onchange="filter()"
-                            >
-
-                            <span>
-                                {{ $course->course }}
-                            </span>
-
-                        </label>
-
-                    @endforeach
-
-                </div>
-
-            </div>
-
-
-            <!-- BATCH -->
-
-            <div class="vm-dropdown">
-
-                <button
-                    type="button"
-                    class="vm-dropdown-button"
-                    onclick="toggleDropdown('batchMenu', this)"
-                >
-
-                    <span class="vm-dropdown-label">
-
-                        📅
-
-                        <span>
-                            Batch
-                        </span>
-
-                        <span
-                            id="batchCount"
-                            class="vm-dropdown-count"
-                        >
-                            0
-                        </span>
-
-                    </span>
-
-                    <span class="vm-chevron">
-                        ▼
-                    </span>
-
-                </button>
-
-
-                <div
-                    id="batchMenu"
-                    class="vm-dropdown-menu"
-                >
-
-                    @foreach($batches as $batch)
-
-                        <label class="vm-option">
-
-                            <input
-                                type="checkbox"
-                                value="{{ strtolower($batch->batch_year) }}"
-                                onchange="filter()"
-                            >
-
-                            <span>
-                                {{ $batch->batch_year }}
-                            </span>
-
-                        </label>
-
-                    @endforeach
-
-                </div>
-
-            </div>
-
-
-            <!-- VERIFICATION -->
-
-            <div class="vm-dropdown">
-
-                <button
-                    type="button"
-                    class="vm-dropdown-button"
-                    onclick="toggleDropdown('statusMenu', this)"
-                >
-
-                    <span class="vm-dropdown-label">
-
-                        🛡️
-
-                        <span>
-                            Verification
-                        </span>
-
-                        <span
-                            id="statusCount"
-                            class="vm-dropdown-count"
-                        >
-                            0
-                        </span>
-
-                    </span>
-
-                    <span class="vm-chevron">
-                        ▼
-                    </span>
-
-                </button>
-
-
-                <div
-                    id="statusMenu"
-                    class="vm-dropdown-menu"
-                >
-
-                    <label class="vm-option">
-
-                        <input
-                            type="checkbox"
-                            value="verified"
-                            onchange="filter()"
-                        >
-
-                        <span>
-                            Verified
-                        </span>
-
-                    </label>
-
-
-                    <label class="vm-option">
-
-                        <input
-                            type="checkbox"
-                            value="pending"
-                            onchange="filter()"
-                        >
-
-                        <span>
-                            Pending
-                        </span>
-
-                    </label>
-
-                </div>
-
-            </div>
-
-
-            <!-- BS STATUS -->
-
-            <div class="vm-dropdown">
-
-                <button
-                    type="button"
-                    class="vm-dropdown-button"
-                    onclick="toggleDropdown('bsMenu', this)"
-                >
-
-                    <span class="vm-dropdown-label">
-
-                        🎓
-
-                        <span>
-                            BS Status
-                        </span>
-
-                        <span
-                            id="bsCount"
-                            class="vm-dropdown-count"
-                        >
-                            0
-                        </span>
-
-                    </span>
-
-                    <span class="vm-chevron">
-                        ▼
-                    </span>
-
-                </button>
-
-
-                <div
-                    id="bsMenu"
-                    class="vm-dropdown-menu"
-                >
-
-                    <label class="vm-option">
-
-                        <input
-                            type="checkbox"
-                            value="qualified"
-                            onchange="filter()"
-                        >
-
-                        <span>
-                            Qualified
-                        </span>
-
-                    </label>
-
-
-                    <label class="vm-option">
-
-                        <input
-                            type="checkbox"
-                            value="not qualified"
-                            onchange="filter()"
-                        >
-
-                        <span>
-                            Not Qualified
-                        </span>
-
-                    </label>
-
-                </div>
-
-            </div>
-
-
-            <!-- SEARCH -->
-
-            <div class="vm-search">
-
-                <span class="vm-search-icon">
-                    🔎
-                </span>
-
-                <input
-                    type="text"
-                    id="search"
-                    placeholder="Search by name or TRB number..."
-                    autocomplete="off"
-                >
-
-                <button
-                    type="button"
-                    id="searchClear"
-                    class="vm-search-clear"
-                    onclick="clearSearch()"
-                >
-                    ×
-                </button>
-
-            </div>
-
-        </div>
-
     </div>
+
+</form>
+
 
 
     <!-- =====================================================
