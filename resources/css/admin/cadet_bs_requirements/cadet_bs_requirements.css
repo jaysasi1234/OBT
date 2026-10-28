@@ -1494,146 +1494,74 @@ body{
 }
 
 
+/* =========================================================
+   CUSTOM MODAL
+========================================================= */
 
-/* =========================================
-   FIXED BS REQUIREMENTS MODAL
-========================================= */
+.custom-modal{
 
-.custom-modal {
-    position: fixed !important;
-    inset: 0 !important;
+    position:fixed;
 
-    width: 100vw !important;
-    height: 100dvh !important;
+    inset:0;
 
-    margin: 0 !important;
-    padding: 24px !important;
+    background:rgba(3,12,29,.78);
 
-    display: none;
-    align-items: center !important;
-    justify-content: center !important;
+    display:none;
 
-    background: rgba(3, 12, 29, 0.82);
-    backdrop-filter: blur(5px);
+    justify-content:center;
 
-    z-index: 999999 !important;
-    box-sizing: border-box;
+    align-items:center;
+
+    z-index:9999;
+
+    padding:20px;
+
+    backdrop-filter:blur(5px);
 }
 
-.custom-modal-content {
-    position: relative !important;
+.custom-modal-content{
 
-    width: 100% !important;
-    max-width: 1100px !important;
-    max-height: calc(100dvh - 48px) !important;
+    position:relative;
 
-    margin: 0 auto !important;
+    background:#0b1d3a;
 
-    display: flex;
-    flex-direction: column;
+    width:95%;
 
-    background: #0b1d3a;
-    border: 1px solid rgba(96,165,250,.18);
-    border-radius: 18px;
+    max-width:1200px;
 
-    overflow: hidden;
+    max-height:90vh;
 
-    box-shadow: 0 25px 60px rgba(0,0,0,.55);
+    overflow:hidden;
 
-    animation: popup .25s ease;
-    box-sizing: border-box;
+    border-radius:18px;
+
+    border:1px solid rgba(96,165,250,.18);
+
+    animation:popup .25s ease;
+
+    box-shadow:
+        0 25px 60px rgba(0,0,0,.55),
+        inset 0 1px 0 rgba(255,255,255,.03);
 }
 
-.custom-modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+@keyframes popup{
 
-    gap: 16px;
-    flex-shrink: 0;
+    from{
 
-    padding: 20px 25px;
+        opacity:0;
 
-    background: linear-gradient(135deg,#173b78,#102b59);
-    border-bottom: 1px solid rgba(96,165,250,.18);
-}
-
-.custom-modal-header h3 {
-    margin: 0;
-    min-width: 0;
-
-    color: #ffffff;
-    font-size: 21px;
-    font-weight: 800;
-
-    overflow-wrap: anywhere;
-}
-
-.close-modal {
-    flex-shrink: 0;
-
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    margin-left: auto;
-
-    border: 0;
-    border-radius: 10px;
-
-    background: rgba(255,255,255,.08);
-    color: #ffffff;
-
-    font-size: 26px;
-    cursor: pointer;
-}
-
-.close-modal:hover {
-    background: #dc2626;
-}
-
-#modalBody {
-    flex: 1;
-    min-height: 0;
-    min-width: 0;
-
-    padding: 25px;
-
-    overflow: auto;
-    background: #0b1d3a;
-    color: #dbeafe;
-}
-
-#modalBody .requirement-summary {
-    min-width: 0;
-}
-
-#modalBody .table {
-    min-width: 950px;
-}
-
-@media (max-width: 768px) {
-    .custom-modal {
-        padding: 12px !important;
+        transform:
+            translateY(30px)
+            scale(.98);
     }
 
-    .custom-modal-content {
-        max-height: calc(100dvh - 24px) !important;
-    }
+    to{
 
-    .custom-modal-header {
-        padding: 15px;
-    }
+        opacity:1;
 
-    .custom-modal-header h3 {
-        font-size: 17px;
-    }
-
-    #modalBody {
-        padding: 15px;
+        transform:
+            translateY(0)
+            scale(1);
     }
 }
 
@@ -2290,4 +2218,415 @@ body{
 .table-responsive::-webkit-scrollbar-thumb:hover{
 
     background:#3b6eb5;
+}
+
+/* =========================================================
+   VIEW REQUIREMENTS MODAL - FULL RESPONSIVE FIX
+   ========================================================= */
+
+/* Desktop */
+.custom-modal {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+
+    display: none;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+    z-index: 9999;
+}
+
+.custom-modal-content {
+    width: min(1100px, 100%);
+    max-width: 1100px;
+    height: auto;
+    max-height: 90vh;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+    min-width: 0;
+
+    border-radius: 18px;
+}
+
+/* Modal header */
+.custom-modal-header {
+    flex: 0 0 auto;
+    min-width: 0;
+}
+
+.custom-modal-header h3 {
+    min-width: 0;
+    max-width: calc(100% - 50px);
+
+    margin: 0;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Modal body */
+#modalBody {
+    flex: 1 1 auto;
+
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    box-sizing: border-box;
+
+    overflow-x: auto;
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent children from expanding modal */
+#modalBody > * {
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   REQUIREMENT SUMMARY
+   ========================================================= */
+
+#modalBody .requirement-summary {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+#modalBody .summary-header {
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+#modalBody .table-responsive {
+    width: 100%;
+    max-width: 100%;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+#modalBody table {
+    max-width: none;
+}
+
+/*
+|--------------------------------------------------------------------------
+| On desktop the table can use its natural width.
+|--------------------------------------------------------------------------
+*/
+
+@media (min-width: 769px) {
+
+    #modalBody table {
+        width: 100%;
+    }
+
+}
+
+/* =========================================================
+   ATTACHMENTS
+   ========================================================= */
+
+#modalBody .attachment-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    box-sizing: border-box;
+}
+
+#modalBody .attachment-info {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+#modalBody .attachment-name {
+    max-width: 100%;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   MOBILE MODAL
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .custom-modal {
+        padding: 8px;
+
+        align-items: center;
+        justify-content: center;
+
+        overflow: hidden;
+    }
+
+    .custom-modal-content {
+        width: 100%;
+        max-width: 100%;
+
+        height: calc(100vh - 16px);
+        max-height: calc(100vh - 16px);
+
+        border-radius: 14px;
+    }
+
+    /* Header */
+    .custom-modal-header {
+        padding: 14px 15px;
+
+        gap: 10px;
+    }
+
+    .custom-modal-header h3 {
+        font-size: 17px;
+        line-height: 1.3;
+
+        white-space: normal;
+
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .close-modal {
+        flex: 0 0 36px;
+
+        width: 36px;
+        height: 36px;
+        min-width: 36px;
+
+        font-size: 23px;
+    }
+
+    /* Body */
+    #modalBody {
+        padding: 14px;
+
+        width: 100%;
+        max-width: 100%;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    /* Summary */
+    #modalBody .summary-header {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 8px;
+
+        margin-bottom: 18px;
+        padding-bottom: 12px;
+    }
+
+    #modalBody .summary-header h4 {
+        font-size: 18px;
+
+        max-width: 100%;
+
+        overflow-wrap: anywhere;
+    }
+
+    /* =====================================================
+       REQUIREMENT TABLE ON MOBILE
+       ===================================================== */
+
+    #modalBody .table-responsive {
+        width: 100%;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        border-radius: 10px;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #modalBody table {
+        width: 700px;
+        min-width: 700px;
+        max-width: none;
+    }
+
+    #modalBody th,
+    #modalBody td {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    /* =====================================================
+       ATTACHMENT CARDS
+       ===================================================== */
+
+    #modalBody .attachment-card {
+        width: 100%;
+        min-width: 0;
+
+        display: flex;
+        align-items: center;
+
+        gap: 9px;
+
+        padding: 10px;
+    }
+
+    #modalBody .attachment-info {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    #modalBody .attachment-name {
+        white-space: normal;
+
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    #modalBody .attachment-actions {
+        flex: 0 0 auto;
+    }
+
+}
+
+/* =========================================================
+   SMALL PHONE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .custom-modal {
+        padding: 0;
+    }
+
+    .custom-modal-content {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+
+        border-radius: 0;
+    }
+
+    .custom-modal-header {
+        padding: 13px 14px;
+    }
+
+    .custom-modal-header h3 {
+        font-size: 16px;
+    }
+
+    .close-modal {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+
+        font-size: 21px;
+    }
+
+    #modalBody {
+        padding: 12px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    #modalBody .summary-header h4 {
+        font-size: 17px;
+    }
+
+    /* Mobile table */
+    #modalBody .table-responsive {
+        margin-left: 0;
+        margin-right: 0;
+
+        width: 100%;
+        max-width: 100%;
+
+        overflow-x: auto;
+    }
+
+    #modalBody table {
+        min-width: 650px;
+        width: 650px;
+    }
+
+    /* Attachment */
+    #modalBody .attachment-card {
+        padding: 9px;
+        gap: 8px;
+    }
+
+    #modalBody .attachment-icon {
+        flex: 0 0 36px;
+
+        width: 36px;
+        height: 36px;
+    }
+
+    #modalBody .attachment-actions {
+        display: flex;
+        flex-shrink: 0;
+
+        gap: 5px;
+    }
+
+}
+
+/* =========================================================
+   VERY SMALL PHONE
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    #modalBody {
+        padding: 10px;
+    }
+
+    .custom-modal-header {
+        padding: 11px 12px;
+    }
+
+    .custom-modal-header h3 {
+        font-size: 15px;
+    }
+
+    #modalBody .summary-header h4 {
+        font-size: 16px;
+    }
+
+    #modalBody table {
+        min-width: 620px;
+        width: 620px;
+    }
+
 }
