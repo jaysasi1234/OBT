@@ -2219,3 +2219,121 @@ body{
 
     background:#3b6eb5;
 }
+
+
+/* =====================================================
+   VIEW REQUIREMENTS MODAL — CENTERING FIX
+   ===================================================== */
+
+#requirementsModal,
+.custom-modal {
+    position: fixed !important;
+    inset: 0 !important;
+
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+
+    margin: 0 !important;
+    padding: 16px !important;
+
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    z-index: 99999 !important;
+}
+
+/* Show modal while keeping it centered */
+#requirementsModal.show,
+.custom-modal.show,
+#requirementsModal.active,
+.custom-modal.active {
+    display: flex !important;
+}
+
+/* Modal panel */
+#requirementsModal .custom-modal-content,
+.custom-modal .custom-modal-content {
+    position: relative !important;
+
+    width:  min(900px, 100%) !important;
+    max-width: 900px !important;
+
+    height: auto !important;
+    max-height: calc(100dvh - 32px) !important;
+
+    margin: auto !important;
+    flex: 0 1 auto !important;
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+    border-radius: 16px;
+}
+
+/* Header stays at the top */
+#requirementsModal .custom-modal-header,
+.custom-modal .custom-modal-header {
+    flex-shrink: 0;
+    min-width: 0;
+}
+
+/* Only the modal body scrolls */
+#requirementsModal #modalBody,
+.custom-modal #modalBody {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+
+    flex: 1 1 auto;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Tablet and mobile */
+@media (max-width: 768px) {
+    #requirementsModal,
+    .custom-modal {
+        padding: 12px !important;
+    }
+
+    #requirementsModal .custom-modal-content,
+    .custom-modal .custom-modal-content {
+        width: 100% !important;
+        max-width: 560px !important;
+        max-height: calc(100dvh - 24px) !important;
+
+        margin: auto !important;
+        border-radius: 14px !important;
+    }
+}
+
+/* Small phones — centered popup, not left-aligned */
+@media (max-width: 480px) {
+    #requirementsModal,
+    .custom-modal {
+        padding: 10px !important;
+    }
+
+    #requirementsModal .custom-modal-content,
+    .custom-modal .custom-modal-content {
+        width: 100% !important;
+        max-width: 420px !important;
+        max-height: calc(100dvh - 20px) !important;
+
+        margin: auto !important;
+        border-radius: 12px !important;
+    }
+}
