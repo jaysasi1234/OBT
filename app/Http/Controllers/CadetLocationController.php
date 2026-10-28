@@ -54,11 +54,7 @@ class CadetLocationController extends Controller
         */
 
         $deployment = $cadet->deployments()
-            ->whereIn('status', [
-                'Deployed',
-                'Active',
-                'On Board',
-            ])
+            ->where('status', 'Ongoing')
             ->latest()
             ->first();
 
