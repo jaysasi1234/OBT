@@ -39,40 +39,26 @@ class AccountCredentialController extends Controller
         | Accounts
         |--------------------------------------------------------------------------
         */
-        $users = User::query()
-            ->with([
-                'cadet.batch'
-            ])
-            ->when($search !== '', function ($query) use ($search) {
-
-                $query->where(function ($q) use ($search) {
-
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('username', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-
-                });
-
-            })
-            ->when($batchId, function ($query) use ($batchId) {
-
-                $query->whereHas('cadet', function ($q) use ($batchId) {
-
-                    $q->where('batch_id', $batchId);
-
-                });
-
-            })
-            ->orderBy('role')
-            ->orderBy('name')
-            ->get([
-                'id',
-                'name',
-                'username',
-                'email',
-                'role',
-                'is_active',
-            ]);
+$users = User::query()
+    ->with([
+        'cadet.batch'
+    ])
+    ->when($search !== '', function ($query) use ($search) {
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('username', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%");
+        });
+    })
+    ->when($batchId, function ($query) use ($batchId) {
+        $query->whereHas('cadet', function ($q) use ($batchId) {
+            $q->where('batch_id', $batchId);
+        });
+    })
+    ->orderBy('role')
+    ->orderBy('name')
+    ->paginate(25)
+    ->withQueryString();
 
         /*
         |--------------------------------------------------------------------------

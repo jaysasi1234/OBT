@@ -478,6 +478,10 @@
 
             </table>
 
+            <div class="account-pagination">
+    {{ $users->links() }}
+</div>
+
         </div>
 
     </div>
