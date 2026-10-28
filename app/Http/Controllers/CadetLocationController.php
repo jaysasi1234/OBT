@@ -10,6 +10,12 @@ class CadetLocationController extends Controller
 {
     public function update(Request $request)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Validate GPS data
+        |--------------------------------------------------------------------------
+        */
+
         $request->validate([
             'latitude' => [
                 'required',
@@ -30,11 +36,17 @@ class CadetLocationController extends Controller
             ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | Get authenticated user
+        |--------------------------------------------------------------------------
+        */
+
         $user = Auth::user();
 
         /*
         |--------------------------------------------------------------------------
-        | Get cadet
+        | Get cadet record
         |--------------------------------------------------------------------------
         */
 
@@ -49,8 +61,11 @@ class CadetLocationController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Make sure this cadet is currently deployed
+        | Check CURRENT deployment
         |--------------------------------------------------------------------------
+        |
+        | Only an Ongoing deployment is allowed to send GPS location.
+        |
         */
 
         $deployment = $cadet->deployments()
@@ -58,7 +73,26 @@ class CadetLocationController extends Controller
             ->latest()
             ->first();
 
+        /*
+        |--------------------------------------------------------------------------
+        | Cadet is NOT currently deployed
+        |--------------------------------------------------------------------------
+        */
+
         if (!$deployment) {
+
+            /*
+            | Clear old GPS coordinates so the admin map
+            | will not continue showing this cadet.
+            */
+
+            $cadet->latitude = null;
+            $cadet->longitude = null;
+            $cadet->location_accuracy = null;
+            $cadet->location_updated_at = null;
+
+            $cadet->save();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Cadet is not currently deployed.',
@@ -67,7 +101,7 @@ class CadetLocationController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Save location
+        | Save current location
         |--------------------------------------------------------------------------
         */
 
@@ -93,23 +127,28 @@ class CadetLocationController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Prepare last seen timestamp safely
+        | Prepare last seen timestamp
         |--------------------------------------------------------------------------
         */
 
         $lastSeen = $cadet->location_updated_at;
 
         if ($lastSeen instanceof \Carbon\CarbonInterface) {
+
             $lastSeen = $lastSeen->toISOString();
+
         } elseif ($lastSeen) {
+
             $lastSeen = (string) $lastSeen;
+
         } else {
+
             $lastSeen = now()->toISOString();
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Broadcast immediately to admin map
+        | Broadcast location update
         |--------------------------------------------------------------------------
         */
 
@@ -147,29 +186,24 @@ class CadetLocationController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Response
+        | Return response
         |--------------------------------------------------------------------------
         */
 
         return response()->json([
             'success' => true,
 
-            'message' =>
-                'Location updated successfully.',
+            'message' => 'Location updated successfully.',
 
-            'latitude' =>
-                (float) $cadet->latitude,
+            'latitude' => (float) $cadet->latitude,
 
-            'longitude' =>
-                (float) $cadet->longitude,
+            'longitude' => (float) $cadet->longitude,
 
-            'accuracy' =>
-                $cadet->location_accuracy !== null
-                    ? (float) $cadet->location_accuracy
-                    : null,
+            'accuracy' => $cadet->location_accuracy !== null
+                ? (float) $cadet->location_accuracy
+                : null,
 
-            'updated_at' =>
-                $lastSeen,
+            'updated_at' => $lastSeen,
         ]);
     }
 }
