@@ -14,26 +14,29 @@ class LocationController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function index()
-    {
-        $cadets = Cadet::with([
-                'deployment',
-                'user',
-            ])
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->get()
-            ->map(function ($cadet) {
+public function index()
+{
+    $cadets = Cadet::with([
+            'deployment',
+            'user',
+        ])
+        ->whereNotNull('latitude')
+        ->whereNotNull('longitude')
+        ->whereHas('deployment', function ($query) {
+            $query->where('status', 'Ongoing');
+        })
+        ->get()
+        ->map(function ($cadet) {
 
-                return $this->normalizeCadet($cadet);
+            return $this->normalizeCadet($cadet);
 
-            });
+        });
 
-        return view(
-            'admin.locations',
-            compact('cadets')
-        );
-    }
+    return view(
+        'admin.locations',
+        compact('cadets')
+    );
+}
 
 
     /*
@@ -42,25 +45,28 @@ class LocationController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function data()
-    {
-        $cadets = Cadet::with([
-                'deployment',
-                'user',
-            ])
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->get()
-            ->map(function ($cadet) {
+public function data()
+{
+    $cadets = Cadet::with([
+            'deployment',
+            'user',
+        ])
+        ->whereNotNull('latitude')
+        ->whereNotNull('longitude')
+        ->whereHas('deployment', function ($query) {
+            $query->where('status', 'Ongoing');
+        })
+        ->get()
+        ->map(function ($cadet) {
 
-                return $this->normalizeCadet($cadet);
+            return $this->normalizeCadet($cadet);
 
-            });
+        });
 
-        return response()->json(
-            $cadets->values()
-        );
-    }
+    return response()->json(
+        $cadets->values()
+    );
+}
 
 
     /*
