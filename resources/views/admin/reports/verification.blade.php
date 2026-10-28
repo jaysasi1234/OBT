@@ -752,6 +752,12 @@
 
             </table>
 
+            
+<div class="verification-pagination">
+    {{ $cadets->links() }}
+</div>
+
+
         </div>
 
     </div>

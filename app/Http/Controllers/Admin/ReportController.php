@@ -159,66 +159,81 @@ class ReportController extends Controller
        VERIFICATION REPORT
     ========================= */
 
-    public function verification(Request $request)
-    {
-        $query = Cadet::with('batch');
 
-        $courses = Cadet::select('course')
-            ->distinct()
-            ->orderBy('course')
-            ->get();
+public function verification(Request $request)
+{
+    $query = Cadet::with('batch');
 
-        if ($request->course) {
-            $query->where('course',$request->course);
-        }
+    $courses = Cadet::select('course')
+        ->distinct()
+        ->orderBy('course')
+        ->get();
 
-        if ($request->batch) {
-            $query->where('batch_id',$request->batch);
-        }
-
-        if ($request->status) {
-            $query->where(
-                'verification_status',
-                $request->status
-            );
-        }
-
-        if ($request->search) {
-            $query->where(
-                'full_name',
-                'like',
-                "%{$request->search}%"
-            );
-        }
-
-        $cadets = $query->latest()->get();
-
-        foreach ($cadets as $cadet) {
-            $cadet->verification_label =
-                in_array($cadet->verification_status,[
-                    'Verified',
-                    'Pending',
-                    'Deficiency'
-                ])
-                ? $cadet->verification_status
-                : 'Not Submitted';
-        }
-
-        return view('admin.reports.verification',[
-            'cadets'     => $cadets,
-            'courses'    => $courses,
-            'batches'    => Batch::all(),
-            'verified'   => $cadets->where(
-                'verification_status','Verified'
-            )->count(),
-            'pending'    => $cadets->where(
-                'verification_status','Pending'
-            )->count(),
-            'deficiency' => $cadets->where(
-                'verification_status','Deficiency'
-            )->count()
-        ]);
+    // FILTER: Course
+    if ($request->filled('course')) {
+        $query->where('course', $request->course);
     }
+
+    // FILTER: Batch
+    if ($request->filled('batch')) {
+        $query->where('batch_id', $request->batch);
+    }
+
+    // FILTER: Verification Status
+    if ($request->filled('status')) {
+        $query->where(
+            'verification_status',
+            $request->status
+        );
+    }
+
+    // FILTER: Search by cadet name
+    if ($request->filled('search')) {
+        $query->where(
+            'full_name',
+            'like',
+            '%' . $request->search . '%'
+        );
+    }
+
+    // COUNT matching records before pagination
+    $verified = (clone $query)
+        ->where('verification_status', 'Verified')
+        ->count();
+
+    $pending = (clone $query)
+        ->where('verification_status', 'Pending')
+        ->count();
+
+    $deficiency = (clone $query)
+        ->where('verification_status', 'Deficiency')
+        ->count();
+
+    // PAGINATION: 25 cadets per page
+    $cadets = $query
+        ->latest()
+        ->paginate(25)
+        ->withQueryString();
+
+    // Set display label for each cadet on the current page
+    foreach ($cadets as $cadet) {
+        $cadet->verification_label = in_array(
+            $cadet->verification_status,
+            ['Verified', 'Pending', 'Deficiency']
+        )
+            ? $cadet->verification_status
+            : 'Not Submitted';
+    }
+
+    return view('admin.reports.verification', [
+        'cadets'     => $cadets,
+        'courses'    => $courses,
+        'batches'    => Batch::all(),
+        'verified'   => $verified,
+        'pending'    => $pending,
+        'deficiency' => $deficiency,
+    ]);
+}
 
 
     /* =========================

@@ -1902,6 +1902,31 @@ body{
 }
 
 
+.verification-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 24px 0;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.verification-pagination nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: 100%;
+}
+
+.verification-pagination svg {
+    width: 18px;
+    height: 18px;
+}
+
+
 /* =========================================================
    RESPONSIVE
 ========================================================= */
