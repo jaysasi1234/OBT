@@ -55,8 +55,8 @@ $users = User::query()
             $q->where('batch_id', $batchId);
         });
     })
-    ->orderBy('role')
     ->orderByRaw('LOWER(name) ASC')
+    ->orderBy('id', 'ASC')
     ->paginate(25)
     ->withQueryString();
 
