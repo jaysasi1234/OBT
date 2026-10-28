@@ -23,11 +23,14 @@ class UserController extends Controller
     // DISPLAY USERS
     // =========================================================
 
-public function index()
+
+public function index(Request $request)
 {
+    // Display 25 users per page.
     $users = User::with('cadet')
         ->latest()
-        ->get();
+        ->paginate(25)
+        ->withQueryString();
 
     $courses = Course::orderBy('course_name')
         ->get();
@@ -42,26 +45,21 @@ public function index()
     $cadetsByBatch = $cadets->groupBy('batch_id');
 
     $batchData = $batches->map(function ($batch) use ($cadetsByBatch) {
-
         return [
             'id' => $batch->id,
-
             'batch_year' => $batch->batch_year,
 
             'cadets' => ($cadetsByBatch[$batch->id] ?? collect())
                 ->map(function ($cadet) {
-
                     return [
                         'id' => $cadet->id,
                         'name' => $cadet->full_name,
                         'trb' => $cadet->trb_control_number,
                     ];
-
                 })
                 ->values()
                 ->toArray(),
         ];
-
     })
     ->values()
     ->toArray();
@@ -74,6 +72,7 @@ public function index()
         'batchData'
     ));
 }
+
 
 // =========================================================
 // CREATE ACCOUNTS FOR ENTIRE BATCH

@@ -281,6 +281,10 @@
 
         </table>
 
+        <div class="users-pagination">
+    {{ $users->links() }}
+</div>
+
     </div>
 
 </div>
