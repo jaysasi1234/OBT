@@ -56,7 +56,7 @@ $users = User::query()
         });
     })
     ->orderBy('role')
-    ->orderBy('name')
+    ->orderByRaw('LOWER(name) ASC')
     ->paginate(25)
     ->withQueryString();
 
