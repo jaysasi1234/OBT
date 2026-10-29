@@ -1454,7 +1454,7 @@
                 @endforeach
 
             </div>
-
+{{-- ADD MORE MEMBERS SECTION --}}
 @php
     $existingMemberIds = $selectedGroup->members
         ->pluck('user_id')
@@ -1473,8 +1473,27 @@
 <div class="add-members-section">
 
     <h4>Add More Members</h4>
+    <p>Search for users and select who to add to this group.</p>
 
-    <p>Select the users you want to add to this group.</p>
+    {{-- Search input --}}
+    <div class="member-search-box">
+        <i class="bi bi-search"></i>
+        <input
+            type="search"
+            id="memberSearchInput"
+            placeholder="Search by name or role..."
+            autocomplete="off"
+            oninput="searchAvailableMembers()"
+        >
+        <button
+            type="button"
+            id="clearMemberSearch"
+            onclick="clearMemberSearchInput()"
+            title="Clear search"
+        >
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
 
     <form
         method="POST"
@@ -1482,13 +1501,15 @@
     >
         @csrf
 
-        <div class="add-member-list">
+        <div class="add-member-list" id="addMemberList">
 
             @forelse ($availableCandidates as $candidate)
 
                 <label
                     class="add-member-option"
                     for="add-member-{{ $candidate->id }}"
+                    data-member-name="{{ strtolower($candidate->name ?? '') }}"
+                    data-member-role="{{ strtolower($candidate->role ?? '') }}"
                 >
                     <input
                         type="checkbox"
@@ -1510,30 +1531,30 @@
 
                     <div class="add-member-info">
                         <strong>{{ $candidate->name }}</strong>
-                        <span>{{ ucfirst($candidate->role) }}</span>
+                        <span>{{ ucfirst($candidate->role ?? 'User') }}</span>
                     </div>
                 </label>
 
             @empty
-
-                <p>No additional contacts are available.</p>
-
+                <p class="no-members-message">
+                    No additional contacts are available.
+                </p>
             @endforelse
+
+            <p id="noMemberSearchResults" class="no-members-message" hidden>
+                No users match your search.
+            </p>
 
         </div>
 
         @if ($availableCandidates->isNotEmpty())
-            <button
-                type="submit"
-                class="add-members-button"
-            >
+            <button type="submit" class="add-members-button">
                 <i class="bi bi-person-plus-fill"></i>
                 Add Selected Members
             </button>
         @endif
 
     </form>
-
 </div>
 
         </div>
@@ -2198,6 +2219,41 @@ window.addEventListener(
 
 })();
 
+</script>
+
+<script>
+    function searchAvailableMembers() {
+        const input = document.getElementById('memberSearchInput');
+        const query = input.value.trim().toLowerCase();
+        const list = document.getElementById('addMemberList');
+        const members = list.querySelectorAll('.add-member-option');
+        const noResults = document.getElementById('noMemberSearchResults');
+        const clearButton = document.getElementById('clearMemberSearch');
+
+        let visibleCount = 0;
+
+        members.forEach(function (member) {
+            const name = member.dataset.memberName || '';
+            const role = member.dataset.memberRole || '';
+            const matches = name.includes(query) || role.includes(query);
+
+            member.hidden = !matches;
+
+            if (matches) {
+                visibleCount++;
+            }
+        });
+
+        noResults.hidden = visibleCount !== 0;
+        clearButton.style.display = query ? 'inline-flex' : 'none';
+    }
+
+    function clearMemberSearchInput() {
+        const input = document.getElementById('memberSearchInput');
+        input.value = '';
+        searchAvailableMembers();
+        input.focus();
+    }
 </script>
 
 @endsection

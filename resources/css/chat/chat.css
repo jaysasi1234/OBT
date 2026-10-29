@@ -1469,6 +1469,60 @@ body {
     background: #1e40af;
 }
 
+/* Search available members */
+.member-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 14px 0;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.member-search-box > i {
+    color: #64748b;
+}
+
+.member-search-box input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.member-search-box:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+#clearMemberSearch {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.add-member-option[hidden],
+#noMemberSearchResults[hidden] {
+    display: none !important;
+}
+
+.no-members-message {
+    padding: 12px 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
 /* =========================================================
    MESSAGE
 ========================================================= */
