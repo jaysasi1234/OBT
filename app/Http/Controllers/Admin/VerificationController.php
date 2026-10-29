@@ -193,6 +193,17 @@ class VerificationController extends Controller
                     ? 'Verified'
                     : 'Pending';
 
+            // -------------------------------------------------
+            // DEPLOYMENT ELIGIBILITY
+            // -------------------------------------------------
+
+            $cadet->deployment_eligibility =
+                (
+                    $totalRequirements > 0 &&
+                    $approved >= $totalRequirements
+                )
+                    ? 'Eligible for Deployment'
+                    : 'Not Eligible';
 
             // -------------------------------------------------
             // BS STATUS
@@ -422,64 +433,31 @@ class VerificationController extends Controller
         $notQualified = 0;
 
 
-        // -----------------------------------------------------
-        // CALCULATE STATISTICS
-        // -----------------------------------------------------
 
-        foreach ($statisticsCadets as $statCadet) {
+foreach ($statisticsCadets as $statCadet) {
 
-            // Verification
-            $approved =
-                $statCadet->documents
-                    ->where(
-                        'pivot.status',
-                        'Approved'
-                    )
-                    ->count();
+    // -------------------------------------------------
+    // VERIFICATION REQUIREMENTS
+    // -------------------------------------------------
 
+    $approved =
+        $statCadet->documents
+            ->where('pivot.status', 'Approved')
+            ->count();
 
-            if (
-                $totalRequirements > 0 &&
-                $approved >= $totalRequirements
-            ) {
+    $isEligible =
+        $totalRequirements > 0 &&
+        $approved >= $totalRequirements;
 
-                $completed++;
+    if ($isEligible) {
+        $completed++;
+        $qualified++;
+    } else {
+        $incomplete++;
+        $notQualified++;
+    }
+}
 
-            } else {
-
-                $incomplete++;
-            }
-
-
-            // BS
-            $totalBS =
-                $statCadet->bsRequirements->count();
-
-
-            $completedBS =
-                $statCadet->bsRequirements
-                    ->whereIn(
-                        'status',
-                        [
-                            'Approved',
-                            'Completed',
-                        ]
-                    )
-                    ->count();
-
-
-            if (
-                $totalBS > 0 &&
-                $completedBS >= $totalBS
-            ) {
-
-                $qualified++;
-
-            } else {
-
-                $notQualified++;
-            }
-        }
 
 
         // =====================================================
