@@ -1451,9 +1451,9 @@
 
                     </div>
 
-                    {{-- =================================================
-     ADD NEW MEMBERS
-================================================= --}}
+                @endforeach
+
+            </div>
 
 @php
     $existingMemberIds = $selectedGroup->members
@@ -1474,11 +1474,11 @@
 
     <h4>Add More Members</h4>
 
-    <p>Select users you want to add to this group.</p>
+    <p>Select the users you want to add to this group.</p>
 
     <form
         method="POST"
-        action="{{ route('chat.groups.members.add', $selectedGroup) }}"
+        action="{{ route('chat.groups.members.add', ['group' => $selectedGroup->id]) }}"
     >
         @csrf
 
@@ -1490,7 +1490,6 @@
                     class="add-member-option"
                     for="add-member-{{ $candidate->id }}"
                 >
-
                     <input
                         type="checkbox"
                         id="add-member-{{ $candidate->id }}"
@@ -1499,30 +1498,20 @@
                     >
 
                     <div class="add-member-avatar">
-
                         @if ($candidate->profile_picture)
-
                             <img
                                 src="{{ asset('storage/' . $candidate->profile_picture) }}"
                                 alt="{{ $candidate->name }}"
                             >
-
                         @else
-
-                            {{ strtoupper(substr($candidate->name, 0, 1)) }}
-
+                            {{ strtoupper(substr($candidate->name ?? 'U', 0, 1)) }}
                         @endif
-
                     </div>
 
                     <div class="add-member-info">
-
                         <strong>{{ $candidate->name }}</strong>
-
                         <span>{{ ucfirst($candidate->role) }}</span>
-
                     </div>
-
                 </label>
 
             @empty
@@ -1534,21 +1523,18 @@
         </div>
 
         @if ($availableCandidates->isNotEmpty())
-
-            <button type="submit" class="add-members-button">
+            <button
+                type="submit"
+                class="add-members-button"
+            >
                 <i class="bi bi-person-plus-fill"></i>
                 Add Selected Members
             </button>
-
         @endif
 
     </form>
 
 </div>
-
-                @endforeach
-
-            </div>
 
         </div>
 
