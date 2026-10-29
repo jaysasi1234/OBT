@@ -1451,6 +1451,101 @@
 
                     </div>
 
+                    {{-- =================================================
+     ADD NEW MEMBERS
+================================================= --}}
+
+@php
+    $existingMemberIds = $selectedGroup->members
+        ->pluck('user_id')
+        ->map(fn ($id) => (int) $id)
+        ->all();
+
+    $availableCandidates = $users->filter(
+        fn ($candidate) => !in_array(
+            (int) $candidate->id,
+            $existingMemberIds,
+            true
+        )
+    );
+@endphp
+
+<div class="add-members-section">
+
+    <h4>Add More Members</h4>
+
+    <p>Select users you want to add to this group.</p>
+
+    <form
+        method="POST"
+        action="{{ route('chat.groups.members.add', $selectedGroup) }}"
+    >
+        @csrf
+
+        <div class="add-member-list">
+
+            @forelse ($availableCandidates as $candidate)
+
+                <label
+                    class="add-member-option"
+                    for="add-member-{{ $candidate->id }}"
+                >
+
+                    <input
+                        type="checkbox"
+                        id="add-member-{{ $candidate->id }}"
+                        name="members[]"
+                        value="{{ $candidate->id }}"
+                    >
+
+                    <div class="add-member-avatar">
+
+                        @if ($candidate->profile_picture)
+
+                            <img
+                                src="{{ asset('storage/' . $candidate->profile_picture) }}"
+                                alt="{{ $candidate->name }}"
+                            >
+
+                        @else
+
+                            {{ strtoupper(substr($candidate->name, 0, 1)) }}
+
+                        @endif
+
+                    </div>
+
+                    <div class="add-member-info">
+
+                        <strong>{{ $candidate->name }}</strong>
+
+                        <span>{{ ucfirst($candidate->role) }}</span>
+
+                    </div>
+
+                </label>
+
+            @empty
+
+                <p>No additional contacts are available.</p>
+
+            @endforelse
+
+        </div>
+
+        @if ($availableCandidates->isNotEmpty())
+
+            <button type="submit" class="add-members-button">
+                <i class="bi bi-person-plus-fill"></i>
+                Add Selected Members
+            </button>
+
+        @endif
+
+    </form>
+
+</div>
+
                 @endforeach
 
             </div>

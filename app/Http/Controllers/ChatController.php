@@ -1203,65 +1203,74 @@ public function createGroup(Request $request)
 }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | ADD GROUP MEMBER
-    |--------------------------------------------------------------------------
-    */
 
-    public function addMember(
-        Request $request,
-        ChatGroup $group
-    ) {
+/*
+|--------------------------------------------------------------------------
+| ADD GROUP MEMBERS
+|--------------------------------------------------------------------------
+*/
 
-        $user = Auth::user();
+public function addMember(Request $request, ChatGroup $group)
+{
+    $user = Auth::user();
 
+    // Only the group creator or a group admin can add members.
+    if (!$this->isGroupAdmin($group, $user)) {
+        abort(403, 'You are not allowed to add members to this group.');
+    }
 
-        if (!$this->isGroupAdmin(
-            $group,
-            $user
-        )) {
+    $validated = $request->validate([
+        'members' => ['required', 'array', 'min:1'],
+        'members.*' => [
+            'required',
+            'integer',
+            'distinct',
+            'exists:users,id',
+        ],
+    ]);
 
-            abort(403);
+    $addedCount = 0;
+
+    foreach (array_unique($validated['members']) as $memberId) {
+        $memberId = (int) $memberId;
+
+        // Do not add the same person twice.
+        $alreadyMember = $group->members()
+            ->where('user_id', $memberId)
+            ->exists();
+
+        if ($alreadyMember) {
+            continue;
         }
 
-
-        $request->validate([
-
-            'user_id' => [
-                'required',
-                'integer',
-                'exists:users,id',
-            ],
-
+        // Add the new member with the default member role.
+        ChatGroupMember::create([
+            'chat_group_id' => $group->id,
+            'user_id' => $memberId,
+            'role' => 'member',
+            'joined_at' => now(),
         ]);
 
+        $addedCount++;
+    }
 
-        ChatGroupMember::firstOrCreate(
-
-            [
-                'chat_group_id' =>
-                    $group->id,
-
-                'user_id' =>
-                    $request->user_id,
-            ],
-
-            [
-                'role' =>
-                    'member',
-
-                'joined_at' =>
-                    now(),
-            ]
-        );
-
-
+    if ($addedCount === 0) {
         return back()->with(
-            'success',
-            'Member added to group.'
+            'error',
+            'The selected users are already members of this group.'
         );
     }
+
+    return redirect()
+        ->route($this->chatRouteName($user), [
+            'type' => 'group',
+            'group_id' => $group->id,
+        ])
+        ->with(
+            'success',
+            "{$addedCount} member(s) added successfully."
+        );
+}
 
 
     /*
