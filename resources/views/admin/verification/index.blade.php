@@ -168,33 +168,33 @@
         </div>
 
 
-        <div class="vm-card vm-not-qualified">
+<div class="vm-card vm-not-qualified">
 
-            <div class="vm-card-content">
+    <div class="vm-card-content">
 
-                <div>
+        <div>
 
-                    <div class="vm-card-description">
-                        Verification requirements still incomplete
-                    </div>
+            <div class="vm-card-label">
+                Not Qualified
+            </div>
 
-                    <div class="vm-card-number">
-                        {{ $notQualified }}
-                    </div>
+            <div class="vm-card-number">
+                {{ $notQualified }}
+            </div>
 
-                    <div class="vm-card-description">
-                        Not yet eligible
-                    </div>
-
-                </div>
-
-                <div class="vm-card-icon">
-                    !
-                </div>
-
+            <div class="vm-card-description">
+                Verification requirements still incomplete
             </div>
 
         </div>
+
+        <div class="vm-card-icon">
+            !
+        </div>
+
+    </div>
+
+</div>
 
     </div>
 
@@ -628,6 +628,7 @@
                         <th>Batch</th>
                         <th>Requirements</th>
                         <th>Verification</th>
+                        <th>Deployment Eligibility</th>
                         <th>BS Status</th>
                         <th>Action</th>
                     </tr>
@@ -657,7 +658,9 @@
 
                             $isVerified =
                                 $required > 0 &&
-                                $approved == $required;
+                                $approved >= $required;
+
+                            $isEligibleForDeployment = $isVerified;
 
                             $bsRequired =
                                 $cadet->bs_required_count ?? 0;
@@ -758,6 +761,33 @@
 
                             <td>
 
+    @if($isEligibleForDeployment)
+
+        <span class="vm-status qualified">
+
+            <span class="vm-status-dot"></span>
+
+            Eligible
+
+        </span>
+
+    @else
+
+        <span class="vm-status not-qualified">
+
+            <span class="vm-status-dot"></span>
+
+            Not Eligible
+
+        </span>
+
+    @endif
+
+</td>
+
+
+                            <td>
+
                                 @if($isBSQualified)
 
                                     <span class="vm-status qualified">
@@ -802,7 +832,7 @@
                         <tr>
 
                             <td
-                                colspan="8"
+                                colspan="9"
                                 class="vm-empty"
                             >
 
