@@ -51,7 +51,10 @@
 
     <div class="vm-stats">
 
-        <div class="vm-card vm-total">
+        <div class="vm-card vm-total"
+     data-card-filter="all"
+     role="button"
+     tabindex="0">
 
             <div class="vm-card-content">
 
@@ -80,7 +83,10 @@
         </div>
 
 
-        <div class="vm-card vm-completed">
+        <div class="vm-card vm-completed"
+     data-card-filter="verified"
+     role="button"
+     tabindex="0">
 
             <div class="vm-card-content">
 
@@ -109,7 +115,10 @@
         </div>
 
 
-        <div class="vm-card vm-incomplete">
+       <div class="vm-card vm-incomplete"
+     data-card-filter="pending"
+     role="button"
+     tabindex="0">
 
             <div class="vm-card-content">
 
@@ -138,7 +147,10 @@
         </div>
 
 
-        <div class="vm-card vm-qualified">
+        <div class="vm-card vm-qualified"
+     data-card-filter="verified"
+     role="button"
+     tabindex="0">
 
             <div class="vm-card-content">
 
@@ -168,7 +180,10 @@
         </div>
 
 
-<div class="vm-card vm-not-qualified">
+<div class="vm-card vm-not-qualified"
+     data-card-filter="pending"
+     role="button"
+     tabindex="0">
 
     <div class="vm-card-content">
 
@@ -1898,6 +1913,137 @@
     updateFilterCounts();
 
 })();
+
+
+// ==========================================
+// INTERACTIVE VERIFICATION SUMMARY CARDS
+// ==========================================
+
+const statisticCards = document.querySelectorAll(
+    '.vm-card[data-card-filter]'
+);
+
+function updateActiveStatisticCard() {
+    const selectedVerification = [
+        ...document.querySelectorAll(
+            'input[name="verification[]"]:checked'
+        )
+    ];
+
+    const selectedCourse = document.querySelectorAll(
+        'input[name="course[]"]:checked'
+    );
+
+    const selectedBatch = document.querySelectorAll(
+        'input[name="batch[]"]:checked'
+    );
+
+    const selectedBs = document.querySelectorAll(
+        'input[name="bs_status[]"]:checked'
+    );
+
+    const searchValue = searchInput
+        ? searchInput.value.trim()
+        : '';
+
+    let activeFilter = 'all';
+
+    if (
+        selectedCourse.length ||
+        selectedBatch.length ||
+        selectedBs.length ||
+        searchValue
+    ) {
+        activeFilter = null;
+    } else if (selectedVerification.length === 1) {
+        activeFilter = selectedVerification[0].value;
+    } else if (selectedVerification.length > 1) {
+        activeFilter = null;
+    }
+
+    statisticCards.forEach(card => {
+        card.classList.toggle(
+            'active',
+            card.dataset.cardFilter === activeFilter
+        );
+    });
+}
+
+function handleStatisticCard(card) {
+    const filter = card.dataset.cardFilter;
+
+    // Clear existing verification selections
+    document.querySelectorAll(
+        'input[name="verification[]"]'
+    ).forEach(input => {
+        input.checked = false;
+    });
+
+    if (filter === 'all') {
+        // Clear all filters
+        document.querySelectorAll(
+            'input[name="course[]"],' +
+            'input[name="batch[]"],' +
+            'input[name="verification[]"],' +
+            'input[name="bs_status[]"]'
+        ).forEach(input => {
+            input.checked = false;
+        });
+
+        if (searchInput) {
+            searchInput.value = '';
+        }
+    } else {
+        // Apply the selected verification filter
+        const matchingCheckbox = document.querySelector(
+            `input[name="verification[]"][value="${filter}"]`
+        );
+
+        if (matchingCheckbox) {
+            matchingCheckbox.checked = true;
+        }
+    }
+
+    // Refresh filter counts and table
+    updateFilterCounts();
+    updateActiveStatisticCard();
+    applyFilters();
+}
+
+// Make cards clickable and keyboard accessible
+statisticCards.forEach(card => {
+    card.addEventListener('click', () => {
+        handleStatisticCard(card);
+    });
+
+    card.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleStatisticCard(card);
+        }
+    });
+});
+
+// Update active card when other filters change
+document.addEventListener('change', event => {
+    if (event.target.matches(
+        'input[name="course[]"],' +
+        'input[name="batch[]"],' +
+        'input[name="verification[]"],' +
+        'input[name="bs_status[]"]'
+    )) {
+        updateActiveStatisticCard();
+    }
+});
+
+if (searchInput) {
+    searchInput.addEventListener('input', () => {
+        updateActiveStatisticCard();
+    });
+}
+
+// Initial active card
+updateActiveStatisticCard();
 
 </script>
 

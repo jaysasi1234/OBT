@@ -1443,6 +1443,46 @@ tbody tr:last-child td{
     animation: verificationTableSpinner 0.75s linear infinite;
 }
 
+/* ==========================================
+   INTERACTIVE VERIFICATION SUMMARY CARDS
+========================================== */
+
+.vm-stats .vm-card[data-card-filter] {
+    cursor: pointer;
+    position: relative;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.vm-stats .vm-card[data-card-filter]:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+}
+
+.vm-stats .vm-card[data-card-filter]:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 4px;
+}
+
+.vm-stats .vm-card[data-card-filter].active {
+    border: 2px solid #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    transform: translateY(-3px);
+}
+
+.vm-stats .vm-card[data-card-filter].active::after {
+    content: "FILTER ACTIVE";
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    color: #2563eb;
+}
+
 /*
  * Spinner animation
  */
