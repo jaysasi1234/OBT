@@ -152,9 +152,10 @@
                         {{ $qualified }}
                     </div>
 
-                    <div class="vm-card-description">
-                        Eligible for deployment
-                    </div>
+<div class="vm-card-description">
+    Eligible for deployment
+    after all verification requirements are approved
+</div>
 
                 </div>
 
@@ -173,8 +174,8 @@
 
                 <div>
 
-                    <div class="vm-card-label">
-                        Not Qualified
+                    <div class="vm-card-description">
+                        Verification requirements still incomplete
                     </div>
 
                     <div class="vm-card-number">
