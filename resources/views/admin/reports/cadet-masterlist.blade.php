@@ -324,7 +324,7 @@
                     Total Cadets:
 
                     <strong>
-                        {{ $cadets->count() }}
+                        {{ $cadets->total() }}
                     </strong>
 
                 </div>
@@ -747,19 +747,34 @@
                 </a>
 
 
-                <div class="showing-count">
+            <div class="showing-count">
+                Showing
 
-                    Showing
+                <strong>{{ $cadets->firstItem() ?? 0 }}</strong>
 
-                    <strong>
-                        {{ $cadets->count() }}
-                    </strong>
+                to
 
-                    record{{ $cadets->count() != 1 ? 's' : '' }}
+                <strong>{{ $cadets->lastItem() ?? 0 }}</strong>
 
-                </div>
+                of
+
+                <strong>{{ $cadets->total() }}</strong>
+
+                cadets
+            </div>
 
             </div>
+
+            {{-- PAGINATION --}}
+@if($cadets->hasPages())
+
+    <div class="pagination-wrapper">
+
+        {{ $cadets->links() }}
+
+    </div>
+
+@endif
 
         </div>
 

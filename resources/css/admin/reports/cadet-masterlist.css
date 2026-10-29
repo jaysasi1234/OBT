@@ -1283,6 +1283,71 @@ td:nth-child(8) {
 }
 
 
+/* =================================
+   PAGINATION
+================================= */
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 22px 15px;
+    border-top: 1px solid #e8edf4;
+    overflow-x: auto;
+}
+
+.pagination-wrapper nav {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-wrapper nav > div:first-child {
+    display: none;
+}
+
+.pagination-wrapper nav > div:last-child {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pagination-wrapper a,
+.pagination-wrapper span[aria-current="page"] span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 9px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.pagination-wrapper a:hover {
+    background: #eff6ff;
+    color: #2563eb;
+    border-color: #2563eb;
+}
+
+.pagination-wrapper span[aria-current="page"] span {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+}
+
+.pagination-wrapper span[aria-disabled="true"] span {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+
 /* =========================================================
    ANIMATIONS
    ========================================================= */

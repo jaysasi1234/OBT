@@ -79,63 +79,91 @@ class ReportController extends Controller
     }
 
 
-    /* =========================
-       CADET MASTERLIST
-    ========================= */
 
-    public function cadetMasterlist(Request $request)
-    {
-        $query = Cadet::with([
-            'batch',
-            'deployment',
-            'complaints',
-            'shippedOnOrder'
-        ]);
+/* =========================
+   CADET MASTERLIST
+========================= */
 
-        $courses = Cadet::select('course')
-            ->distinct()
-            ->orderBy('course')
-            ->get();
+public function cadetMasterlist(Request $request)
+{
+    $query = Cadet::with([
+        'batch',
+        'deployment',
+        'complaints',
+        'shippedOnOrder'
+    ]);
 
-        $batches = Batch::orderBy('batch_year','desc')->get();
+    $courses = Cadet::select('course')
+        ->distinct()
+        ->orderBy('course')
+        ->get();
 
-        if ($request->search) {
-            $query->where(
-                'full_name',
-                'like',
-                "%{$request->search}%"
-            );
-        }
+    $batches = Batch::orderBy('batch_year', 'desc')->get();
 
-        if ($request->course) {
-            $query->where('course',$request->course);
-        }
+    // SEARCH
+    if ($request->filled('search')) {
+        $query->where('full_name', 'like', '%' . $request->search . '%');
+    }
 
-        if ($request->batch) {
-            $query->where('batch_id',$request->batch);
-        }
+    // COURSE FILTER
+    if ($request->filled('course')) {
+        $query->where('course', $request->course);
+    }
 
-        if ($request->deployment_status) {
-            $this->applyDeploymentFilter(
-                $query,
-                $request->deployment_status
-            );
-        }
+    // BATCH FILTER
+    if ($request->filled('batch')) {
+        $query->where('batch_id', $request->batch);
+    }
 
-        if ($request->verification_status) {
-            $query->where(
-                'verification_status',
-                $request->verification_status
-            );
-        }
-
-        $cadets = $query->latest()->get();
-
-        return view(
-            'admin.reports.cadet-masterlist',
-            compact('cadets','batches','courses')
+    // DEPLOYMENT FILTER
+    if ($request->filled('deployment_status')) {
+        $this->applyDeploymentFilter(
+            $query,
+            $request->deployment_status
         );
     }
+
+    // VERIFICATION FILTER
+    if ($request->filled('verification_status')) {
+        $query->where(
+            'verification_status',
+            $request->verification_status
+        );
+    }
+
+    // PAGINATION: 25 CADETS PER PAGE
+    $cadets = $query
+        ->latest()
+        ->paginate(25)
+        ->withQueryString();
+
+    // COMPUTE DISPLAY VALUES FOR CURRENT PAGE
+    foreach ($cadets as $cadet) {
+
+        $deployment = $cadet->deployment;
+
+        $cadet->deployment_percentage =
+            $deployment?->percentage ??
+            match ($deployment?->status) {
+                'Completed' => 100,
+                'Ongoing' => 50,
+                default => 0
+            };
+
+        $cadet->bs_status =
+            $cadet->complaints->count()
+                ? 'With Issue'
+                : ($cadet->verification_status === 'Verified'
+                    ? 'Good'
+                    : 'Pending');
+    }
+
+    return view(
+        'admin.reports.cadet-masterlist',
+        compact('cadets', 'batches', 'courses')
+    );
+}
+
 
 
     /* =========================
