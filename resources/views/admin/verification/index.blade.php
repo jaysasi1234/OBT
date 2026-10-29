@@ -64,9 +64,9 @@
                         Total Verification
                     </div>
 
-                    <div class="vm-card-number">
-                        {{ $verificationTotal }}
-                    </div>
+<div class="vm-card-number" id="statVerificationTotal">
+    {{ $verificationTotal }}
+</div>
 
                     <div class="vm-card-description">
                         Cadets under verification
@@ -96,9 +96,9 @@
                         Completed
                     </div>
 
-                    <div class="vm-card-number">
-                        {{ $completed }}
-                    </div>
+<div class="vm-card-number" id="statCompleted">
+    {{ $completed }}
+</div>
 
                     <div class="vm-card-description">
                         All requirements approved
@@ -128,9 +128,9 @@
                         Incomplete
                     </div>
 
-                    <div class="vm-card-number">
-                        {{ $incomplete }}
-                    </div>
+            <div class="vm-card-number" id="statIncomplete">
+                {{ $incomplete }}
+            </div>
 
                     <div class="vm-card-description">
                         Requirements still pending
@@ -160,9 +160,9 @@
                         Qualified
                     </div>
 
-                    <div class="vm-card-number">
-                        {{ $qualified }}
-                    </div>
+<div class="vm-card-number" id="statQualified">
+    {{ $qualified }}
+</div>
 
 <div class="vm-card-description">
     Eligible for deployment
@@ -193,9 +193,9 @@
                 Not Qualified
             </div>
 
-            <div class="vm-card-number">
-                {{ $notQualified }}
-            </div>
+<div class="vm-card-number" id="statNotQualified">
+    {{ $notQualified }}
+</div>
 
             <div class="vm-card-description">
                 Verification requirements still incomplete
@@ -1336,6 +1336,8 @@
             const html =
                 await response.text();
 
+                updateStatisticNumbersFromResponse(html);
+
 
             /*
              * Convert returned HTML
@@ -1668,6 +1670,32 @@ updateActiveStatisticCard();
         );
 
     }
+
+    function updateStatisticNumbersFromResponse(html) {
+    const parser = new DOMParser();
+
+    const newDocument = parser.parseFromString(
+        html,
+        'text/html'
+    );
+
+    const statisticIds = [
+        'statVerificationTotal',
+        'statCompleted',
+        'statIncomplete',
+        'statQualified',
+        'statNotQualified'
+    ];
+
+    statisticIds.forEach(function (id) {
+        const newNumber = newDocument.getElementById(id);
+        const currentNumber = document.getElementById(id);
+
+        if (newNumber && currentNumber) {
+            currentNumber.textContent = newNumber.textContent.trim();
+        }
+    });
+}
 
 
     /* =========================================================
