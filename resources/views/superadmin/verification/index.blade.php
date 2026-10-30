@@ -1471,13 +1471,9 @@
                             |--------------------------------------------------------------------------
                             */
 
-                            $approvedDocuments =
-                                $cadet->documents
-                                    ->where(
-                                        'pivot.status',
-                                        'Approved'
-                                    )
-                                    ->count();
+$approvedDocuments = (int) (
+    $cadet->approved_documents_count ?? 0
+);
 
 
                             /*
@@ -1486,9 +1482,7 @@
                             |--------------------------------------------------------------------------
                             */
 
-                            $totalDocuments =
-                                $cadet->required_documents_count
-                                ?? 0;
+$totalDocuments = (int) $totalRequirements;
 
 
                             /*
@@ -1539,20 +1533,27 @@
                             |--------------------------------------------------------------------------
                             */
 
-                            $verificationStatus =
-                                $cadet->verification_status
-                                ?? 'Pending';
+$verificationStatus = (
+    $totalDocuments > 0 &&
+    $approvedDocuments >= $totalDocuments
+)
+    ? 'Verified'
+    : 'Pending';
 
+$bsRequired = (int) (
+    $cadet->bs_required_count ?? 0
+);
 
-                            /*
-                            |--------------------------------------------------------------------------
-                            | BS STATUS
-                            |--------------------------------------------------------------------------
-                            */
+$bsCompleted = (int) (
+    $cadet->bs_completed_count ?? 0
+);
 
-                            $bsStatus =
-                                $cadet->bs_status
-                                ?? 'Not Qualified';
+$bsStatus = (
+    $bsRequired > 0 &&
+    $bsCompleted >= $bsRequired
+)
+    ? 'Qualified'
+    : 'Not Qualified';
 
                         @endphp
 
