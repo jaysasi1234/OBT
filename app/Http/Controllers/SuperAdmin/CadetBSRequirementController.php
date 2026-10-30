@@ -12,44 +12,39 @@ class CadetBSRequirementController extends Controller
 {
     /**
      * Display BS requirements for completed cadets.
-     *
      * SUPER ADMIN = VIEW ONLY
      */
     public function index(Request $request)
     {
-        $query = Cadet::with([
-            'batch',
-            'deployment',
-            'bsRequirements.requirement'
-        ])
-        ->whereHas('deployment', function ($q) {
-            $q->where('status', 'Completed');
-        });
+        /*
+        |--------------------------------------------------------------------------
+        | BASE CADET QUERY
+        |--------------------------------------------------------------------------
+        */
+
+        $query = Cadet::query()
+            ->with([
+                'batch',
+                'deployment',
+                'bsRequirements.requirement'
+            ])
+            ->whereHas('deployment', function ($q) {
+                $q->where('status', 'Completed');
+            });
 
         /*
         |--------------------------------------------------------------------------
-        | SEARCH
+        | SEARCH FILTER
         |--------------------------------------------------------------------------
         */
 
         if ($request->filled('search')) {
+            $search = $request->search;
 
-            $query->where(function ($q) use ($request) {
-
-                $q->where(
-                    'full_name',
-                    'like',
-                    '%' . $request->search . '%'
-                )
-
-                ->orWhere(
-                    'trb_control_number',
-                    'like',
-                    '%' . $request->search . '%'
-                );
-
+            $query->where(function ($q) use ($search) {
+                $q->where('full_name', 'like', "%{$search}%")
+                    ->orWhere('trb_control_number', 'like', "%{$search}%");
             });
-
         }
 
         /*
@@ -59,12 +54,7 @@ class CadetBSRequirementController extends Controller
         */
 
         if ($request->filled('course')) {
-
-            $query->where(
-                'course',
-                $request->course
-            );
-
+            $query->where('course', $request->course);
         }
 
         /*
@@ -74,41 +64,8 @@ class CadetBSRequirementController extends Controller
         */
 
         if ($request->filled('batch')) {
-
-            $query->where(
-                'batch_id',
-                $request->batch
-            );
-
+            $query->where('batch_id', $request->batch);
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | GET CADETS
-        |--------------------------------------------------------------------------
-        */
-
-        $cadets = $query
-            ->get()
-            ->sortBy(function ($cadet) {
-                return strtolower($cadet->full_name);
-            })
-            ->values();
-
-        /*
-        |--------------------------------------------------------------------------
-        | FILTER DATA
-        |--------------------------------------------------------------------------
-        */
-
-        $batches = Batch::orderBy(
-            'batch_year'
-        )->get();
-
-        $courses = Cadet::select('course')
-            ->distinct()
-            ->orderBy('course')
-            ->pluck('course');
 
         /*
         |--------------------------------------------------------------------------
@@ -118,21 +75,83 @@ class CadetBSRequirementController extends Controller
 
         $totalRequirements = BSRequirement::count();
 
+        /*
+        |--------------------------------------------------------------------------
+        | STATISTICS - ALL MATCHING CADETS
+        |--------------------------------------------------------------------------
+        |
+        | This calculates statistics across all filtered cadets,
+        | not only the 25 cadets displayed on the current page.
+        |
+        */
+
+        $stats = (clone $query)
+            ->withCount('bsRequirements')
+            ->get(['id']);
+
+        $totalCadets = $stats->count();
+
+        $submittedRequirements = $stats->sum(
+            'bs_requirements_count'
+        );
+
+        $pendingCadets = $stats->filter(function ($cadet) use ($totalRequirements) {
+            return $cadet->bs_requirements_count < $totalRequirements;
+        })->count();
+
+        $completedCadets = $stats->filter(function ($cadet) use ($totalRequirements) {
+            return $cadet->bs_requirements_count >= $totalRequirements;
+        })->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAGINATION
+        |--------------------------------------------------------------------------
+        */
+
+        $cadets = $query
+            ->orderBy('full_name', 'asc')
+            ->paginate(25)
+            ->withQueryString();
+
+        /*
+        |--------------------------------------------------------------------------
+        | FILTER OPTIONS
+        |--------------------------------------------------------------------------
+        */
+
+        $batches = Batch::orderBy('batch_year', 'desc')->get();
+
+        $courses = Cadet::select('course')
+            ->whereNotNull('course')
+            ->where('course', '!=', '')
+            ->distinct()
+            ->orderBy('course')
+            ->pluck('course');
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETURN VIEW
+        |--------------------------------------------------------------------------
+        */
+
         return view(
             'superadmin.cadet_bs_requirements.index',
             compact(
                 'cadets',
                 'totalRequirements',
                 'courses',
-                'batches'
+                'batches',
+                'totalCadets',
+                'submittedRequirements',
+                'pendingCadets',
+                'completedCadets'
             )
         );
     }
 
-
     /**
      * View a specific cadet's BS requirements.
-     *
      * SUPER ADMIN = VIEW ONLY
      */
     public function show(Cadet $cadet)

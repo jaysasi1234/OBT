@@ -48,6 +48,110 @@
 
 
 /* =========================================================
+   PAGINATION
+========================================================= */
+
+.bs-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    padding: 20px 25px;
+
+    border-top: 1px solid rgba(96, 165, 250, .14);
+
+    background: #101f49;
+}
+
+.bs-pagination-info {
+    color: #9fb1d3;
+    font-size: 13px;
+}
+
+.bs-pagination-info strong {
+    color: #ffffff;
+}
+
+.bs-pagination-links {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.bs-pagination-links nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bs-pagination-links nav > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bs-pagination-links a,
+.bs-pagination-links span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 38px;
+    min-height: 38px;
+
+    padding: 7px 12px;
+
+    border: 1px solid rgba(96, 165, 250, .20);
+    border-radius: 9px;
+
+    background: #172955;
+    color: #dbeafe;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-decoration: none;
+}
+
+.bs-pagination-links a:hover {
+    background: #315fe0;
+    color: #ffffff;
+}
+
+.bs-pagination-links span[aria-current="page"] span {
+    background: #315fe0;
+    border-color: #4075df;
+    color: #ffffff;
+}
+
+.bs-pagination-links span[aria-disabled="true"] {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+.bs-pagination-links svg {
+    width: 17px;
+    height: 17px;
+}
+
+@media (max-width: 768px) {
+
+    .bs-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .bs-pagination-links {
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+    }
+}
+
+/* =========================================================
    PAGE HEADER
 ========================================================= */
 
@@ -1595,26 +1699,6 @@
          STATISTICS
     ====================================================== --}}
 
-    @php
-
-        $totalCadets = $cadets->count();
-
-        $submittedRequirements = $cadets->sum(
-            fn ($cadet) => $cadet->bsRequirements->count()
-        );
-
-        $pendingCadets = $cadets->filter(
-            fn ($cadet) =>
-                $cadet->bsRequirements->count() < $totalRequirements
-        )->count();
-
-        $completedCadets = $cadets->filter(
-            fn ($cadet) =>
-                $cadet->bsRequirements->count() >= $totalRequirements
-        )->count();
-
-    @endphp
-
 
     <div class="bs-stats">
 
@@ -1954,9 +2038,9 @@
 
                             {{-- NUMBER --}}
 
-                            <td>
-                                {{ $loop->iteration }}
-                            </td>
+<td>
+    {{ $cadets->firstItem() + $loop->index }}
+</td>
 
 
                             {{-- TRB --}}
@@ -2076,6 +2160,30 @@
             </table>
 
         </div>
+
+                {{-- PAGINATION --}}
+
+        @if($cadets->hasPages())
+
+            <div class="bs-pagination">
+
+                <div class="bs-pagination-info">
+                    Showing
+                    <strong>{{ $cadets->firstItem() }}</strong>
+                    to
+                    <strong>{{ $cadets->lastItem() }}</strong>
+                    of
+                    <strong>{{ $cadets->total() }}</strong>
+                    completed cadets
+                </div>
+
+                <div class="bs-pagination-links">
+                    {{ $cadets->onEachSide(1)->links() }}
+                </div>
+
+            </div>
+
+        @endif
 
     </div>
 
