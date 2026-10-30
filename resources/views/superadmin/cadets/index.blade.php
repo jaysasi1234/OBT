@@ -3405,378 +3405,158 @@
 
 <script>
 
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* ======================================================================
-       ELEMENTS
-       ====================================================================== */
+    /* ==========================================================
+       MODAL ELEMENTS
+       ========================================================== */
 
-    const modal =
-        document.getElementById('cadetModal');
+    const modal = document.getElementById('cadetModal');
 
-    const closeModalButton =
-        document.getElementById('closeCadetModal');
+    const closeModalButton = document.getElementById('closeCadetModal');
+    const closeModalFooter = document.getElementById('closeCadetModalFooter');
 
-    const closeModalFooter =
-        document.getElementById('closeCadetModalFooter');
+    const modalPhoto = document.getElementById('modalPhoto');
+    const modalName = document.getElementById('modalName');
+    const modalTrb = document.getElementById('modalTrb');
+    const modalCourse = document.getElementById('modalCourse');
+    const modalBatch = document.getElementById('modalBatch');
+    const modalRank = document.getElementById('modalRank');
+    const modalContact = document.getElementById('modalContact');
+    const modalBirth = document.getElementById('modalBirth');
 
-    const modalPhoto =
-        document.getElementById('modalPhoto');
-
-    const modalName =
-        document.getElementById('modalName');
-
-    const modalTrb =
-        document.getElementById('modalTrb');
-
-    const modalCourse =
-        document.getElementById('modalCourse');
-
-    const modalBatch =
-        document.getElementById('modalBatch');
-
-    const modalRank =
-        document.getElementById('modalRank');
-
-    const modalContact =
-        document.getElementById('modalContact');
-
-    const modalBirth =
-        document.getElementById('modalBirth');
-
-
-    /* ======================================================================
+    /* ==========================================================
        FILTER ELEMENTS
-       ====================================================================== */
+       ========================================================== */
 
-    const courseFilter =
-        document.getElementById('courseFilter');
+    const courseFilter = document.getElementById('courseFilter');
+    const batchFilter = document.getElementById('batchFilter');
+    const deploymentFilter = document.getElementById('deploymentFilter');
+    const verificationFilter = document.getElementById('verificationFilter');
+    const searchInput = document.getElementById('searchInput');
 
-    const batchFilter =
-        document.getElementById('batchFilter');
+    const tableBody = document.getElementById('cadetTableBody');
 
-    const deploymentFilter =
-        document.getElementById('deploymentFilter');
-
-    const verificationFilter =
-        document.getElementById('verificationFilter');
-
-    const searchInput =
-        document.getElementById('searchInput');
-
-    const tableBody =
-        document.getElementById('cadetTableBody');
-
-    const tableRows =
-        tableBody
-            ? tableBody.querySelectorAll('tr')
-            : [];
-
-
-    /* ======================================================================
-       DEFAULT PHOTO
-       ====================================================================== */
+    const tableRows = tableBody
+        ? Array.from(tableBody.querySelectorAll('tr'))
+        : [];
 
     const defaultPhoto =
         'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
-
-    /* ======================================================================
+    /* ==========================================================
        OPEN PROFILE MODAL
-       ====================================================================== */
+       ========================================================== */
 
-    document
-        .querySelectorAll('.cadet-view-profile')
-        .forEach(function (button) {
+    document.querySelectorAll('.cadet-view-profile').forEach(function (button) {
 
-            button.addEventListener(
-                'click',
-                function () {
+        button.addEventListener('click', function () {
 
-                    /* ------------------------------------------------------
-                       GET DATA
-                       ------------------------------------------------------ */
+            modalName.textContent = this.dataset.name || '-';
+            modalTrb.textContent = this.dataset.trb || '-';
+            modalCourse.textContent = this.dataset.course || '-';
+            modalBatch.textContent = this.dataset.batch || '-';
+            modalRank.textContent = this.dataset.rank || '-';
+            modalContact.textContent = this.dataset.contact || '-';
+            modalBirth.textContent = this.dataset.birth || '-';
 
-                    modalName.textContent =
-                        this.dataset.name || '-';
+            modalPhoto.onerror = function () {
+                this.onerror = null;
+                this.src = defaultPhoto;
+            };
 
-                    modalTrb.textContent =
-                        this.dataset.trb || '-';
+            modalPhoto.src = this.dataset.photo || defaultPhoto;
 
-                    modalCourse.textContent =
-                        this.dataset.course || '-';
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
 
-                    modalBatch.textContent =
-                        this.dataset.batch || '-';
-
-                    modalRank.textContent =
-                        this.dataset.rank || '-';
-
-                    modalContact.textContent =
-                        this.dataset.contact || '-';
-
-                    modalBirth.textContent =
-                        this.dataset.birth || '-';
-
-
-                    /* ------------------------------------------------------
-                       PHOTO
-                       ------------------------------------------------------ */
-
-                    const photo =
-                        this.dataset.photo || defaultPhoto;
-
-                    modalPhoto.onerror =
-                        function () {
-
-                            this.onerror = null;
-
-                            this.src =
-                                defaultPhoto;
-
-                        };
-
-                    modalPhoto.src =
-                        photo;
-
-
-                    /* ------------------------------------------------------
-                       SHOW MODAL
-                       ------------------------------------------------------ */
-
-                    modal.classList.add('show');
-
-                    modal.setAttribute(
-                        'aria-hidden',
-                        'false'
-                    );
-
-                    document.body.style.overflow =
-                        'hidden';
-
-                }
-            );
+            document.body.style.overflow = 'hidden';
 
         });
 
+    });
 
-    /* ======================================================================
+    /* ==========================================================
        CLOSE MODAL
-       ====================================================================== */
+       ========================================================== */
 
     function closeCadetModal() {
 
         modal.classList.remove('show');
+        modal.setAttribute('aria-hidden', 'true');
 
-        modal.setAttribute(
-            'aria-hidden',
-            'true'
-        );
-
-        document.body.style.overflow =
-            '';
+        document.body.style.overflow = '';
 
     }
 
+    closeModalButton?.addEventListener('click', closeCadetModal);
+    closeModalFooter?.addEventListener('click', closeCadetModal);
 
-    /* ======================================================================
-       CLOSE BUTTON
-       ====================================================================== */
+    modal?.addEventListener('click', function (event) {
 
-    closeModalButton.addEventListener(
-        'click',
-        closeCadetModal
-    );
-
-
-    /* ======================================================================
-       FOOTER CLOSE BUTTON
-       ====================================================================== */
-
-    closeModalFooter.addEventListener(
-        'click',
-        closeCadetModal
-    );
-
-
-    /* ======================================================================
-       CLICK OUTSIDE MODAL
-       ====================================================================== */
-
-    modal.addEventListener(
-        'click',
-        function (event) {
-
-            if (
-                event.target === modal
-            ) {
-
-                closeCadetModal();
-
-            }
-
+        if (event.target === modal) {
+            closeCadetModal();
         }
-    );
 
+    });
 
-    /* ======================================================================
-       ESCAPE KEY
-       ====================================================================== */
+    document.addEventListener('keydown', function (event) {
 
-    document.addEventListener(
-        'keydown',
-        function (event) {
-
-            if (
-                event.key === 'Escape' &&
-                modal.classList.contains('show')
-            ) {
-
-                closeCadetModal();
-
-            }
-
+        if (
+            event.key === 'Escape' &&
+            modal?.classList.contains('show')
+        ) {
+            closeCadetModal();
         }
-    );
 
+    });
 
-    /* ======================================================================
+    /* ==========================================================
        FILTER TABLE
-       ====================================================================== */
+       ========================================================== */
 
     function filterTable() {
 
-        const course =
-            courseFilter.value
-                .trim()
-                .toLowerCase();
+        const course = courseFilter.value.trim().toLowerCase();
+        const batch = batchFilter.value.trim().toLowerCase();
+        const deployment = deploymentFilter.value.trim().toLowerCase();
+        const verification = verificationFilter.value.trim().toLowerCase();
+        const search = searchInput.value.trim().toLowerCase();
 
-        const batch =
-            batchFilter.value
-                .trim()
-                .toLowerCase();
-
-        const deployment =
-            deploymentFilter.value
-                .trim()
-                .toLowerCase();
-
-        const verification =
-            verificationFilter.value
-                .trim()
-                .toLowerCase();
-
-        const search =
-            searchInput.value
-                .trim()
-                .toLowerCase();
-
-
-
-        /* ==============================================================
-           LOOP THROUGH ROWS
-           ============================================================== */
+        let visibleCount = 0;
 
         tableRows.forEach(function (row) {
 
-            /* ----------------------------------------------------------
-               SKIP EMPTY ROW
-               ---------------------------------------------------------- */
-
+            // Ignore the empty-state row
             if (
+                row.querySelector('.cadet-table-empty') ||
                 row.classList.contains('cadet-table-empty')
             ) {
                 return;
             }
 
+            const rowCourse = (row.dataset.course || '').toLowerCase();
+            const rowBatch = (row.dataset.batch || '').toLowerCase();
+            const rowDeployment = (row.dataset.deployment || '').toLowerCase();
+            const rowVerification = (row.dataset.verification || '').toLowerCase();
 
-            if (
-                row.querySelector('.cadet-table-empty')
-            ) {
-                return;
-            }
-
-
-            /* ----------------------------------------------------------
-               GET ROW DATA
-               ---------------------------------------------------------- */
-
-            const rowCourse =
-                (
-                    row.dataset.course || ''
-                ).toLowerCase();
-
-            const rowBatch =
-                (
-                    row.dataset.batch || ''
-                ).toLowerCase();
-
-            const rowDeployment =
-                (
-                    row.dataset.deployment || ''
-                ).toLowerCase();
-
-            const rowVerification =
-                (
-                    row.dataset.verification || ''
-                ).toLowerCase();
-
-            const rowText =
-                (
-                    row.textContent || ''
-                )
-                .trim()
-                .toLowerCase();
-
-
-            /* ----------------------------------------------------------
-               MATCH COURSE
-               ---------------------------------------------------------- */
+            const rowText = (row.textContent || '').trim().toLowerCase();
 
             const matchesCourse =
-                !course ||
-                rowCourse.includes(course);
-
-
-            /* ----------------------------------------------------------
-               MATCH BATCH
-               ---------------------------------------------------------- */
+                !course || rowCourse.includes(course);
 
             const matchesBatch =
-                !batch ||
-                rowBatch.includes(batch);
-
-
-            /* ----------------------------------------------------------
-               MATCH DEPLOYMENT
-               ---------------------------------------------------------- */
+                !batch || rowBatch.includes(batch);
 
             const matchesDeployment =
-                !deployment ||
-                rowDeployment === deployment;
-
-
-            /* ----------------------------------------------------------
-               MATCH VERIFICATION
-               ---------------------------------------------------------- */
+                !deployment || rowDeployment === deployment;
 
             const matchesVerification =
-                !verification ||
-                rowVerification === verification;
-
-
-            /* ----------------------------------------------------------
-               MATCH SEARCH
-               ---------------------------------------------------------- */
+                !verification || rowVerification === verification;
 
             const matchesSearch =
-                !search ||
-                rowText.includes(search);
-
-
-            /* ----------------------------------------------------------
-               FINAL MATCH
-               ---------------------------------------------------------- */
+                !search || rowText.includes(search);
 
             const matches =
                 matchesCourse &&
@@ -3785,125 +3565,134 @@ document.addEventListener('DOMContentLoaded', function () {
                 matchesVerification &&
                 matchesSearch;
 
+            row.style.display = matches ? '' : 'none';
 
-            /* ----------------------------------------------------------
-               SHOW / HIDE
-               ---------------------------------------------------------- */
-
-            row.style.display =
-                matches
-                    ? ''
-                    : 'none';
-
-
-
-                    /* ==============================================================
-   INTERACTIVE STAT CARDS
-   ============================================================== */
-
-const statCards = [
-    {
-        selector: '.cadet-stat-blue',
-        filter: ''
-    },
-    {
-        selector: '.cadet-stat-green',
-        filter: 'verified'
-    },
-    {
-        selector: '.cadet-stat-yellow',
-        filter: 'pending'
-    },
-    {
-        selector: '.cadet-stat-red',
-        filter: 'deficiency'
-    }
-];
-
-statCards.forEach(function (card) {
-
-    const element = document.querySelector(card.selector);
-
-    if (!element) {
-        return;
-    }
-
-    element.setAttribute('role', 'button');
-    element.setAttribute('tabindex', '0');
-
-    function activateCard() {
-
-        // Set the verification filter
-        verificationFilter.value = card.filter;
-
-        // Highlight selected card
-        statCards.forEach(function (item) {
-
-            const otherCard =
-                document.querySelector(item.selector);
-
-            if (otherCard) {
-                otherCard.classList.remove('active');
+            if (matches) {
+                visibleCount++;
             }
 
         });
 
-        element.classList.add('active');
-
-        // Apply filters
-        filterTable();
+        // Optional: update a result counter if you add one later.
+        console.log('Visible cadets on this page:', visibleCount);
 
     }
 
-    element.addEventListener('click', activateCard);
+    /* ==========================================================
+       INTERACTIVE STAT CARDS
+       IMPORTANT: THIS MUST BE OUTSIDE tableRows.forEach()
+       ========================================================== */
 
-    element.addEventListener('keydown', function (event) {
+    const statCards = [
+        {
+            selector: '.cadet-stat-blue',
+            filter: ''
+        },
+        {
+            selector: '.cadet-stat-green',
+            filter: 'verified'
+        },
+        {
+            selector: '.cadet-stat-yellow',
+            filter: 'pending'
+        },
+        {
+            selector: '.cadet-stat-red',
+            filter: 'deficiency'
+        }
+    ];
 
-        if (event.key === 'Enter' || event.key === ' ') {
+    statCards.forEach(function (card) {
 
-            event.preventDefault();
+        const element = document.querySelector(card.selector);
 
-            activateCard();
+        if (!element) {
+            return;
+        }
+
+        element.setAttribute('role', 'button');
+        element.setAttribute('tabindex', '0');
+
+        function activateCard() {
+
+            verificationFilter.value = card.filter;
+
+            // Remove previous active state
+            statCards.forEach(function (item) {
+
+                const otherCard = document.querySelector(item.selector);
+
+                otherCard?.classList.remove('active');
+
+            });
+
+            element.classList.add('active');
+
+            filterTable();
 
         }
 
+        element.addEventListener('click', activateCard);
+
+        element.addEventListener('keydown', function (event) {
+
+            if (event.key === 'Enter' || event.key === ' ') {
+
+                event.preventDefault();
+                activateCard();
+
+            }
+
+        });
+
     });
 
-});
-
-    /* ======================================================================
+    /* ==========================================================
        FILTER EVENT LISTENERS
-       ====================================================================== */
+       ========================================================== */
 
-    courseFilter.addEventListener(
-        'change',
-        filterTable
-    );
+    courseFilter.addEventListener('change', filterTable);
+    batchFilter.addEventListener('change', filterTable);
+    deploymentFilter.addEventListener('change', filterTable);
+    verificationFilter.addEventListener('change', filterTable);
 
-    batchFilter.addEventListener(
-        'change',
-        filterTable
-    );
+    searchInput.addEventListener('input', filterTable);
 
-    deploymentFilter.addEventListener(
-        'change',
-        filterTable
-    );
+    /* ==========================================================
+       CLEAR ACTIVE CARD WHEN FILTER IS CHANGED MANUALLY
+       ========================================================== */
 
-    verificationFilter.addEventListener(
-        'change',
-        filterTable
-    );
+    [
+        courseFilter,
+        batchFilter,
+        deploymentFilter,
+        verificationFilter,
+        searchInput
+    ].forEach(function (element) {
 
-    searchInput.addEventListener(
-        'input',
-        filterTable
-    );
+        element.addEventListener('change', function () {
 
+            if (element !== verificationFilter) {
+                statCards.forEach(function (card) {
+                    document.querySelector(card.selector)?.classList.remove('active');
+                });
+            }
 
-    /* ======================================================================
+        });
+
+    });
+
+    searchInput.addEventListener('input', function () {
+
+        statCards.forEach(function (card) {
+            document.querySelector(card.selector)?.classList.remove('active');
+        });
+
+    });
+
+    /* ==========================================================
        INITIAL FILTER
-       ====================================================================== */
+       ========================================================== */
 
     filterTable();
 
