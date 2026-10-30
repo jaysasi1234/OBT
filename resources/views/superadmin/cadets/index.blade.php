@@ -142,6 +142,26 @@
     -webkit-backdrop-filter: blur(12px);
 }
 
+/* ==========================================================
+   INTERACTIVE STAT CARDS
+   ========================================================== */
+
+.cadet-stat {
+    cursor: pointer;
+    user-select: none;
+}
+
+.cadet-stat.active {
+    outline: 3px solid rgba(255, 255, 255, 0.75);
+    outline-offset: 3px;
+    transform: translateY(-4px);
+}
+
+.cadet-stat:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 4px;
+}
+
 
 /* ==========================================================================
    PAGE HEADER
@@ -3652,18 +3672,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .toLowerCase();
 
 
-        /* ==============================================================
-           COUNTERS
-           ============================================================== */
-
-        let total = 0;
-
-        let verified = 0;
-
-        let pending = 0;
-
-        let deficiency = 0;
-
 
         /* ==============================================================
            LOOP THROUGH ROWS
@@ -3788,104 +3796,80 @@ document.addEventListener('DOMContentLoaded', function () {
                     : 'none';
 
 
-            /* ----------------------------------------------------------
-               UPDATE COUNTERS
-               ---------------------------------------------------------- */
 
-            if (matches) {
+                    /* ==============================================================
+   INTERACTIVE STAT CARDS
+   ============================================================== */
 
-                total++;
+const statCards = [
+    {
+        selector: '.cadet-stat-blue',
+        filter: ''
+    },
+    {
+        selector: '.cadet-stat-green',
+        filter: 'verified'
+    },
+    {
+        selector: '.cadet-stat-yellow',
+        filter: 'pending'
+    },
+    {
+        selector: '.cadet-stat-red',
+        filter: 'deficiency'
+    }
+];
 
+statCards.forEach(function (card) {
 
-                if (
-                    rowVerification === 'verified'
-                ) {
+    const element = document.querySelector(card.selector);
 
-                    verified++;
+    if (!element) {
+        return;
+    }
 
-                }
+    element.setAttribute('role', 'button');
+    element.setAttribute('tabindex', '0');
 
+    function activateCard() {
 
-                if (
-                    rowVerification === 'pending'
-                ) {
+        // Set the verification filter
+        verificationFilter.value = card.filter;
 
-                    pending++;
+        // Highlight selected card
+        statCards.forEach(function (item) {
 
-                }
+            const otherCard =
+                document.querySelector(item.selector);
 
-
-                if (
-                    rowVerification === 'deficiency'
-                ) {
-
-                    deficiency++;
-
-                }
-
+            if (otherCard) {
+                otherCard.classList.remove('active');
             }
 
         });
 
+        element.classList.add('active');
 
-        /* ==============================================================
-           UPDATE STATISTICS
-           ============================================================== */
-
-        const totalElement =
-            document.getElementById(
-                'totalCadetsCount'
-            );
-
-        const verifiedElement =
-            document.getElementById(
-                'verifiedCadetsCount'
-            );
-
-        const pendingElement =
-            document.getElementById(
-                'pendingCadetsCount'
-            );
-
-        const deficiencyElement =
-            document.getElementById(
-                'deficiencyCadetsCount'
-            );
-
-
-        if (totalElement) {
-
-            totalElement.textContent =
-                total;
-
-        }
-
-
-        if (verifiedElement) {
-
-            verifiedElement.textContent =
-                verified;
-
-        }
-
-
-        if (pendingElement) {
-
-            pendingElement.textContent =
-                pending;
-
-        }
-
-
-        if (deficiencyElement) {
-
-            deficiencyElement.textContent =
-                deficiency;
-
-        }
+        // Apply filters
+        filterTable();
 
     }
 
+    element.addEventListener('click', activateCard);
+
+    element.addEventListener('keydown', function (event) {
+
+        if (event.key === 'Enter' || event.key === ' ') {
+
+            event.preventDefault();
+
+            activateCard();
+
+        }
+
+    });
+
+});
 
     /* ======================================================================
        FILTER EVENT LISTENERS
