@@ -1502,9 +1502,9 @@
                         Deployed Cadets
                     </div>
 
-                    <div class="stat-value">
-                        {{ $cadets->count() }}
-                    </div>
+                <div class="stat-value">
+                    {{ $cadets->total() }}
+                </div>
 
                 </div>
 
