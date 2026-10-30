@@ -2943,77 +2943,39 @@ function filterCadets() {
 
 
 /* =========================================================
-   SERVER-SIDE SEARCH AND FILTER
-   ========================================================= */
-
-let filterTimeout = null;
-
-function filterCadets() {
-
-    clearTimeout(filterTimeout);
-
-    filterTimeout = setTimeout(() => {
-
-        const params = new URLSearchParams();
-
-        const search =
-            document.getElementById('searchCadet').value.trim();
-
-        const batch =
-            document.getElementById('batchFilter').value;
-
-        const course =
-            document.getElementById('courseFilter').value;
-
-        const deployment =
-            document.getElementById('deploymentFilter').value;
-
-        if (search) {
-            params.set('search', search);
-        }
-
-        if (batch) {
-            params.set('batch', batch);
-        }
-
-        if (course) {
-            params.set('course', course);
-        }
-
-        if (deployment) {
-            params.set('deployment', deployment);
-        }
-
-        // Start at page 1 whenever filters change
-        params.delete('page');
-
-        window.location.href =
-            window.location.pathname +
-            (params.toString() ? '?' + params.toString() : '');
-
-    }, 350);
-}
-
-
-/* =========================================================
    FILTER EVENTS
    ========================================================= */
 
 document
     .getElementById('searchCadet')
-    ?.addEventListener('input', filterCadets);
+    ?.addEventListener(
+        'input',
+        filterCadets
+    );
+
 
 document
     .getElementById('batchFilter')
-    ?.addEventListener('change', filterCadets);
+    ?.addEventListener(
+        'change',
+        filterCadets
+    );
+
 
 document
     .getElementById('courseFilter')
-    ?.addEventListener('change', filterCadets);
+    ?.addEventListener(
+        'change',
+        filterCadets
+    );
+
 
 document
     .getElementById('deploymentFilter')
-    ?.addEventListener('change', filterCadets);
+    ?.addEventListener(
+        'change',
+        filterCadets
+    );
 
 </script>
 
