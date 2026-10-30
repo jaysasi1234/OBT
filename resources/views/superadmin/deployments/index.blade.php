@@ -38,6 +38,30 @@
         0 10px 30px rgba(0,0,0,.18);
 }
 
+/* =========================================================
+   STICKY TOP SECTION
+   HEADER + STATISTICS + FILTERS
+   ========================================================= */
+
+.deployment-sticky-area {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background: #0b1b43;
+
+    padding-top: 6px;
+    padding-bottom: 2px;
+}
+
+/* Keep the sticky section visually above the table */
+.deployment-sticky-area .page-header {
+    position: relative;
+}
+
+.deployment-sticky-area .filter-container {
+    margin-bottom: 20px;
+}
 
 /* =========================================================
    PAGE BACKGROUND
@@ -2015,6 +2039,8 @@ body {
 </style>
 
 
+<div class="deployment-sticky-area">
+
 <div class="page-header">
 
     <div>
@@ -2227,6 +2253,7 @@ body {
 
     </div>
 
+</div>
 
     {{-- =====================================================
          TABLE
