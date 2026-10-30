@@ -3441,13 +3441,12 @@
 </div>
 
 
+
 <script>
-
-
 document.addEventListener('DOMContentLoaded', function () {
 
     /* ==========================================================
-       MODAL ELEMENTS
+       PROFILE MODAL ELEMENTS
        ========================================================== */
 
     const modal = document.getElementById('cadetModal');
@@ -3464,24 +3463,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalContact = document.getElementById('modalContact');
     const modalBirth = document.getElementById('modalBirth');
 
-    /* ==========================================================
-       FILTER ELEMENTS
-       ========================================================== */
-
-    const courseFilter = document.getElementById('courseFilter');
-    const batchFilter = document.getElementById('batchFilter');
-    const deploymentFilter = document.getElementById('deploymentFilter');
-    const verificationFilter = document.getElementById('verificationFilter');
-    const searchInput = document.getElementById('searchInput');
-
-    const tableBody = document.getElementById('cadetTableBody');
-
-    const tableRows = tableBody
-        ? Array.from(tableBody.querySelectorAll('tr'))
-        : [];
-
     const defaultPhoto =
         'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
 
     /* ==========================================================
        OPEN PROFILE MODAL
@@ -3515,8 +3499,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
+
     /* ==========================================================
-       CLOSE MODAL
+       CLOSE PROFILE MODAL
        ========================================================== */
 
     function closeCadetModal() {
@@ -3529,6 +3514,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     closeModalButton?.addEventListener('click', closeCadetModal);
+
     closeModalFooter?.addEventListener('click', closeCadetModal);
 
     modal?.addEventListener('click', function (event) {
@@ -3550,90 +3536,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
- 
-/* ==========================================================
-   STAT CARD FILTERS — SERVER SIDE
-   ========================================================== */
-
-const statCards = [
-    {
-        selector: '.cadet-stat-blue',
-        filter: ''
-    },
-    {
-        selector: '.cadet-stat-green',
-        filter: 'verified'
-    },
-    {
-        selector: '.cadet-stat-yellow',
-        filter: 'pending'
-    },
-    {
-        selector: '.cadet-stat-red',
-        filter: 'deficiency'
-    }
-];
-
-statCards.forEach(function (card) {
-
-    const element = document.querySelector(card.selector);
-
-    if (!element) return;
-
-    element.style.cursor = 'pointer';
-
-    function activateCard() {
-
-        const url = new URL(window.location.href);
-
-        if (card.filter) {
-            url.searchParams.set('verification', card.filter);
-        } else {
-            url.searchParams.delete('verification');
-        }
-
-        url.searchParams.delete('page');
-
-        window.location.href = url.toString();
-    }
-
-    element.addEventListener('click', activateCard);
-
-    element.addEventListener('keydown', function (event) {
-
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            activateCard();
-        }
-
-    });
-
-});
-
 
     /* ==========================================================
-       INTERACTIVE STAT CARDS
-       IMPORTANT: THIS MUST BE OUTSIDE tableRows.forEach()
+       STATISTIC CARDS — SERVER-SIDE FILTERING
        ========================================================== */
 
     const statCards = [
         {
             selector: '.cadet-stat-blue',
-            filter: ''
+            filter: '',
+            label: 'Total Cadets'
         },
         {
             selector: '.cadet-stat-green',
-            filter: 'verified'
+            filter: 'verified',
+            label: 'Verified Cadets'
         },
         {
             selector: '.cadet-stat-yellow',
-            filter: 'pending'
+            filter: 'pending',
+            label: 'Pending Cadets'
         },
         {
             selector: '.cadet-stat-red',
-            filter: 'deficiency'
+            filter: 'deficiency',
+            label: 'Cadets with Deficiency'
         }
     ];
+
 
     statCards.forEach(function (card) {
 
@@ -3643,35 +3573,58 @@ statCards.forEach(function (card) {
             return;
         }
 
+        // Make the card accessible and interactive.
+        element.style.cursor = 'pointer';
         element.setAttribute('role', 'button');
         element.setAttribute('tabindex', '0');
+        element.setAttribute('aria-label', card.label);
 
+
+        // Highlight the currently selected verification card.
+        const currentVerification =
+            new URLSearchParams(window.location.search)
+                .get('verification') || '';
+
+        if (currentVerification === card.filter && card.filter !== '') {
+            element.classList.add('active');
+        }
+
+
+        // Navigate to Laravel with the selected filter.
         function activateCard() {
 
-            verificationFilter.value = card.filter;
+            const url = new URL(window.location.href);
 
-            // Remove previous active state
-            statCards.forEach(function (item) {
+            if (card.filter !== '') {
 
-                const otherCard = document.querySelector(item.selector);
+                url.searchParams.set('verification', card.filter);
 
-                otherCard?.classList.remove('active');
+            } else {
 
-            });
+                url.searchParams.delete('verification');
 
-            element.classList.add('active');
+            }
 
-            filterTable();
+            // Always start from page 1.
+            url.searchParams.delete('page');
+
+            // Navigate so Laravel reloads the filtered database results.
+            window.location.href = url.toString();
 
         }
 
+
+        // Mouse click.
         element.addEventListener('click', activateCard);
 
+
+        // Keyboard: Enter or Space.
         element.addEventListener('keydown', function (event) {
 
             if (event.key === 'Enter' || event.key === ' ') {
 
                 event.preventDefault();
+
                 activateCard();
 
             }
@@ -3680,57 +3633,8 @@ statCards.forEach(function (card) {
 
     });
 
-    /* ==========================================================
-       FILTER EVENT LISTENERS
-       ========================================================== */
-
-    courseFilter.addEventListener('change', filterTable);
-    batchFilter.addEventListener('change', filterTable);
-    deploymentFilter.addEventListener('change', filterTable);
-    verificationFilter.addEventListener('change', filterTable);
-
-    searchInput.addEventListener('input', filterTable);
-
-    /* ==========================================================
-       CLEAR ACTIVE CARD WHEN FILTER IS CHANGED MANUALLY
-       ========================================================== */
-
-    [
-        courseFilter,
-        batchFilter,
-        deploymentFilter,
-        verificationFilter,
-        searchInput
-    ].forEach(function (element) {
-
-        element.addEventListener('change', function () {
-
-            if (element !== verificationFilter) {
-                statCards.forEach(function (card) {
-                    document.querySelector(card.selector)?.classList.remove('active');
-                });
-            }
-
-        });
-
-    });
-
-    searchInput.addEventListener('input', function () {
-
-        statCards.forEach(function (card) {
-            document.querySelector(card.selector)?.classList.remove('active');
-        });
-
-    });
-
-    /* ==========================================================
-       INITIAL FILTER
-       ========================================================== */
-
-    filterTable();
-
 });
-
 </script>
+
 
 @endsection
