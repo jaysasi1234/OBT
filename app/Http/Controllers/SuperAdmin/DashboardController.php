@@ -72,32 +72,6 @@ class DashboardController extends Controller
             ->count();
 
 
-        // =========================================================
-        // VERIFICATION COUNTS
-        // =========================================================
-        //
-        // Verification is calculated per cadet.
-        //
-        // Approved = all documents assigned to the cadet
-        // are approved.
-        //
-        // Deficiency = at least one document is rejected.
-        //
-        // Pending = documents are still waiting for approval.
-        //
-        // =========================================================
-
-        $verified = 0;
-
-        $pendingVerification = 0;
-
-        $deficiency = 0;
-
-
-        $verificationCadets = Cadet::with('documents')
-            ->get();
-
-
 // =========================================================
 // VERIFICATION COUNTS
 // SAME LOGIC AS ADMIN DASHBOARD
@@ -173,13 +147,13 @@ if ($totalRequirements > 0) {
 
         }
     ])
-    ->get()
-    ->filter(function ($cadet) use ($totalRequirements) {
+        ->get()
+        ->filter(function ($cadet) use ($totalRequirements) {
 
-        return $cadet->approved_documents_count < $totalRequirements;
+            return $cadet->approved_documents_count < $totalRequirements;
 
-    })
-    ->take(5);
+        })
+        ->values();
 
 } else {
 
