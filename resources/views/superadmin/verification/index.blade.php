@@ -249,14 +249,6 @@
         );
 }
 
-.verification-pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 24px;
-    padding: 16px;
-    overflow-x: auto;
-}
-
 /* =========================================================
    FILTER CONTAINER
    ========================================================= */
@@ -1327,7 +1319,12 @@
                             */
 
                             $approvedDocuments =
-$cadet->approved_documents_count;
+                                $cadet->documents
+                                    ->where(
+                                        'pivot.status',
+                                        'Approved'
+                                    )
+                                    ->count();
 
 
                             /*
@@ -1390,7 +1387,7 @@ $cadet->approved_documents_count;
                             */
 
                             $verificationStatus =
-                                $cadet->verification_status_display
+                                $cadet->verification_status
                                 ?? 'Pending';
 
 
@@ -1401,7 +1398,7 @@ $cadet->approved_documents_count;
                             */
 
                             $bsStatus =
-                                $cadet->bs_status_display
+                                $cadet->bs_status
                                 ?? 'Not Qualified';
 
                         @endphp
@@ -1538,10 +1535,6 @@ $cadet->approved_documents_count;
             </table>
 
         </div>
-
-        <div class="verification-pagination">
-    {{ $cadets->links() }}
-</div>
 
     </div>
 
