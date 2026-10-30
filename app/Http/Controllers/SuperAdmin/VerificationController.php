@@ -7,28 +7,30 @@ use App\Models\Cadet;
 use App\Models\Batch;
 use App\Models\Document;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 class VerificationController extends Controller
 {
-    /**
-     * Display verification monitoring.
-     */
     public function index(Request $request)
     {
+        $totalRequirements = Document::count();
+
         /*
         |--------------------------------------------------------------------------
-        | LOAD CADETS
+        | BASE QUERY
         |--------------------------------------------------------------------------
         */
 
-        $query = Cadet::with([
-            'user',
-            'batch',
-            'documents',
-            'bsRequirements',
-        ]);
-
+        $query = Cadet::query()
+            ->with('batch')
+            ->withCount([
+                'documents as approved_documents_count' => function ($q) {
+                    $q->wherePivot('status', 'Approved');
+                },
+                'bsRequirements as bs_required_count',
+                'bsRequirements as bs_completed_count' => function ($q) {
+                    $q->whereIn('status', ['Approved', 'Completed']);
+                },
+            ]);
 
         /*
         |--------------------------------------------------------------------------
@@ -37,14 +39,12 @@ class VerificationController extends Controller
         */
 
         if ($request->filled('search')) {
-
             $query->where(
                 'full_name',
                 'like',
                 '%' . $request->search . '%'
             );
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -53,13 +53,8 @@ class VerificationController extends Controller
         */
 
         if ($request->filled('course')) {
-
-            $query->where(
-                'course',
-                $request->course
-            );
+            $query->where('course', $request->course);
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -68,146 +63,43 @@ class VerificationController extends Controller
         */
 
         if ($request->filled('batch')) {
-
-            $query->where(
-                'batch_id',
-                $request->batch
-            );
+            $query->where('batch_id', $request->batch);
         }
 
-
         /*
         |--------------------------------------------------------------------------
-        | GET CADETS
-        | A-Z ORDER
-        |--------------------------------------------------------------------------
-        */
-
-        $cadets = $query
-            ->orderBy('full_name', 'asc')
-            ->get();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | TOTAL SYSTEM DOCUMENT REQUIREMENTS
-        |--------------------------------------------------------------------------
-        */
-
-        $totalRequirements = Document::count();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | CALCULATE VERIFICATION STATUS
-        |--------------------------------------------------------------------------
-        */
-
-        foreach ($cadets as $cadet) {
-
-            /*
-            |----------------------------------------------------------------------
-            | DOCUMENT STATUS
-            |----------------------------------------------------------------------
-            */
-
-            $approvedDocuments = $cadet->documents
-                ->where('pivot.status', 'Approved')
-                ->count();
-
-            $cadet->required_documents_count =
-                $totalRequirements;
-
-            $cadet->approved_documents_count =
-                $approvedDocuments;
-
-            $cadet->doc_progress =
-                $totalRequirements > 0
-                    ? $approvedDocuments . '/' . $totalRequirements
-                    : '0/0';
-
-
-            /*
-            |----------------------------------------------------------------------
-            | VERIFICATION STATUS
-            |----------------------------------------------------------------------
-            */
-
-            if (
-                $totalRequirements > 0 &&
-                $approvedDocuments >= $totalRequirements
-            ) {
-
-                $cadet->verification_status = 'Verified';
-
-            } else {
-
-                $cadet->verification_status = 'Pending';
-            }
-
-
-            /*
-            |----------------------------------------------------------------------
-            | BS REQUIREMENTS
-            |----------------------------------------------------------------------
-            */
-
-            $totalBSRequirements =
-                $cadet->bsRequirements->count();
-
-            $completedBSRequirements =
-                $cadet->bsRequirements
-                    ->whereIn('status', [
-                        'Approved',
-                        'Completed',
-                    ])
-                    ->count();
-
-            $cadet->bs_required_count =
-                $totalBSRequirements;
-
-            $cadet->bs_completed_count =
-                $completedBSRequirements;
-
-
-            /*
-            |----------------------------------------------------------------------
-            | BS STATUS
-            |----------------------------------------------------------------------
-            */
-
-            if (
-                $totalBSRequirements > 0 &&
-                $completedBSRequirements >= $totalBSRequirements
-            ) {
-
-                $cadet->bs_status = 'Qualified';
-
-            } else {
-
-                $cadet->bs_status = 'Not Qualified';
-            }
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | VERIFICATION STATUS FILTER
+        | VERIFICATION FILTER
         |--------------------------------------------------------------------------
         */
 
         if ($request->filled('verification_status')) {
 
-            $cadets = $cadets
-                ->filter(function ($cadet) use ($request) {
+            $approvedSql = "(
+                SELECT COUNT(*)
+                FROM cadet_documents
+                WHERE cadet_documents.cadet_id = cadets.id
+                AND cadet_documents.status = 'Approved'
+            )";
 
-                    return $cadet->verification_status ===
-                        $request->verification_status;
+            if ($request->verification_status === 'Verified') {
 
-                })
-                ->values();
+                if ($totalRequirements > 0) {
+                    $query->whereRaw(
+                        "{$approvedSql} >= ?",
+                        [$totalRequirements]
+                    );
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+
+            } elseif ($request->verification_status === 'Pending') {
+
+                $query->whereRaw(
+                    "{$approvedSql} < ?",
+                    [$totalRequirements]
+                );
+            }
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -215,18 +107,36 @@ class VerificationController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($request->filled('bs_status')) {
+        if ($request->bs_status === 'Qualified') {
 
-            $cadets = $cadets
-                ->filter(function ($cadet) use ($request) {
+            $query->whereHas('bsRequirements')
+                ->whereDoesntHave('bsRequirements', function ($q) {
+                    $q->where(function ($statusQuery) {
+                        $statusQuery
+                            ->whereNull('status')
+                            ->orWhereNotIn('status', [
+                                'Approved',
+                                'Completed',
+                            ]);
+                    });
+                });
 
-                    return $cadet->bs_status ===
-                        $request->bs_status;
+        } elseif ($request->bs_status === 'Not Qualified') {
 
-                })
-                ->values();
+            $query->where(function ($q) {
+                $q->whereDoesntHave('bsRequirements')
+                    ->orWhereHas('bsRequirements', function ($bsQuery) {
+                        $bsQuery->where(function ($statusQuery) {
+                            $statusQuery
+                                ->whereNull('status')
+                                ->orWhereNotIn('status', [
+                                    'Approved',
+                                    'Completed',
+                                ]);
+                        });
+                    });
+            });
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -234,60 +144,119 @@ class VerificationController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $verificationTotal =
-            $cadets->count();
+        $verificationTotal = (clone $query)->count();
 
-        $completed =
-            $cadets
-                ->where('verification_status', 'Verified')
-                ->count();
+        $completedQuery = clone $query;
 
-        $incomplete =
-            $cadets
-                ->where('verification_status', 'Pending')
-                ->count();
+        if ($totalRequirements > 0) {
+            $completedQuery->whereRaw(
+                "(
+                    SELECT COUNT(*)
+                    FROM cadet_documents
+                    WHERE cadet_documents.cadet_id = cadets.id
+                    AND cadet_documents.status = 'Approved'
+                ) >= ?",
+                [$totalRequirements]
+            );
+        } else {
+            $completedQuery->whereRaw('1 = 0');
+        }
 
-        $qualified =
-            $cadets
-                ->where('bs_status', 'Qualified')
-                ->count();
+        $completed = $completedQuery->count();
 
-        $notQualified =
-            $cadets
-                ->where('bs_status', 'Not Qualified')
-                ->count();
+        $incompleteQuery = clone $query;
 
-                /*
-|--------------------------------------------------------------------------
-| PAGINATION
-|--------------------------------------------------------------------------
-*/
+        $incompleteQuery->whereRaw(
+            "(
+                SELECT COUNT(*)
+                FROM cadet_documents
+                WHERE cadet_documents.cadet_id = cadets.id
+                AND cadet_documents.status = 'Approved'
+            ) < ?",
+            [$totalRequirements]
+        );
 
-$perPage = 25;
+        $incomplete = $incompleteQuery->count();
 
-$currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $qualifiedQuery = clone $query;
 
-$totalCadets = $cadets->count();
+        $qualifiedQuery->whereHas('bsRequirements')
+            ->whereDoesntHave('bsRequirements', function ($q) {
+                $q->where(function ($statusQuery) {
+                    $statusQuery
+                        ->whereNull('status')
+                        ->orWhereNotIn('status', [
+                            'Approved',
+                            'Completed',
+                        ]);
+                });
+            });
 
-$currentItems = $cadets
-    ->slice(($currentPage - 1) * $perPage, $perPage)
-    ->values();
+        $qualified = $qualifiedQuery->count();
 
-$cadets = new LengthAwarePaginator(
-    $currentItems,
-    $totalCadets,
-    $perPage,
-    $currentPage,
-    [
-        'path' => $request->url(),
-        'query' => $request->query(),
-    ]
-);
+        $notQualifiedQuery = clone $query;
 
+        $notQualifiedQuery->where(function ($q) {
+            $q->whereDoesntHave('bsRequirements')
+                ->orWhereHas('bsRequirements', function ($bsQuery) {
+                    $bsQuery->where(function ($statusQuery) {
+                        $statusQuery
+                            ->whereNull('status')
+                            ->orWhereNotIn('status', [
+                                'Approved',
+                                'Completed',
+                            ]);
+                    });
+                });
+        });
+
+        $notQualified = $notQualifiedQuery->count();
 
         /*
         |--------------------------------------------------------------------------
-        | COURSES
+        | PAGINATION
+        |--------------------------------------------------------------------------
+        */
+
+        $cadets = $query
+            ->orderBy('full_name', 'asc')
+            ->paginate(25)
+            ->withQueryString();
+
+        /*
+        |--------------------------------------------------------------------------
+        | DISPLAY VALUES FOR CURRENT PAGE
+        |--------------------------------------------------------------------------
+        */
+
+        foreach ($cadets as $cadet) {
+
+            $approved = (int) $cadet->approved_documents_count;
+
+            $cadet->required_documents_count = $totalRequirements;
+
+            $cadet->doc_progress = $totalRequirements > 0
+                ? $approved . '/' . $totalRequirements
+                : '0/0';
+
+            $cadet->verification_status_display =
+                $totalRequirements > 0 &&
+                $approved >= $totalRequirements
+                    ? 'Verified'
+                    : 'Pending';
+
+            $totalBS = (int) $cadet->bs_required_count;
+            $completedBS = (int) $cadet->bs_completed_count;
+
+            $cadet->bs_status_display =
+                $totalBS > 0 && $completedBS >= $totalBS
+                    ? 'Qualified'
+                    : 'Not Qualified';
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | COURSE OPTIONS
         |--------------------------------------------------------------------------
         */
 
@@ -298,24 +267,13 @@ $cadets = new LengthAwarePaginator(
             ->orderBy('course')
             ->get();
 
-
         /*
         |--------------------------------------------------------------------------
-        | BATCHES
+        | BATCH OPTIONS
         |--------------------------------------------------------------------------
         */
 
-        $batches = Batch::orderBy(
-            'batch_year',
-            'desc'
-        )->get();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | RETURN VIEW
-        |--------------------------------------------------------------------------
-        */
+        $batches = Batch::orderBy('batch_year', 'desc')->get();
 
         return view(
             'superadmin.verification.index',
@@ -332,10 +290,6 @@ $cadets = new LengthAwarePaginator(
         );
     }
 
-
-    /**
-     * Display a single cadet verification record.
-     */
     public function show(int $id)
     {
         $cadet = Cadet::with([
@@ -345,67 +299,25 @@ $cadets = new LengthAwarePaginator(
             'bsRequirements',
         ])->findOrFail($id);
 
+        $totalDocs = $cadet->documents->count();
 
-        /*
-        |--------------------------------------------------------------------------
-        | DOCUMENT VERIFICATION
-        |--------------------------------------------------------------------------
-        */
+        $approvedDocs = $cadet->documents
+            ->where('pivot.status', 'Approved')
+            ->count();
 
-        $totalDocs =
-            $cadet->documents->count();
+        $progress = $totalDocs > 0
+            ? round(($approvedDocs / $totalDocs) * 100)
+            : 0;
 
-        $approvedDocs =
-            $cadet->documents
-                ->where('pivot.status', 'Approved')
-                ->count();
+        $totalBS = $cadet->bsRequirements->count();
 
-        $progress =
-            $totalDocs > 0
-                ? round(
-                    ($approvedDocs / $totalDocs) * 100
-                )
-                : 0;
+        $completedBS = $cadet->bsRequirements
+            ->whereIn('status', ['Approved', 'Completed'])
+            ->count();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | BS REQUIREMENTS
-        |--------------------------------------------------------------------------
-        */
-
-        $totalBS =
-            $cadet->bsRequirements->count();
-
-        $completedBS =
-            $cadet->bsRequirements
-                ->whereIn('status', [
-                    'Approved',
-                    'Completed',
-                ])
-                ->count();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | BS STATUS
-        |--------------------------------------------------------------------------
-        */
-
-        $bsStatus =
-            (
-                $totalBS > 0 &&
-                $completedBS >= $totalBS
-            )
-                ? 'Qualified'
-                : 'Not Qualified';
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | RETURN VIEW
-        |--------------------------------------------------------------------------
-        */
+        $bsStatus = ($totalBS > 0 && $completedBS >= $totalBS)
+            ? 'Qualified'
+            : 'Not Qualified';
 
         return view(
             'superadmin.verification.show',
