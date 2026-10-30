@@ -87,6 +87,93 @@
     line-height: 1.5;
 }
 
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.pagination-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(8, 22, 55, 0.35);
+}
+
+.pagination-info {
+    color: #a9bad8;
+    font-size: 13px;
+}
+
+.pagination-info strong {
+    color: #ffffff;
+}
+
+.pagination-links {
+    display: flex;
+    align-items: center;
+}
+
+.pagination-links nav {
+    margin: 0;
+}
+
+.pagination-links .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 0;
+}
+
+.pagination-links .page-link {
+    min-width: 36px;
+    border: 1px solid rgba(96, 165, 250, 0.18);
+    border-radius: 8px !important;
+    background: #172955;
+    color: #dbeafe;
+    text-align: center;
+    font-size: 13px;
+    box-shadow: none;
+}
+
+.pagination-links .page-link:hover {
+    border-color: #4f7df3;
+    background: #294fc2;
+    color: #ffffff;
+}
+
+.pagination-links .page-item.active .page-link {
+    border-color: #315fe0;
+    background: #315fe0;
+    color: #ffffff;
+}
+
+.pagination-links .page-item.disabled .page-link {
+    border-color: rgba(255, 255, 255, 0.06);
+    background: #111f43;
+    color: #64748b;
+}
+
+@media (max-width: 768px) {
+
+    .pagination-container {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px 20px;
+    }
+
+    .pagination-links {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+}
+
+
 /* =========================================================
    STICKY CONTROLS
    ========================================================= */
@@ -1536,6 +1623,38 @@
 
         </div>
 
+        {{-- =====================================================
+     PAGINATION
+====================================================== --}}
+
+<div class="pagination-container">
+
+    <div class="pagination-info">
+
+        Showing
+
+        <strong>{{ $cadets->firstItem() ?? 0 }}</strong>
+
+        to
+
+        <strong>{{ $cadets->lastItem() ?? 0 }}</strong>
+
+        of
+
+        <strong>{{ $cadets->total() }}</strong>
+
+        cadets
+
+    </div>
+
+    <div class="pagination-links">
+
+        {{ $cadets->links('pagination::bootstrap-5') }}
+
+    </div>
+
+</div>
+
     </div>
 
 </div>
@@ -1957,6 +2076,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const form =
         document.getElementById('filterForm');
+
+        // Always return to page 1 when filtering.
+if (form) {
+
+    form.addEventListener('submit', function () {
+
+        const pageInput = form.querySelector('input[name="page"]');
+
+        if (pageInput) {
+            pageInput.remove();
+        }
+
+    });
+
+}
 
     if (!form) {
         return;
