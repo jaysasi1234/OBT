@@ -43,30 +43,43 @@
    HEADER + STATISTICS + FILTERS
    ========================================================= */
 
-.deployment-sticky-area {
-    position: -webkit-sticky;
+.deployment-sticky-controls {
     position: sticky;
+    position: -webkit-sticky;
 
-    top: 0;
-    z-index: 1000;
+    top: 75px;
+    z-index: 900;
 
     width: 100%;
 
-    background: #0b1b43;
+    padding: 6px 0 22px;
 
-    padding-top: 6px;
-    padding-bottom: 2px;
+    background: linear-gradient(
+        to bottom,
+        rgba(7, 21, 47, 0.98),
+        rgba(7, 21, 47, 0.96),
+        rgba(7, 21, 47, 0.92)
+    );
 
-    isolation: isolate;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-/* Keep the sticky section visually above the table */
-.deployment-sticky-area .page-header {
+/* Header inside sticky section */
+.deployment-sticky-controls .page-header {
     position: relative;
 }
 
-.deployment-sticky-area .filter-container {
+/* Filters inside sticky section */
+.deployment-sticky-controls .filter-container {
     margin-bottom: 20px;
+}
+
+/* Responsive sticky position */
+@media (max-width: 600px) {
+    .deployment-sticky-controls {
+        top: 65px;
+    }
 }
 
 /* =========================================================
@@ -2045,9 +2058,12 @@ body {
 </style>
 
 
-<div class="deployment-sticky-area">
+<div class="deployment-page">
 
-<div class="page-header">
+    {{-- STICKY SECTION: HEADER + STATISTICS + FILTERS --}}
+    <div class="deployment-sticky-controls">
+
+        <div class="page-header">
 
     <div>
         <h2>
@@ -2259,10 +2275,16 @@ body {
 
     </div>
 
-</div>
+    {{-- END OF CARD CONTAINER --}}
+
+    </div>
+
+    {{-- END OF STICKY SECTION --}}
+    </div>
+
 
     {{-- =====================================================
-         TABLE
+         TABLE - OUTSIDE THE STICKY SECTION
     ====================================================== --}}
 
     <div class="table-header">
