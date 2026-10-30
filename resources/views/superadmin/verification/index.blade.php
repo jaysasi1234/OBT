@@ -88,9 +88,8 @@
 }
 
 
-
 /* =========================================================
-   PAGINATION
+   PAGINATION - LARGER AND MORE READABLE
    ========================================================= */
 
 .pagination-container {
@@ -98,80 +97,147 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 15px;
-    padding: 20px 28px;
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    gap: 20px;
+    padding: 22px 28px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(8, 22, 55, 0.35);
 }
 
 .pagination-info {
-    color: #a9bad8;
-    font-size: 13px;
+    color: #cbd5e1 !important;
+    font-size: 14px !important;
+    font-weight: 500;
 }
 
 .pagination-info strong {
-    color: #ffffff;
+    color: #ffffff !important;
+    font-weight: 700;
 }
 
 .pagination-links {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
+    max-width: 100%;
 }
 
 .pagination-links nav {
-    margin: 0;
+    margin: 0 !important;
 }
 
 .pagination-links .pagination {
-    display: flex;
+    display: flex !important;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 5px;
-    margin: 0;
+    gap: 7px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.pagination-links .page-item {
+    margin: 0 !important;
 }
 
 .pagination-links .page-link {
-    min-width: 36px;
-    border: 1px solid rgba(96, 165, 250, 0.18);
-    border-radius: 8px !important;
-    background: #172955;
-    color: #dbeafe;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 40px !important;
+    height: 40px !important;
+    padding: 8px 12px !important;
+
+    border: 1px solid rgba(96, 165, 250, 0.25) !important;
+    border-radius: 9px !important;
+
+    background: #172955 !important;
+    color: #dbeafe !important;
+
+    font-family: inherit !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+
     text-align: center;
-    font-size: 13px;
-    box-shadow: none;
+    text-decoration: none;
+
+    box-shadow: none !important;
+    transition: all 0.2s ease;
 }
 
 .pagination-links .page-link:hover {
-    border-color: #4f7df3;
-    background: #294fc2;
-    color: #ffffff;
+    border-color: #60a5fa !important;
+    background: #294fc2 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
 }
 
 .pagination-links .page-item.active .page-link {
-    border-color: #315fe0;
-    background: #315fe0;
-    color: #ffffff;
+    border-color: #4778f5 !important;
+    background: linear-gradient(
+        135deg,
+        #3869e8,
+        #294fc2
+    ) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(49, 95, 224, 0.3) !important;
 }
 
 .pagination-links .page-item.disabled .page-link {
-    border-color: rgba(255, 255, 255, 0.06);
-    background: #111f43;
-    color: #64748b;
+    border-color: rgba(255, 255, 255, 0.06) !important;
+    background: #111f43 !important;
+    color: #64748b !important;
+    opacity: 0.65;
+    transform: none;
 }
+
+/* Previous and Next buttons */
+
+.pagination-links .page-item:first-child .page-link,
+.pagination-links .page-item:last-child .page-link {
+    min-width: 85px !important;
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+}
+
+/* Pagination icons */
+
+.pagination-links .page-link svg {
+    width: 17px !important;
+    height: 17px !important;
+}
+
+/* =========================================================
+   MOBILE PAGINATION
+   ========================================================= */
 
 @media (max-width: 768px) {
 
     .pagination-container {
         align-items: flex-start;
         flex-direction: column;
-        padding: 18px 20px;
+        padding: 20px;
     }
 
     .pagination-links {
         width: 100%;
+        justify-content: flex-start;
         overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .pagination-links .pagination {
+        flex-wrap: nowrap;
+    }
+
+    .pagination-links .page-link {
+        min-width: 38px !important;
+        height: 38px !important;
+        font-size: 13px !important;
     }
 
 }
+
 
 
 /* =========================================================
