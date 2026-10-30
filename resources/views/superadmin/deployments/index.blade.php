@@ -731,7 +731,6 @@ body {
 .table-scroll-top-inner {
     height: 1px;
 }
-
 /* =========================================================
    TABLE
    ========================================================= */
@@ -1733,14 +1732,6 @@ body {
 }
 
 
-.table-scroll-top {
-    display: block;
-    overflow-x: auto;
-    overflow-y: hidden;
-    height: 18px;
-    margin-top: 0;
-}
-
 /* =========================================================
    MODAL STATUS
    ========================================================= */
@@ -2443,15 +2434,9 @@ body {
     </div>
 
 
-{{-- TOP HORIZONTAL SCROLLBAR --}}
-<div class="table-scroll-top" id="tableScrollTop">
-    <div class="table-scroll-top-inner" id="tableScrollTopInner"></div>
-</div>
+    <div class="table-responsive">
 
-{{-- MAIN TABLE --}}
-<div class="table-responsive" id="tableScrollMain">
-
-    <table class="table-custom">
+        <table class="table-custom">
 
             <thead>
 
@@ -3260,65 +3245,6 @@ document.addEventListener(
         document.body.style.overflow = "";
     }
 );
-
-/* =========================================================
-   SYNCHRONIZED HORIZONTAL TABLE SCROLLBARS
-   ========================================================= */
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const topScroll = document.getElementById("tableScrollTop");
-    const topInner = document.getElementById("tableScrollTopInner");
-    const mainScroll = document.getElementById("tableScrollMain");
-    const table = mainScroll?.querySelector(".table-custom");
-
-    if (!topScroll || !topInner || !mainScroll || !table) {
-        return;
-    }
-
-    let isSyncing = false;
-
-    function updateTopScrollbar() {
-
-        // Match the top scrollbar width to the actual table width.
-        topInner.style.width = table.scrollWidth + "px";
-
-        // Show the top scrollbar only when horizontal scrolling is needed.
-        topScroll.style.display =
-            table.scrollWidth > mainScroll.clientWidth
-                ? "block"
-                : "none";
-
-        topScroll.scrollLeft = mainScroll.scrollLeft;
-    }
-
-    topScroll.addEventListener("scroll", function () {
-
-        if (isSyncing) return;
-
-        isSyncing = true;
-        mainScroll.scrollLeft = topScroll.scrollLeft;
-        isSyncing = false;
-
-    });
-
-    mainScroll.addEventListener("scroll", function () {
-
-        if (isSyncing) return;
-
-        isSyncing = true;
-        topScroll.scrollLeft = mainScroll.scrollLeft;
-        isSyncing = false;
-
-    });
-
-    // Initial setup
-    updateTopScrollbar();
-
-    // Recalculate when the screen size changes.
-    window.addEventListener("resize", updateTopScrollbar);
-
-});
 
 </script>
 
