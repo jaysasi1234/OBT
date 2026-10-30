@@ -732,7 +732,6 @@ body {
     height: 1px;
 }
 
-
 /* =========================================================
    TABLE
    ========================================================= */
@@ -1733,6 +1732,14 @@ body {
     font-weight: 600;
 }
 
+
+.table-scroll-top {
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 18px;
+    margin-top: 0;
+}
 
 /* =========================================================
    MODAL STATUS
