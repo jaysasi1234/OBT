@@ -882,6 +882,108 @@
 
 
 /* ==========================================================================
+   CADET PAGINATION
+   ========================================================================== */
+
+.cadet-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+
+    margin-top: 20px;
+    padding: 18px 22px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+
+    background: linear-gradient(
+        135deg,
+        rgba(13, 25, 64, 0.98),
+        rgba(9, 21, 50, 0.98)
+    );
+
+    color: #a9b8d8;
+    font-size: 12px;
+}
+
+.cadet-pagination-info strong {
+    color: #ffffff;
+}
+
+.cadet-pagination-links nav {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cadet-pagination-links nav > div:first-child {
+    display: none;
+}
+
+.cadet-pagination-links nav > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cadet-pagination-links a,
+.cadet-pagination-links span[aria-current="page"] > span,
+.cadet-pagination-links button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 8px;
+
+    background: #111f4d;
+    color: #dbe4f3;
+
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.cadet-pagination-links a:hover {
+    border-color: #4f7cff;
+    background: #244fc7;
+    color: #ffffff;
+}
+
+.cadet-pagination-links span[aria-current="page"] > span {
+    border-color: #4f7cff;
+    background: #2f5df5;
+    color: #ffffff;
+}
+
+.cadet-pagination-links span[aria-disabled="true"] > span,
+.cadet-pagination-links button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .cadet-pagination {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cadet-pagination-links {
+        width: 100%;
+        overflow-x: auto;
+    }
+}
+
+
+/* ==========================================================================
    VERIFICATION STATUS
    ========================================================================== */
 
@@ -3027,9 +3129,37 @@
 
             </tbody>
 
+
         </table>
 
     </div>
+
+    {{-- ================================================================
+         PAGINATION
+         ================================================================ --}}
+
+    @if($cadets->hasPages())
+
+        <div class="cadet-pagination">
+
+            <div class="cadet-pagination-info">
+                Showing
+                <strong>{{ $cadets->firstItem() }}</strong>
+                to
+                <strong>{{ $cadets->lastItem() }}</strong>
+                of
+                <strong>{{ $cadets->total() }}</strong>
+                cadets
+            </div>
+
+            <div class="cadet-pagination-links">
+                {{ $cadets->links() }}
+            </div>
+
+        </div>
+
+    @endif
+
 
 </div>
 
@@ -3522,17 +3652,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 .toLowerCase();
 
 
-        /* ==============================================================
-           COUNTERS
-           ============================================================== */
-
-        let total = 0;
-
-        let verified = 0;
-
-        let pending = 0;
-
-        let deficiency = 0;
 
 
         /* ==============================================================
@@ -3656,46 +3775,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 matches
                     ? ''
                     : 'none';
-
-
-            /* ----------------------------------------------------------
-               UPDATE COUNTERS
-               ---------------------------------------------------------- */
-
-            if (matches) {
-
-                total++;
-
-
-                if (
-                    rowVerification === 'verified'
-                ) {
-
-                    verified++;
-
-                }
-
-
-                if (
-                    rowVerification === 'pending'
-                ) {
-
-                    pending++;
-
-                }
-
-
-                if (
-                    rowVerification === 'deficiency'
-                ) {
-
-                    deficiency++;
-
-                }
-
-            }
-
-        });
 
 
         /* ==============================================================

@@ -11,7 +11,7 @@ class CadetController extends Controller
     public function index()
     {
         // ================================================================
-        // CADETS — ORDERED A-Z BY FULL NAME
+        // CADETS — ORDERED A-Z WITH PAGINATION
         // ================================================================
 
         $cadets = Cadet::with([
@@ -19,7 +19,8 @@ class CadetController extends Controller
             'deployment'
         ])
         ->orderBy('full_name', 'asc')
-        ->get();
+        ->paginate(25)
+        ->withQueryString();
 
 
         // ================================================================
@@ -40,23 +41,20 @@ class CadetController extends Controller
 
 
         // ================================================================
-        // STATISTICS
+        // STATISTICS — COUNT ALL CADETS, NOT JUST THE CURRENT PAGE
         // ================================================================
 
-        $totalCadets = $cadets->count();
-
+        $totalCadets = Cadet::count();
 
         $verifiedCadets = Cadet::where(
             'verification_status',
             'Verified'
         )->count();
 
-
         $pendingCadets = Cadet::where(
             'verification_status',
             'Pending'
         )->count();
-
 
         $deficiencyCadets = Cadet::where(
             'verification_status',
