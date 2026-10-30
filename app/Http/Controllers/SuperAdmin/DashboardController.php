@@ -7,6 +7,7 @@ use App\Models\Cadet;
 use App\Models\Complaint;
 use App\Models\Deployment;
 use App\Models\Batch;
+use App\Models\Document;
 
 class DashboardController extends Controller
 {
@@ -95,93 +96,47 @@ class DashboardController extends Controller
 
         $verificationCadets = Cadet::with('documents')
             ->get();
-$rejectedCadets = $verificationCadets->filter(function ($cadet) {
-
-    return $cadet->documents->contains(function ($document) {
-
-        return strtolower(trim($document->pivot->status ?? ''))
-            === 'rejected';
-
-    });
-
-});
-
-dd(
-    $rejectedCadets->map(function ($cadet) {
-
-        return [
-            'cadet' => $cadet->full_name,
-            'documents' => $cadet->documents
-                ->filter(function ($document) {
-
-                    return strtolower(trim($document->pivot->status ?? ''))
-                        === 'rejected';
-
-                })
-                ->map(function ($document) {
-
-                    return [
-                        'document' => $document->name ?? $document->title ?? 'Unknown Document',
-                        'status' => $document->pivot->status,
-                    ];
-
-                })->values(),
-        ];
-
-    })->values()
-);
 
 
-        foreach ($verificationCadets as $cadet) {
+// =========================================================
+// VERIFICATION COUNTS
+// SAME LOGIC AS ADMIN DASHBOARD
+// =========================================================
 
-            $documents = $cadet->documents;
+$totalRequirements = Document::count();
 
+$verified = 0;
 
-            // No documents yet
-            if ($documents->isEmpty()) {
+$pendingVerification = 0;
 
-                $pendingVerification++;
+$deficiency = 0;
 
-                continue;
-            }
+if ($totalRequirements > 0) {
 
+    $verificationCadets = Cadet::withCount([
+        'documents as approved_documents_count' => function ($query) {
 
-            $totalDocuments = $documents->count();
+            $query->where('status', 'Approved');
 
-
-            $approvedDocuments = $documents
-                ->where('pivot.status', 'Approved')
-                ->count();
-
-
-            $rejectedDocuments = $documents
-                ->where('pivot.status', 'Rejected')
-                ->count();
-
-
-            // All documents approved
-            if (
-                $totalDocuments > 0 &&
-                $approvedDocuments === $totalDocuments
-            ) {
-
-                $verified++;
-
-            }
-
-            // At least one rejected document
-            elseif ($rejectedDocuments > 0) {
-
-                $deficiency++;
-
-            }
-
-            // Still waiting for approval
-            else {
-
-                $pendingVerification++;
-            }
         }
+    ])->get(['id']);
+
+    // Count verified cadets
+    $verified = $verificationCadets
+        ->filter(function ($cadet) use ($totalRequirements) {
+
+            return $cadet->approved_documents_count >= $totalRequirements;
+
+        })
+        ->count();
+
+    // Same as Admin Dashboard
+    $pendingVerification = $totalCadets - $verified;
+
+    // Same as Admin Dashboard
+    $deficiency = 0;
+
+}
 
 
         // =========================================================
@@ -200,32 +155,37 @@ dd(
         )->count();
 
 
-        // =========================================================
-        // INCOMPLETE REQUIREMENTS
-        // =========================================================
+// =========================================================
+// INCOMPLETE REQUIREMENTS
+// SAME LOGIC AS ADMIN DASHBOARD
+// =========================================================
 
-        $incompleteRequirements = Cadet::with('documents')
-            ->get()
-            ->filter(function ($cadet) {
+if ($totalRequirements > 0) {
 
-                $documents = $cadet->documents;
+    $incompleteRequirements = Cadet::with([
+        'documents',
+        'batch'
+    ])
+    ->withCount([
+        'documents as approved_documents_count' => function ($query) {
 
+            $query->where('status', 'Approved');
 
-                // No documents = incomplete
-                if ($documents->isEmpty()) {
+        }
+    ])
+    ->get()
+    ->filter(function ($cadet) use ($totalRequirements) {
 
-                    return true;
-                }
+        return $cadet->approved_documents_count < $totalRequirements;
 
+    })
+    ->take(5);
 
-                $approvedDocuments = $documents
-                    ->where('pivot.status', 'Approved')
-                    ->count();
+} else {
 
+    $incompleteRequirements = collect();
 
-                return $approvedDocuments < $documents->count();
-            })
-            ->take(5);
+}
 
 
         // =========================================================
