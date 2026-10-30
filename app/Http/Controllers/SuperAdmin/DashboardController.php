@@ -95,6 +95,41 @@ class DashboardController extends Controller
 
         $verificationCadets = Cadet::with('documents')
             ->get();
+$rejectedCadets = $verificationCadets->filter(function ($cadet) {
+
+    return $cadet->documents->contains(function ($document) {
+
+        return strtolower(trim($document->pivot->status ?? ''))
+            === 'rejected';
+
+    });
+
+});
+
+dd(
+    $rejectedCadets->map(function ($cadet) {
+
+        return [
+            'cadet' => $cadet->full_name,
+            'documents' => $cadet->documents
+                ->filter(function ($document) {
+
+                    return strtolower(trim($document->pivot->status ?? ''))
+                        === 'rejected';
+
+                })
+                ->map(function ($document) {
+
+                    return [
+                        'document' => $document->name ?? $document->title ?? 'Unknown Document',
+                        'status' => $document->pivot->status,
+                    ];
+
+                })->values(),
+        ];
+
+    })->values()
+);
 
 
         foreach ($verificationCadets as $cadet) {
