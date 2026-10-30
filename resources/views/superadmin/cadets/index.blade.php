@@ -2757,98 +2757,68 @@
 
         {{-- FILTERS --}}
 
-        <form method="GET" action="{{ url()->current() }}" class="cadet-filters" id="cadetFilterForm">
+<form method="GET"
+      action="{{ route('superadmin.cadets.index') }}"
+      class="cadet-filters"
+      id="cadetFilterForm">
 
+    {{-- COURSE --}}
+    <select id="courseFilter" name="course">
+        <option value="">All Courses</option>
 
-            {{-- COURSE --}}
+        @foreach($courses as $course)
+            <option value="{{ strtolower($course->course) }}"
+                {{ request('course') === strtolower($course->course) ? 'selected' : '' }}>
+                {{ $course->course }}
+            </option>
+        @endforeach
+    </select>
 
-<select id="courseFilter" name="course">
-    <option value="">All Courses</option>
+    {{-- BATCH --}}
+    <select id="batchFilter" name="batch">
+        <option value="">All Batches</option>
 
-    @foreach($courses as $course)
-        <option
-            value="{{ strtolower($course->course) }}"
-            {{ request('course') === strtolower($course->course) ? 'selected' : '' }}
-        >
-            {{ $course->course }}
-        </option>
-    @endforeach
-</select>
+        @foreach($batches as $batch)
+            <option value="{{ strtolower($batch->batch_year) }}"
+                {{ request('batch') === strtolower($batch->batch_year) ? 'selected' : '' }}>
+                {{ $batch->batch_year }}
+            </option>
+        @endforeach
+    </select>
 
-            {{-- BATCH --}}
+    {{-- DEPLOYMENT --}}
+    <select id="deploymentFilter" name="deployment">
+        <option value="">All Deployments</option>
+        <option value="not_deployed" {{ request('deployment') === 'not_deployed' ? 'selected' : '' }}>Not Deployed</option>
+        <option value="ongoing" {{ request('deployment') === 'ongoing' ? 'selected' : '' }}>Ongoing</option>
+        <option value="completed" {{ request('deployment') === 'completed' ? 'selected' : '' }}>Completed</option>
+    </select>
 
-<select id="batchFilter" name="batch">
-    <option value="">All Batches</option>
+    {{-- VERIFICATION --}}
+    <select id="verificationFilter" name="verification">
+        <option value="">All Verification Status</option>
+        <option value="verified" {{ request('verification') === 'verified' ? 'selected' : '' }}>Verified</option>
+        <option value="pending" {{ request('verification') === 'pending' ? 'selected' : '' }}>Pending</option>
+        <option value="deficiency" {{ request('verification') === 'deficiency' ? 'selected' : '' }}>Deficiency</option>
+    </select>
 
-    @foreach($batches as $batch)
-        <option
-            value="{{ strtolower($batch->batch_year) }}"
-            {{ request('batch') === strtolower($batch->batch_year) ? 'selected' : '' }}
-        >
-            {{ $batch->batch_year }}
-        </option>
-    @endforeach
-</select>
+    {{-- SEARCH --}}
+    <input
+        type="text"
+        id="searchInput"
+        name="search"
+        value="{{ request('search') }}"
+        placeholder="Search cadet..."
+        autocomplete="off"
+    >
 
-
-            {{-- DEPLOYMENT --}}
-
-<select id="deploymentFilter" name="deployment">
-    <option value="">All Deployments</option>
-
-    <option value="not_deployed" {{ request('deployment') === 'not_deployed' ? 'selected' : '' }}>
-        Not Deployed
-    </option>
-
-    <option value="ongoing" {{ request('deployment') === 'ongoing' ? 'selected' : '' }}>
-        Ongoing
-    </option>
-
-    <option value="completed" {{ request('deployment') === 'completed' ? 'selected' : '' }}>
-        Completed
-    </option>
-</select>
-
-
-            {{-- VERIFICATION --}}
-
-<select id="verificationFilter" name="verification">
-    <option value="">All Verification Status</option>
-
-    <option value="verified" {{ request('verification') === 'verified' ? 'selected' : '' }}>
-        Verified
-    </option>
-
-    <option value="pending" {{ request('verification') === 'pending' ? 'selected' : '' }}>
-        Pending
-    </option>
-
-    <option value="deficiency" {{ request('verification') === 'deficiency' ? 'selected' : '' }}>
-        Deficiency
-    </option>
-</select>
-
-
-            {{-- SEARCH --}}
-
-<input
-    type="text"
-    id="searchInput"
-    name="search"
-    value="{{ request('search') }}"
-    placeholder="Search cadet..."
-    autocomplete="off"
->
-
-<button type="submit" class="cadet-filter-button">
-    <i class="fas fa-filter"></i>
-    Apply Filters
-</button>
-
-<a href="{{ route('superadmin.cadets.index') }}" class="cadet-reset-button">
-    <i class="fas fa-rotate-left"></i>
-    Reset
-</a>
+    {{-- RESET --}}
+    <a href="{{ route('superadmin.cadets.index') }}"
+       class="cadet-reset-button"
+       id="resetCadetFilters">
+        <i class="fas fa-rotate-left"></i>
+        Reset
+    </a>
 
 </form>
 
@@ -3441,184 +3411,143 @@
 </div>
 
 
-
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* ==========================================================
-       PROFILE MODAL ELEMENTS
-       ========================================================== */
+    const form = document.getElementById('cadetFilterForm');
 
-    const modal = document.getElementById('cadetModal');
+    const courseFilter = document.getElementById('courseFilter');
+    const batchFilter = document.getElementById('batchFilter');
+    const deploymentFilter = document.getElementById('deploymentFilter');
+    const verificationFilter = document.getElementById('verificationFilter');
+    const searchInput = document.getElementById('searchInput');
 
-    const closeModalButton = document.getElementById('closeCadetModal');
-    const closeModalFooter = document.getElementById('closeCadetModalFooter');
+    let searchTimer = null;
 
-    const modalPhoto = document.getElementById('modalPhoto');
-    const modalName = document.getElementById('modalName');
-    const modalTrb = document.getElementById('modalTrb');
-    const modalCourse = document.getElementById('modalCourse');
-    const modalBatch = document.getElementById('modalBatch');
-    const modalRank = document.getElementById('modalRank');
-    const modalContact = document.getElementById('modalContact');
-    const modalBirth = document.getElementById('modalBirth');
+    /*
+    |--------------------------------------------------------------------------
+    | AUTOMATIC FILTERING
+    |--------------------------------------------------------------------------
+    */
 
-    const defaultPhoto =
-        'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+    function applyFilters() {
 
+        const params = new URLSearchParams();
 
-    /* ==========================================================
-       OPEN PROFILE MODAL
-       ========================================================== */
+        if (courseFilter.value) {
+            params.set('course', courseFilter.value);
+        }
 
-    document.querySelectorAll('.cadet-view-profile').forEach(function (button) {
+        if (batchFilter.value) {
+            params.set('batch', batchFilter.value);
+        }
 
-        button.addEventListener('click', function () {
+        if (deploymentFilter.value) {
+            params.set('deployment', deploymentFilter.value);
+        }
 
-            modalName.textContent = this.dataset.name || '-';
-            modalTrb.textContent = this.dataset.trb || '-';
-            modalCourse.textContent = this.dataset.course || '-';
-            modalBatch.textContent = this.dataset.batch || '-';
-            modalRank.textContent = this.dataset.rank || '-';
-            modalContact.textContent = this.dataset.contact || '-';
-            modalBirth.textContent = this.dataset.birth || '-';
+        if (verificationFilter.value) {
+            params.set('verification', verificationFilter.value);
+        }
 
-            modalPhoto.onerror = function () {
-                this.onerror = null;
-                this.src = defaultPhoto;
-            };
+        if (searchInput.value.trim()) {
+            params.set('search', searchInput.value.trim());
+        }
 
-            modalPhoto.src = this.dataset.photo || defaultPhoto;
+        // Always return to page 1 after changing filters.
+        params.delete('page');
 
-            modal.classList.add('show');
-            modal.setAttribute('aria-hidden', 'false');
+        const url = new URL(form.action);
 
-            document.body.style.overflow = 'hidden';
+        url.search = params.toString();
 
-        });
-
-    });
-
-
-    /* ==========================================================
-       CLOSE PROFILE MODAL
-       ========================================================== */
-
-    function closeCadetModal() {
-
-        modal.classList.remove('show');
-        modal.setAttribute('aria-hidden', 'true');
-
-        document.body.style.overflow = '';
-
+        window.location.href = url.toString();
     }
 
-    closeModalButton?.addEventListener('click', closeCadetModal);
 
-    closeModalFooter?.addEventListener('click', closeCadetModal);
+    /*
+    |--------------------------------------------------------------------------
+    | SELECT FILTERS
+    |--------------------------------------------------------------------------
+    */
 
-    modal?.addEventListener('click', function (event) {
+    [
+        courseFilter,
+        batchFilter,
+        deploymentFilter,
+        verificationFilter
+    ].forEach(function (filter) {
 
-        if (event.target === modal) {
-            closeCadetModal();
-        }
-
-    });
-
-    document.addEventListener('keydown', function (event) {
-
-        if (
-            event.key === 'Escape' &&
-            modal?.classList.contains('show')
-        ) {
-            closeCadetModal();
-        }
+        filter.addEventListener('change', applyFilters);
 
     });
 
 
-    /* ==========================================================
-       STATISTIC CARDS — SERVER-SIDE FILTERING
-       ========================================================== */
+    /*
+    |--------------------------------------------------------------------------
+    | AUTOMATIC SEARCH WITH DEBOUNCE
+    |--------------------------------------------------------------------------
+    */
+
+    searchInput.addEventListener('input', function () {
+
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(function () {
+
+            applyFilters();
+
+        }, 500);
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATISTICS CARD FILTERS
+    |--------------------------------------------------------------------------
+    */
 
     const statCards = [
         {
             selector: '.cadet-stat-blue',
-            filter: '',
-            label: 'Total Cadets'
+            filter: ''
         },
         {
             selector: '.cadet-stat-green',
-            filter: 'verified',
-            label: 'Verified Cadets'
+            filter: 'verified'
         },
         {
             selector: '.cadet-stat-yellow',
-            filter: 'pending',
-            label: 'Pending Cadets'
+            filter: 'pending'
         },
         {
             selector: '.cadet-stat-red',
-            filter: 'deficiency',
-            label: 'Cadets with Deficiency'
+            filter: 'deficiency'
         }
     ];
-
 
     statCards.forEach(function (card) {
 
         const element = document.querySelector(card.selector);
 
-        if (!element) {
-            return;
-        }
+        if (!element) return;
 
-        // Make the card accessible and interactive.
         element.style.cursor = 'pointer';
+
         element.setAttribute('role', 'button');
         element.setAttribute('tabindex', '0');
-        element.setAttribute('aria-label', card.label);
 
-
-        // Highlight the currently selected verification card.
-        const currentVerification =
-            new URLSearchParams(window.location.search)
-                .get('verification') || '';
-
-        if (currentVerification === card.filter && card.filter !== '') {
-            element.classList.add('active');
-        }
-
-
-        // Navigate to Laravel with the selected filter.
         function activateCard() {
 
-            const url = new URL(window.location.href);
+            verificationFilter.value = card.filter;
 
-            if (card.filter !== '') {
-
-                url.searchParams.set('verification', card.filter);
-
-            } else {
-
-                url.searchParams.delete('verification');
-
-            }
-
-            // Always start from page 1.
-            url.searchParams.delete('page');
-
-            // Navigate so Laravel reloads the filtered database results.
-            window.location.href = url.toString();
+            applyFilters();
 
         }
 
-
-        // Mouse click.
         element.addEventListener('click', activateCard);
 
-
-        // Keyboard: Enter or Space.
         element.addEventListener('keydown', function (event) {
 
             if (event.key === 'Enter' || event.key === ' ') {
@@ -3633,8 +3562,106 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | CADET PROFILE MODAL
+    |--------------------------------------------------------------------------
+    */
+
+    const modal = document.getElementById('cadetModal');
+
+    const closeButton = document.getElementById('closeCadetModal');
+    const closeFooter = document.getElementById('closeCadetModalFooter');
+
+    const defaultPhoto =
+        'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+    document.querySelectorAll('.cadet-view-profile').forEach(function (button) {
+
+        button.addEventListener('click', function () {
+
+            document.getElementById('modalName').textContent =
+                this.dataset.name || '-';
+
+            document.getElementById('modalTrb').textContent =
+                this.dataset.trb || '-';
+
+            document.getElementById('modalCourse').textContent =
+                this.dataset.course || '-';
+
+            document.getElementById('modalBatch').textContent =
+                this.dataset.batch || '-';
+
+            document.getElementById('modalRank').textContent =
+                this.dataset.rank || '-';
+
+            document.getElementById('modalContact').textContent =
+                this.dataset.contact || '-';
+
+            document.getElementById('modalBirth').textContent =
+                this.dataset.birth || '-';
+
+            const photo = document.getElementById('modalPhoto');
+
+            photo.onerror = function () {
+                this.onerror = null;
+                this.src = defaultPhoto;
+            };
+
+            photo.src = this.dataset.photo || defaultPhoto;
+
+            modal.classList.add('show');
+
+            modal.setAttribute('aria-hidden', 'false');
+
+            document.body.style.overflow = 'hidden';
+
+        });
+
+    });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CLOSE MODAL
+    |--------------------------------------------------------------------------
+    */
+
+    function closeCadetModal() {
+
+        modal.classList.remove('show');
+
+        modal.setAttribute('aria-hidden', 'true');
+
+        document.body.style.overflow = '';
+
+    }
+
+    closeButton?.addEventListener('click', closeCadetModal);
+
+    closeFooter?.addEventListener('click', closeCadetModal);
+
+    modal?.addEventListener('click', function (event) {
+
+        if (event.target === modal) {
+            closeCadetModal();
+        }
+
+    });
+
+    document.addEventListener('keydown', function (event) {
+
+        if (
+            event.key === 'Escape' &&
+            modal.classList.contains('show')
+        ) {
+            closeCadetModal();
+        }
+
+    });
+
 });
 </script>
-
 
 @endsection
