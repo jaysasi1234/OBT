@@ -44,14 +44,20 @@
    ========================================================= */
 
 .deployment-sticky-area {
+    position: -webkit-sticky;
     position: sticky;
+
     top: 0;
     z-index: 1000;
+
+    width: 100%;
 
     background: #0b1b43;
 
     padding-top: 6px;
     padding-bottom: 2px;
+
+    isolation: isolate;
 }
 
 /* Keep the sticky section visually above the table */
