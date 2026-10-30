@@ -56,6 +56,47 @@
 }
 
 
+
+.cadet-filter-button,
+.cadet-reset-button {
+    min-height: 52px;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.cadet-filter-button {
+    border: 1px solid rgba(255,255,255,0.12);
+    background: linear-gradient(135deg, #2f66e8, #244fc7);
+    color: #fff;
+}
+
+.cadet-filter-button:hover {
+    background: linear-gradient(135deg, #4f7cff, #2f5df5);
+    transform: translateY(-2px);
+}
+
+.cadet-reset-button {
+    border: 1px solid rgba(255,255,255,0.12);
+    background: #263858;
+    color: #fff;
+}
+
+.cadet-reset-button:hover {
+    background: #354b70;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+
 /* ==========================================================================
    PAGE
    ========================================================================== */
@@ -2716,103 +2757,100 @@
 
         {{-- FILTERS --}}
 
-        <div class="cadet-filters">
+        <form method="GET" action="{{ url()->current() }}" class="cadet-filters" id="cadetFilterForm">
 
 
             {{-- COURSE --}}
 
-            <select id="courseFilter">
+<select id="courseFilter" name="course">
+    <option value="">All Courses</option>
 
-                <option value="">
-                    All Courses
-                </option>
-
-                @foreach($courses as $course)
-
-                    <option value="{{ strtolower($course->course) }}">
-                        {{ $course->course }}
-                    </option>
-
-                @endforeach
-
-            </select>
-
+    @foreach($courses as $course)
+        <option
+            value="{{ strtolower($course->course) }}"
+            {{ request('course') === strtolower($course->course) ? 'selected' : '' }}
+        >
+            {{ $course->course }}
+        </option>
+    @endforeach
+</select>
 
             {{-- BATCH --}}
 
-            <select id="batchFilter">
+<select id="batchFilter" name="batch">
+    <option value="">All Batches</option>
 
-                <option value="">
-                    All Batches
-                </option>
-
-                @foreach($batches as $batch)
-
-                    <option value="{{ strtolower($batch->batch_year) }}">
-                        {{ $batch->batch_year }}
-                    </option>
-
-                @endforeach
-
-            </select>
+    @foreach($batches as $batch)
+        <option
+            value="{{ strtolower($batch->batch_year) }}"
+            {{ request('batch') === strtolower($batch->batch_year) ? 'selected' : '' }}
+        >
+            {{ $batch->batch_year }}
+        </option>
+    @endforeach
+</select>
 
 
             {{-- DEPLOYMENT --}}
 
-            <select id="deploymentFilter">
+<select id="deploymentFilter" name="deployment">
+    <option value="">All Deployments</option>
 
-                <option value="">
-                    Deployment
-                </option>
+    <option value="not_deployed" {{ request('deployment') === 'not_deployed' ? 'selected' : '' }}>
+        Not Deployed
+    </option>
 
-                <option value="not_deployed">
-                    Not Deployed
-                </option>
+    <option value="ongoing" {{ request('deployment') === 'ongoing' ? 'selected' : '' }}>
+        Ongoing
+    </option>
 
-                <option value="ongoing">
-                    Ongoing
-                </option>
-
-                <option value="completed">
-                    Completed
-                </option>
-
-            </select>
+    <option value="completed" {{ request('deployment') === 'completed' ? 'selected' : '' }}>
+        Completed
+    </option>
+</select>
 
 
             {{-- VERIFICATION --}}
 
-            <select id="verificationFilter">
+<select id="verificationFilter" name="verification">
+    <option value="">All Verification Status</option>
 
-                <option value="">
-                    Verification
-                </option>
+    <option value="verified" {{ request('verification') === 'verified' ? 'selected' : '' }}>
+        Verified
+    </option>
 
-                <option value="verified">
-                    Verified
-                </option>
+    <option value="pending" {{ request('verification') === 'pending' ? 'selected' : '' }}>
+        Pending
+    </option>
 
-                <option value="pending">
-                    Pending
-                </option>
-
-                <option value="deficiency">
-                    Deficiency
-                </option>
-
-            </select>
+    <option value="deficiency" {{ request('verification') === 'deficiency' ? 'selected' : '' }}>
+        Deficiency
+    </option>
+</select>
 
 
             {{-- SEARCH --}}
 
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search cadet..."
-                autocomplete="off"
-            >
+<input
+    type="text"
+    id="searchInput"
+    name="search"
+    value="{{ request('search') }}"
+    placeholder="Search cadet..."
+    autocomplete="off"
+>
 
-        </div>
+<button type="submit" class="cadet-filter-button">
+    <i class="fas fa-filter"></i>
+    Apply Filters
+</button>
+
+<a href="{{ route('superadmin.cadets.index') }}" class="cadet-reset-button">
+    <i class="fas fa-rotate-left"></i>
+    Reset
+</a>
+
+</form>
 
 
         {{-- ==================================================================
@@ -3512,71 +3550,66 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    /* ==========================================================
-       FILTER TABLE
-       ========================================================== */
+ 
+/* ==========================================================
+   STAT CARD FILTERS — SERVER SIDE
+   ========================================================== */
 
-    function filterTable() {
-
-        const course = courseFilter.value.trim().toLowerCase();
-        const batch = batchFilter.value.trim().toLowerCase();
-        const deployment = deploymentFilter.value.trim().toLowerCase();
-        const verification = verificationFilter.value.trim().toLowerCase();
-        const search = searchInput.value.trim().toLowerCase();
-
-        let visibleCount = 0;
-
-        tableRows.forEach(function (row) {
-
-            // Ignore the empty-state row
-            if (
-                row.querySelector('.cadet-table-empty') ||
-                row.classList.contains('cadet-table-empty')
-            ) {
-                return;
-            }
-
-            const rowCourse = (row.dataset.course || '').toLowerCase();
-            const rowBatch = (row.dataset.batch || '').toLowerCase();
-            const rowDeployment = (row.dataset.deployment || '').toLowerCase();
-            const rowVerification = (row.dataset.verification || '').toLowerCase();
-
-            const rowText = (row.textContent || '').trim().toLowerCase();
-
-            const matchesCourse =
-                !course || rowCourse.includes(course);
-
-            const matchesBatch =
-                !batch || rowBatch.includes(batch);
-
-            const matchesDeployment =
-                !deployment || rowDeployment === deployment;
-
-            const matchesVerification =
-                !verification || rowVerification === verification;
-
-            const matchesSearch =
-                !search || rowText.includes(search);
-
-            const matches =
-                matchesCourse &&
-                matchesBatch &&
-                matchesDeployment &&
-                matchesVerification &&
-                matchesSearch;
-
-            row.style.display = matches ? '' : 'none';
-
-            if (matches) {
-                visibleCount++;
-            }
-
-        });
-
-        // Optional: update a result counter if you add one later.
-        console.log('Visible cadets on this page:', visibleCount);
-
+const statCards = [
+    {
+        selector: '.cadet-stat-blue',
+        filter: ''
+    },
+    {
+        selector: '.cadet-stat-green',
+        filter: 'verified'
+    },
+    {
+        selector: '.cadet-stat-yellow',
+        filter: 'pending'
+    },
+    {
+        selector: '.cadet-stat-red',
+        filter: 'deficiency'
     }
+];
+
+statCards.forEach(function (card) {
+
+    const element = document.querySelector(card.selector);
+
+    if (!element) return;
+
+    element.style.cursor = 'pointer';
+
+    function activateCard() {
+
+        const url = new URL(window.location.href);
+
+        if (card.filter) {
+            url.searchParams.set('verification', card.filter);
+        } else {
+            url.searchParams.delete('verification');
+        }
+
+        url.searchParams.delete('page');
+
+        window.location.href = url.toString();
+    }
+
+    element.addEventListener('click', activateCard);
+
+    element.addEventListener('keydown', function (event) {
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            activateCard();
+        }
+
+    });
+
+});
+
 
     /* ==========================================================
        INTERACTIVE STAT CARDS
