@@ -10,35 +10,68 @@ use Carbon\Carbon;
 
 class CadetRequirementController extends Controller
 {
-    public function index()
-    {
-        $cadets = Cadet::with([
-            'batch',
-            'deployment',
-            'onboardRequirements.requirement'
-        ])
-        ->whereHas('deployment', function ($query) {
-            $query->whereIn('status', ['Ongoing', 'Completed']);
-        })
+public function index(Request $request)
+{
+    $query = Cadet::with([
+        'batch',
+        'deployment',
+        'onboardRequirements.requirement'
+    ])
+    ->whereHas('deployment', function ($query) {
+        $query->whereIn('status', ['Ongoing', 'Completed']);
+    });
+
+    // SEARCH CADET NAME OR TRB NUMBER
+    if ($request->filled('search')) {
+        $search = trim($request->search);
+
+        $query->where(function ($q) use ($search) {
+            $q->where('full_name', 'LIKE', "%{$search}%")
+              ->orWhere('trb_control_number', 'LIKE', "%{$search}%");
+        });
+    }
+
+    // FILTER BY BATCH
+    if ($request->filled('batch')) {
+        $query->whereHas('batch', function ($q) use ($request) {
+            $q->where('batch_year', $request->batch);
+        });
+    }
+
+    // FILTER BY COURSE
+    if ($request->filled('course')) {
+        $query->where('course', $request->course);
+    }
+
+    // FILTER BY DEPLOYMENT STATUS
+    if ($request->filled('deployment')) {
+        $query->whereHas('deployment', function ($q) use ($request) {
+            $q->where('status', $request->deployment);
+        });
+    }
+
+    // PAGINATION: 25 CADETS PER PAGE
+    $cadets = $query
         ->orderBy('full_name', 'asc')
+        ->paginate(25)
+        ->withQueryString();
+
+    $batches = Batch::orderBy('batch_year', 'desc')->get();
+
+    $courses = Cadet::select('course')
+        ->distinct()
+        ->orderBy('course')
         ->get();
 
-        $batches = Batch::orderBy('batch_year', 'desc')->get();
-
-        $courses = Cadet::select('course')
-            ->distinct()
-            ->orderBy('course')
-            ->get();
-
-        return view(
-            'superadmin.cadet_requirements.index',
-            compact(
-                'cadets',
-                'batches',
-                'courses'
-            )
-        );
-    }
+    return view(
+        'superadmin.cadet_requirements.index',
+        compact(
+            'cadets',
+            'batches',
+            'courses'
+        )
+    );
+}
 
     public function show($id)
     {
