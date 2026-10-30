@@ -2729,6 +2729,25 @@
         #334d78;
 }
 
+
+/* Active statistic card */
+.cadet-stat.active {
+    outline: 3px solid rgba(255, 255, 255, 0.85);
+    outline-offset: 3px;
+    transform: translateY(-4px);
+}
+
+/* Clickable card feedback */
+.cadet-stat {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Keyboard accessibility */
+.cadet-stat:focus-visible {
+    outline: 3px solid #ffffff;
+    outline-offset: 4px;
+}
 </style>
 
 <div class="cadet-page">
