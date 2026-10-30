@@ -764,6 +764,92 @@
 }
 
 /* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.pagination-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px 28px;
+    border-top: 1px solid rgba(96, 165, 250, 0.13);
+    background: #101f49;
+}
+
+.pagination-info {
+    color: #a9bad8;
+    font-size: 13px;
+}
+
+.pagination-info strong {
+    color: #ffffff;
+}
+
+.pagination-links nav {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pagination-links nav > div:first-child {
+    display: none;
+}
+
+.pagination-links nav > div:last-child {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.pagination-links a,
+.pagination-links span[aria-current="page"] span,
+.pagination-links span[aria-disabled="true"] span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 11px;
+    border: 1px solid rgba(96, 165, 250, 0.20);
+    border-radius: 8px;
+    background: #172955;
+    color: #dbeafe;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.pagination-links span[aria-current="page"] span {
+    border-color: #3b82f6;
+    background: #315fe0;
+    color: #ffffff;
+}
+
+.pagination-links a:hover {
+    border-color: #60a5fa;
+    background: #294fc2;
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .pagination-wrapper {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .pagination-links {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .pagination-links nav {
+        justify-content: flex-start;
+    }
+}
+
+/* =========================================================
    MODAL BODY
    ========================================================= */
 
@@ -1912,6 +1998,29 @@
 
         </div>
 
+        {{-- PAGINATION --}}
+@if($cadets->hasPages())
+
+    <div class="pagination-wrapper">
+
+        <div class="pagination-info">
+            Showing
+            <strong>{{ $cadets->firstItem() }}</strong>
+            to
+            <strong>{{ $cadets->lastItem() }}</strong>
+            of
+            <strong>{{ $cadets->total() }}</strong>
+            deployed cadets
+        </div>
+
+        <div class="pagination-links">
+            {{ $cadets->links() }}
+        </div>
+
+    </div>
+
+@endif
+
     </div>
 
 </div>
@@ -2834,39 +2943,77 @@ function filterCadets() {
 
 
 /* =========================================================
+   SERVER-SIDE SEARCH AND FILTER
+   ========================================================= */
+
+let filterTimeout = null;
+
+function filterCadets() {
+
+    clearTimeout(filterTimeout);
+
+    filterTimeout = setTimeout(() => {
+
+        const params = new URLSearchParams();
+
+        const search =
+            document.getElementById('searchCadet').value.trim();
+
+        const batch =
+            document.getElementById('batchFilter').value;
+
+        const course =
+            document.getElementById('courseFilter').value;
+
+        const deployment =
+            document.getElementById('deploymentFilter').value;
+
+        if (search) {
+            params.set('search', search);
+        }
+
+        if (batch) {
+            params.set('batch', batch);
+        }
+
+        if (course) {
+            params.set('course', course);
+        }
+
+        if (deployment) {
+            params.set('deployment', deployment);
+        }
+
+        // Start at page 1 whenever filters change
+        params.delete('page');
+
+        window.location.href =
+            window.location.pathname +
+            (params.toString() ? '?' + params.toString() : '');
+
+    }, 350);
+}
+
+
+/* =========================================================
    FILTER EVENTS
    ========================================================= */
 
 document
     .getElementById('searchCadet')
-    ?.addEventListener(
-        'input',
-        filterCadets
-    );
-
+    ?.addEventListener('input', filterCadets);
 
 document
     .getElementById('batchFilter')
-    ?.addEventListener(
-        'change',
-        filterCadets
-    );
-
+    ?.addEventListener('change', filterCadets);
 
 document
     .getElementById('courseFilter')
-    ?.addEventListener(
-        'change',
-        filterCadets
-    );
-
+    ?.addEventListener('change', filterCadets);
 
 document
     .getElementById('deploymentFilter')
-    ?.addEventListener(
-        'change',
-        filterCadets
-    );
+    ?.addEventListener('change', filterCadets);
 
 </script>
 
