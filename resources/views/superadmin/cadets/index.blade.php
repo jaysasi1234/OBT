@@ -3652,6 +3652,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 .toLowerCase();
 
 
+        /* ==============================================================
+           COUNTERS
+           ============================================================== */
+
+        let total = 0;
+
+        let verified = 0;
+
+        let pending = 0;
+
+        let deficiency = 0;
 
 
         /* ==============================================================
@@ -3775,6 +3786,46 @@ document.addEventListener('DOMContentLoaded', function () {
                 matches
                     ? ''
                     : 'none';
+
+
+            /* ----------------------------------------------------------
+               UPDATE COUNTERS
+               ---------------------------------------------------------- */
+
+            if (matches) {
+
+                total++;
+
+
+                if (
+                    rowVerification === 'verified'
+                ) {
+
+                    verified++;
+
+                }
+
+
+                if (
+                    rowVerification === 'pending'
+                ) {
+
+                    pending++;
+
+                }
+
+
+                if (
+                    rowVerification === 'deficiency'
+                ) {
+
+                    deficiency++;
+
+                }
+
+            }
+
+        });
 
 
         /* ==============================================================
