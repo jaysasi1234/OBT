@@ -690,6 +690,48 @@ body {
     scrollbar-color: #3a5bb3 #111d42;
 }
 
+/* =========================================================
+   TOP HORIZONTAL SCROLLBAR
+   ========================================================= */
+
+.table-scroll-top {
+    width: 100%;
+    height: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: #101c42;
+    border: 1px solid rgba(255,255,255,.06);
+    border-bottom: none;
+
+    scrollbar-width: thin;
+    scrollbar-color: #4167c7 #0c1839;
+
+    cursor: grab;
+}
+
+.table-scroll-top:active {
+    cursor: grabbing;
+}
+
+.table-scroll-top::-webkit-scrollbar {
+    height: 11px;
+}
+
+.table-scroll-top::-webkit-scrollbar-track {
+    background: #0c1839;
+}
+
+.table-scroll-top::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #294da9, #4167c7);
+    border-radius: 20px;
+    border: 2px solid #0c1839;
+}
+
+.table-scroll-top-inner {
+    height: 1px;
+}
+
 
 /* =========================================================
    TABLE
@@ -2394,9 +2436,15 @@ body {
     </div>
 
 
-    <div class="table-responsive">
+{{-- TOP HORIZONTAL SCROLLBAR --}}
+<div class="table-scroll-top" id="tableScrollTop">
+    <div class="table-scroll-top-inner" id="tableScrollTopInner"></div>
+</div>
 
-        <table class="table-custom">
+{{-- MAIN TABLE --}}
+<div class="table-responsive" id="tableScrollMain">
+
+    <table class="table-custom">
 
             <thead>
 
@@ -3205,6 +3253,65 @@ document.addEventListener(
         document.body.style.overflow = "";
     }
 );
+
+/* =========================================================
+   SYNCHRONIZED HORIZONTAL TABLE SCROLLBARS
+   ========================================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const topScroll = document.getElementById("tableScrollTop");
+    const topInner = document.getElementById("tableScrollTopInner");
+    const mainScroll = document.getElementById("tableScrollMain");
+    const table = mainScroll?.querySelector(".table-custom");
+
+    if (!topScroll || !topInner || !mainScroll || !table) {
+        return;
+    }
+
+    let isSyncing = false;
+
+    function updateTopScrollbar() {
+
+        // Match the top scrollbar width to the actual table width.
+        topInner.style.width = table.scrollWidth + "px";
+
+        // Show the top scrollbar only when horizontal scrolling is needed.
+        topScroll.style.display =
+            table.scrollWidth > mainScroll.clientWidth
+                ? "block"
+                : "none";
+
+        topScroll.scrollLeft = mainScroll.scrollLeft;
+    }
+
+    topScroll.addEventListener("scroll", function () {
+
+        if (isSyncing) return;
+
+        isSyncing = true;
+        mainScroll.scrollLeft = topScroll.scrollLeft;
+        isSyncing = false;
+
+    });
+
+    mainScroll.addEventListener("scroll", function () {
+
+        if (isSyncing) return;
+
+        isSyncing = true;
+        topScroll.scrollLeft = mainScroll.scrollLeft;
+        isSyncing = false;
+
+    });
+
+    // Initial setup
+    updateTopScrollbar();
+
+    // Recalculate when the screen size changes.
+    window.addEventListener("resize", updateTopScrollbar);
+
+});
 
 </script>
 
