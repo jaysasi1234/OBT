@@ -797,6 +797,92 @@ body {
 }
 
 
+/* =========================================================
+   FROZEN TABLE COLUMNS
+   TRB NO. | NAME | COURSE | BATCH
+   ========================================================= */
+
+/* Keep the table layout predictable */
+.table-custom {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* First column - TRB No. */
+.table-custom th:nth-child(1),
+.table-custom td:nth-child(1) {
+    position: sticky;
+    left: 0;
+    min-width: 150px;
+    width: 150px;
+    z-index: 7;
+}
+
+/* Second column - Name */
+.table-custom th:nth-child(2),
+.table-custom td:nth-child(2) {
+    position: sticky;
+    left: 150px;
+    min-width: 200px;
+    width: 200px;
+    z-index: 7;
+}
+
+/* Third column - Course */
+.table-custom th:nth-child(3),
+.table-custom td:nth-child(3) {
+    position: sticky;
+    left: 350px;
+    min-width: 130px;
+    width: 130px;
+    z-index: 7;
+}
+
+/* Fourth column - Batch */
+.table-custom th:nth-child(4),
+.table-custom td:nth-child(4) {
+    position: sticky;
+    left: 480px;
+    min-width: 120px;
+    width: 120px;
+    z-index: 7;
+}
+
+/* Frozen column backgrounds */
+.table-custom tbody td:nth-child(1),
+.table-custom tbody td:nth-child(2),
+.table-custom tbody td:nth-child(3),
+.table-custom tbody td:nth-child(4) {
+    background: #18285e;
+}
+
+/* Alternating row backgrounds */
+.table-custom tbody tr:nth-child(even) td:nth-child(-n+4) {
+    background: #172655;
+}
+
+/* Hover background for frozen columns */
+.table-custom tbody tr:hover td:nth-child(-n+4) {
+    background: #1c306d;
+}
+
+/* Frozen column header backgrounds */
+.table-custom thead th:nth-child(-n+4) {
+    background: linear-gradient(
+        135deg,
+        #315ff0 0%,
+        #294fc9 100%
+    );
+    z-index: 10;
+}
+
+/* Subtle divider after the frozen columns */
+.table-custom th:nth-child(4),
+.table-custom td:nth-child(4) {
+    box-shadow: 5px 0 8px rgba(0, 0, 0, .20);
+}
+
+
 /* Alternating table row */
 
 .table-custom tbody tr:nth-child(even) td {
