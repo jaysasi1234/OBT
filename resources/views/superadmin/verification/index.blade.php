@@ -250,6 +250,91 @@
 }
 
 /* =========================================================
+   PAGINATION
+========================================================= */
+
+.verification-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px 25px;
+    border-top: 1px solid rgba(96, 165, 250, 0.13);
+    background: #101f49;
+}
+
+.pagination-info {
+    color: #9fb0cf;
+    font-size: 13px;
+}
+
+.pagination-info strong {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.pagination-links nav {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pagination-links nav > div:first-child {
+    display: none;
+}
+
+.pagination-links nav > div:last-child {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.pagination-links nav a,
+.pagination-links nav span[aria-current="page"] span,
+.pagination-links nav span[aria-disabled="true"] span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid rgba(96, 165, 250, 0.20);
+    border-radius: 9px;
+    background: #172955;
+    color: #dbeafe;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.pagination-links nav a:hover {
+    background: #294fc2;
+    color: #ffffff;
+}
+
+.pagination-links nav span[aria-current="page"] span {
+    background: #315fe0;
+    border-color: #4f7df3;
+    color: #ffffff;
+}
+
+.pagination-links nav span[aria-disabled="true"] span {
+    opacity: 0.4;
+}
+
+@media (max-width: 768px) {
+    .verification-pagination {
+        flex-direction: column;
+        align-items: center;
+        padding: 17px;
+    }
+
+    .pagination-links nav {
+        justify-content: center;
+    }
+}
+
+/* =========================================================
    FILTER CONTAINER
    ========================================================= */
 
@@ -1535,6 +1620,32 @@
             </table>
 
         </div>
+
+        {{-- =================================================
+             PAGINATION
+        ================================================== --}}
+
+        @if ($cadets->hasPages())
+
+            <div class="verification-pagination">
+
+                <div class="pagination-info">
+                    Showing
+                    <strong>{{ $cadets->firstItem() }}</strong>
+                    to
+                    <strong>{{ $cadets->lastItem() }}</strong>
+                    of
+                    <strong>{{ $cadets->total() }}</strong>
+                    cadets
+                </div>
+
+                <div class="pagination-links">
+                    {{ $cadets->onEachSide(1)->links() }}
+                </div>
+
+            </div>
+
+        @endif
 
     </div>
 

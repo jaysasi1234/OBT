@@ -7,6 +7,7 @@ use App\Models\Cadet;
 use App\Models\Batch;
 use App\Models\Document;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class VerificationController extends Controller
 {
@@ -255,6 +256,33 @@ class VerificationController extends Controller
             $cadets
                 ->where('bs_status', 'Not Qualified')
                 ->count();
+
+                /*
+|--------------------------------------------------------------------------
+| PAGINATION
+|--------------------------------------------------------------------------
+*/
+
+$perPage = 25;
+
+$currentPage = LengthAwarePaginator::resolveCurrentPage();
+
+$totalCadets = $cadets->count();
+
+$currentItems = $cadets
+    ->slice(($currentPage - 1) * $perPage, $perPage)
+    ->values();
+
+$cadets = new LengthAwarePaginator(
+    $currentItems,
+    $totalCadets,
+    $perPage,
+    $currentPage,
+    [
+        'path' => $request->url(),
+        'query' => $request->query(),
+    ]
+);
 
 
         /*
