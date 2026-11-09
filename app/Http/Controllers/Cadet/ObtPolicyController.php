@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Cadet;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class ObtPolicyController extends Controller
 {
@@ -27,17 +26,31 @@ class ObtPolicyController extends Controller
     }
 
     /**
+     * Get the original DOCX path.
+     */
+    private function manualFilePath(): string
+    {
+        return public_path($this->manualPath);
+    }
+
+    /**
+     * Get the PDF path.
+     */
+    private function pdfFilePath(): string
+    {
+        return public_path($this->pdfPath);
+    }
+
+    /**
      * Display OBT Policies.
      */
     public function index()
     {
         $this->ensureCadet();
 
-        $manualAvailable = Storage::disk('public')
-            ->exists($this->manualPath);
+        $manualAvailable = is_file($this->manualFilePath());
 
-        $pdfAvailable = Storage::disk('public')
-            ->exists($this->pdfPath);
+        $pdfAvailable = is_file($this->pdfFilePath());
 
         $acknowledgement = DB::table('obt_policy_acknowledgements')
             ->where('user_id', Auth::id())
@@ -58,13 +71,13 @@ class ObtPolicyController extends Controller
     {
         $this->ensureCadet();
 
+        $filePath = $this->pdfFilePath();
+
         abort_unless(
-            Storage::disk('public')->exists($this->pdfPath),
+            is_file($filePath),
             404,
             'The official OBT Manual PDF is not available.'
         );
-
-        $filePath = Storage::disk('public')->path($this->pdfPath);
 
         return response()->file($filePath, [
             'Content-Type' => 'application/pdf',
@@ -80,14 +93,16 @@ class ObtPolicyController extends Controller
     {
         $this->ensureCadet();
 
+        $filePath = $this->manualFilePath();
+
         abort_unless(
-            Storage::disk('public')->exists($this->manualPath),
+            is_file($filePath),
             404,
             'The official OBT Manual is not available.'
         );
 
-        return Storage::disk('public')->download(
-            $this->manualPath,
+        return response()->download(
+            $filePath,
             'MMACI-Official-OBT-Manual.docx'
         );
     }
@@ -99,14 +114,16 @@ class ObtPolicyController extends Controller
     {
         $this->ensureCadet();
 
+        $filePath = $this->pdfFilePath();
+
         abort_unless(
-            Storage::disk('public')->exists($this->pdfPath),
+            is_file($filePath),
             404,
             'The official OBT Manual PDF is not available.'
         );
 
-        return Storage::disk('public')->download(
-            $this->pdfPath,
+        return response()->download(
+            $filePath,
             'MMACI-Official-OBT-Manual.pdf'
         );
     }
@@ -119,7 +136,7 @@ class ObtPolicyController extends Controller
         $this->ensureCadet();
 
         abort_unless(
-            Storage::disk('public')->exists($this->manualPath),
+            is_file($this->manualFilePath()),
             404,
             'The official OBT Manual is not available.'
         );
