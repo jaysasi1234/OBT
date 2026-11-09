@@ -1155,6 +1155,15 @@
                 <span>Chat</span>
             </a>
 
+            <a href="{{ route('cadet.obt-policies.index') }}"
+                class="menu-item {{ request()->routeIs('cadet.obt-policies.*') ? 'active' : '' }}">
+
+                <i class="fas fa-book-open"></i>
+
+                <span>OBT Policies</span>
+
+            </a>
+
             <div class="menu-divider"></div>
 
             <form method="POST" action="{{ route('logout') }}">

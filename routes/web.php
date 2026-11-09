@@ -401,6 +401,22 @@ Route::prefix('cadet')
         Route::get('/complaints', [CadetComplaintController::class, 'index'])->name('complaints');
         Route::post('/complaints/store', [CadetComplaintController::class, 'store'])->name('complaints.store');
 
+                // OBT POLICIES
+        Route::get('/obt-policies', [
+            \App\Http\Controllers\Cadet\ObtPolicyController::class,
+            'index'
+        ])->name('obt-policies.index');
+
+        Route::get('/obt-policies/download', [
+            \App\Http\Controllers\Cadet\ObtPolicyController::class,
+            'download'
+        ])->name('obt-policies.download');
+
+        Route::post('/obt-policies/acknowledge', [
+            \App\Http\Controllers\Cadet\ObtPolicyController::class,
+            'acknowledge'
+        ])->name('obt-policies.acknowledge');
+
 
         Route::post('/update-location', [CadetController::class, 'updateLocation'])->name('update.location');
     });
