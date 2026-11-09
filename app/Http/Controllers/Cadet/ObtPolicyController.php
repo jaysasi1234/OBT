@@ -67,24 +67,37 @@ class ObtPolicyController extends Controller
     /**
      * Display PDF inside the browser.
      */
-    public function preview()
-    {
-        $this->ensureCadet();
+public function preview()
+{
+    $this->ensureCadet();
 
-        $filePath = $this->pdfFilePath();
+    $filePath = $this->pdfFilePath();
 
-        abort_unless(
-            is_file($filePath),
-            404,
-            'The official OBT Manual PDF is not available.'
-        );
+    abort_unless(
+        is_file($filePath) && is_readable($filePath),
+        404,
+        'The official OBT Manual PDF is not available.'
+    );
 
-        return response()->file($filePath, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="MMACI-Official-OBT-Manual.pdf"',
-            'X-Content-Type-Options' => 'nosniff',
-        ]);
-    }
+    return response()->stream(function () use ($filePath) {
+        $handle = fopen($filePath, 'rb');
+
+        if ($handle === false) {
+            abort(500, 'Unable to read the OBT Manual PDF.');
+        }
+
+        fpassthru($handle);
+        fclose($handle);
+
+    }, 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="MMACI-Official-OBT-Manual.pdf"',
+        'Content-Length' => filesize($filePath),
+        'Accept-Ranges' => 'bytes',
+        'X-Content-Type-Options' => 'nosniff',
+        'Cache-Control' => 'private, no-cache, no-store, must-revalidate',
+    ]);
+}
 
     /**
      * Download original Word manual.
