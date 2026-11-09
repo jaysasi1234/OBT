@@ -7,6 +7,8 @@
     .obt-policy-page {
         padding: 28px;
         color: #fff;
+        max-width: 1500px;
+        margin: auto;
     }
 
     .obt-policy-heading {
@@ -29,30 +31,30 @@
         background: linear-gradient(120deg, #12366b, #10254a);
         border: 1px solid rgba(96,165,250,.2);
         border-radius: 18px;
-        padding: 28px;
+        padding: 25px;
         display: flex;
         align-items: center;
-        gap: 22px;
+        gap: 20px;
         margin-bottom: 24px;
     }
 
     .obt-policy-hero-icon {
-        width: 70px;
-        height: 70px;
-        min-width: 70px;
-        border-radius: 18px;
+        width: 65px;
+        height: 65px;
+        min-width: 65px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: rgba(96,165,250,.16);
         color: #93c5fd;
-        font-size: 30px;
+        font-size: 28px;
     }
 
     .obt-policy-hero h2 {
-        font-size: 21px;
+        font-size: 20px;
         font-weight: 800;
-        margin-bottom: 8px;
+        margin-bottom: 7px;
     }
 
     .obt-policy-hero p {
@@ -76,89 +78,133 @@
         margin-bottom: 18px;
     }
 
-    .obt-policy-document {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        padding: 18px;
+    .obt-policy-meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .obt-policy-meta-item {
         background: #142746;
-        border: 1px solid rgba(148,163,184,.12);
-        border-radius: 13px;
+        border: 1px solid rgba(148,163,184,.1);
+        padding: 14px;
+        border-radius: 11px;
     }
 
-    .obt-policy-file-icon {
-        width: 48px;
-        height: 48px;
-        min-width: 48px;
-        border-radius: 12px;
+    .obt-policy-meta-item span {
+        display: block;
+        color: #94a3b8;
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+
+    .obt-policy-meta-item strong {
+        font-size: 13px;
+        color: #e2e8f0;
+    }
+
+    .obt-policy-reader-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 14px 16px;
+        background: #142746;
+        border: 1px solid rgba(148,163,184,.13);
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .obt-policy-reader-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #e2e8f0;
+    }
+
+    .obt-policy-reader-title span {
+        display: block;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 400;
+        margin-top: 4px;
+    }
+
+    .obt-policy-actions {
         display: flex;
         align-items: center;
-        justify-content: center;
-        background: rgba(239,68,68,.12);
-        color: #f87171;
-        font-size: 23px;
+        gap: 9px;
+        flex-wrap: wrap;
     }
 
-    .obt-policy-document-info {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .obt-policy-document-info strong {
-        display: block;
-        font-size: 14px;
-        margin-bottom: 5px;
-    }
-
-    .obt-policy-document-info span {
-        color: #94a3b8;
-        font-size: 12px;
-    }
-
-    .obt-policy-download {
+    .obt-policy-btn {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        padding: 11px 16px;
+        padding: 10px 14px;
         background: #2563eb;
         color: #fff;
-        border-radius: 9px;
+        border: 1px solid #2563eb;
+        border-radius: 8px;
         text-decoration: none;
-        font-size: 13px;
-        font-weight: 700;
-        white-space: nowrap;
-        transition: .2s;
-    }
-
-    .obt-policy-download:hover {
-        background: #1d4ed8;
-        color: white;
-        transform: translateY(-2px);
-    }
-
-    .obt-policy-sections {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 13px;
-    }
-
-    .obt-policy-section {
-        padding: 16px;
-        background: #142746;
-        border: 1px solid rgba(148,163,184,.10);
-        border-radius: 12px;
-    }
-
-    .obt-policy-section strong {
-        display: block;
-        font-size: 13px;
-        margin-bottom: 6px;
-    }
-
-    .obt-policy-section span {
-        color: #94a3b8;
         font-size: 12px;
+        font-weight: 700;
+        transition: .2s;
+        cursor: pointer;
+    }
+
+    .obt-policy-btn:hover {
+        background: #1d4ed8;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .obt-policy-btn.secondary {
+        background: #1e3558;
+        border-color: rgba(148,163,184,.2);
+        color: #cbd5e1;
+    }
+
+    .obt-policy-btn.secondary:hover {
+        background: #29466f;
+        color: #fff;
+    }
+
+    .obt-policy-viewer {
+        position: relative;
+        background: #26364d;
+        border: 1px solid rgba(148,163,184,.13);
+        border-radius: 0 0 12px 12px;
+        overflow: hidden;
+    }
+
+    .obt-policy-viewer iframe {
+        display: block;
+        width: 100%;
+        height: 780px;
+        border: none;
+        background: #fff;
+    }
+
+    .obt-policy-reader-note {
+        color: #94a3b8;
+        font-size: 11px;
+        line-height: 1.7;
+        padding: 12px 15px;
+        background: #142746;
+        border-top: 1px solid rgba(148,163,184,.1);
+    }
+
+    .obt-policy-missing {
+        padding: 17px;
+        border-radius: 11px;
+        background: rgba(239,68,68,.10);
+        border: 1px solid rgba(239,68,68,.25);
+        color: #fca5a5;
+        font-size: 13px;
+        line-height: 1.7;
     }
 
     .obt-policy-alert {
@@ -170,6 +216,16 @@
         font-size: 13px;
         line-height: 1.7;
         margin-bottom: 18px;
+    }
+
+    .obt-policy-success {
+        padding: 15px;
+        border-radius: 11px;
+        background: rgba(34,197,94,.10);
+        border: 1px solid rgba(34,197,94,.25);
+        color: #86efac;
+        font-size: 13px;
+        line-height: 1.7;
     }
 
     .obt-policy-ack {
@@ -185,6 +241,7 @@
     .obt-policy-ack input {
         width: 18px;
         height: 18px;
+        min-width: 18px;
         margin-top: 3px;
         accent-color: #3b82f6;
     }
@@ -217,61 +274,62 @@
         cursor: not-allowed;
     }
 
-    .obt-policy-success {
-        padding: 15px;
-        border-radius: 11px;
-        background: rgba(34,197,94,.10);
-        border: 1px solid rgba(34,197,94,.25);
-        color: #86efac;
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    .obt-policy-missing {
-        padding: 16px;
-        border-radius: 11px;
-        background: rgba(239,68,68,.10);
-        border: 1px solid rgba(239,68,68,.25);
-        color: #fca5a5;
-        font-size: 13px;
-        line-height: 1.7;
-    }
-
-    @media(max-width: 700px) {
+    @media(max-width: 800px) {
         .obt-policy-page {
             padding: 18px;
         }
 
+        .obt-policy-meta {
+            grid-template-columns: 1fr;
+        }
+
+        .obt-policy-viewer iframe {
+            height: 650px;
+        }
+    }
+
+    @media(max-width: 600px) {
         .obt-policy-hero {
             align-items: flex-start;
             flex-direction: column;
         }
 
-        .obt-policy-sections {
-            grid-template-columns: 1fr;
-        }
-
-        .obt-policy-document {
+        .obt-policy-reader-toolbar {
             align-items: flex-start;
-            flex-wrap: wrap;
+            flex-direction: column;
         }
 
-        .obt-policy-download {
+        .obt-policy-actions {
             width: 100%;
+        }
+
+        .obt-policy-actions a {
+            flex: 1;
+        }
+
+        .obt-policy-viewer iframe {
+            height: 550px;
+        }
+
+        .obt-policy-card {
+            padding: 17px;
         }
     }
 </style>
 
 <div class="obt-policy-page">
 
+    {{-- PAGE HEADING --}}
     <div class="obt-policy-heading">
         <h1>OBT Policies</h1>
+
         <p>
             Official Onboard Training Manual and guidelines of
             Merchant Marine Academy of Caraga, Inc.
         </p>
     </div>
 
+    {{-- HERO --}}
     <div class="obt-policy-hero">
 
         <div class="obt-policy-hero-icon">
@@ -282,14 +340,15 @@
             <h2>Onboard Training Manual</h2>
 
             <p>
-                Read and understand the official guidelines,
-                requirements, and procedures governing your
-                Onboard Training.
+                Read the official Onboard Training Manual to understand
+                the requirements, procedures, assessments, and
+                responsibilities related to your Onboard Training.
             </p>
         </div>
 
     </div>
 
+    {{-- SUCCESS MESSAGE --}}
     @if(session('success'))
         <div class="obt-policy-success" style="margin-bottom:20px;">
             <i class="fas fa-check-circle"></i>
@@ -297,40 +356,56 @@
         </div>
     @endif
 
+    {{-- MANUAL INFORMATION --}}
     <div class="obt-policy-card">
 
         <h3>
             <i class="fas fa-file-alt"></i>
-            Official OBT Manual
+            Official Manual Information
         </h3>
+
+        <div class="obt-policy-meta">
+
+            <div class="obt-policy-meta-item">
+                <span>Institution</span>
+                <strong>MMACI</strong>
+            </div>
+
+            <div class="obt-policy-meta-item">
+                <span>Manual Revision</span>
+                <strong>Revision 03</strong>
+            </div>
+
+            <div class="obt-policy-meta-item">
+                <span>Effectivity Date</span>
+                <strong>December 16, 2024</strong>
+            </div>
+
+        </div>
 
         @if($manualAvailable)
 
-            <div class="obt-policy-document">
-
-                <div class="obt-policy-file-icon">
-                    <i class="fas fa-file-word"></i>
-                </div>
-
-                <div class="obt-policy-document-info">
-
-                    <strong>
-                        MMACI Official Onboard Training Manual
-                    </strong>
-
-                    <span>
-                        Revision 03 · Word Document · Official Manual
-                    </span>
-
-                </div>
+            <div class="obt-policy-actions">
 
                 <a href="{{ route('cadet.obt-policies.download') }}"
-                   class="obt-policy-download">
+                   class="obt-policy-btn">
 
-                    <i class="fas fa-download"></i>
-                    Download Manual
+                    <i class="fas fa-file-word"></i>
+                    Download Original DOCX
 
                 </a>
+
+                @if($pdfAvailable)
+
+                    <a href="{{ route('cadet.obt-policies.download-pdf') }}"
+                       class="obt-policy-btn secondary">
+
+                        <i class="fas fa-file-pdf"></i>
+                        Download PDF
+
+                    </a>
+
+                @endif
 
             </div>
 
@@ -338,73 +413,104 @@
 
             <div class="obt-policy-missing">
                 <i class="fas fa-exclamation-circle"></i>
-
-                The official OBT Manual has not yet been uploaded
-                to the system. Please contact the OBT Office.
+                The original official OBT Manual has not been uploaded.
+                Please contact the OBT Office.
             </div>
 
         @endif
 
     </div>
 
+    {{-- EMBEDDED PDF READER --}}
     <div class="obt-policy-card">
 
         <h3>
-            <i class="fas fa-list-alt"></i>
-            Manual Contents
+            <i class="fas fa-book-reader"></i>
+            Read Official OBT Manual
         </h3>
 
-        <div class="obt-policy-sections">
+        @if($pdfAvailable)
 
-            <div class="obt-policy-section">
-                <strong>Section 1 – Objectives of OBT</strong>
-                <span>OBT objectives and training guidelines</span>
+            <div class="obt-policy-reader-toolbar">
+
+                <div class="obt-policy-reader-title">
+
+                    <i class="fas fa-file-pdf"
+                       style="color:#f87171;margin-right:6px;"></i>
+
+                    MMACI Official Onboard Training Manual
+
+                    <span>
+                        Revision 03 · PDF Document
+                    </span>
+
+                </div>
+
+                <div class="obt-policy-actions">
+
+                    <a href="{{ route('cadet.obt-policies.preview') }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="obt-policy-btn secondary">
+
+                        <i class="fas fa-expand"></i>
+                        Open Full Screen
+
+                    </a>
+
+                    <a href="{{ route('cadet.obt-policies.download-pdf') }}"
+                       class="obt-policy-btn">
+
+                        <i class="fas fa-download"></i>
+                        Download PDF
+
+                    </a>
+
+                </div>
+
             </div>
 
-            <div class="obt-policy-section">
-                <strong>Section 2 – OBT Requirements</strong>
-                <span>Requirements for BSMT and BSMarE programs</span>
+            <div class="obt-policy-viewer">
+
+                <iframe
+                    src="{{ route('cadet.obt-policies.preview') }}"
+                    title="Official MMACI OBT Manual PDF Reader"
+                    loading="lazy">
+
+                </iframe>
+
+                <div class="obt-policy-reader-note">
+
+                    <i class="fas fa-info-circle"></i>
+
+                    Use the PDF viewer toolbar to navigate pages,
+                    zoom in or out, and print the official manual.
+                    If your browser does not support embedded PDF
+                    viewing, use the Open Full Screen button.
+
+                </div>
+
             </div>
 
-            <div class="obt-policy-section">
-                <strong>Section 3 – General Requirements</strong>
-                <span>General requirements for the OBT program</span>
+        @else
+
+            <div class="obt-policy-missing">
+
+                <i class="fas fa-exclamation-circle"></i>
+
+                The PDF reading copy has not yet been uploaded.
+
+                <br>
+
+                Please contact the OBT Office or system administrator.
+
             </div>
 
-            <div class="obt-policy-section">
-                <strong>Section 4 – Records of OBT</strong>
-                <span>Training records and documentation</span>
-            </div>
-
-            <div class="obt-policy-section">
-                <strong>Section 5 – Validation of OBT</strong>
-                <span>Validation of completed onboard training</span>
-            </div>
-
-            <div class="obt-policy-section">
-                <strong>Section 6 – Assessment</strong>
-                <span>Assessment procedures</span>
-            </div>
-
-            <div class="obt-policy-section">
-                <strong>Section 7 – Remediation</strong>
-                <span>Remediation procedures</span>
-            </div>
-
-            <div class="obt-policy-section">
-                <strong>Section 8 – Sanction</strong>
-                <span>Sanctions under the OBT Manual</span>
-            </div>
-
-        </div>
-
-        <p style="color:#94a3b8;font-size:12px;margin-top:16px;">
-            These are the section headings from the official manual.
-            Refer to the original document for the complete provisions.
-        </p>
+        @endif
 
     </div>
 
+    {{-- ACKNOWLEDGEMENT --}}
     <div class="obt-policy-card">
 
         <h3>
@@ -415,6 +521,7 @@
         @if($acknowledgement)
 
             <div class="obt-policy-success">
+
                 <i class="fas fa-check-circle"></i>
 
                 You have acknowledged the current OBT Manual.
@@ -423,43 +530,56 @@
 
                 <strong>
                     Acknowledged:
-                    {{ \Carbon\Carbon::parse($acknowledgement->acknowledged_at)->format('F d, Y h:i A') }}
+
+                    {{ \Carbon\Carbon::parse(
+                        $acknowledgement->acknowledged_at
+                    )->format('F d, Y h:i A') }}
                 </strong>
+
             </div>
 
         @elseif($manualAvailable)
 
             <div class="obt-policy-alert">
-                Please download and read the official OBT Manual
-                before confirming your acknowledgement.
+
+                Please read the official OBT Manual using the
+                document reader above before confirming your
+                acknowledgement.
+
             </div>
 
-            <form method="POST"
-                  action="{{ route('cadet.obt-policies.acknowledge') }}"
-                  id="obtPolicyAckForm">
+            <form
+                method="POST"
+                action="{{ route('cadet.obt-policies.acknowledge') }}"
+                id="obtPolicyAckForm">
 
                 @csrf
 
                 <div class="obt-policy-ack">
 
-                    <input type="checkbox"
-                           id="obtPolicyConfirm"
-                           required>
+                    <input
+                        type="checkbox"
+                        id="obtPolicyConfirm"
+                        required>
 
                     <label for="obtPolicyConfirm">
-                        I confirm that I have read and understood the
-                        official Onboard Training Manual of Merchant
-                        Marine Academy of Caraga, Inc. and acknowledge
-                        that I am responsible for following its
-                        applicable guidelines and requirements.
+
+                        I confirm that I have read and understood
+                        the official Onboard Training Manual of
+                        Merchant Marine Academy of Caraga, Inc.
+                        and acknowledge that I am responsible
+                        for following its applicable guidelines
+                        and requirements.
+
                     </label>
 
                 </div>
 
-                <button type="submit"
-                        class="obt-policy-submit"
-                        id="obtPolicySubmit"
-                        disabled>
+                <button
+                    type="submit"
+                    class="obt-policy-submit"
+                    id="obtPolicySubmit"
+                    disabled>
 
                     <i class="fas fa-check"></i>
                     Acknowledge OBT Manual
@@ -471,8 +591,10 @@
         @else
 
             <div class="obt-policy-alert">
-                Acknowledgement will be available after the official
-                manual has been uploaded.
+
+                Acknowledgement will be available after the
+                original official manual has been uploaded.
+
             </div>
 
         @endif
@@ -481,6 +603,7 @@
 
 </div>
 
+{{-- ACKNOWLEDGEMENT CHECKBOX --}}
 @if($manualAvailable && !$acknowledgement)
 
 <script>
@@ -490,13 +613,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const button = document.getElementById('obtPolicySubmit');
 
     if (checkbox && button) {
+
         checkbox.addEventListener('change', function () {
+
             button.disabled = !this.checked;
+
         });
+
     }
 
 });
 </script>
+
 @endif
 
 @endsection

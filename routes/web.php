@@ -417,6 +417,18 @@ Route::prefix('cadet')
             'acknowledge'
         ])->name('obt-policies.acknowledge');
 
+        // OBT POLICY PDF PREVIEW
+Route::get('/obt-policies/preview', [
+    \App\Http\Controllers\Cadet\ObtPolicyController::class,
+    'preview'
+])->name('obt-policies.preview');
+
+// OBT POLICY PDF DOWNLOAD
+Route::get('/obt-policies/download-pdf', [
+    \App\Http\Controllers\Cadet\ObtPolicyController::class,
+    'downloadPdf'
+])->name('obt-policies.download-pdf');
+
 
         Route::post('/update-location', [CadetController::class, 'updateLocation'])->name('update.location');
     });

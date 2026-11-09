@@ -9,25 +9,19 @@ use Illuminate\Support\Facades\Storage;
 
 class ObtPolicyController extends Controller
 {
-    /**
-     * Current official manual revision.
-     */
     private string $policyKey = 'obt-manual-revision-03';
 
-    /**
-     * Location of the official OBT Manual.
-     */
     private string $manualPath = 'obt-policies/obt-manual.docx';
 
+    private string $pdfPath = 'obt-policies/obt-manual.pdf';
+
     /**
-     * Make sure only cadets can access this page.
+     * Allow authenticated cadets only.
      */
     private function ensureCadet(): void
     {
-        $user = Auth::user();
-
         abort_unless(
-            $user !== null && $user->role === 'cadet',
+            Auth::check() && Auth::user()?->role === 'cadet',
             403
         );
     }
@@ -42,6 +36,9 @@ class ObtPolicyController extends Controller
         $manualAvailable = Storage::disk('public')
             ->exists($this->manualPath);
 
+        $pdfAvailable = Storage::disk('public')
+            ->exists($this->pdfPath);
+
         $acknowledgement = DB::table('obt_policy_acknowledgements')
             ->where('user_id', Auth::id())
             ->where('policy_key', $this->policyKey)
@@ -49,12 +46,35 @@ class ObtPolicyController extends Controller
 
         return view('cadet.obt-policies.index', [
             'manualAvailable' => $manualAvailable,
+            'pdfAvailable' => $pdfAvailable,
             'acknowledgement' => $acknowledgement,
         ]);
     }
 
     /**
-     * Download the official OBT Manual.
+     * Display PDF inside the browser.
+     */
+    public function preview()
+    {
+        $this->ensureCadet();
+
+        abort_unless(
+            Storage::disk('public')->exists($this->pdfPath),
+            404,
+            'The official OBT Manual PDF is not available.'
+        );
+
+        $filePath = Storage::disk('public')->path($this->pdfPath);
+
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="MMACI-Official-OBT-Manual.pdf"',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
+    /**
+     * Download original Word manual.
      */
     public function download()
     {
@@ -73,7 +93,26 @@ class ObtPolicyController extends Controller
     }
 
     /**
-     * Record that the cadet has read the manual.
+     * Download PDF reading copy.
+     */
+    public function downloadPdf()
+    {
+        $this->ensureCadet();
+
+        abort_unless(
+            Storage::disk('public')->exists($this->pdfPath),
+            404,
+            'The official OBT Manual PDF is not available.'
+        );
+
+        return Storage::disk('public')->download(
+            $this->pdfPath,
+            'MMACI-Official-OBT-Manual.pdf'
+        );
+    }
+
+    /**
+     * Record cadet acknowledgement.
      */
     public function acknowledge()
     {
@@ -85,27 +124,23 @@ class ObtPolicyController extends Controller
             'The official OBT Manual is not available.'
         );
 
-        $now = now();
-
-        $existing = DB::table('obt_policy_acknowledgements')
-            ->where('user_id', Auth::id())
-            ->where('policy_key', $this->policyKey)
-            ->exists();
-
         DB::table('obt_policy_acknowledgements')->updateOrInsert(
             [
                 'user_id' => Auth::id(),
                 'policy_key' => $this->policyKey,
             ],
             [
-                'acknowledged_at' => $now,
-                'updated_at' => $now,
-                ...($existing ? [] : ['created_at' => $now]),
+                'acknowledged_at' => now(),
+                'updated_at' => now(),
+                'created_at' => now(),
             ]
         );
 
         return redirect()
             ->route('cadet.obt-policies.index')
-            ->with('success', 'You have successfully acknowledged the OBT Manual.');
+            ->with(
+                'success',
+                'You have successfully acknowledged the OBT Manual.'
+            );
     }
 }
