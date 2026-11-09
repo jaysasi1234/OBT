@@ -39,6 +39,14 @@ class ObtPolicyController extends Controller
         $pdfAvailable = Storage::disk('public')
             ->exists($this->pdfPath);
 
+            dd([
+    'controller' => self::class,
+    'manual_path' => Storage::disk('public')->path($this->manualPath),
+    'pdf_path' => Storage::disk('public')->path($this->pdfPath),
+    'manual_available' => $manualAvailable,
+    'pdf_available' => $pdfAvailable,
+]);
+
         $acknowledgement = DB::table('obt_policy_acknowledgements')
             ->where('user_id', Auth::id())
             ->where('policy_key', $this->policyKey)
