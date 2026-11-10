@@ -640,51 +640,71 @@ foreach ($statisticsCadets as $statCadet) {
             );
 
 
-        $path = null;
+// =========================================================
+// PRESERVE EXISTING FILE WHEN APPROVING OR REJECTING
+// =========================================================
 
+// Get the existing document submission.
+$existingSubmission = DB::table('cadet_documents')
+    ->where('cadet_id', $cadet->id)
+    ->where('document_id', $request->document_id)
+    ->first();
 
-        if ($request->hasFile('file')) {
+// Keep the existing file path.
+$path = $existingSubmission->file_path ?? null;
 
-            $path =
-                $request
-                    ->file('file')
-                    ->store(
-                        'documents',
-                        'public'
-                    );
-        }
+// Check if a new file was uploaded.
+$hasNewFile = $request->hasFile('file');
 
+// Store the new file only if one was selected.
+if ($hasNewFile) {
+    $path = $request->file('file')
+        ->store('documents', 'public');
+}
 
-        $cadet->documents()
-            ->updateExistingPivot(
-                $request->document_id,
-                [
+// Current timestamp.
+$now = now();
 
-                    'file_path' =>
-                        $path,
+// Prepare the document information.
+$pivotData = [
+    'file_path' => $path,
+    'status' => $request->status,
+    'remarks' => $request->remarks,
+];
 
-                    'status' =>
-                        $request->status,
+// If a new file is uploaded, record its submission time.
+if ($hasNewFile) {
 
-                    // Submission timestamp
-                    'submitted_at' =>
-                        now(),
+    $pivotData['submitted_at'] = $now;
 
-                    // Reset previous review timestamps
-                    'reviewed_at' =>
-                        null,
+    // Reset previous review information for the new submission.
+    $pivotData['reviewed_at'] = null;
+    $pivotData['approved_at'] = null;
+    $pivotData['rejected_at'] = null;
+    $pivotData['reviewed_by'] = null;
+}
 
-                    'approved_at' =>
-                        null,
+// If the document is approved or rejected, record the review.
+if (in_array(strtolower($request->status), ['approved', 'rejected'])) {
 
-                    'rejected_at' =>
-                        null,
+    $pivotData['reviewed_at'] = $now;
+    $pivotData['reviewed_by'] = \Illuminate\Support\Facades\Auth::id();
 
-                    'reviewed_by' =>
-                        null,
+    if (strtolower($request->status) === 'approved') {
+        $pivotData['approved_at'] = $now;
+        $pivotData['rejected_at'] = null;
+    }
 
-                ]
-            );
+    if (strtolower($request->status) === 'rejected') {
+        $pivotData['rejected_at'] = $now;
+        $pivotData['approved_at'] = null;
+    }
+}
+
+// Save the document without deleting its existing file.
+$cadet->documents()->syncWithoutDetaching([
+    $request->document_id => $pivotData,
+]);
 
 
         $cadet->load('documents');
