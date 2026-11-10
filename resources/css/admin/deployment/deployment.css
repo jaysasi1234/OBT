@@ -1954,6 +1954,170 @@ main {
 
 
 /* =========================================================
+   FINAL FIX: STICKY FIRST 4 COLUMNS
+   Prevent TRB, NAME, COURSE and BATCH from being covered
+========================================================= */
+
+/* Correct total table width: sum of all 18 columns */
+.dm-table {
+    width: 2695px !important;
+    min-width: 2695px !important;
+    max-width: none !important;
+    table-layout: fixed !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+/* Keep horizontal scrolling inside the table container */
+.dm-table-scroll {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    isolation: isolate;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Column 1 - TRB */
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1) {
+    width: 125px !important;
+    min-width: 125px !important;
+    left: 0 !important;
+    position: sticky !important;
+}
+
+/* Column 2 - NAME */
+.dm-table th:nth-child(2),
+.dm-table td:nth-child(2) {
+    width: 210px !important;
+    min-width: 210px !important;
+    left: 125px !important;
+    position: sticky !important;
+}
+
+/* Column 3 - COURSE */
+.dm-table th:nth-child(3),
+.dm-table td:nth-child(3) {
+    width: 105px !important;
+    min-width: 105px !important;
+    left: 335px !important;
+    position: sticky !important;
+}
+
+/* Column 4 - BATCH */
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    width: 110px !important;
+    min-width: 110px !important;
+    left: 440px !important;
+    position: sticky !important;
+}
+
+/* Sticky body cells: keep them above scrolling columns */
+.dm-table tbody td:nth-child(1) {
+    z-index: 24 !important;
+    background: #111d40 !important;
+}
+
+.dm-table tbody td:nth-child(2) {
+    z-index: 23 !important;
+    background: #111d40 !important;
+}
+
+.dm-table tbody td:nth-child(3) {
+    z-index: 22 !important;
+    background: #111d40 !important;
+}
+
+.dm-table tbody td:nth-child(4) {
+    z-index: 21 !important;
+    background: #111d40 !important;
+}
+
+/* Sticky header cells: highest stacking level */
+.dm-table thead th:nth-child(1) {
+    z-index: 44 !important;
+    background: #293f91 !important;
+}
+
+.dm-table thead th:nth-child(2) {
+    z-index: 43 !important;
+    background: #293f91 !important;
+}
+
+.dm-table thead th:nth-child(3) {
+    z-index: 42 !important;
+    background: #293f91 !important;
+}
+
+.dm-table thead th:nth-child(4) {
+    z-index: 41 !important;
+    background: #293f91 !important;
+}
+
+/* Other table headers stay below sticky headers */
+.dm-table thead th:nth-child(n+5) {
+    z-index: 5 !important;
+    position: sticky;
+    top: 0;
+}
+
+/* Keep other table cells below sticky columns */
+.dm-table tbody td:nth-child(n+5) {
+    position: relative;
+    z-index: 1;
+}
+
+/* Highlight sticky columns on hover */
+.dm-table tbody tr:hover td:nth-child(-n+4) {
+    background: #1c3069 !important;
+}
+
+/* Visual separation after BATCH */
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    box-shadow: 6px 0 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Mobile sticky offsets remain consistent */
+@media (max-width: 768px) {
+    .dm-table {
+        width: 2695px !important;
+        min-width: 2695px !important;
+    }
+
+    .dm-table th:nth-child(1),
+    .dm-table td:nth-child(1) {
+        left: 0 !important;
+        width: 125px !important;
+        min-width: 125px !important;
+    }
+
+    .dm-table th:nth-child(2),
+    .dm-table td:nth-child(2) {
+        left: 125px !important;
+        width: 210px !important;
+        min-width: 210px !important;
+    }
+
+    .dm-table th:nth-child(3),
+    .dm-table td:nth-child(3) {
+        left: 335px !important;
+        width: 105px !important;
+        min-width: 105px !important;
+    }
+
+    .dm-table th:nth-child(4),
+    .dm-table td:nth-child(4) {
+        left: 440px !important;
+        width: 110px !important;
+        min-width: 110px !important;
+    }
+}
+
+/* =========================================================
    27. MODAL FORM SECTIONS
    ========================================================= */
 
