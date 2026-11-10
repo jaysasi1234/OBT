@@ -1164,6 +1164,17 @@
 
             </a>
 
+
+            <a href="{{ route('cadet.shipping-companies.index') }}"
+            class="menu-item {{ request()->routeIs('cadet.shipping-companies.*') ? 'active' : '' }}">
+
+                <i class="fas fa-ship"></i>
+
+                <span>Accredited Shipping Companies</span>
+
+            </a>
+
+
             <div class="menu-divider"></div>
 
             <form method="POST" action="{{ route('logout') }}">

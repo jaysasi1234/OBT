@@ -37,6 +37,7 @@ use App\Http\Controllers\Admin\ForgotPasswordController;
 use App\Http\Controllers\Admin\AccountCredentialController;
 use App\Http\Controllers\Admin\CadetRequirementController;
 use App\Http\Controllers\Admin\CadetInsuranceController;
+use App\Http\Controllers\Admin\ShippingCompanyController as AdminShippingCompanyController;
 
 // super admin
 use App\Http\Controllers\SuperAdmin\SuperAdminAuthController;
@@ -46,6 +47,7 @@ use App\Http\Controllers\SuperAdmin\RemarkController as SuperAdminRemarkControll
 use App\Http\Controllers\SuperAdmin\SuperAdminForgotPasswordController;
 use App\Http\Controllers\SuperAdmin\CadetRequirementController as SuperAdminCadetRequirementController;
 use App\Http\Controllers\SuperAdmin\CadetBSRequirementController as SuperAdminCadetBSRequirementController;
+use App\Http\Controllers\SuperAdmin\ShippingCompanyController as SuperAdminShippingCompanyController;
 
 
 // CADET
@@ -59,6 +61,7 @@ use App\Http\Controllers\Cadet\OnboardRequirementController as CadetOnboardRequi
 use App\Http\Controllers\Cadet\BSRequirementController as CadetBSController;
 use App\Http\Controllers\SuperAdmin\ShippedOnOrderController as SuperAdminShippedOnOrderController;
 use App\Http\Controllers\Cadet\InsuranceController as CadetInsuranceViewingController;
+use App\Http\Controllers\Cadet\ShippingCompanyController as CadetShippingCompanyController;
 
 // CHAT
 use App\Http\Controllers\ChatController;
@@ -254,7 +257,20 @@ Route::delete(
     [CadetInsuranceController::class, 'destroy']
 )->name('insurance.delete');
 
+/*
+|--------------------------------------------------------------------------
+| ACCREDITED SHIPPING COMPANIES
+|--------------------------------------------------------------------------
+*/
+
+Route::resource(
+    'shipping-companies',
+    AdminShippingCompanyController::class
+);
+
 });
+
+
 
 Route::middleware(['auth'])->group(function () {
 
@@ -361,6 +377,18 @@ Route::get(
     '/shipped-so/{shippedOnOrder}',
     [SuperAdminShippedOnOrderController::class, 'show']
 )->name('shipped-so.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| ACCREDITED SHIPPING COMPANIES
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/shipping-companies',
+    [SuperAdminShippingCompanyController::class, 'index']
+)->name('shipping-companies.index');
 
         Route::get('/notifications', [SuperAdminNotificationController::class, 'index'])->name('notifications');
 
@@ -472,6 +500,17 @@ Route::get(
     '/insurance/download',
     [CadetInsuranceViewingController::class, 'download']
 )->name('insurance.download');
+
+/*
+|--------------------------------------------------------------------------
+| ACCREDITED SHIPPING COMPANIES
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/shipping-companies',
+    [CadetShippingCompanyController::class, 'index']
+)->name('shipping-companies.index');
 
 
         Route::post('/update-location', [CadetController::class, 'updateLocation'])->name('update.location');

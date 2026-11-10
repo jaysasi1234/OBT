@@ -2762,6 +2762,24 @@
 
             </a>
 
+            {{-- Accredited Shipping Companies --}}
+
+            <a
+                href="{{ route('admin.shipping-companies.index') }}"
+                class="
+                    admin-menu-item
+                    {{ request()->routeIs('admin.shipping-companies.*') ? 'active' : '' }}
+                "
+            >
+
+                <i class="fas fa-ship"></i>
+
+                <span>
+                    Accredited Shipping Companies
+                </span>
+
+            </a>
+
 
             {{-- Locations --}}
 
