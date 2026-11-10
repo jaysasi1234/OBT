@@ -2333,6 +2333,146 @@ main {
     background: #4b64b4;
 }
 
+
+/* =========================================================
+   FIX: FULL HORIZONTAL TABLE SCROLLING
+   Keeps TRB, NAME, COURSE and BATCH sticky
+   Allows scrolling all the way to ACTION
+========================================================= */
+
+/* Main scroll container */
+.dm-table-scroll {
+    display: block !important;
+
+    position: relative !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    scrollbar-width: auto;
+    scrollbar-color: #526bb8 #0d1534;
+
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+}
+
+/* Make the table expand to fit ALL columns */
+.dm-table {
+    width: max-content !important;
+    min-width: 1935px !important;
+
+    table-layout: fixed !important;
+
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+/* Keep the first four columns fixed */
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1) {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 6;
+}
+
+.dm-table th:nth-child(2),
+.dm-table td:nth-child(2) {
+    position: sticky !important;
+    left: 130px !important;
+    z-index: 6;
+}
+
+.dm-table th:nth-child(3),
+.dm-table td:nth-child(3) {
+    position: sticky !important;
+    left: 320px !important;
+    z-index: 6;
+}
+
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    position: sticky !important;
+    left: 440px !important;
+    z-index: 6;
+}
+
+/* Sticky header layering */
+.dm-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.dm-table thead th:nth-child(-n+4) {
+    z-index: 10;
+}
+
+/* Sticky column backgrounds */
+.dm-table tbody td:nth-child(1),
+.dm-table tbody td:nth-child(2),
+.dm-table tbody td:nth-child(3),
+.dm-table tbody td:nth-child(4) {
+    background: #0f1b42 !important;
+}
+
+.dm-table tbody tr:nth-child(even) td:nth-child(-n+4) {
+    background: #131e49 !important;
+}
+
+.dm-table tbody tr:hover td:nth-child(-n+4) {
+    background: #1b2b68 !important;
+}
+
+/* Visible horizontal scrollbar */
+.dm-table-scroll::-webkit-scrollbar {
+    height: 12px;
+}
+
+.dm-table-scroll::-webkit-scrollbar-track {
+    background: #0d1534;
+    border-radius: 10px;
+}
+
+.dm-table-scroll::-webkit-scrollbar-thumb {
+    background: #526bb8;
+    border-radius: 10px;
+}
+
+.dm-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #718bdc;
+}
+
+/* Keep the table card from creating another scroll area */
+.dm-table-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Prevent parent containers from clipping the scroll area */
+#deploymentResults {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+/* Mobile horizontal scrolling */
+@media (max-width: 768px) {
+    .dm-table-scroll {
+        overflow-x: auto !important;
+    }
+
+    .dm-table {
+        min-width: 1935px !important;
+    }
+}
+
+
 /* Tablet */
 @media (max-width: 1000px) {
     .dm-table {
