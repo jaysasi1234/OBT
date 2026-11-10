@@ -194,6 +194,7 @@ public function insurance(): HasOne
     // DOCUMENTS
     // =========================================================
 
+
     public function documents()
     {
         return $this->belongsToMany(
@@ -205,9 +206,14 @@ public function insurance(): HasOne
             'file_path',
             'remarks',
             'submitted_at',
+            'reviewed_at',
+            'approved_at',
+            'rejected_at',
+            'reviewed_by',
         ])
         ->withTimestamps();
     }
+
 
 
     // =========================================================

@@ -666,8 +666,22 @@ foreach ($statisticsCadets as $statCadet) {
                     'status' =>
                         $request->status,
 
+                    // Submission timestamp
                     'submitted_at' =>
                         now(),
+
+                    // Reset previous review timestamps
+                    'reviewed_at' =>
+                        null,
+
+                    'approved_at' =>
+                        null,
+
+                    'rejected_at' =>
+                        null,
+
+                    'reviewed_by' =>
+                        null,
 
                 ]
             );
@@ -844,15 +858,53 @@ foreach ($statisticsCadets as $statCadet) {
             );
 
 
+        // Record admin review information
+        $reviewedAt = now();
+
+        $reviewData = [
+
+            'status' =>
+                $request->status,
+
+            'reviewed_at' =>
+                $reviewedAt,
+
+            'reviewed_by' =>
+                auth()->id(),
+
+        ];
+
+        // APPROVED
+        if (strtolower($request->status) === 'approved') {
+
+            $reviewData['approved_at'] = $reviewedAt;
+
+            $reviewData['rejected_at'] = null;
+
+        }
+
+        // REJECTED
+        elseif (strtolower($request->status) === 'rejected') {
+
+            $reviewData['rejected_at'] = $reviewedAt;
+
+            $reviewData['approved_at'] = null;
+
+        }
+
+        // OTHER STATUS
+        else {
+
+            $reviewData['approved_at'] = null;
+
+            $reviewData['rejected_at'] = null;
+
+        }
+
         $cadet->documents()
             ->updateExistingPivot(
                 $request->document_id,
-                [
-
-                    'status' =>
-                        $request->status,
-
-                ]
+                $reviewData
             );
 
 
