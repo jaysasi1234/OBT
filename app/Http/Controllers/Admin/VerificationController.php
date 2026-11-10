@@ -869,8 +869,7 @@ foreach ($statisticsCadets as $statCadet) {
             'reviewed_at' =>
                 $reviewedAt,
 
-            'reviewed_by' =>
-                auth()->id(),
+        'reviewed_by' => \Illuminate\Support\Facades\Auth::id(),
 
         ];
 
