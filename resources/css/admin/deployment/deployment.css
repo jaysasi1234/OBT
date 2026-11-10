@@ -2247,15 +2247,6 @@ main {
     border-spacing: 0;
 }
 
-/* Remove conflicting sticky column positioning */
-.dm-table th,
-.dm-table td {
-    position: static !important;
-    left: auto !important;
-    right: auto !important;
-    box-shadow: none !important;
-}
-
 /* Table headers */
 .dm-table thead th {
     position: static !important;
@@ -2370,6 +2361,139 @@ main {
         height: 55px;
         padding: 9px;
         font-size: 10px;
+    }
+}
+
+
+
+/* =========================================================
+   FIXED FIRST FOUR COLUMNS
+   TRB | NAME | COURSE | BATCH
+   ========================================================= */
+
+/* Keep horizontal scrolling inside table */
+.dm-table-scroll {
+    position: relative;
+    width: 100%;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Table layout */
+.dm-table {
+    min-width: 1580px;
+    width: 100%;
+    table-layout: fixed !important;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+/* Fixed column positions */
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1) {
+    position: sticky !important;
+    left: 0 !important;
+    width: 130px;
+    min-width: 130px;
+}
+
+.dm-table th:nth-child(2),
+.dm-table td:nth-child(2) {
+    position: sticky !important;
+    left: 130px !important;
+    width: 190px;
+    min-width: 190px;
+}
+
+.dm-table th:nth-child(3),
+.dm-table td:nth-child(3) {
+    position: sticky !important;
+    left: 320px !important;
+    width: 120px;
+    min-width: 120px;
+}
+
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    position: sticky !important;
+    left: 440px !important;
+    width: 110px;
+    min-width: 110px;
+}
+
+/* Fixed column backgrounds */
+.dm-table tbody td:nth-child(1),
+.dm-table tbody td:nth-child(2),
+.dm-table tbody td:nth-child(3),
+.dm-table tbody td:nth-child(4) {
+    background: #0f1b42 !important;
+}
+
+/* Alternating row backgrounds */
+.dm-table tbody tr:nth-child(even) td:nth-child(-n+4) {
+    background: #131e49 !important;
+}
+
+/* Hover background */
+.dm-table tbody tr:hover td:nth-child(-n+4) {
+    background: #1b2b68 !important;
+}
+
+/* Fixed header backgrounds */
+.dm-table thead th:nth-child(-n+4) {
+    position: sticky !important;
+    top: 0;
+    background: #263b91 !important;
+    z-index: 20 !important;
+}
+
+/* Keep fixed body columns above scrolling columns */
+.dm-table tbody td:nth-child(-n+4) {
+    z-index: 10 !important;
+}
+
+/* Separation shadow after BATCH */
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    box-shadow: 6px 0 12px rgba(0, 0, 0, 0.30) !important;
+}
+
+/* Prevent text from overflowing */
+.dm-table td:nth-child(-n+4) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .dm-table th:nth-child(1),
+    .dm-table td:nth-child(1) {
+        left: 0 !important;
+        width: 110px;
+        min-width: 110px;
+    }
+
+    .dm-table th:nth-child(2),
+    .dm-table td:nth-child(2) {
+        left: 110px !important;
+        width: 170px;
+        min-width: 170px;
+    }
+
+    .dm-table th:nth-child(3),
+    .dm-table td:nth-child(3) {
+        left: 280px !important;
+        width: 110px;
+        min-width: 110px;
+    }
+
+    .dm-table th:nth-child(4),
+    .dm-table td:nth-child(4) {
+        left: 390px !important;
+        width: 100px;
+        min-width: 100px;
     }
 }
 
