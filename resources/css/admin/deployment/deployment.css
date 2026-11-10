@@ -2996,6 +2996,302 @@ main {
 
 
 /* =========================================================
+   FINAL DEPLOYMENT TABLE FIX
+   18 COLUMNS + HORIZONTAL SCROLL
+   STICKY FIRST 4 COLUMNS
+========================================================= */
+
+/* TABLE SCROLL CONTAINER */
+.dm-table-scroll {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+
+    isolation: isolate;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+    scrollbar-color: #3a4f98 #0d1534;
+}
+
+/* TABLE WIDTH
+   Total of all 18 column widths = 2695px
+*/
+.dm-table {
+    width: 2695px !important;
+    min-width: 2695px !important;
+    max-width: none !important;
+
+    table-layout: fixed !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+/* GENERAL CELL SETTINGS */
+.dm-table th,
+.dm-table td {
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+/* =========================================================
+   18 COLUMN WIDTHS
+========================================================= */
+
+/* 1. TRB */
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1) {
+    width: 125px !important;
+    min-width: 125px !important;
+}
+
+/* 2. NAME */
+.dm-table th:nth-child(2),
+.dm-table td:nth-child(2) {
+    width: 210px !important;
+    min-width: 210px !important;
+}
+
+/* 3. COURSE */
+.dm-table th:nth-child(3),
+.dm-table td:nth-child(3) {
+    width: 105px !important;
+    min-width: 105px !important;
+}
+
+/* 4. BATCH */
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    width: 110px !important;
+    min-width: 110px !important;
+}
+
+/* 5. VESSEL */
+.dm-table th:nth-child(5),
+.dm-table td:nth-child(5) {
+    width: 170px !important;
+    min-width: 170px !important;
+}
+
+/* 6. COMPANY */
+.dm-table th:nth-child(6),
+.dm-table td:nth-child(6) {
+    width: 180px !important;
+    min-width: 180px !important;
+}
+
+/* 7. DEPLOYMENT TYPE */
+.dm-table th:nth-child(7),
+.dm-table td:nth-child(7) {
+    width: 160px !important;
+    min-width: 160px !important;
+}
+
+/* 8. EMBARKATION PLACE */
+.dm-table th:nth-child(8),
+.dm-table td:nth-child(8) {
+    width: 190px !important;
+    min-width: 190px !important;
+}
+
+/* 9. EMBARKATION DATE */
+.dm-table th:nth-child(9),
+.dm-table td:nth-child(9) {
+    width: 145px !important;
+    min-width: 145px !important;
+}
+
+/* 10. DISEMBARKATION PLACE */
+.dm-table th:nth-child(10),
+.dm-table td:nth-child(10) {
+    width: 190px !important;
+    min-width: 190px !important;
+}
+
+/* 11. DISEMBARKATION DATE */
+.dm-table th:nth-child(11),
+.dm-table td:nth-child(11) {
+    width: 145px !important;
+    min-width: 145px !important;
+}
+
+/* 12. IMO NUMBER */
+.dm-table th:nth-child(12),
+.dm-table td:nth-child(12) {
+    width: 130px !important;
+    min-width: 130px !important;
+}
+
+/* 13. GRT */
+.dm-table th:nth-child(13),
+.dm-table td:nth-child(13) {
+    width: 100px !important;
+    min-width: 100px !important;
+}
+
+/* 14. KWH */
+.dm-table th:nth-child(14),
+.dm-table td:nth-child(14) {
+    width: 100px !important;
+    min-width: 100px !important;
+}
+
+/* 15. SEA SERVICE DURATION */
+.dm-table th:nth-child(15),
+.dm-table td:nth-child(15) {
+    width: 210px !important;
+    min-width: 210px !important;
+}
+
+/* 16. PROGRESS */
+.dm-table th:nth-child(16),
+.dm-table td:nth-child(16) {
+    width: 160px !important;
+    min-width: 160px !important;
+}
+
+/* 17. STATUS */
+.dm-table th:nth-child(17),
+.dm-table td:nth-child(17) {
+    width: 145px !important;
+    min-width: 145px !important;
+}
+
+/* 18. ACTION */
+.dm-table th:nth-child(18),
+.dm-table td:nth-child(18) {
+    width: 120px !important;
+    min-width: 120px !important;
+}
+
+/* =========================================================
+   STICKY FIRST FOUR COLUMNS
+   TRB: 0px
+   NAME: 125px
+   COURSE: 335px
+   BATCH: 440px
+========================================================= */
+
+/* TRB */
+.dm-table th:nth-child(1),
+.dm-table td:nth-child(1) {
+    position: sticky !important;
+    left: 0 !important;
+}
+
+/* NAME */
+.dm-table th:nth-child(2),
+.dm-table td:nth-child(2) {
+    position: sticky !important;
+    left: 125px !important;
+}
+
+/* COURSE */
+.dm-table th:nth-child(3),
+.dm-table td:nth-child(3) {
+    position: sticky !important;
+    left: 335px !important;
+}
+
+/* BATCH */
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    position: sticky !important;
+    left: 440px !important;
+}
+
+/* STICKY BODY BACKGROUNDS */
+.dm-table tbody td:nth-child(-n+4) {
+    z-index: 10 !important;
+    background: #111d40 !important;
+}
+
+/* STICKY HEADER BACKGROUNDS */
+.dm-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #293f91 !important;
+}
+
+.dm-table thead th:nth-child(-n+4) {
+    z-index: 20 !important;
+    background: #293f91 !important;
+}
+
+/* HOVER EFFECT */
+.dm-table tbody tr:hover td {
+    background: #1b2b68;
+}
+
+.dm-table tbody tr:hover td:nth-child(-n+4) {
+    background: #1c3069 !important;
+}
+
+/* SEPARATION AFTER BATCH */
+.dm-table th:nth-child(4),
+.dm-table td:nth-child(4) {
+    box-shadow: 6px 0 12px rgba(0, 0, 0, 0.25);
+}
+
+/* HEADER ALIGNMENT */
+.dm-table thead th {
+    height: 55px;
+    padding: 10px 12px !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+}
+
+/* BODY ALIGNMENT */
+.dm-table tbody td {
+    padding: 12px !important;
+    font-size: 11px;
+}
+
+/* NAME LEFT ALIGNMENT */
+.dm-table tbody td:nth-child(2) {
+    text-align: left !important;
+}
+
+/* PROGRESS CONTENT */
+.dm-table .dm-progress {
+    width: 100%;
+    min-width: 0;
+}
+
+/* SEA SERVICE BADGE */
+.dm-table .dm-sea-duration {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .dm-table-scroll {
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+    }
+
+    .dm-table {
+        width: 2695px !important;
+        min-width: 2695px !important;
+    }
+}
+
+
+
+/* =========================================================
    DEPLOYMENT TABLE - FIX COLUMN OVERLAPPING
    18 COLUMNS + HORIZONTAL SCROLL + STICKY FIRST 4
 ========================================================= */
