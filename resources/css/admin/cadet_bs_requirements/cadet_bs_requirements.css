@@ -1839,6 +1839,22 @@ body{
 }
 
 
+.submission-datetime {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.submission-datetime strong {
+    font-size: 13px;
+    color: #1e293b;
+}
+
+.submission-datetime small {
+    font-size: 12px;
+    color: #64748b;
+}
+
 /* =========================================================
    RESPONSIVE - TABLET
 ========================================================= */

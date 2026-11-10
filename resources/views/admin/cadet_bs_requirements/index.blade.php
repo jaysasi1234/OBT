@@ -386,8 +386,7 @@
                     <th>Requirement</th>
                     <th>Status</th>
                     <th>Attachment</th>
-                    <th>Remarks</th>
-                    <th>Date</th>
+                    <th>Submitted Date & Time</th>
                     <th width="220">Action</th>
                 </tr>
 
@@ -496,23 +495,20 @@
 </td>
 
                     <td>
+                        @if($submission->submitted_at)
+                            <div class="submission-datetime">
+                                <strong>
+                                    {{ \Carbon\Carbon::parse($submission->submitted_at)->format('M d, Y') }}
+                                </strong>
 
-                        {{ $submission->remarks ?? '-' }}
-
-                    </td>
-
-                    <td>
-
-                        @if(!empty($submission->submitted_at))
-
-                            {{ date('M d, Y', strtotime($submission->submitted_at)) }}
-
+                                <small>
+                                    <i class="fa-regular fa-clock"></i>
+                                    {{ \Carbon\Carbon::parse($submission->submitted_at)->format('h:i A') }}
+                                </small>
+                            </div>
                         @else
-
                             -
-
                         @endif
-
                     </td>
 
                     <td>
