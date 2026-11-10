@@ -231,25 +231,15 @@
 
                     <table>
 
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Requirement
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th>
-                                    File
-                                </th>
-
-                            </tr>
-
-                        </thead>
+<thead>
+    <tr>
+        <th>Requirement</th>
+        <th>Status</th>
+        <th>Submission Date</th>
+        <th>Review Date</th>
+        <th>File</th>
+    </tr>
+</thead>
 
 
                         <tbody>
@@ -279,27 +269,59 @@
                             @endphp
 
 
-                            <tr>
+<tr>
+    <td>
+        {{ $doc->name ?? 'Unnamed Requirement' }}
+    </td>
 
-                                <td>
+    <td>
+        <span class="status {{ $statusClass }}">
+            {{ $status }}
+        </span>
+    </td>
 
-                                    {{ $doc->name ?? 'Unnamed Requirement' }}
-
-                                </td>
-
-
-                                <td>
-
-                                    <span class="status {{ $statusClass }}">
-
-                                        {{ $status }}
-
-                                    </span>
-
-                                </td>
+    {{-- SUBMISSION TIMESTAMP --}}
+    <td>
+        @if($doc->pivot->submitted_at)
+            {{ \Carbon\Carbon::parse($doc->pivot->submitted_at)->format('M d, Y h:i A') }}
+        @else
+            <span class="text-muted">Not submitted</span>
+        @endif
+    </td>
 
 
-                                <td>
+{{-- REVIEW TIMESTAMP --}}
+<td>
+    @if($doc->pivot->reviewed_at)
+        <div>
+            Reviewed:
+            {{ \Carbon\Carbon::parse($doc->pivot->reviewed_at)->format('M d, Y h:i A') }}
+        </div>
+    @else
+        <span class="text-muted">Not reviewed</span>
+    @endif
+
+    @if($doc->pivot->approved_at)
+        <div>
+            <small>
+                Approved:
+                {{ \Carbon\Carbon::parse($doc->pivot->approved_at)->format('M d, Y h:i A') }}
+            </small>
+        </div>
+    @endif
+
+    @if($doc->pivot->rejected_at)
+        <div>
+            <small>
+                Rejected:
+                {{ \Carbon\Carbon::parse($doc->pivot->rejected_at)->format('M d, Y h:i A') }}
+            </small>
+        </div>
+    @endif
+</td>
+
+
+    <td>
 
                                     <div class="file-actions">
 
@@ -347,7 +369,7 @@
                             <tr>
 
                                 <td
-                                    colspan="3"
+                                    colspan="5"
                                     style="
                                         text-align:center;
                                         padding:30px;
