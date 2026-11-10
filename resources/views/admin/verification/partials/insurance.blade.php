@@ -155,13 +155,19 @@
 </div>
 
 <style>
+
+/* =========================================================
+   INSURANCE MANAGEMENT - DARK NAVY VERIFICATION THEME
+========================================================= */
+
 .insurance-management-card {
     margin-top: 25px;
     padding: 24px;
     border-radius: 18px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 8px 25px rgba(15, 23, 42, .06);
+    background: linear-gradient(145deg, #0d1940, #111f4d);
+    border: 1px solid rgba(96, 165, 250, .22);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, .20);
+    color: #e2e8f0;
 }
 
 .insurance-management-header {
@@ -174,14 +180,14 @@
 
 .insurance-management-header h3 {
     margin: 0 0 6px;
-    color: #172554;
+    color: #f1f5f9;
     font-size: 18px;
     font-weight: 800;
 }
 
 .insurance-management-header p {
     margin: 0;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 12px;
 }
 
@@ -194,23 +200,27 @@
 }
 
 .insurance-badge.uploaded {
-    color: #15803d;
-    background: #dcfce7;
+    color: #86efac;
+    background: rgba(22, 163, 74, .16);
+    border: 1px solid rgba(74, 222, 128, .25);
 }
 
 .insurance-badge.missing {
-    color: #b45309;
-    background: #fef3c7;
+    color: #fcd34d;
+    background: rgba(217, 119, 6, .15);
+    border: 1px solid rgba(251, 191, 36, .25);
 }
+
+/* FILE DETAILS */
 
 .insurance-file-details {
     display: flex;
     align-items: center;
     gap: 15px;
     padding: 16px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(96, 165, 250, .20);
     border-radius: 13px;
-    background: #f8fafc;
+    background: rgba(7, 21, 47, .75);
 }
 
 .insurance-file-icon {
@@ -220,7 +230,8 @@
     place-items: center;
     flex-shrink: 0;
     border-radius: 12px;
-    background: #dbeafe;
+    background: rgba(37, 99, 235, .20);
+    border: 1px solid rgba(96, 165, 250, .20);
     font-size: 21px;
 }
 
@@ -236,13 +247,13 @@
 }
 
 .insurance-file-info strong {
-    color: #1e293b;
+    color: #f1f5f9;
     font-size: 13px;
 }
 
 .insurance-file-info small {
     margin-top: 4px;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 11px;
 }
 
@@ -252,6 +263,8 @@
     gap: 8px;
 }
 
+/* ACTION BUTTONS */
+
 .insurance-action,
 .insurance-upload-button,
 .insurance-delete-button {
@@ -260,33 +273,48 @@
     align-items: center;
     gap: 7px;
     padding: 10px 13px;
-    border: 0;
+    border: 1px solid transparent;
     border-radius: 8px;
     font-size: 11px;
     font-weight: 700;
     text-decoration: none;
     cursor: pointer;
+    transition: .2s ease;
 }
 
 .insurance-action.view {
-    background: #e0f2fe;
-    color: #0369a1;
+    background: rgba(14, 165, 233, .15);
+    color: #7dd3fc;
+    border-color: rgba(56, 189, 248, .25);
+}
+
+.insurance-action.view:hover {
+    background: #0284c7;
+    color: #fff;
 }
 
 .insurance-action.download {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: rgba(37, 99, 235, .20);
+    color: #93c5fd;
+    border-color: rgba(96, 165, 250, .25);
+}
+
+.insurance-action.download:hover {
+    background: #2563eb;
+    color: #fff;
 }
 
 .insurance-divider {
     height: 1px;
     margin: 22px 0;
-    background: #e2e8f0;
+    background: rgba(148, 163, 184, .18);
 }
+
+/* FORM */
 
 .insurance-form-title {
     margin: 0 0 14px;
-    color: #334155;
+    color: #e2e8f0;
     font-size: 13px;
     font-weight: 800;
 }
@@ -298,10 +326,10 @@
     gap: 7px;
     padding: 25px 15px;
     margin-bottom: 20px;
-    border: 1px dashed #cbd5e1;
+    border: 1px dashed rgba(96, 165, 250, .35);
     border-radius: 12px;
     text-align: center;
-    background: #f8fafc;
+    background: rgba(7, 21, 47, .55);
 }
 
 .insurance-empty-icon {
@@ -309,19 +337,19 @@
 }
 
 .insurance-empty strong {
-    color: #334155;
+    color: #e2e8f0;
     font-size: 13px;
 }
 
 .insurance-empty span {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 11px;
 }
 
 .insurance-upload-field label {
     display: block;
     margin-bottom: 8px;
-    color: #334155;
+    color: #cbd5e1;
     font-size: 12px;
     font-weight: 700;
 }
@@ -329,34 +357,63 @@
 .insurance-upload-field input {
     width: 100%;
     padding: 11px;
-    border: 1px dashed #94a3b8;
+    border: 1px dashed #475569;
     border-radius: 9px;
-    background: #f8fafc;
-    color: #334155;
+    background: rgba(7, 21, 47, .75);
+    color: #e2e8f0;
     box-sizing: border-box;
+}
+
+.insurance-upload-field input::file-selector-button {
+    padding: 7px 12px;
+    margin-right: 10px;
+    border: 0;
+    border-radius: 6px;
+    background: #1d4ed8;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
 }
 
 .insurance-upload-field small {
     display: block;
     margin-top: 7px;
-    color: #64748b;
+    color: #94a3b8;
     font-size: 10px;
 }
 
 .insurance-upload-button {
     margin-top: 15px;
-    background: #1d4ed8;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #fff;
+    border-color: rgba(147, 197, 253, .2);
 }
+
+.insurance-upload-button:hover {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    transform: translateY(-1px);
+}
+
+/* DELETE */
 
 .insurance-delete-area {
     margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(148, 163, 184, .15);
 }
 
 .insurance-delete-button {
-    background: #fee2e2;
-    color: #b91c1c;
+    background: rgba(220, 38, 38, .13);
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, .25);
 }
+
+.insurance-delete-button:hover {
+    background: #b91c1c;
+    color: #fff;
+}
+
+/* MESSAGES */
 
 .insurance-message {
     margin-bottom: 15px;
@@ -366,14 +423,18 @@
 }
 
 .insurance-message.success {
-    color: #166534;
-    background: #dcfce7;
+    color: #86efac;
+    background: rgba(22, 163, 74, .13);
+    border: 1px solid rgba(74, 222, 128, .22);
 }
 
 .insurance-message.error {
-    color: #991b1b;
-    background: #fee2e2;
+    color: #fca5a5;
+    background: rgba(220, 38, 38, .13);
+    border: 1px solid rgba(248, 113, 113, .22);
 }
+
+/* RESPONSIVE */
 
 @media(max-width: 650px) {
     .insurance-management-header,
@@ -385,5 +446,14 @@
     .insurance-file-actions {
         width: 100%;
     }
+
+    .insurance-action {
+        flex: 1;
+    }
+
+    .insurance-management-card {
+        padding: 17px;
+    }
 }
+
 </style>
