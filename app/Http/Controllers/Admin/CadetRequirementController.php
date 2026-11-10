@@ -331,6 +331,52 @@ public function show(Cadet $cadet)
     ]);
 }
 
+
+
+public function update(Request $request, CadetOnboardRequirement $requirement)
+{
+    $validated = $request->validate([
+        'status' => 'required|in:Pending,Approved,Rejected',
+    ]);
+
+    try {
+        $requirement->status = $validated['status'];
+
+        if ($validated['status'] === 'Approved') {
+            $requirement->approved_at = now();
+            $requirement->approved_by = Auth::id();
+        } else {
+            $requirement->approved_at = null;
+            $requirement->approved_by = null;
+        }
+
+        $requirement->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Requirement status updated successfully.',
+            'status' => $requirement->status,
+            'approved_at' => $requirement->approved_at
+                ? $requirement->approved_at->format('M d, Y h:i A')
+                : null,
+        ]);
+
+    } catch (\Throwable $e) {
+        \Illuminate\Support\Facades\Log::error(
+            'Onboard requirement update failed.',
+            [
+                'requirement_id' => $requirement->id,
+                'error' => $e->getMessage(),
+            ]
+        );
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Unable to update requirement.',
+        ], 500);
+    }
+}
+
 // =========================================================
 // APPROVE ALL ONBOARD REQUIREMENTS AS LEGACY
 // =========================================================
