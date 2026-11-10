@@ -492,9 +492,30 @@
 
             <div class="dm-table-scroll">
 
-                <table class="dm-table">
+<table class="dm-table">
 
-                    <thead>
+    <colgroup>
+        <col style="width:125px;">
+        <col style="width:210px;">
+        <col style="width:105px;">
+        <col style="width:120px;">
+        <col style="width:160px;">
+        <col style="width:190px;">
+        <col style="width:160px;">
+        <col style="width:190px;">
+        <col style="width:145px;">
+        <col style="width:190px;">
+        <col style="width:145px;">
+        <col style="width:125px;">
+        <col style="width:90px;">
+        <col style="width:90px;">
+        <col style="width:190px;">
+        <col style="width:150px;">
+        <col style="width:140px;">
+        <col style="width:120px;">
+    </colgroup>
+
+    <thead>
 
                         <tr>
 
