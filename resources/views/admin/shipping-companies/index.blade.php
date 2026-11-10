@@ -452,6 +452,16 @@
     }
 }
 
+/* Dark page background */
+body:has(.shipping-admin) {
+    background: #07152f !important;
+}
+
+.admin-content:has(.shipping-admin),
+.admin-main:has(.shipping-admin) {
+    background: #07152f !important;
+}
+
 </style>
 
 <div class="shipping-admin">
