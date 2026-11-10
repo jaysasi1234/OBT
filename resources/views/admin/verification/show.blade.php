@@ -1883,5 +1883,6 @@ function approveAllLegacyDocuments() {
     form.submit();
 }
 </script>
+@include('admin.verification.partials.insurance')
 
 @endsection

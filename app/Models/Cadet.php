@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Models\CadetInsurance;
 
 use App\Models\ShippedOnOrder;
 use App\Models\Document;
@@ -121,6 +122,17 @@ class Cadet extends Model
 
     ];
 
+
+/*
+|--------------------------------------------------------------------------
+| INSURANCE
+|--------------------------------------------------------------------------
+*/
+
+public function insurance(): HasOne
+{
+    return $this->hasOne(CadetInsurance::class, 'cadet_id');
+}
 
     // =========================================================
     // USER

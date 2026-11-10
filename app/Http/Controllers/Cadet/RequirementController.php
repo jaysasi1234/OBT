@@ -15,32 +15,73 @@ class RequirementController extends Controller
 {
     public function index()
     {
-        // 1. Get logged-in user cadet profile
+        /*
+        |--------------------------------------------------------------------------
+        | 1. GET LOGGED-IN CADET
+        |--------------------------------------------------------------------------
+        */
+
         $cadet = Cadet::where('user_id', Auth::id())->first();
 
-        // 2. If cadet does NOT exist, still allow page to open safely
-        if (!$cadet) {
+        /*
+        |--------------------------------------------------------------------------
+        | 2. CHECK IF CADET EXISTS
+        |--------------------------------------------------------------------------
+        */
 
+        if (!$cadet) {
             return view('cadet.requirements', [
                 'documents' => collect(),
                 'cadetDocs' => collect(),
 
                 'total' => 0,
                 'approved' => 0,
+                'submitted' => 0,
                 'pending' => 0,
                 'rejected' => 0,
+
+                // No insurance record
+                'insurance' => null,
+
             ])->with('error', 'Cadet profile not found. Please contact admin.');
         }
 
-        // 3. Get all required documents (from admin)
+        /*
+        |--------------------------------------------------------------------------
+        | 3. GET CADET INSURANCE
+        |--------------------------------------------------------------------------
+        |
+        | This is separate from Verification Requirements.
+        | It does not affect requirement statistics or approval status.
+        |
+        */
+
+        $insurance = $cadet->insurance;
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. GET REQUIRED DOCUMENTS
+        |--------------------------------------------------------------------------
+        */
+
         $documents = Document::all();
 
-        // 4. Get cadet submitted documents
+        /*
+        |--------------------------------------------------------------------------
+        | 5. GET CADET SUBMITTED DOCUMENTS
+        |--------------------------------------------------------------------------
+        */
+
         $cadetDocs = CadetDocument::where('cadet_id', $cadet->id)
             ->get()
             ->keyBy('document_id');
 
-        // 5. COMPUTE STATS
+        /*
+        |--------------------------------------------------------------------------
+        | 6. COMPUTE EXISTING REQUIREMENT STATISTICS
+        |--------------------------------------------------------------------------
+        */
+
         $total = $documents->count();
 
         $approved = $cadetDocs->where('status', 'Approved')->count();
@@ -51,7 +92,12 @@ class RequirementController extends Controller
 
         $rejected = $cadetDocs->where('status', 'Rejected')->count();
 
-         // 6. RETURN VIEW
+        /*
+        |--------------------------------------------------------------------------
+        | 7. RETURN CADET REQUIREMENTS PAGE
+        |--------------------------------------------------------------------------
+        */
+
         return view('cadet.requirements', compact(
             'documents',
             'cadetDocs',
@@ -59,120 +105,104 @@ class RequirementController extends Controller
             'approved',
             'submitted',
             'pending',
-            'rejected'
+            'rejected',
+            'insurance'
         ));
     }
 
-public function upload(Request $request)
-{
-    $request->validate([
-        'document_id' => 'required|exists:documents,id',
-        'file' => 'required|mimes:pdf,jpg,jpeg,png|max:5120',
-    ]);
+    public function upload(Request $request)
+    {
+        $request->validate([
+            'document_id' => 'required|exists:documents,id',
+            'file' => 'required|mimes:pdf,jpg,jpeg,png|max:5120',
+        ]);
 
-    /*
-    |--------------------------------------------------------------------------
-    | FIND CADET
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | FIND CADET
+        |--------------------------------------------------------------------------
+        */
 
-    $cadet = Cadet::where(
-        'user_id',
-        Auth::id()
-    )->first();
+        $cadet = Cadet::where(
+            'user_id',
+            Auth::id()
+        )->first();
 
-    if (!$cadet) {
+        if (!$cadet) {
+            return back()->with('error', 'Cadet profile not found.');
+        }
 
-        return back()
-            ->with('error', 'Cadet profile not found.');
-    }
+        /*
+        |--------------------------------------------------------------------------
+        | FIND DOCUMENT
+        |--------------------------------------------------------------------------
+        */
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | FIND DOCUMENT
-    |--------------------------------------------------------------------------
-    */
-
-    $document = Document::findOrFail(
-        $request->document_id
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | STORE FILE
-    |--------------------------------------------------------------------------
-    */
-
-    $path = $request
-        ->file('file')
-        ->store('requirements', 'public');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CREATE / UPDATE SUBMISSION
-    |--------------------------------------------------------------------------
-    */
-
-    $cadetDocument = CadetDocument::updateOrCreate(
-
-        [
-            'cadet_id' => $cadet->id,
-
-            'document_id' => $request->document_id,
-        ],
-
-        [
-            'file_path' => $path,
-
-            'status' => 'Submitted',
-
-            'remarks' => null,
-
-            'submitted_at' => now(),
-        ]
-    );
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | NOTIFY ADMINS
-    |--------------------------------------------------------------------------
-    */
-
-    $admins = User::whereIn(
-        'role',
-        [
-            'Admin',
-            'Super Admin',
-        ]
-    )->get();
-
-
-    foreach ($admins as $admin) {
-
-        $admin->notify(
-            new VerificationRequirementUploadedNotification(
-                $cadet,
-                $document
-            )
+        $document = Document::findOrFail(
+            $request->document_id
         );
 
-    }
+        /*
+        |--------------------------------------------------------------------------
+        | STORE FILE
+        |--------------------------------------------------------------------------
+        */
 
+        $path = $request
+            ->file('file')
+            ->store('requirements', 'public');
 
-    /*
-    |--------------------------------------------------------------------------
-    | SUCCESS
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE / UPDATE SUBMISSION
+        |--------------------------------------------------------------------------
+        */
 
-    return back()
-        ->with(
+        CadetDocument::updateOrCreate(
+            [
+                'cadet_id' => $cadet->id,
+                'document_id' => $request->document_id,
+            ],
+            [
+                'file_path' => $path,
+                'status' => 'Submitted',
+                'remarks' => null,
+                'submitted_at' => now(),
+            ]
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOTIFY ADMINS
+        |--------------------------------------------------------------------------
+        */
+
+        $admins = User::whereIn(
+            'role',
+            [
+                'Admin',
+                'Super Admin',
+            ]
+        )->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(
+                new VerificationRequirementUploadedNotification(
+                    $cadet,
+                    $document
+                )
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SUCCESS
+        |--------------------------------------------------------------------------
+        */
+
+        return back()->with(
             'success',
             'Requirement uploaded successfully.'
         );
-}
+    }
 }

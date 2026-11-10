@@ -36,6 +36,7 @@ use App\Http\Controllers\Admin\ShippedOnOrderController;
 use App\Http\Controllers\Admin\ForgotPasswordController;
 use App\Http\Controllers\Admin\AccountCredentialController;
 use App\Http\Controllers\Admin\CadetRequirementController;
+use App\Http\Controllers\Admin\CadetInsuranceController;
 
 // super admin
 use App\Http\Controllers\SuperAdmin\SuperAdminAuthController;
@@ -57,6 +58,7 @@ use App\Http\Controllers\Cadet\NotificationController as CadetNotificationContro
 use App\Http\Controllers\Cadet\OnboardRequirementController as CadetOnboardRequirementController;
 use App\Http\Controllers\Cadet\BSRequirementController as CadetBSController;
 use App\Http\Controllers\SuperAdmin\ShippedOnOrderController as SuperAdminShippedOnOrderController;
+use App\Http\Controllers\Cadet\InsuranceController as CadetInsuranceViewingController;
 
 // CHAT
 use App\Http\Controllers\ChatController;
@@ -225,6 +227,32 @@ Route::post(
         Route::post('/complaint-types/store', [ComplaintTypeController::class, 'store'])->name('complaint.types.store');
         Route::put('/complaint-types/update/{id}', [ComplaintTypeController::class, 'update'])->name('complaint.types.update');
         Route::delete('/complaint-types/delete/{id}', [ComplaintTypeController::class, 'destroy'])->name('complaint.types.delete');
+        
+        /*
+|--------------------------------------------------------------------------
+| CADET INSURANCE MANAGEMENT
+|--------------------------------------------------------------------------
+*/
+
+Route::post(
+    '/cadets/{cadet}/insurance',
+    [CadetInsuranceController::class, 'store']
+)->name('insurance.upload');
+
+Route::get(
+    '/cadets/{cadet}/insurance/view',
+    [CadetInsuranceController::class, 'view']
+)->name('insurance.view');
+
+Route::get(
+    '/cadets/{cadet}/insurance/download',
+    [CadetInsuranceController::class, 'download']
+)->name('insurance.download');
+
+Route::delete(
+    '/cadets/{cadet}/insurance',
+    [CadetInsuranceController::class, 'destroy']
+)->name('insurance.delete');
 
 });
 
@@ -428,6 +456,22 @@ Route::get('/obt-policies/download-pdf', [
     \App\Http\Controllers\Cadet\ObtPolicyController::class,
     'downloadPdf'
 ])->name('obt-policies.download-pdf');
+
+/*
+|--------------------------------------------------------------------------
+| CADET INSURANCE VIEWING
+|--------------------------------------------------------------------------
+*/
+
+Route::get(
+    '/insurance/view',
+    [CadetInsuranceViewingController::class, 'view']
+)->name('insurance.view');
+
+Route::get(
+    '/insurance/download',
+    [CadetInsuranceViewingController::class, 'download']
+)->name('insurance.download');
 
 
         Route::post('/update-location', [CadetController::class, 'updateLocation'])->name('update.location');

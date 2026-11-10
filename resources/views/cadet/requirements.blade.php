@@ -2146,6 +2146,211 @@
         </div>
 
     </div>
+{{-- =========================================================
+     INSURANCE DOCUMENT
+========================================================= --}}
+
+<div class="requirements-box insurance-cadet-box">
+
+    <div class="table-header">
+
+        <div class="table-title-area">
+
+            <h3>🛡️ Insurance Document</h3>
+
+            <p>
+                Your insurance document is provided and managed by the administrator.
+            </p>
+
+        </div>
+
+        @if($insurance)
+            <span class="status approved">
+                <span class="status-dot"></span>
+                Available
+            </span>
+        @else
+            <span class="status none">
+                <span class="status-dot"></span>
+                Not Yet Available
+            </span>
+        @endif
+
+    </div>
+
+    @if($insurance)
+
+        <div class="insurance-cadet-file">
+
+            <div class="insurance-cadet-icon">
+                📄
+            </div>
+
+            <div class="insurance-cadet-info">
+
+                <strong>
+                    {{ $insurance->original_name }}
+                </strong>
+
+                <small>
+                    Uploaded:
+                    {{ $insurance->created_at?->format('F d, Y') }}
+                </small>
+
+                <small>
+                    File size:
+                    {{ $insurance->file_size
+                        ? number_format($insurance->file_size / 1048576, 2).' MB'
+                        : 'Not available' }}
+                </small>
+
+            </div>
+
+            <div class="insurance-cadet-actions">
+
+                <a
+                    href="{{ route('cadet.insurance.view') }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn-view">
+
+                    👁 View Document
+
+                </a>
+
+                <a
+                    href="{{ route('cadet.insurance.download') }}"
+                    class="action-btn upload-btn">
+
+                    ⬇ Download
+
+                </a>
+
+            </div>
+
+        </div>
+
+    @else
+
+        <div class="insurance-cadet-empty">
+
+            <div class="insurance-cadet-empty-icon">
+                🛡️
+            </div>
+
+            <strong>
+                Insurance document not uploaded yet
+            </strong>
+
+            <span>
+                Your administrator will upload your insurance document.
+                Once available, you can view or download it here.
+            </span>
+
+        </div>
+
+    @endif
+
+</div>
+
+<style>
+.insurance-cadet-box {
+    margin-top: 22px;
+}
+
+.insurance-cadet-file {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    border: 1px solid rgba(96,165,250,.16);
+    border-radius: 14px;
+    background: rgba(37,99,235,.055);
+}
+
+.insurance-cadet-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: rgba(37,99,235,.17);
+    font-size: 23px;
+}
+
+.insurance-cadet-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.insurance-cadet-info strong,
+.insurance-cadet-info small {
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+.insurance-cadet-info strong {
+    color: #f8fafc;
+    font-size: 13px;
+}
+
+.insurance-cadet-info small {
+    margin-top: 5px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.insurance-cadet-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.insurance-cadet-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 18px;
+    text-align: center;
+    border: 1px dashed rgba(148,163,184,.20);
+    border-radius: 14px;
+    background: rgba(255,255,255,.02);
+}
+
+.insurance-cadet-empty-icon {
+    font-size: 30px;
+}
+
+.insurance-cadet-empty strong {
+    color: #e2e8f0;
+    font-size: 13px;
+}
+
+.insurance-cadet-empty span {
+    max-width: 450px;
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+@media(max-width: 650px) {
+    .insurance-cadet-file {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .insurance-cadet-actions {
+        width: 100%;
+    }
+
+    .insurance-cadet-actions a {
+        flex: 1;
+    }
+}
+</style>
 
 </div>
 
