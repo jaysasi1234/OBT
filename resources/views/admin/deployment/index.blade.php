@@ -542,6 +542,12 @@
                                 Disembarkation Date
                             </th>
 
+                            <th>IMO Number</th>
+
+                            <th>GRT</th>
+
+                            <th>KWH</th>
+
                             <th>
                                 Duration of Sea Service
                             </th>
@@ -975,6 +981,32 @@
 
                                 </td>
 
+                                {{-- IMO NUMBER --}}
+
+                                <td>
+                                    <span class="dm-cell-text">
+                                        {{ $deployment?->imo_number ?? '—' }}
+                                    </span>
+                                </td>
+
+
+                                {{-- GRT --}}
+
+                                <td>
+                                    <span class="dm-cell-text">
+                                        {{ $deployment?->grt ?? '—' }}
+                                    </span>
+                                </td>
+
+
+                                {{-- KWH --}}
+
+                                <td>
+                                    <span class="dm-cell-text">
+                                        {{ $deployment?->kwh ?? '—' }}
+                                    </span>
+                                </td>
+
 
                                 {{-- DURATION --}}
 
@@ -1103,7 +1135,7 @@
                             <tr>
 
                                 <td
-                                    colspan="15"
+                                    colspan="18"
                                     class="dm-empty"
                                 >
 
@@ -1513,6 +1545,63 @@
                     </div>
 
                 </div>
+
+                {{-- VESSEL PARTICULARS --}}
+
+<div class="dm-form-grid">
+
+    <div class="dm-form-group">
+
+        <label class="dm-form-label">
+            IMO Number
+        </label>
+
+        <input
+            type="text"
+            id="modalImoNumber"
+            class="dm-form-input"
+            placeholder="Enter IMO number"
+        >
+
+    </div>
+
+
+    <div class="dm-form-group">
+
+        <label class="dm-form-label">
+            GRT
+        </label>
+
+        <input
+            type="number"
+            id="modalGrt"
+            class="dm-form-input"
+            placeholder="Enter GRT"
+            min="0"
+            step="0.01"
+        >
+
+    </div>
+
+
+    <div class="dm-form-group">
+
+        <label class="dm-form-label">
+            KWH
+        </label>
+
+        <input
+            type="number"
+            id="modalKwh"
+            class="dm-form-input"
+            placeholder="Enter KWH"
+            min="0"
+            step="0.01"
+        >
+
+    </div>
+
+</div>
 
 
                 <div class="dm-divider"></div>
@@ -2790,6 +2879,18 @@ function openDeploymentModal(cadet) {
         "modalDisembarked"
     ).value = "";
 
+    document.getElementById(
+    "modalImoNumber"
+    ).value = "";
+
+    document.getElementById(
+        "modalGrt"
+    ).value = "";
+
+    document.getElementById(
+        "modalKwh"
+    ).value = "";
+
 
     document.getElementById(
         "modalSeaServiceDuration"
@@ -2899,6 +3000,21 @@ function openDeploymentModal(cadet) {
                     dep.date_disembarked
                 ).slice(0, 10)
                 : "";
+
+                document.getElementById(
+            "modalImoNumber"
+            ).value =
+                dep.imo_number ?? "";
+
+            document.getElementById(
+                "modalGrt"
+            ).value =
+                dep.grt ?? "";
+
+            document.getElementById(
+                "modalKwh"
+            ).value =
+                dep.kwh ?? "";
 
 
         calculateSeaServiceDuration();
@@ -3375,6 +3491,21 @@ function saveDeploymentChanges() {
                 date_disembarked:
                     document.getElementById(
                         "modalDisembarked"
+                    ).value,
+
+                    imo_number:
+                    document.getElementById(
+                        "modalImoNumber"
+                    ).value,
+
+                grt:
+                    document.getElementById(
+                        "modalGrt"
+                    ).value,
+
+                kwh:
+                    document.getElementById(
+                        "modalKwh"
                     ).value,
 
                 deployment_status:

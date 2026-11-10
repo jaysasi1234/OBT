@@ -600,6 +600,15 @@ public function index(Request $request)
                 'deployment_type' =>
                     $deployment->deployment_type,
 
+                'imo_number' =>
+                    $deployment->imo_number,
+
+                'grt' =>
+                    $deployment->grt,
+
+                'kwh' =>
+                    $deployment->kwh,
+
                 'embarkation_place' =>
                     $deployment->embarkation_place,
 
@@ -647,6 +656,16 @@ public function index(Request $request)
 
                 'deployment_type' =>
                     'required|in:Domestic,International',
+
+                    // NEW: VESSEL PARTICULARS
+                'imo_number' =>
+                    'nullable|string|max:50',
+
+                'grt' =>
+                    'nullable|numeric|min:0',
+
+                'kwh' =>
+                    'nullable|numeric|min:0',
 
                 'embarkation_place' =>
                     'nullable|string|max:255',
@@ -727,6 +746,16 @@ public function index(Request $request)
 
             $deployment->deployment_type =
                 $validated['deployment_type'];
+
+                // NEW: SAVE VESSEL PARTICULARS
+            $deployment->imo_number =
+                $validated['imo_number'] ?? null;
+
+            $deployment->grt =
+                $validated['grt'] ?? null;
+
+            $deployment->kwh =
+                $validated['kwh'] ?? null;
 
             $deployment->embarkation_place =
                 $validated['embarkation_place'] ?? null;

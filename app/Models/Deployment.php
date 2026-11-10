@@ -20,6 +20,9 @@ class Deployment extends Model
         'date_deployed',
         'disembarkation_place',
         'date_disembarked',
+        'imo_number',
+        'grt',
+        'kwh',
         'expected_completion',
         'notes',
     ];
