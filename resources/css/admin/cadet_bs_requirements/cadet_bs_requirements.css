@@ -1847,7 +1847,8 @@ body{
 
 .submission-datetime strong {
     font-size: 13px;
-    color: #1e293b;
+    color: #ffffff;
+    font-weight: 700;
 }
 
 .submission-datetime small {
