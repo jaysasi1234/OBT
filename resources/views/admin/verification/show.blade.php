@@ -236,7 +236,6 @@
         <th>Requirement</th>
         <th>Status</th>
         <th>Submission Date</th>
-        <th>Review Date</th>
         <th>File</th>
     </tr>
 </thead>
@@ -274,32 +273,10 @@
         {{ $doc->name ?? 'Unnamed Requirement' }}
     </td>
 
-    <td>
-        <span class="status {{ $statusClass }}">
-            {{ $status }}
-        </span>
-    </td>
-
-    {{-- SUBMISSION TIMESTAMP --}}
-    <td>
-        @if($doc->pivot->submitted_at)
-            {{ \Carbon\Carbon::parse($doc->pivot->submitted_at)->format('M d, Y h:i A') }}
-        @else
-            <span class="text-muted">Not submitted</span>
-        @endif
-    </td>
-
-
-{{-- REVIEW TIMESTAMP --}}
 <td>
-    @if($doc->pivot->reviewed_at)
-        <div>
-            Reviewed:
-            {{ \Carbon\Carbon::parse($doc->pivot->reviewed_at)->format('M d, Y h:i A') }}
-        </div>
-    @else
-        <span class="text-muted">Not reviewed</span>
-    @endif
+    <span class="status {{ $statusClass }}">
+        {{ $status }}
+    </span>
 
     @if($doc->pivot->approved_at)
         <div>
@@ -320,6 +297,14 @@
     @endif
 </td>
 
+    {{-- SUBMISSION TIMESTAMP --}}
+    <td>
+        @if($doc->pivot->submitted_at)
+            {{ \Carbon\Carbon::parse($doc->pivot->submitted_at)->format('M d, Y h:i A') }}
+        @else
+            <span class="text-muted">Not submitted</span>
+        @endif
+    </td>
 
     <td>
 
@@ -369,7 +354,7 @@
                             <tr>
 
                                 <td
-                                    colspan="5"
+                                    colspan="4"
                                     style="
                                         text-align:center;
                                         padding:30px;
