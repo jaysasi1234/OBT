@@ -295,6 +295,42 @@ public function index(Request $request)
     );
 }
 
+
+
+// =========================================================
+// SHOW CADET ONBOARD REQUIREMENTS CHECKLIST
+// =========================================================
+
+public function show(Cadet $cadet)
+{
+    $cadet->load([
+        'onboardRequirements.requirement'
+    ]);
+
+    return response()->json([
+        'id' => $cadet->id,
+        'full_name' => $cadet->full_name,
+
+        'onboard_requirements' => $cadet->onboardRequirements
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'status' => $item->status,
+                    'attachment' => $item->attachment,
+                    'submitted_at' => $item->submitted_at,
+                    'approved_at' => $item->approved_at,
+                    'remarks' => $item->remarks,
+
+                    'requirement' => $item->requirement ? [
+                        'title' => $item->requirement->title,
+                        'frequency' => $item->requirement->frequency,
+                    ] : null,
+                ];
+            })
+            ->values(),
+    ]);
+}
+
 // =========================================================
 // APPROVE ALL ONBOARD REQUIREMENTS AS LEGACY
 // =========================================================
