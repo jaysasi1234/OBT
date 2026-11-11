@@ -146,78 +146,88 @@
         </div>
 
 
-        {{-- =================================================
-             FILTERS
-        ================================================== --}}
 
-        <div class="credentials-filters">
+{{-- =================================================
+     SERVER-SIDE FILTERS
+================================================== --}}
 
-            <div class="filter-group">
+<form
+    method="GET"
+    action="{{ route('admin.settings.account-credentials') }}"
+    class="credentials-filters"
+    id="credentialsFiltersForm">
 
-                <label
-                    for="accountSearch"
-                    class="filter-label">
+    <div class="filter-group">
 
-                    Search Account
+        <label for="accountSearch" class="filter-label">
+            Search Account
+        </label>
 
-                </label>
+        <input
+            type="text"
+            id="accountSearch"
+            name="search"
+            class="filter-input"
+            value="{{ $search }}"
+            placeholder="Search name, username, or email...">
 
-                <input
-                    type="text"
-                    id="accountSearch"
-                    class="filter-input"
-                    placeholder="Search name, username, or email...">
+    </div>
 
-            </div>
+    <div class="filter-group">
 
+        <label for="batchFilter" class="filter-label">
+            Batch
+        </label>
 
-            <div class="filter-group">
+        <select
+            id="batchFilter"
+            name="batch_id"
+            class="filter-select">
 
-                <label
-                    for="batchFilter"
-                    class="filter-label">
+            <option value="">
+                All Batches
+            </option>
 
-                    Batch
+            @foreach($batches as $batch)
 
-                </label>
+                <option
+                    value="{{ $batch->id }}"
+                    {{ (string) $batchId === (string) $batch->id ? 'selected' : '' }}>
 
-                    <select
-                        id="batchFilter"
-                        class="filter-select">
+                    {{ $batch->batch_year }}
 
-                        <option value="">
-                            All Batches
-                        </option>
+                </option>
 
-                        @foreach($batches as $batch)
+            @endforeach
 
-                            <option value="{{ strtolower($batch->batch_year) }}">
-                                {{ $batch->batch_year }}
-                            </option>
+        </select>
 
-                        @endforeach
+    </div>
 
-                    </select>
+    <div class="filter-actions">
 
-            </div>
+        <button
+            type="submit"
+            class="clear-filter-btn">
 
+            <i class="bi bi-search"></i>
+            Search
 
-            <div class="filter-actions">
+        </button>
 
-                <button
-                    type="button"
-                    class="clear-filter-btn"
-                    onclick="clearCredentialFilters()">
+        <a
+            href="{{ route('admin.settings.account-credentials') }}"
+            class="clear-filter-btn">
 
-                    <i class="bi bi-arrow-counterclockwise"></i>
+            <i class="bi bi-arrow-counterclockwise"></i>
+            Clear Filters
 
-                    Clear Filters
+        </a>
 
-                </button>
+    </div>
 
-            </div>
+</form>
 
-        </div>
 
 
         {{-- =================================================
@@ -365,7 +375,7 @@
                         {{-- NUMBER --}}
 
                         <td>
-                            {{ $index + 1 }}
+                            {{ $users->firstItem() + $index }}
                         </td>
 
 
@@ -772,6 +782,9 @@ const searchInput =
 const batchFilter =
     document.getElementById('batchFilter');
 
+const filtersForm =
+    document.getElementById('credentialsFiltersForm');
+
 const tableBody =
     document.getElementById('credentialsTableBody');
 
@@ -954,104 +967,14 @@ function updateSelectAllState()
 
 
 /* =========================================================
-   FILTER ACCOUNTS
+   SERVER-SIDE FILTER SUBMISSION
 ========================================================= */
 
-function filterAccounts()
-{
-    const search =
-        (
-            searchInput?.value || ''
-        )
-        .trim()
-        .toLowerCase();
+if (batchFilter && filtersForm) {
 
-
-    const batch =
-        batchFilter?.value || '';
-
-
-    let visibleCount = 0;
-
-
-    getAccountRows().forEach(
-        row => {
-
-            const rowSearch =
-                (
-                    row.dataset.search || ''
-                ).toLowerCase();
-
-
-            const rowBatch =
-                (row.dataset.batch || '').toLowerCase().trim();
-
-
-            const searchMatch =
-                !search ||
-                rowSearch.includes(search);
-
-
-            const batchMatch =
-                !batch ||
-                rowBatch === batch;
-
-
-            const visible =
-                searchMatch &&
-                batchMatch;
-
-
-            row.classList.toggle(
-                'filter-hidden',
-                !visible
-            );
-
-
-            if (visible) {
-                visibleCount++;
-            }
-
-        }
-    );
-
-
-    if (visibleCountElement) {
-
-        visibleCountElement.textContent =
-            visibleCount;
-
-    }
-
-
-    updateSelectAllState();
-}
-
-
-/* =========================================================
-   SEARCH EVENT
-========================================================= */
-
-if (searchInput) {
-
-    searchInput.addEventListener(
-        'input',
-        filterAccounts
-    );
-
-}
-
-
-/* =========================================================
-   BATCH FILTER EVENT
-========================================================= */
-
-if (batchFilter) {
-
-    batchFilter.addEventListener(
-        'change',
-        filterAccounts
-    );
+    batchFilter.addEventListener('change', function () {
+        filtersForm.requestSubmit();
+    });
 
 }
 
@@ -1196,27 +1119,6 @@ function clearAccountSelection()
     updateSelectionUI();
 }
 
-
-/* =========================================================
-   CLEAR FILTERS
-========================================================= */
-
-function clearCredentialFilters()
-{
-    if (searchInput) {
-
-        searchInput.value = '';
-
-    }
-
-    if (batchFilter) {
-
-        batchFilter.value = '';
-
-    }
-
-    filterAccounts();
-}
 
 
 /* =========================================================
@@ -1578,8 +1480,6 @@ document.addEventListener(
 document.addEventListener(
     'DOMContentLoaded',
     function() {
-
-        filterAccounts();
 
         updateSelectionUI();
 

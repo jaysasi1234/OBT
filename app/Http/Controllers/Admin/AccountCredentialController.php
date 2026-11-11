@@ -18,77 +18,53 @@ class AccountCredentialController extends Controller
      * ACCOUNT CREDENTIALS PAGE
      * =========================================================
      */
-    public function index(Request $request)
-    {
-        $search = trim($request->input('search', ''));
-        $batchId = $request->input('batch_id');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Batches
-        |--------------------------------------------------------------------------
-        */
+public function index(Request $request)
+{
+    $search = trim($request->input('search', ''));
+    $batchId = $request->input('batch_id');
 
-        $batches = Batch::query()
-            ->orderByDesc('id')
-            ->get();
+    // Load available batches for the filter.
+    $batches = Batch::query()
+        ->orderByDesc('batch_year')
+        ->get();
 
+    // Retrieve all Cadet accounts, including those without a linked profile.
+    $users = User::query()
+        ->where('role', 'cadet')
+        ->with(['cadet.batch'])
 
-        /*
-        |--------------------------------------------------------------------------
-        | Accounts
-        |--------------------------------------------------------------------------
-        */
-$users = User::query()
-    ->with([
-        'cadet.batch'
-    ])
-    ->when($search !== '', function ($query) use ($search) {
-        $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%")
-                ->orWhere('username', 'like', "%{$search}%")
-                ->orWhere('email', 'like', "%{$search}%");
-        });
-    })
-    ->when($batchId, function ($query) use ($batchId) {
-        $query->whereHas('cadet', function ($q) use ($batchId) {
-            $q->where('batch_id', $batchId);
-        });
-    })
-    ->orderByRaw('LOWER(name) ASC')
-    ->orderBy('id', 'ASC')
-    ->paginate(25)
-    ->withQueryString();
+        // Search across all Cadet accounts in the database.
+        ->when($search !== '', function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhereHas('cadet', function ($cadetQuery) use ($search) {
+                        $cadetQuery->where('full_name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+            });
+        })
 
-        /*
-        |--------------------------------------------------------------------------
-        | Add batch information for Blade
-        |--------------------------------------------------------------------------
-        */
+        // Filter using the actual batch ID.
+        ->when($batchId !== null && $batchId !== '', function ($query) use ($batchId) {
+            $query->whereHas('cadet', function ($q) use ($batchId) {
+                $q->where('batch_id', $batchId);
+            });
+        })
 
-        $users->each(function ($user) {
+        ->orderByRaw('LOWER(name) ASC')
+        ->orderBy('id')
+        ->paginate(25)
+        ->withQueryString();
 
-            $user->batch_id =
-                $user->cadet?->batch?->id;
+    return view(
+        'admin.settings.account-credentials',
+        compact('users', 'batches', 'search', 'batchId')
+    );
+}
 
-            $user->batch_name =
-                $user->cadet?->batch?->name
-                ?? $user->cadet?->batch?->batch_name
-                ?? $user->cadet?->batch?->year
-                ?? null;
-        });
-
-
-        return view(
-            'admin.settings.account-credentials',
-            compact(
-                'users',
-                'batches',
-                'search',
-                'batchId'
-            )
-        );
-    }
 
 
     /**
