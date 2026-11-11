@@ -4,11 +4,6 @@
 @endphp
 
 <style>
-/* =========================================================
-   SHIPPING COMPANY FORM
-   MATCHED TO VERIFICATION MONITORING DARK NAVY THEME
-   ========================================================= */
-
 .shipping-form {
     background: #0d1940;
     border: 1px solid #203858;
@@ -32,7 +27,8 @@
 
 .shipping-form input[type="text"],
 .shipping-form input[type="file"],
-.shipping-form select {
+.shipping-form select,
+.shipping-form textarea {
     width: 100%;
     padding: 12px 14px;
     border: 1px solid #294365;
@@ -44,10 +40,22 @@
     transition: .2s ease;
 }
 
+.shipping-form textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
 .shipping-form input:focus,
-.shipping-form select:focus {
+.shipping-form select:focus,
+.shipping-form textarea:focus {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
+}
+
+.shipping-form input::placeholder,
+.shipping-form textarea::placeholder {
+    color: #8495ad;
 }
 
 .shipping-form select option {
@@ -157,6 +165,7 @@
 
 <div class="shipping-form">
 
+    {{-- COMPANY NAME --}}
     <div class="form-group">
         <label for="company_name">
             Shipping Company Name
@@ -178,6 +187,53 @@
         @enderror
     </div>
 
+    {{-- COMPANY INFORMATION --}}
+    <div class="form-group">
+        <label for="company_information">
+            Company Information
+        </label>
+
+        <textarea
+            id="company_information"
+            name="company_information"
+            rows="5"
+            maxlength="5000"
+            placeholder="Enter a brief description or background of the shipping company..."
+        >{{ old('company_information', $company?->company_information) }}</textarea>
+
+        <span class="help-text">
+            Provide a brief overview of the shipping company.
+        </span>
+
+        @error('company_information')
+            <div class="field-error">{{ $message }}</div>
+        @enderror
+    </div>
+
+    {{-- COMPANY ADDRESS --}}
+    <div class="form-group">
+        <label for="company_address">
+            Company Address
+        </label>
+
+        <textarea
+            id="company_address"
+            name="company_address"
+            rows="3"
+            maxlength="2000"
+            placeholder="Enter the complete company address..."
+        >{{ old('company_address', $company?->company_address) }}</textarea>
+
+        <span class="help-text">
+            Enter the complete business address of the shipping company.
+        </span>
+
+        @error('company_address')
+            <div class="field-error">{{ $message }}</div>
+        @enderror
+    </div>
+
+    {{-- COMPANY LOGO --}}
     <div class="form-group">
         <label for="logo">Company Logo</label>
 
@@ -210,6 +266,7 @@
         @enderror
     </div>
 
+    {{-- ACCREDITATION STATUS --}}
     <div class="form-group">
         <label for="is_accredited">
             Accreditation Status
@@ -217,7 +274,6 @@
         </label>
 
         <select id="is_accredited" name="is_accredited" required>
-
             <option value="1"
                 {{ (string) old('is_accredited', $company ? (int) $company->is_accredited : 1) === '1' ? 'selected' : '' }}>
                 Accredited
@@ -227,7 +283,6 @@
                 {{ (string) old('is_accredited', $company ? (int) $company->is_accredited : 1) === '0' ? 'selected' : '' }}>
                 Not Accredited
             </option>
-
         </select>
 
         <span class="help-text">
@@ -239,8 +294,8 @@
         @enderror
     </div>
 
+    {{-- FORM ACTIONS --}}
     <div class="form-actions">
-
         <button type="submit" class="save-btn">
             <i class="fas fa-save"></i>
             {{ $buttonText }}
@@ -253,7 +308,6 @@
             <i class="fas fa-times"></i>
             Cancel
         </a>
-
     </div>
 
 </div>

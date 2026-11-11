@@ -10,18 +10,11 @@ use Illuminate\Validation\Rule;
 
 class ShippingCompanyController extends Controller
 {
-    /**
-     * Display all shipping companies.
-     */
     public function index(Request $request)
     {
         $companies = ShippingCompany::query()
             ->when($request->filled('search'), function ($query) use ($request) {
-                $query->where(
-                    'company_name',
-                    'like',
-                    '%' . $request->search . '%'
-                );
+                $query->where('company_name', 'like', '%' . $request->search . '%');
             })
             ->when($request->filled('status'), function ($query) use ($request) {
                 if ($request->status === 'accredited') {
@@ -46,17 +39,11 @@ class ShippingCompanyController extends Controller
         ));
     }
 
-    /**
-     * Show the create form.
-     */
     public function create()
     {
         return view('admin.shipping-companies.create');
     }
 
-    /**
-     * Store a new shipping company.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -65,6 +52,16 @@ class ShippingCompanyController extends Controller
                 'string',
                 'max:255',
                 'unique:shipping_companies,company_name',
+            ],
+            'company_information' => [
+                'nullable',
+                'string',
+                'max:5000',
+            ],
+            'company_address' => [
+                'nullable',
+                'string',
+                'max:2000',
             ],
             'logo' => [
                 'nullable',
@@ -87,6 +84,8 @@ class ShippingCompanyController extends Controller
 
         ShippingCompany::create([
             'company_name' => $validated['company_name'],
+            'company_information' => $validated['company_information'] ?? null,
+            'company_address' => $validated['company_address'] ?? null,
             'logo_path' => $logoPath,
             'is_accredited' => $validated['is_accredited'],
         ]);
@@ -96,9 +95,6 @@ class ShippingCompanyController extends Controller
             ->with('success', 'Shipping company added successfully.');
     }
 
-    /**
-     * Display a company.
-     */
     public function show(ShippingCompany $shippingCompany)
     {
         return redirect()->route(
@@ -107,17 +103,11 @@ class ShippingCompanyController extends Controller
         );
     }
 
-    /**
-     * Show the edit form.
-     */
     public function edit(ShippingCompany $shippingCompany)
     {
         return view('admin.shipping-companies.edit', compact('shippingCompany'));
     }
 
-    /**
-     * Update a shipping company.
-     */
     public function update(Request $request, ShippingCompany $shippingCompany)
     {
         $validated = $request->validate([
@@ -127,6 +117,16 @@ class ShippingCompanyController extends Controller
                 'max:255',
                 Rule::unique('shipping_companies', 'company_name')
                     ->ignore($shippingCompany->id),
+            ],
+            'company_information' => [
+                'nullable',
+                'string',
+                'max:5000',
+            ],
+            'company_address' => [
+                'nullable',
+                'string',
+                'max:2000',
             ],
             'logo' => [
                 'nullable',
@@ -153,6 +153,8 @@ class ShippingCompanyController extends Controller
 
         $shippingCompany->update([
             'company_name' => $validated['company_name'],
+            'company_information' => $validated['company_information'] ?? null,
+            'company_address' => $validated['company_address'] ?? null,
             'logo_path' => $logoPath,
             'is_accredited' => $validated['is_accredited'],
         ]);
@@ -162,9 +164,6 @@ class ShippingCompanyController extends Controller
             ->with('success', 'Shipping company updated successfully.');
     }
 
-    /**
-     * Delete a shipping company.
-     */
     public function destroy(ShippingCompany $shippingCompany)
     {
         if ($shippingCompany->logo_path) {

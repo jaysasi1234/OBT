@@ -4,10 +4,9 @@
 @section('content')
 
 <style>
-
 /* =========================================================
    ACCREDITED SHIPPING COMPANIES
-   MATCHED TO CADET INSURANCE MANAGEMENT DARK NAVY THEME
+   DARK NAVY ADMIN THEME
 ========================================================= */
 
 .shipping-admin {
@@ -333,6 +332,17 @@
     transition: .2s ease;
 }
 
+.shipping-admin .details-btn {
+    background: rgba(14, 165, 233, .15);
+    border-color: rgba(56, 189, 248, .25);
+    color: #7dd3fc;
+}
+
+.shipping-admin .details-btn:hover {
+    background: #0284c7;
+    color: #fff;
+}
+
 .shipping-admin .edit-btn {
     background: rgba(37, 99, 235, .20);
     border-color: rgba(96, 165, 250, .25);
@@ -353,6 +363,131 @@
 .shipping-admin .delete-btn:hover {
     background: #b91c1c;
     color: #fff;
+}
+
+/* COMPANY DETAILS MODAL */
+
+.shipping-admin .company-modal {
+    width: min(560px, calc(100% - 30px));
+    max-height: 85vh;
+    padding: 0;
+    overflow: auto;
+    border: 1px solid #294365;
+    border-radius: 16px;
+    background: #0d1940;
+    color: #e2e8f0;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .5);
+}
+
+.shipping-admin .company-modal::backdrop {
+    background: rgba(2, 8, 23, .8);
+    backdrop-filter: blur(4px);
+}
+
+.shipping-admin .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, .15);
+}
+
+.shipping-admin .modal-header h3 {
+    margin: 0;
+    color: #f1f5f9;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.shipping-admin .modal-close {
+    width: 34px;
+    height: 34px;
+    border: 1px solid #294365;
+    border-radius: 8px;
+    background: #172b4d;
+    color: #cbd5e1;
+    cursor: pointer;
+}
+
+.shipping-admin .modal-body {
+    padding: 22px;
+}
+
+.shipping-admin .modal-company-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 95px;
+    height: 95px;
+    margin: 0 auto 14px;
+    padding: 8px;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.shipping-admin .modal-company-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.shipping-admin .modal-company-logo i {
+    color: #2563eb;
+    font-size: 38px;
+}
+
+.shipping-admin .modal-company-name {
+    margin-bottom: 20px;
+    color: #f1f5f9;
+    text-align: center;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.shipping-admin .detail-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid rgba(96, 165, 250, .17);
+    border-radius: 10px;
+    background: rgba(7, 21, 47, .55);
+}
+
+.shipping-admin .detail-item strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #93c5fd;
+    font-size: 12px;
+}
+
+.shipping-admin .detail-item p {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+.shipping-admin .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 20px;
+    border-top: 1px solid rgba(148, 163, 184, .15);
+}
+
+.shipping-admin .modal-footer button {
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 8px;
+    background: #263b59;
+    color: #dbeafe;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.shipping-admin .modal-footer button:hover {
+    background: #344d70;
 }
 
 /* EMPTY STATE */
@@ -450,9 +585,18 @@
     .shipping-admin .pagination-area {
         overflow-x: auto;
     }
+
+    .shipping-admin .company-modal {
+        max-height: 90vh;
+    }
+
+    .shipping-admin .modal-body {
+        padding: 16px;
+    }
 }
 
-/* Dark page background */
+/* DARK PAGE BACKGROUND */
+
 body:has(.shipping-admin) {
     background: #07152f !important;
 }
@@ -461,11 +605,11 @@ body:has(.shipping-admin) {
 .admin-main:has(.shipping-admin) {
     background: #07152f !important;
 }
-
 </style>
 
 <div class="shipping-admin">
 
+    {{-- PAGE HEADER --}}
     <div class="page-heading">
         <div>
             <h2><i class="fas fa-ship"></i> Accredited Shipping Companies</h2>
@@ -477,6 +621,7 @@ body:has(.shipping-admin) {
         </a>
     </div>
 
+    {{-- SUCCESS MESSAGE --}}
     @if(session('success'))
         <div class="alert-success">
             <i class="fas fa-check-circle"></i>
@@ -484,7 +629,9 @@ body:has(.shipping-admin) {
         </div>
     @endif
 
+    {{-- STATISTICS --}}
     <div class="stats-grid">
+
         <div class="stat-card">
             <i class="fas fa-building"></i>
             <span>Total Companies</span>
@@ -502,14 +649,17 @@ body:has(.shipping-admin) {
             <span>Not Accredited</span>
             <strong>{{ $notAccreditedCompanies }}</strong>
         </div>
+
     </div>
 
+    {{-- COMPANY RECORDS --}}
     <div class="panel">
 
         <div class="panel-header">
             <h3><i class="fas fa-list"></i> Company Records</h3>
         </div>
 
+        {{-- SEARCH AND FILTERS --}}
         <form method="GET"
               action="{{ route('admin.shipping-companies.index') }}"
               class="filters">
@@ -523,9 +673,11 @@ body:has(.shipping-admin) {
 
             <select name="status">
                 <option value="">All Accreditation Status</option>
+
                 <option value="accredited" {{ request('status') === 'accredited' ? 'selected' : '' }}>
                     Accredited
                 </option>
+
                 <option value="not_accredited" {{ request('status') === 'not_accredited' ? 'selected' : '' }}>
                     Not Accredited
                 </option>
@@ -538,9 +690,12 @@ body:has(.shipping-admin) {
             <a href="{{ route('admin.shipping-companies.index') }}" class="reset-btn">
                 <i class="fas fa-rotate-left"></i> Reset
             </a>
+
         </form>
 
+        {{-- TABLE --}}
         <div class="table-wrap">
+
             <table>
                 <thead>
                     <tr>
@@ -553,17 +708,21 @@ body:has(.shipping-admin) {
                 </thead>
 
                 <tbody>
+
                     @forelse($companies as $company)
+
                         <tr>
                             <td>{{ $companies->firstItem() + $loop->index }}</td>
 
+                            {{-- COMPANY NAME AND LOGO --}}
                             <td>
                                 <div class="company-info">
+
                                     <div class="company-logo">
                                         @if($company->logo_path)
                                             <img
                                                 src="{{ asset('storage/' . $company->logo_path) }}"
-                                                alt="Company logo"
+                                                alt="{{ $company->company_name }} logo"
                                             >
                                         @else
                                             <i class="fas fa-ship"></i>
@@ -573,25 +732,45 @@ body:has(.shipping-admin) {
                                     <span class="company-name">
                                         {{ $company->company_name }}
                                     </span>
+
                                 </div>
                             </td>
 
+                            {{-- ACCREDITATION STATUS --}}
                             <td>
                                 @if($company->is_accredited)
                                     <span class="status accredited">
-                                        <i class="fas fa-check-circle"></i> Accredited
+                                        <i class="fas fa-check-circle"></i>
+                                        Accredited
                                     </span>
                                 @else
                                     <span class="status not-accredited">
-                                        <i class="fas fa-times-circle"></i> Not Accredited
+                                        <i class="fas fa-times-circle"></i>
+                                        Not Accredited
                                     </span>
                                 @endif
                             </td>
 
-                            <td>{{ $company->created_at->format('M d, Y') }}</td>
+                            {{-- DATE ADDED --}}
+                            <td>
+                                {{ $company->created_at?->format('M d, Y') ?? 'N/A' }}
+                            </td>
 
+                            {{-- ACTIONS --}}
                             <td>
                                 <div class="actions">
+
+                                    {{-- VIEW DETAILS --}}
+                                    <button
+                                        type="button"
+                                        class="action-btn details-btn"
+                                        title="View Company Details"
+                                        onclick="document.getElementById('companyDetails{{ $company->id }}').showModal()"
+                                    >
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+
+                                    {{-- EDIT --}}
                                     <a
                                         href="{{ route('admin.shipping-companies.edit', $company->id) }}"
                                         class="action-btn edit-btn"
@@ -600,6 +779,7 @@ body:has(.shipping-admin) {
                                         <i class="fas fa-pen"></i>
                                     </a>
 
+                                    {{-- DELETE --}}
                                     <form
                                         action="{{ route('admin.shipping-companies.destroy', $company->id) }}"
                                         method="POST"
@@ -608,14 +788,21 @@ body:has(.shipping-admin) {
                                         @csrf
                                         @method('DELETE')
 
-                                        <button type="submit" class="action-btn delete-btn" title="Delete">
+                                        <button
+                                            type="submit"
+                                            class="action-btn delete-btn"
+                                            title="Delete"
+                                        >
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
+
                                 </div>
                             </td>
                         </tr>
+
                     @empty
+
                         <tr>
                             <td colspan="5">
                                 <div class="empty-state">
@@ -625,16 +812,134 @@ body:has(.shipping-admin) {
                                 </div>
                             </td>
                         </tr>
+
                     @endforelse
+
                 </tbody>
             </table>
+
         </div>
 
+        {{-- COMPANY DETAILS MODALS --}}
+        @foreach($companies as $company)
+
+            <dialog
+                class="company-modal"
+                id="companyDetails{{ $company->id }}"
+            >
+
+                <div class="modal-header">
+
+                    <h3>
+                        <i class="fas fa-building"></i>
+                        Company Details
+                    </h3>
+
+                    <button
+                        type="button"
+                        class="modal-close"
+                        onclick="this.closest('dialog').close()"
+                        aria-label="Close"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    {{-- COMPANY LOGO --}}
+                    <div class="modal-company-logo">
+
+                        @if($company->logo_path)
+                            <img
+                                src="{{ asset('storage/' . $company->logo_path) }}"
+                                alt="{{ $company->company_name }} logo"
+                            >
+                        @else
+                            <i class="fas fa-ship"></i>
+                        @endif
+
+                    </div>
+
+                    {{-- COMPANY NAME --}}
+                    <div class="modal-company-name">
+                        {{ $company->company_name }}
+                    </div>
+
+                    {{-- COMPANY INFORMATION --}}
+                    <div class="detail-item">
+
+                        <strong>
+                            <i class="fas fa-info-circle"></i>
+                            Company Information
+                        </strong>
+
+                        <p>{{ $company->company_information ?: 'No company information has been provided.' }}</p>
+
+                    </div>
+
+                    {{-- COMPANY ADDRESS --}}
+                    <div class="detail-item">
+
+                        <strong>
+                            <i class="fas fa-map-marker-alt"></i>
+                            Company Address
+                        </strong>
+
+                        <p>{{ $company->company_address ?: 'No company address has been provided.' }}</p>
+
+                    </div>
+
+                    {{-- ACCREDITATION STATUS --}}
+                    <div class="detail-item">
+
+                        <strong>
+                            <i class="fas fa-certificate"></i>
+                            Accreditation Status
+                        </strong>
+
+                        <p>
+                            @if($company->is_accredited)
+                                <span class="status accredited">
+                                    <i class="fas fa-check-circle"></i>
+                                    Accredited
+                                </span>
+                            @else
+                                <span class="status not-accredited">
+                                    <i class="fas fa-times-circle"></i>
+                                    Not Accredited
+                                </span>
+                            @endif
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        onclick="this.closest('dialog').close()"
+                    >
+                        <i class="fas fa-times"></i>
+                        Close
+                    </button>
+
+                </div>
+
+            </dialog>
+
+        @endforeach
+
+        {{-- PAGINATION --}}
         <div class="pagination-area">
             {{ $companies->links() }}
         </div>
 
     </div>
+
 </div>
 
 @endsection

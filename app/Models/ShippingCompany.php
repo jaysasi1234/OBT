@@ -8,6 +8,8 @@ class ShippingCompany extends Model
 {
     protected $fillable = [
         'company_name',
+        'company_information',
+        'company_address',
         'logo_path',
         'is_accredited',
     ];
