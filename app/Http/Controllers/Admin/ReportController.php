@@ -980,6 +980,155 @@ private function buildDeploymentSummary($cadets)
     }
 
 
+
+/* =========================================================
+   GENERATED REMARKS REPORT
+========================================================= */
+
+public function remarksReport(Request $request)
+{
+    $query = $this->remarksReportQuery($request);
+
+    // SUMMARY COUNTS BASED ON SEARCH AND OTHER FILTERS
+    $total = (clone $query)->count();
+
+    $withRemarks = (clone $query)
+        ->whereNotNull('remarks')
+        ->where('remarks', '!=', '')
+        ->count();
+
+    $noRemarks = (clone $query)
+        ->where(function ($q) {
+            $q->whereNull('remarks')
+              ->orWhere('remarks', '');
+        })
+        ->count();
+
+    // FILTER BY REMARKS AVAILABILITY
+    $reportQuery = clone $query;
+
+    if ($request->remarks_status === 'with') {
+        $reportQuery->whereNotNull('remarks')
+            ->where('remarks', '!=', '');
+    }
+
+    if ($request->remarks_status === 'without') {
+        $reportQuery->where(function ($q) {
+            $q->whereNull('remarks')
+              ->orWhere('remarks', '');
+        });
+    }
+
+    // PAGINATION
+    $cadets = $reportQuery
+        ->orderBy('full_name')
+        ->paginate(25)
+        ->withQueryString();
+
+    // FILTER OPTIONS
+    $courses = Cadet::select('course')
+        ->whereNotNull('course')
+        ->distinct()
+        ->orderBy('course')
+        ->pluck('course');
+
+    $batches = Batch::orderBy('batch_year', 'desc')->get();
+
+    $years = Cadet::whereNotNull('remarks_year')
+        ->distinct()
+        ->orderByDesc('remarks_year')
+        ->pluck('remarks_year');
+
+    return view('admin.reports.remarks', compact(
+        'cadets',
+        'total',
+        'withRemarks',
+        'noRemarks',
+        'courses',
+        'batches',
+        'years'
+    ));
+}
+
+
+/* =========================================================
+   REMARKS REPORT QUERY
+========================================================= */
+
+private function remarksReportQuery(Request $request)
+{
+    $query = Cadet::with('batch');
+
+    // SEARCH
+    if ($request->filled('search')) {
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('full_name', 'like', "%{$search}%")
+              ->orWhere('trb_control_number', 'like', "%{$search}%");
+        });
+    }
+
+    // COURSE
+    if ($request->filled('course')) {
+        $query->where('course', $request->course);
+    }
+
+    // BATCH
+    if ($request->filled('batch')) {
+        $query->where('batch_id', $request->batch);
+    }
+
+    // MONTH
+    if ($request->filled('month')) {
+        $query->where('remarks_month', $request->month);
+    }
+
+    // YEAR
+    if ($request->filled('year')) {
+        $query->where('remarks_year', $request->year);
+    }
+
+    return $query;
+}
+
+
+/* =========================================================
+   GENERATE REMARKS PDF
+========================================================= */
+
+public function remarksReportPdf(Request $request)
+{
+    $query = $this->remarksReportQuery($request);
+
+    // REMARKS STATUS FILTER
+    if ($request->remarks_status === 'with') {
+        $query->whereNotNull('remarks')
+            ->where('remarks', '!=', '');
+    }
+
+    if ($request->remarks_status === 'without') {
+        $query->where(function ($q) {
+            $q->whereNull('remarks')
+              ->orWhere('remarks', '');
+        });
+    }
+
+    $cadets = $query
+        ->orderBy('full_name')
+        ->get();
+
+    $pdf = Pdf::loadView(
+        'admin.reports.pdf.remarks_pdf',
+        compact('cadets')
+    )->setPaper('A4', 'landscape');
+
+    return $pdf->download(
+        'Generated_Remarks_Report_' . now()->format('Ymd_His') . '.pdf'
+    );
+}
+
+
     /* =========================
        CSV EXPORT
     ========================= */

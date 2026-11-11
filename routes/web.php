@@ -190,6 +190,18 @@ Route::post(
         Route::get('/reports/deployment', [ReportController::class, 'deployment'])->name('reports.deployment');
         Route::get('/reports/verification',[ReportController::class, 'verification'])->name('reports.verification');
         Route::get('/reports/complaint', [ReportController::class, 'complaint'])->name('reports.complaint');
+
+// GENERATED REMARKS REPORT
+Route::get(
+    '/reports/remarks',
+    [ReportController::class, 'remarksReport']
+)->name('reports.remarks');
+
+Route::get(
+    '/reports/remarks/pdf',
+    [ReportController::class, 'remarksReportPdf']
+)->name('reports.remarks.pdf');
+
         Route::put('/deployment/{cadet}', [DeploymentController::class, 'update'])->name('deployment.update');
         Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
 

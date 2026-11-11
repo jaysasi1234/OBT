@@ -137,6 +137,37 @@
 
             </div>
 
+
+
+            <!-- =================================================
+                GENERATED REMARKS REPORT
+            ================================================== -->
+
+            <div
+                class="report-item"
+                onclick="window.location.href='{{ route('admin.reports.remarks') }}'"
+            >
+
+                <div class="icon">
+                    📋
+                </div>
+
+                <div>
+
+                    <div class="report-title">
+                        Generated Remarks Report
+                    </div>
+
+                    <small>
+                        Generate and review cadet remarks with reporting
+                        dates and admin tracking information.
+                    </small>
+
+                </div>
+
+            </div>
+
+
         </div>
 
     </div>
