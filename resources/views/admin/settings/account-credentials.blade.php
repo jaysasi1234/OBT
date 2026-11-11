@@ -128,7 +128,7 @@
                 Total Accounts:
 
                 <strong id="totalAccounts">
-                    {{ $users->count() }}
+                    {{ $users->total() }}
                 </strong>
 
             </div>
@@ -146,78 +146,81 @@
         </div>
 
 
-        {{-- =================================================
-             FILTERS
-        ================================================== --}}
 
-        <div class="credentials-filters">
+{{-- =================================================
+     FILTERS
+================================================== --}}
 
-            <div class="filter-group">
+<form method="GET"
+      action="{{ route('admin.settings.account-credentials') }}"
+      class="credentials-filters">
 
-                <label
-                    for="accountSearch"
-                    class="filter-label">
+    <div class="filter-group">
 
-                    Search Account
+        <label for="accountSearch" class="filter-label">
+            Search Account
+        </label>
 
-                </label>
+        <input
+            type="text"
+            name="search"
+            id="accountSearch"
+            class="filter-input"
+            value="{{ $search }}"
+            placeholder="Search name, username, or email..."
+        >
 
-                <input
-                    type="text"
-                    id="accountSearch"
-                    class="filter-input"
-                    placeholder="Search name, username, or email...">
+    </div>
 
-            </div>
+    <div class="filter-group">
 
+        <label for="batchFilter" class="filter-label">
+            Batch
+        </label>
 
-            <div class="filter-group">
+        <select
+            name="batch_id"
+            id="batchFilter"
+            class="filter-select">
 
-                <label
-                    for="batchFilter"
-                    class="filter-label">
+            <option value="">All Batches</option>
 
-                    Batch
+            @foreach($batches as $batch)
 
-                </label>
+                <option
+                    value="{{ $batch->id }}"
+                    {{ (string) $batchId === (string) $batch->id ? 'selected' : '' }}>
 
-                    <select
-                        id="batchFilter"
-                        class="filter-select">
+                    {{ $batch->batch_year }}
 
-                        <option value="">
-                            All Batches
-                        </option>
+                </option>
 
-                        @foreach($batches as $batch)
+            @endforeach
 
-                            <option value="{{ strtolower($batch->batch_year) }}">
-                                {{ $batch->batch_year }}
-                            </option>
+        </select>
 
-                        @endforeach
+    </div>
 
-                    </select>
+    <div class="filter-actions">
 
-            </div>
+        <button type="submit" class="clear-filter-btn">
+            <i class="bi bi-search"></i>
+            Apply Filters
+        </button>
 
+        <a
+            href="{{ route('admin.settings.account-credentials') }}"
+            class="clear-filter-btn">
 
-            <div class="filter-actions">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            Clear Filters
 
-                <button
-                    type="button"
-                    class="clear-filter-btn"
-                    onclick="clearCredentialFilters()">
+        </a>
 
-                    <i class="bi bi-arrow-counterclockwise"></i>
+    </div>
 
-                    Clear Filters
+</form>
 
-                </button>
-
-            </div>
-
-        </div>
 
 
         {{-- =================================================
