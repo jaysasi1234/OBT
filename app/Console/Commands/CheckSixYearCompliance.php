@@ -3,25 +3,22 @@
 namespace App\Console\Commands;
 
 use App\Models\Cadet;
-use App\Models\User;
-use App\Notifications\SixYearComplianceNotification;
-use Carbon\Carbon;
+use App\Notifications\CadetRequirementSubmitted;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Carbon\Carbon;
 
 class CheckSixYearCompliance extends Command
 {
     protected $signature = 'obt:check-six-year-compliance
-                            {--dry-run : Check without sending notifications}
-                            {--test-only : Send notifications only to test_sixyear}';
+                            {--dry-run : Check compliance without sending notifications}';
 
-    protected $description = 'Check six-year OBT and BS compliance and notify affected accounts';
+    protected $description = 'Check cadets who have reached six years and verify their onboard and BS requirements';
 
     public function handle(): int
     {
         $dryRun = (bool) $this->option('dry-run');
-        $testOnly = (bool) $this->option('test-only');
 
         $cutoffDate = Carbon::now()->subYears(6);
 
@@ -29,32 +26,16 @@ class CheckSixYearCompliance extends Command
         $this->info('Cutoff date: ' . $cutoffDate->toDateString());
 
         if ($dryRun) {
-            $this->warn('DRY RUN: No notifications will be sent.');
+            $this->warn('DRY RUN MODE: No notifications will be sent.');
         }
 
-        if ($testOnly && $dryRun) {
-            $this->error('Use either --dry-run or --test-only, not both.');
-            return self::FAILURE;
-        }
-
-        if ($testOnly) {
-            $this->warn('TEST MODE: Only test_sixyear will receive notifications.');
-        }
-
-        $query = Cadet::with([
+        $cadets = Cadet::with([
             'user',
             'deployment',
             'bsRequirements',
-        ])->whereDate('created_at', '<=', $cutoffDate->toDateString());
-
-        if ($testOnly) {
-            $query->whereHas('user', function ($q) {
-                $q->where('username', 'test_sixyear')
-                  ->where('role', 'cadet');
-            });
-        }
-
-        $cadets = $query->get();
+        ])
+            ->whereDate('created_at', '<=', $cutoffDate)
+            ->get();
 
         $checked = 0;
         $qualified = 0;
@@ -64,8 +45,10 @@ class CheckSixYearCompliance extends Command
         foreach ($cadets as $cadet) {
             $checked++;
 
-            $deploymentCompleted = $cadet->deployment
-                && strtolower((string) $cadet->deployment->status) === 'completed';
+            $deployment = $cadet->deployment;
+
+            $deploymentCompleted = $deployment
+                && strtolower((string) $deployment->status) === 'completed';
 
             $bsRequirements = $cadet->bsRequirements ?? collect();
 
@@ -78,103 +61,60 @@ class CheckSixYearCompliance extends Command
                     );
                 });
 
-            $issues = [];
+            $isCompliant = $deploymentCompleted && $allBsRequirementsCompleted;
 
-            if (!$deploymentCompleted) {
-                $issues[] = 'obt';
-            }
-
-            if (!$allBsRequirementsCompleted) {
-                $issues[] = 'bs';
-            }
-
-            if (empty($issues)) {
+            if ($isCompliant) {
                 $qualified++;
-                $this->line("COMPLIANT: {$cadet->full_name} (ID: {$cadet->id})");
+                $this->line(
+                    "COMPLIANT: {$cadet->full_name} (ID: {$cadet->id})"
+                );
+
                 continue;
             }
 
             $notQualified++;
 
-            $this->warn("NOT COMPLIANT: {$cadet->full_name} (ID: {$cadet->id})");
+            $this->warn(
+                "NOT COMPLIANT: {$cadet->full_name} (ID: {$cadet->id})"
+            );
 
             if (!$cadet->user) {
-                $this->warn('No linked user account. Skipping notifications.');
+                $this->warn('No linked user account. Notification skipped.');
                 continue;
             }
 
-            $cadetData = [
-                'id' => $cadet->id,
-                'name' => $cadet->full_name,
-                'trb_no' => $cadet->trb_control_number ?? 'N/A',
-            ];
+            $eventKey = 'six_year_compliance_' . $cadet->id;
 
-            foreach ($issues as $issue) {
-                $eventKey = 'six_year_' . $issue;
+            $alreadyNotified = DB::table('notifications')
+                ->where('notifiable_type', get_class($cadet->user))
+                ->where('notifiable_id', $cadet->user->id)
+                ->where('data', 'like', '%' . $eventKey . '%')
+                ->exists();
 
-                // Check whether this cadet already received this issue.
-                $alreadyNotified = DB::table('notifications')
-                    ->where('notifiable_type', User::class)
-                    ->where('notifiable_id', $cadet->user->id)
-                    ->where('data', 'like', '%' . $eventKey . '%')
-                    ->exists();
-
-                if ($alreadyNotified) {
-                    $this->line("Already notified: {$issue} for {$cadet->full_name}");
-                    continue;
-                }
-
-                if ($dryRun) {
-                    $this->line("DRY RUN: {$issue} notification would be sent.");
-                    continue;
-                }
-
-                // Notify the affected cadet.
-                $cadet->user->notify(
-                    new SixYearComplianceNotification($issue, $cadetData)
-                );
-
-                $notificationsSent++;
-
-                $this->info("Cadet notification sent: {$issue}");
-
-                // In test mode, never notify real administrators.
-                if ($testOnly) {
-                    continue;
-                }
-
-                // Notify active Admin and Dean accounts.
-                $admins = User::whereIn('role', ['admin', 'dean'])
-                    ->where('is_active', true)
-                    ->get();
-
-                foreach ($admins as $admin) {
-                    $adminEventKey = $eventKey . '_cadet_' . $cadet->id;
-
-                    $adminAlreadyNotified = DB::table('notifications')
-                        ->where('notifiable_type', User::class)
-                        ->where('notifiable_id', $admin->id)
-                        ->where('data', 'like', '%' . $adminEventKey . '%')
-                        ->exists();
-
-                    if ($adminAlreadyNotified) {
-                        continue;
-                    }
-
-                    Notification::send(
-                        $admin,
-                        new SixYearComplianceNotification($issue, $cadetData, true)
-                    );
-
-                    $notificationsSent++;
-                }
+            if ($alreadyNotified) {
+                $this->line('Notification already sent. Skipping.');
+                continue;
             }
+
+            if ($dryRun) {
+                $this->line('DRY RUN: Notification would be sent.');
+                continue;
+            }
+
+            /*
+             * Send notification only when the notification class
+             * supports the required notification message.
+             *
+             * Do not use CadetRequirementSubmitted here unless
+             * it is designed for this six-year compliance event.
+             */
+            $this->warn(
+                'Notification not sent: configure a dedicated six-year compliance notification.'
+            );
         }
 
         $this->newLine();
-
         $this->info('Six-year compliance check completed.');
-
         $this->table(
             ['Description', 'Count'],
             [
