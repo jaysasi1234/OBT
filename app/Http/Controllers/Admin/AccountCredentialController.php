@@ -19,18 +19,21 @@ class AccountCredentialController extends Controller
      * =========================================================
      */
 
+
 public function index(Request $request)
 {
     $search = trim($request->input('search', ''));
     $batchId = $request->input('batch_id');
 
-    // Get batches using their actual database IDs.
     $batches = Batch::query()
         ->orderByDesc('batch_year')
         ->get();
 
-    // Retrieve accounts and their linked cadet/batch records.
+    // Display ALL Cadet accounts, including accounts with
+    // real emails and system-generated @obt.local emails.
     $users = User::query()
+        ->where('role', 'cadet')
+        ->whereHas('cadet')
         ->with(['cadet.batch'])
         ->when($search !== '', function ($query) use ($search) {
             $query->where(function ($q) use ($search) {
@@ -54,6 +57,7 @@ public function index(Request $request)
         compact('users', 'batches', 'search', 'batchId')
     );
 }
+
 
 
 

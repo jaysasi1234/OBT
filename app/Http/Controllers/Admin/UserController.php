@@ -187,9 +187,7 @@ public function createBatchAccounts(Request $request)
     // IMPORTANT: Go directly to Account Credentials,
     // filtered to the batch that was just created.
     return redirect()
-        ->route('admin.settings.account-credentials', [
-            'batch_id' => $batch->id,
-        ])
+        ->route('admin.users.index')
         ->with('success', $message);
 }
 
