@@ -421,6 +421,54 @@
     }
 }
 
+
+
+/* =========================================================
+   FIX WHITE BACKGROUND OUTSIDE GENERATED REMARKS REPORT
+   ========================================================= */
+
+/* Main browser page background */
+body:has(.remarks-report-page) {
+    background: #070d25 !important;
+}
+
+/* Admin content background */
+body:has(.remarks-report-page) main,
+body:has(.remarks-report-page) .main-content,
+body:has(.remarks-report-page) .content,
+body:has(.remarks-report-page) .content-wrapper,
+body:has(.remarks-report-page) .admin-content,
+body:has(.remarks-report-page) .page-content,
+body:has(.remarks-report-page) #content {
+    background: #070d25 !important;
+    background-image:
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(37, 99, 235, .12),
+            transparent 35%
+        ),
+        linear-gradient(
+            180deg,
+            #070d25,
+            #05091c
+        ) !important;
+}
+
+/* Make sure the report fills the available content area */
+body:has(.remarks-report-page) .remarks-report-page {
+    background-color: transparent;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Prevent white backgrounds from appearing around report sections */
+body:has(.remarks-report-page) .remarks-report-page .panel,
+body:has(.remarks-report-page) .remarks-report-page .stat-card {
+    background-color: #11183b;
+}
+
+
 </style>
 
 <div class="remarks-report-page">
