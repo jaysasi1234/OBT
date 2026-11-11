@@ -5,240 +5,379 @@
 @section('content')
 
 <style>
-    /* =========================================
-       UPLOAD DOWNLOADABLE FORM
-       DARK NAVY ADMIN THEME
-    ========================================= */
 
-    .upload-page {
-        width: 100%;
-        min-height: calc(100vh - 84px);
-        margin: 0;
-        padding: 30px 3.5%;
-        background: #07152d !important;
-        color: #eaf0ff;
-        box-sizing: border-box;
-    }
+/* =========================================================
+   UPLOAD DOWNLOADABLE FORM
+   PROFESSIONAL DARK NAVY ADMIN THEME
+========================================================= */
 
-    .upload-panel {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 30px;
-        background: linear-gradient(135deg, #153568 0%, #0d2345 100%);
-        border: 1px solid #244b80;
-        border-radius: 16px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.20);
-    }
-
-    .upload-page h2 {
-        color: #ffffff;
-        font-size: 25px;
-        font-weight: 800;
-        margin: 0 0 8px;
-    }
-
-    .upload-description {
-        color: #bdcce5;
-        font-size: 14px;
-        margin-bottom: 28px;
-    }
-
-    .upload-group {
-        margin-bottom: 22px;
-    }
-
-    .upload-group label {
-        display: block;
-        color: #e3ecff;
-        font-weight: 700;
-        font-size: 14px;
-        margin-bottom: 9px;
-    }
-
-    .upload-group input,
-    .upload-group textarea {
-        display: block;
-        width: 100%;
-        background: #0a1935 !important;
-        border: 1px solid #294775;
-        border-radius: 10px;
-        padding: 13px 15px;
-        color: #ffffff !important;
-        font-size: 14px;
-        outline: none;
-        box-sizing: border-box;
-        transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .upload-group input:focus,
-    .upload-group textarea:focus {
-        border-color: #4385ff;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    }
-
-    .upload-group input::placeholder,
-    .upload-group textarea::placeholder {
-        color: #7185a8;
-    }
-
-    .upload-group input[type="file"] {
-        padding: 12px;
-        cursor: pointer;
-    }
-
-    .upload-group input[type="file"]::file-selector-button {
-        background: #244d91;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 9px 14px;
-        margin-right: 12px;
-        cursor: pointer;
-        font-weight: 600;
-    }
-
-    .upload-group textarea {
-        min-height: 130px;
-        resize: vertical;
-    }
-
-    .upload-help {
-        color: #9eb2d4;
-        font-size: 12px;
-        margin-top: 8px;
-    }
-
-    .upload-check {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 17px;
-        background: #10284e;
-        border: 1px solid #294775;
-        border-radius: 10px;
-        margin-bottom: 25px;
-    }
-
-    .upload-check input {
-        width: 18px;
-        height: 18px;
-        accent-color: #3478ed;
-        cursor: pointer;
-        flex-shrink: 0;
-    }
-
-    .upload-check label {
-        color: #eaf0ff;
-        font-size: 13px;
-        margin: 0;
-        cursor: pointer;
-    }
-
-    .upload-actions {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        padding-top: 5px;
-    }
-
-    .upload-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 9px;
-        padding: 12px 22px;
-        border: none;
-        border-radius: 9px;
-        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        color: #ffffff;
-        font-size: 14px;
-        font-weight: 700;
-        text-decoration: none;
-        cursor: pointer;
-        transition: 0.2s ease;
-    }
-
-    .upload-btn:hover {
-        background: linear-gradient(135deg, #2563eb, #1e40af);
-        color: #ffffff;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(37, 99, 235, 0.25);
-    }
-
-    .upload-cancel {
-        background: #263d60;
-    }
-
-    .upload-cancel:hover {
-        background: #344e75;
-    }
-
-    .upload-error {
-        color: #fca5a5;
-        font-size: 13px;
-        margin-top: 7px;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 768px) {
-        .upload-page {
-            padding: 20px 12px;
-        }
-
-        .upload-panel {
-            padding: 20px;
-        }
-
-        .upload-page h2 {
-            font-size: 21px;
-        }
-
-        .upload-actions {
-            flex-direction: column;
-        }
-
-        .upload-btn {
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-
-
-/* =========================================
-   REMOVE WHITE BACKGROUND FROM ADMIN CONTENT
-========================================= */
-
+/* GLOBAL BACKGROUND */
 html,
 body {
     background: #07152d !important;
+    color: #eaf0ff;
+    min-height: 100%;
 }
 
-body,
-#app {
-    background-color: #07152d !important;
-}
-
+/* MAIN ADMIN CONTENT BACKGROUND */
 main,
 .main-content,
 .content-wrapper,
 .admin-content,
-.page-content,
-.content,
-.container-fluid {
+.page-content {
     background-color: #07152d !important;
+    color: #eaf0ff;
 }
 
-/* Upload page must fill its parent */
-.upload-page {
-    background: #07152d !important;
-    width: 100%;
-    min-height: 100vh;
-    margin: 0 !important;
-    padding: 30px 3.5%;
+/* PREVENT HORIZONTAL OVERFLOW */
+.upload-page,
+.upload-page * {
     box-sizing: border-box;
 }
 
+/* =========================================================
+   MAIN PAGE
+========================================================= */
+
+.upload-page {
+    width: 100%;
+    min-height: calc(100vh - 84px);
+    margin: 0;
+    padding: 30px 3.5%;
+    background: #07152d !important;
+    color: #eaf0ff;
+}
+
+/* =========================================================
+   UPLOAD PANEL
+========================================================= */
+
+.upload-panel {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 32px;
+
+    background: linear-gradient(
+        135deg,
+        #153568 0%,
+        #0d2345 100%
+    );
+
+    border: 1px solid #244b80;
+    border-radius: 16px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* =========================================================
+   HEADING
+========================================================= */
+
+.upload-page h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: #ffffff;
+    font-size: 25px;
+    font-weight: 800;
+
+    margin: 0 0 8px;
+}
+
+.upload-page h2 i {
+    color: #60a5fa;
+    font-size: 27px;
+}
+
+.upload-description {
+    color: #bdcce5;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+/* =========================================================
+   FORM GROUPS
+========================================================= */
+
+.upload-group {
+    margin-bottom: 22px;
+}
+
+.upload-group label {
+    display: block;
+    color: #e3ecff;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 9px;
+}
+
+/* INPUTS AND TEXTAREA */
+
+.upload-group input:not([type="checkbox"]),
+.upload-group textarea {
+    display: block;
+    width: 100%;
+
+    background: #0a1935 !important;
+    border: 1px solid #294775;
+    border-radius: 10px;
+
+    padding: 13px 15px;
+
+    color: #ffffff !important;
+    font-size: 14px;
+
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.upload-group input:not([type="checkbox"]):focus,
+.upload-group textarea:focus {
+    background: #0a1935 !important;
+    border-color: #4385ff;
+
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.upload-group input::placeholder,
+.upload-group textarea::placeholder {
+    color: #7185a8;
+    opacity: 1;
+}
+
+/* TEXTAREA */
+
+.upload-group textarea {
+    min-height: 130px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   FILE UPLOAD
+========================================================= */
+
+.upload-group input[type="file"] {
+    padding: 12px;
+    cursor: pointer;
+    color: #cbd5e1 !important;
+}
+
+.upload-group input[type="file"]::file-selector-button {
+    background: #244d91;
+    color: #ffffff;
+
+    border: none;
+    border-radius: 7px;
+
+    padding: 9px 14px;
+    margin-right: 12px;
+
+    cursor: pointer;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.upload-group input[type="file"]::file-selector-button:hover {
+    background: #3478ed;
+}
+
+/* FILE HELP TEXT */
+
+.upload-help {
+    color: #9eb2d4;
+    font-size: 12px;
+    margin-top: 8px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   PUBLISH CHECKBOX
+========================================================= */
+
+.upload-check {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 17px;
+
+    background: #10284e;
+    border: 1px solid #294775;
+    border-radius: 10px;
+
+    margin-bottom: 25px;
+}
+
+.upload-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+
+    accent-color: #3478ed;
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.upload-check label {
+    color: #eaf0ff;
+    font-size: 13px;
+    line-height: 1.5;
+
+    margin: 0;
+    cursor: pointer;
+}
+
+/* =========================================================
+   VALIDATION ERRORS
+========================================================= */
+
+.upload-error {
+    color: #fca5a5;
+    font-size: 13px;
+    margin-top: 7px;
+    font-weight: 500;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    padding-top: 5px;
+}
+
+.upload-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    padding: 12px 22px;
+
+    border: none;
+    border-radius: 9px;
+
+    background: linear-gradient(
+        135deg,
+        #3b82f6,
+        #1d4ed8
+    );
+
+    color: #ffffff !important;
+
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none !important;
+
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #1e40af
+    );
+
+    color: #ffffff !important;
+
+    transform: translateY(-2px);
+
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.25);
+}
+
+.upload-btn i {
+    font-size: 16px;
+}
+
+/* CANCEL BUTTON */
+
+.upload-cancel {
+    background: #263d60;
+}
+
+.upload-cancel:hover {
+    background: #344e75;
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .upload-page {
+        padding: 20px 12px;
+        min-height: 100vh;
     }
+
+    .upload-panel {
+        padding: 22px 18px;
+        border-radius: 12px;
+    }
+
+    .upload-page h2 {
+        font-size: 21px;
+    }
+
+    .upload-page h2 i {
+        font-size: 23px;
+    }
+
+    .upload-description {
+        font-size: 13px;
+        margin-bottom: 22px;
+    }
+
+    .upload-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .upload-btn {
+        width: 100%;
+        padding: 13px;
+    }
+
+    .upload-check {
+        align-items: flex-start;
+        padding: 14px;
+    }
+}
+
+/* SMALL MOBILE DEVICES */
+
+@media (max-width: 400px) {
+
+    .upload-page {
+        padding: 14px 8px;
+    }
+
+    .upload-panel {
+        padding: 18px 14px;
+    }
+
+    .upload-page h2 {
+        font-size: 19px;
+    }
+
+    .upload-group input:not([type="checkbox"]),
+    .upload-group textarea {
+        font-size: 13px;
+    }
+}
+
 </style>
 
 <div class="upload-page">
