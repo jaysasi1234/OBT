@@ -1175,10 +1175,10 @@
             </a>
 
             <a href="{{ route('cadet.downloadable-forms.index') }}"
-   class="{{ request()->routeIs('cadet.downloadable-forms.*') ? 'active' : '' }}">
+   class="menu-item {{ request()->routeIs('cadet.downloadable-forms.*') ? 'active' : '' }}">
 
-    <i class="bi bi-folder2-open"></i>
-    <span>Forms</span>
+    <i class="fas fa-folder-open"></i>
+    <span>Downloadable Forms</span>
 
 </a>
 
