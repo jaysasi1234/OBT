@@ -201,6 +201,43 @@
             width: 100%;
             box-sizing: border-box;
         }
+
+
+
+/* =========================================
+   REMOVE WHITE BACKGROUND FROM ADMIN CONTENT
+========================================= */
+
+html,
+body {
+    background: #07152d !important;
+}
+
+body,
+#app {
+    background-color: #07152d !important;
+}
+
+main,
+.main-content,
+.content-wrapper,
+.admin-content,
+.page-content,
+.content,
+.container-fluid {
+    background-color: #07152d !important;
+}
+
+/* Upload page must fill its parent */
+.upload-page {
+    background: #07152d !important;
+    width: 100%;
+    min-height: 100vh;
+    margin: 0 !important;
+    padding: 30px 3.5%;
+    box-sizing: border-box;
+}
+
     }
 </style>
 
