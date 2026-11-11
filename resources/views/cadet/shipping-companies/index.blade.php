@@ -116,11 +116,26 @@
     font-size: 11px;
 }
 
-/* COMPANY DETAILS MODAL */
 
 .shipping-modal {
-    width: min(540px, calc(100% - 30px));
-    max-height: 88vh;
+    /* FORCE MODAL TO THE CENTER OF THE SCREEN */
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    inset: 50% auto auto 50% !important;
+    transform: translate(-50%, -50%) !important;
+
+    /* REMOVE DEFAULT DIALOG MARGIN */
+    margin: 0 !important;
+
+    /* MODAL SIZE */
+    width: min(540px, calc(100vw - 30px));
+    max-width: 540px;
+    max-height: calc(100vh - 30px);
+
+    /* MODAL DESIGN */
     padding: 0;
     overflow: auto;
     border: 1px solid #294365;
@@ -129,6 +144,7 @@
     color: #fff;
     box-shadow: 0 25px 70px rgba(0, 0, 0, .5);
 }
+
 
 .shipping-modal::backdrop {
     background: rgba(2, 8, 23, .82);
