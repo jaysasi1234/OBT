@@ -3,185 +3,128 @@
 namespace App\Console\Commands;
 
 use App\Models\Cadet;
-use App\Models\User;
-use App\Notifications\SixYearComplianceNotification;
+use App\Notifications\CadetRequirementSubmitted;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Carbon\Carbon;
 
 class CheckSixYearCompliance extends Command
 {
-    protected $signature = 'obt:check-six-year-compliance {--dry-run : Preview notifications without sending them}';
+    protected $signature = 'obt:check-six-year-compliance
+                            {--dry-run : Check compliance without sending notifications}';
 
-    protected $description = 'Check six-year OBT and BS compliance';
+    protected $description = 'Check cadets who have reached six years and verify their onboard and BS requirements';
 
     public function handle(): int
     {
         $dryRun = (bool) $this->option('dry-run');
 
-        $this->info('Starting six-year compliance monitoring...');
+        $cutoffDate = Carbon::now()->subYears(6);
+
+        $this->info('Starting six-year compliance check...');
+        $this->info('Cutoff date: ' . $cutoffDate->toDateString());
 
         if ($dryRun) {
-            $this->warn('DRY-RUN MODE: No notifications will be sent.');
+            $this->warn('DRY RUN MODE: No notifications will be sent.');
         }
 
-        $cutoffDate = now()->subYears(6);
-
-        $adminUsers = User::whereIn('role', ['admin', 'dean'])
-            ->where('is_active', true)
+        $cadets = Cadet::with([
+            'user',
+            'deployment',
+            'bsRequirements',
+        ])
+            ->whereDate('created_at', '<=', $cutoffDate)
             ->get();
 
         $checked = 0;
-        $obtAlerts = 0;
-        $bsAlerts = 0;
-        $notifications = 0;
+        $qualified = 0;
+        $notQualified = 0;
+        $notificationsSent = 0;
 
-        Cadet::with(['user', 'deployment', 'bsRequirements'])
-            ->whereNotNull('created_at')
-            ->where('created_at', '<=', $cutoffDate)
-            ->chunkById(100, function ($cadets) use (
-                $adminUsers,
-                $dryRun,
-                &$checked,
-                &$obtAlerts,
-                &$bsAlerts,
-                &$notifications
-            ) {
-                foreach ($cadets as $cadet) {
-                    $checked++;
+        foreach ($cadets as $cadet) {
+            $checked++;
 
-                    $cadetData = [
-                        'id' => $cadet->id,
-                        'name' => $cadet->full_name
-                            ?: $cadet->user?->name
-                            ?: 'Unknown Cadet',
-                        'trb_no' => $cadet->trb_control_number ?: 'N/A',
-                    ];
+            $deployment = $cadet->deployment;
 
-                    // OBT: Check actual deployment status.
-                    $deploymentStatus = strtolower(
-                        trim($cadet->deployment?->status ?? '')
-                    );
+            $deploymentCompleted = $deployment
+                && strtolower((string) $deployment->status) === 'completed';
 
-                    $hasBeenDeployed = in_array(
-                        $deploymentStatus,
-                        ['ongoing', 'completed'],
+            $bsRequirements = $cadet->bsRequirements ?? collect();
+
+            $allBsRequirementsCompleted = $bsRequirements->isNotEmpty()
+                && $bsRequirements->every(function ($requirement) {
+                    return in_array(
+                        strtolower((string) $requirement->status),
+                        ['approved', 'completed'],
                         true
                     );
+                });
 
-                    if (!$hasBeenDeployed) {
-                        $obtAlerts++;
+            $isCompliant = $deploymentCompleted && $allBsRequirementsCompleted;
 
-                        if (!$dryRun) {
-                            if ($cadet->user) {
-                                $notifications += (int) $this->sendOnce(
-                                    $cadet->user,
-                                    'obt',
-                                    $cadetData,
-                                    false
-                                );
-                            }
+            if ($isCompliant) {
+                $qualified++;
+                $this->line(
+                    "COMPLIANT: {$cadet->full_name} (ID: {$cadet->id})"
+                );
 
-                            foreach ($adminUsers as $admin) {
-                                $notifications += (int) $this->sendOnce(
-                                    $admin,
-                                    'obt',
-                                    $cadetData,
-                                    true
-                                );
-                            }
-                        }
-                    }
+                continue;
+            }
 
-                    // BS: Check all BS requirements.
-                    $requirements = $cadet->bsRequirements;
+            $notQualified++;
 
-                    $bsCompleted = $requirements->isNotEmpty()
-                        && $requirements->every(function ($requirement) {
-                            return in_array(
-                                strtolower(trim($requirement->status ?? '')),
-                                ['approved', 'completed'],
-                                true
-                            );
-                        });
+            $this->warn(
+                "NOT COMPLIANT: {$cadet->full_name} (ID: {$cadet->id})"
+            );
 
-                    if (!$bsCompleted) {
-                        $bsAlerts++;
+            if (!$cadet->user) {
+                $this->warn('No linked user account. Notification skipped.');
+                continue;
+            }
 
-                        if (!$dryRun) {
-                            if ($cadet->user) {
-                                $notifications += (int) $this->sendOnce(
-                                    $cadet->user,
-                                    'bs',
-                                    $cadetData,
-                                    false
-                                );
-                            }
+            $eventKey = 'six_year_compliance_' . $cadet->id;
 
-                            foreach ($adminUsers as $admin) {
-                                $notifications += (int) $this->sendOnce(
-                                    $admin,
-                                    'bs',
-                                    $cadetData,
-                                    true
-                                );
-                            }
-                        }
-                    }
-                }
-            });
+            $alreadyNotified = DB::table('notifications')
+                ->where('notifiable_type', get_class($cadet->user))
+                ->where('notifiable_id', $cadet->user->id)
+                ->where('data', 'like', '%' . $eventKey . '%')
+                ->exists();
+
+            if ($alreadyNotified) {
+                $this->line('Notification already sent. Skipping.');
+                continue;
+            }
+
+            if ($dryRun) {
+                $this->line('DRY RUN: Notification would be sent.');
+                continue;
+            }
+
+            /*
+             * Send notification only when the notification class
+             * supports the required notification message.
+             *
+             * Do not use CadetRequirementSubmitted here unless
+             * it is designed for this six-year compliance event.
+             */
+            $this->warn(
+                'Notification not sent: configure a dedicated six-year compliance notification.'
+            );
+        }
 
         $this->newLine();
-        $this->info('Six-year compliance checking completed.');
-
+        $this->info('Six-year compliance check completed.');
         $this->table(
-            ['Monitoring Information', 'Total'],
+            ['Description', 'Count'],
             [
-                ['Monitoring Mode', $dryRun ? 'DRY RUN' : 'LIVE'],
-                ['Eligible cadets checked', $checked],
-                ['Cadets requiring OBT attention', $obtAlerts],
-                ['Cadets requiring BS attention', $bsAlerts],
-                ['Notifications sent', $notifications],
+                ['Cadets checked', $checked],
+                ['Compliant', $qualified],
+                ['Not compliant', $notQualified],
+                ['Notifications sent', $notificationsSent],
             ]
         );
 
-        if ($dryRun) {
-            $this->comment('Preview only. No notifications were sent.');
-        }
-
         return self::SUCCESS;
-    }
-
-    private function sendOnce(
-        User $recipient,
-        string $issue,
-        array $cadetData,
-        bool $forAdmin
-    ): bool {
-        $eventKey = 'six_year_' . $issue;
-
-        if ($forAdmin) {
-            $eventKey .= '_cadet_' . $cadetData['id'];
-        }
-
-        $alreadySent = DB::table('notifications')
-            ->where('notifiable_type', get_class($recipient))
-            ->where('notifiable_id', $recipient->id)
-            ->where('type', SixYearComplianceNotification::class)
-            ->whereJsonContains('data->event_key', $eventKey)
-            ->exists();
-
-        if ($alreadySent) {
-            return false;
-        }
-
-        $recipient->notify(
-            new SixYearComplianceNotification(
-                $issue,
-                $cadetData,
-                $forAdmin
-            )
-        );
-
-        return true;
     }
 }
