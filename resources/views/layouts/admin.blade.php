@@ -2780,6 +2780,14 @@
 
             </a>
 
+            <a href="{{ route('admin.downloadable-forms.index') }}"
+   class="{{ request()->routeIs('admin.downloadable-forms.*') ? 'active' : '' }}">
+
+    <i class="bi bi-folder2-open"></i>
+    <span>Downloadable Forms Management</span>
+
+</a>
+
 
             {{-- Locations --}}
 

@@ -596,6 +596,63 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN DOWNLOADABLE FORMS
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::get('/downloadable-forms',
+            [\App\Http\Controllers\DownloadableFormController::class, 'adminIndex']
+        )->name('downloadable-forms.index');
+
+        Route::get('/downloadable-forms/create',
+            [\App\Http\Controllers\DownloadableFormController::class, 'create']
+        )->name('downloadable-forms.create');
+
+        Route::post('/downloadable-forms',
+            [\App\Http\Controllers\DownloadableFormController::class, 'store']
+        )->name('downloadable-forms.store');
+
+        Route::get('/downloadable-forms/{downloadableForm}/edit',
+            [\App\Http\Controllers\DownloadableFormController::class, 'edit']
+        )->name('downloadable-forms.edit');
+
+        Route::put('/downloadable-forms/{downloadableForm}',
+            [\App\Http\Controllers\DownloadableFormController::class, 'update']
+        )->name('downloadable-forms.update');
+
+        Route::delete('/downloadable-forms/{downloadableForm}',
+            [\App\Http\Controllers\DownloadableFormController::class, 'destroy']
+        )->name('downloadable-forms.destroy');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| CADET DOWNLOADABLE FORMS
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'cadet'])
+    ->prefix('cadet')
+    ->name('cadet.')
+    ->group(function () {
+
+        Route::get('/downloadable-forms',
+            [\App\Http\Controllers\DownloadableFormController::class, 'cadetIndex']
+        )->name('downloadable-forms.index');
+
+        Route::get('/downloadable-forms/{downloadableForm}/download',
+            [\App\Http\Controllers\DownloadableFormController::class, 'download']
+        )->name('downloadable-forms.download');
+    });
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD (ROLE FIXED)
