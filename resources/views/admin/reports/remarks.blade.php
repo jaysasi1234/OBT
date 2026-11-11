@@ -3,226 +3,424 @@
 
 @section('content')
 
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+>
+
 <style>
+
+/* =========================================================
+   GENERATED REMARKS REPORT
+   MATCHES CADET MASTERLIST DARK NAVY THEME
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 .remarks-report-page {
+    --rr-bg: #070d25;
+    --rr-panel: #11183b;
+    --rr-panel-2: #151e48;
+    --rr-primary: #3b82f6;
+    --rr-text: #f8fafc;
+    --rr-muted: #94a3b8;
+    --rr-border: rgba(255,255,255,.08);
+
     min-height: 100vh;
+    width: 100%;
     padding: 28px;
-    background: #07152f;
-    color: #eaf1ff;
+    font-family: 'Inter', Arial, sans-serif;
+    color: var(--rr-text);
+
+    background:
+        radial-gradient(circle at 0% 0%, rgba(37,99,235,.20), transparent 32%),
+        radial-gradient(circle at 100% 100%, rgba(79,70,229,.16), transparent 32%),
+        linear-gradient(180deg, #070d25, #05091c);
 }
 
+/* HEADER */
+
 .remarks-report-page .report-header {
-    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+    padding: 26px 30px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 20px;
+
+    background: linear-gradient(135deg, #1b3f9c, #173783 48%, #11285f);
+
+    box-shadow: 0 18px 45px rgba(0,0,0,.32);
 }
 
 .remarks-report-page h1 {
-    font-size: 26px;
+    margin: 0;
+    color: #fff;
+    font-size: 28px;
     font-weight: 800;
-    margin-bottom: 7px;
 }
 
 .remarks-report-page .subtitle {
-    color: #9eb1d0;
+    margin-top: 8px;
+    color: #bdc9ef;
     font-size: 13px;
 }
 
+/* PANELS */
+
 .remarks-report-page .panel {
-    background: #0d2042;
-    border: 1px solid #1d365e;
-    border-radius: 14px;
-    padding: 22px;
-    margin-bottom: 22px;
+    padding: 25px;
+    margin-bottom: 24px;
+    background: linear-gradient(180deg, rgba(20,30,70,.96), rgba(13,20,50,.96));
+    border: 1px solid var(--rr-border);
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(0,0,0,.28);
 }
+
+.remarks-report-page .panel h3 {
+    color: #fff;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+/* STATISTICS */
 
 .remarks-report-page .stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0,1fr));
     gap: 16px;
-    margin-bottom: 22px;
+    margin-bottom: 24px;
 }
 
 .remarks-report-page .stat-card {
-    background: #10284e;
-    border: 1px solid #29446c;
-    border-radius: 13px;
-    padding: 20px;
+    padding: 22px;
+    background: linear-gradient(145deg, #151e48, #11183b);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.20);
 }
 
 .remarks-report-page .stat-card small {
-    color: #a8bad7;
+    color: #aebbe2;
     font-size: 12px;
+    font-weight: 600;
 }
 
 .remarks-report-page .stat-card h2 {
-    font-size: 28px;
-    font-weight: 800;
     margin: 10px 0 0;
+    color: #fff;
+    font-size: 29px;
+    font-weight: 800;
 }
+
+/* FILTERS */
 
 .remarks-report-page .filters {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
-    align-items: end;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 16px;
 }
 
 .remarks-report-page label {
     display: block;
+    margin-bottom: 7px;
+    color: #bcc8ed;
     font-size: 12px;
     font-weight: 700;
-    margin-bottom: 7px;
-    color: #c5d5ef;
 }
 
 .remarks-report-page input,
 .remarks-report-page select {
     width: 100%;
-    padding: 11px 12px;
-    border-radius: 8px;
-    background: #071832;
-    border: 1px solid #30496f;
-    color: white;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid #303b78;
+    border-radius: 10px;
+    background: #0d1435;
+    color: #f8fafc;
+    font-family: inherit;
+    font-size: 13px;
     outline: none;
 }
 
+.remarks-report-page input:focus,
+.remarks-report-page select:focus {
+    border-color: #5b78ff;
+    box-shadow: 0 0 0 3px rgba(91,120,255,.14);
+}
+
+.remarks-report-page select option {
+    background: #11183b;
+    color: #fff;
+}
+
+.remarks-report-page input::placeholder {
+    color: #7180a8;
+}
+
+/* BUTTONS */
+
 .remarks-report-page .actions {
     display: flex;
-    gap: 9px;
     flex-wrap: wrap;
-    margin-top: 18px;
+    gap: 10px;
+    margin-top: 20px;
 }
 
 .remarks-report-page .btn {
-    border: 0;
-    border-radius: 8px;
-    padding: 11px 16px;
-    text-decoration: none;
-    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+    color: #fff;
+    font-family: inherit;
     font-size: 12px;
     font-weight: 700;
+    text-decoration: none;
     cursor: pointer;
-    display: inline-block;
+    transition: .25s ease;
+}
+
+.remarks-report-page .btn:hover {
+    transform: translateY(-2px);
 }
 
 .remarks-report-page .btn-primary {
-    background: #2563eb;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
 }
 
 .remarks-report-page .btn-secondary {
-    background: #334b70;
+    background: linear-gradient(135deg, #475569, #334155);
 }
 
 .remarks-report-page .btn-danger {
-    background: #b42332;
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
 }
 
+/* TABLE */
+
 .remarks-report-page .table-wrap {
+    width: 100%;
     overflow-x: auto;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px;
 }
 
 .remarks-report-page table {
     width: 100%;
-    min-width: 1050px;
-    border-collapse: collapse;
+    min-width: 1150px;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: #fff;
+}
+
+.remarks-report-page thead {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+.remarks-report-page thead tr {
+    background: linear-gradient(135deg, #294db6, #1d367e);
 }
 
 .remarks-report-page th {
-    background: #142c50;
-    color: #a9c7f4;
+    padding: 15px 14px;
+    color: #fff;
     font-size: 11px;
+    font-weight: 800;
+    text-align: center;
     text-transform: uppercase;
-    padding: 14px 12px;
-    text-align: left;
+    letter-spacing: .5px;
     white-space: nowrap;
+    border-bottom: 1px solid rgba(255,255,255,.12);
 }
 
 .remarks-report-page td {
-    padding: 14px 12px;
-    border-bottom: 1px solid #263c60;
+    padding: 15px 14px;
+    color: #d7def7;
     font-size: 12px;
-    vertical-align: top;
+    text-align: center;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.remarks-report-page tbody tr {
+    background: #151c40;
+    transition: .25s ease;
+}
+
+.remarks-report-page tbody tr:nth-child(even) {
+    background: #121938;
 }
 
 .remarks-report-page tbody tr:hover {
-    background: #13294b;
+    background: #1e3477;
+    box-shadow: inset 4px 0 0 #60a5fa;
 }
+
+.remarks-report-page tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* REMARKS TEXT */
 
 .remarks-report-page .remark-text {
     min-width: 220px;
     max-width: 380px;
+    margin: 0 auto;
+    color: #dce8fb;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
-    color: #dce8fb;
+    text-align: left;
 }
 
+/* STATUS BADGES */
+
 .remarks-report-page .status {
-    padding: 5px 9px;
-    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 27px;
+    padding: 6px 11px;
+    border: 1px solid transparent;
+    border-radius: 30px;
     font-size: 10px;
     font-weight: 800;
     white-space: nowrap;
 }
 
 .remarks-report-page .has-remarks {
-    background: #123f36;
-    color: #6ee7b7;
+    background: rgba(22,163,74,.17);
+    border-color: rgba(74,222,128,.18);
+    color: #86efac;
 }
 
 .remarks-report-page .no-remarks {
-    background: #49301b;
-    color: #fdba74;
+    background: rgba(217,119,6,.17);
+    border-color: rgba(251,191,36,.18);
+    color: #fcd34d;
 }
 
-.remarks-report-page .pagination {
+/* EMPTY STATE */
+
+.remarks-report-page .empty {
+    padding: 55px 20px;
+    color: #9eadd5;
+    text-align: center;
+}
+
+/* PAGINATION - DARK THEME */
+
+.remarks-report-page .pagination-wrapper {
     display: flex;
-    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    padding: 22px 15px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    overflow-x: auto;
+}
+
+.remarks-report-page .pagination-wrapper nav > div:first-child {
+    display: none;
+}
+
+.remarks-report-page .pagination-wrapper nav > div:last-child {
+    display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    margin-top: 20px;
+    gap: 6px;
 }
 
-.remarks-report-page .pagination a,
-.remarks-report-page .pagination span {
-    background: #142c50;
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    text-decoration: none;
+.remarks-report-page .pagination-wrapper a,
+.remarks-report-page .pagination-wrapper span[aria-current="page"] span,
+.remarks-report-page .pagination-wrapper span[aria-disabled="true"] span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid #303b78;
+    border-radius: 9px;
+    background: #151e48;
+    color: #dce6ff;
     font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
 }
 
-.remarks-report-page .pagination .active span {
+.remarks-report-page .pagination-wrapper a:hover {
+    background: #1e3477;
+    border-color: #60a5fa;
+    color: #fff;
+}
+
+.remarks-report-page .pagination-wrapper span[aria-current="page"] span {
     background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
 }
 
-.remarks-report-page .pagination .disabled span {
+.remarks-report-page .pagination-wrapper span[aria-disabled="true"] span {
     opacity: .4;
 }
 
-.remarks-report-page .empty {
-    text-align: center;
-    padding: 35px;
-    color: #9eb1d0;
+/* RESPONSIVE */
+
+@media(max-width: 992px) {
+    .remarks-report-page {
+        padding: 18px;
+    }
+
+    .remarks-report-page .filters {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+    }
 }
 
-@media(max-width: 850px) {
+@media(max-width: 768px) {
+    .remarks-report-page {
+        padding: 13px;
+    }
+
     .remarks-report-page .stats {
         grid-template-columns: 1fr;
     }
 
-    .remarks-report-page .filters {
-        grid-template-columns: 1fr 1fr;
+    .remarks-report-page .panel {
+        padding: 17px;
+    }
+
+    .remarks-report-page .report-header {
+        padding: 20px;
+    }
+
+    .remarks-report-page h1 {
+        font-size: 23px;
     }
 }
 
 @media(max-width: 550px) {
-    .remarks-report-page {
-        padding: 14px;
-    }
-
     .remarks-report-page .filters {
         grid-template-columns: 1fr;
     }
+
+    .remarks-report-page .actions {
+        flex-direction: column;
+    }
+
+    .remarks-report-page .actions .btn {
+        width: 100%;
+    }
 }
+
 </style>
 
 <div class="remarks-report-page">
@@ -508,10 +706,13 @@
 
         </div>
 
-        <!-- PAGINATION -->
-        <div class="pagination">
-            {{ $cadets->links() }}
-        </div>
+@if($cadets->hasPages())
+
+    <div class="pagination-wrapper">
+        {{ $cadets->links() }}
+    </div>
+
+@endif
 
     </div>
 
