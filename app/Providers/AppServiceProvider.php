@@ -29,12 +29,6 @@ class AppServiceProvider extends ServiceProvider
 
                 $email = $notifiable->getEmailForPasswordReset();
 
-                /*
-                |--------------------------------------------------------------------------
-                | Admin / Dean
-                |--------------------------------------------------------------------------
-                */
-
                 if (in_array($notifiable->role, ['admin', 'dean'])) {
 
                     return url(
@@ -49,12 +43,6 @@ class AppServiceProvider extends ServiceProvider
                     );
                 }
 
-                /*
-                |--------------------------------------------------------------------------
-                | Cadet
-                |--------------------------------------------------------------------------
-                */
-
                 if ($notifiable->role === 'cadet') {
 
                     return url(
@@ -68,12 +56,6 @@ class AppServiceProvider extends ServiceProvider
                         )
                     );
                 }
-
-                /*
-                |--------------------------------------------------------------------------
-                | Fallback
-                |--------------------------------------------------------------------------
-                */
 
                 return url(
                     route(
@@ -97,7 +79,6 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             Login::class,
             function ($event) {
-
                 $event->user->update([
                     'last_login_at' => now()
                 ]);
@@ -106,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
 
         /*
         |--------------------------------------------------------------------------
-        | Admin Layout
+        | Admin Layout Notifications
         |--------------------------------------------------------------------------
         */
 
@@ -119,17 +100,15 @@ class AppServiceProvider extends ServiceProvider
                     $user = Auth::user();
 
                     $view->with([
+                        'notifications' => $user
+                            ->notifications()
+                            ->latest()
+                            ->take(10)
+                            ->get(),
 
-                        'notifications' =>
-                            $user
-                                ->unreadNotifications()
-                                ->get(),
-
-                        'unreadCount' =>
-                            $user
-                                ->unreadNotifications()
-                                ->count(),
-
+                        'unreadCount' => $user
+                            ->unreadNotifications()
+                            ->count(),
                     ]);
                 }
             }
@@ -149,7 +128,6 @@ class AppServiceProvider extends ServiceProvider
 
                     $view->with(
                         'unreadNotificationsCount',
-
                         Auth::user()
                             ->unreadNotifications()
                             ->count()
