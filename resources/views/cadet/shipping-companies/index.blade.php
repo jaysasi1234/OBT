@@ -68,6 +68,7 @@
     border: 1px solid rgba(96, 165, 250, .15);
     border-radius: 15px;
     transition: .25s ease;
+    cursor: pointer;
 }
 
 .shipping-card:hover {
@@ -108,6 +109,152 @@
     overflow-wrap: anywhere;
 }
 
+.shipping-card .view-hint {
+    display: block;
+    margin-top: 10px;
+    color: #93c5fd;
+    font-size: 11px;
+}
+
+/* COMPANY DETAILS MODAL */
+
+.shipping-modal {
+    width: min(540px, calc(100% - 30px));
+    max-height: 88vh;
+    padding: 0;
+    overflow: auto;
+    border: 1px solid #294365;
+    border-radius: 17px;
+    background: #0d1940;
+    color: #fff;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, .5);
+}
+
+.shipping-modal::backdrop {
+    background: rgba(2, 8, 23, .82);
+    backdrop-filter: blur(5px);
+}
+
+.shipping-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid rgba(148, 163, 184, .15);
+}
+
+.shipping-modal-header h3 {
+    margin: 0;
+    color: #f1f5f9;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.shipping-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    border: 1px solid #294365;
+    border-radius: 8px;
+    background: #172b4d;
+    color: #cbd5e1;
+    cursor: pointer;
+}
+
+.shipping-modal-close:hover {
+    background: #263b59;
+    color: #fff;
+}
+
+.shipping-modal-body {
+    padding: 25px;
+}
+
+.shipping-modal-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 15px;
+    padding: 10px;
+    border-radius: 15px;
+    background: #fff;
+}
+
+.shipping-modal-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.shipping-modal-logo i {
+    color: #64748b;
+    font-size: 42px;
+}
+
+.shipping-modal-name {
+    margin-bottom: 25px;
+    color: #f8fafc;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.shipping-detail {
+    margin-bottom: 15px;
+    padding: 16px;
+    border: 1px solid rgba(96, 165, 250, .18);
+    border-radius: 11px;
+    background: rgba(7, 21, 47, .65);
+}
+
+.shipping-detail-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #93c5fd;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.shipping-detail-content {
+    margin: 0;
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+.shipping-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 15px 20px;
+    border-top: 1px solid rgba(148, 163, 184, .15);
+}
+
+.shipping-modal-footer button {
+    padding: 11px 20px;
+    border: 0;
+    border-radius: 9px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.shipping-modal-footer button:hover {
+    background: #1d4ed8;
+}
+
+/* EMPTY STATE */
+
 .shipping-empty {
     grid-column: 1 / -1;
     padding: 55px 20px;
@@ -127,6 +274,8 @@
 .shipping-pagination {
     margin-top: 25px;
 }
+
+/* RESPONSIVE */
 
 @media(max-width: 480px) {
     .shipping-search {
@@ -154,11 +303,20 @@
     .shipping-card h3 {
         font-size: 13px;
     }
+
+    .shipping-modal-body {
+        padding: 17px;
+    }
+
+    .shipping-modal-name {
+        font-size: 17px;
+    }
 }
 </style>
 
 <div class="shipping-page">
 
+    {{-- PAGE HEADER --}}
     <div class="shipping-header">
         <h2>
             <i class="fas fa-ship"></i>
@@ -167,9 +325,11 @@
 
         <p>
             Browse the shipping companies accredited by the academy.
+            Click a company to view its information and address.
         </p>
     </div>
 
+    {{-- SEARCH --}}
     <form method="GET"
           action="{{ route('cadet.shipping-companies.index') }}"
           class="shipping-search">
@@ -188,11 +348,19 @@
 
     </form>
 
+    {{-- SHIPPING COMPANY CARDS --}}
     <div class="shipping-grid">
 
         @forelse($companies as $company)
 
-            <div class="shipping-card">
+            <div
+                class="shipping-card"
+                role="button"
+                tabindex="0"
+                aria-label="View details for {{ $company->company_name }}"
+                onclick="document.getElementById('shippingModal{{ $company->id }}').showModal()"
+                onkeydown="if(event.key === 'Enter' || event.key === ' '){event.preventDefault();document.getElementById('shippingModal{{ $company->id }}').showModal();}"
+            >
 
                 <div class="shipping-logo">
 
@@ -209,7 +377,101 @@
 
                 <h3>{{ $company->company_name }}</h3>
 
+                <span class="view-hint">
+                    <i class="fas fa-eye"></i>
+                    Click to view company details
+                </span>
+
             </div>
+
+            {{-- COMPANY DETAILS MODAL --}}
+            <dialog
+                class="shipping-modal"
+                id="shippingModal{{ $company->id }}"
+            >
+
+                <div class="shipping-modal-header">
+
+                    <h3>
+                        <i class="fas fa-building"></i>
+                        Shipping Company Details
+                    </h3>
+
+                    <button
+                        type="button"
+                        class="shipping-modal-close"
+                        onclick="this.closest('dialog').close()"
+                        aria-label="Close modal"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                </div>
+
+                <div class="shipping-modal-body">
+
+                    {{-- COMPANY LOGO --}}
+                    <div class="shipping-modal-logo">
+
+                        @if($company->logo_path)
+                            <img
+                                src="{{ asset('storage/' . $company->logo_path) }}"
+                                alt="{{ $company->company_name }} logo"
+                            >
+                        @else
+                            <i class="fas fa-ship"></i>
+                        @endif
+
+                    </div>
+
+                    {{-- COMPANY NAME --}}
+                    <div class="shipping-modal-name">
+                        {{ $company->company_name }}
+                    </div>
+
+                    {{-- COMPANY INFORMATION --}}
+                    <div class="shipping-detail">
+
+                        <span class="shipping-detail-label">
+                            <i class="fas fa-info-circle"></i>
+                            Company Information
+                        </span>
+
+                        <p class="shipping-detail-content">
+                            {{ $company->company_information ?: 'Company information is not yet available.' }}
+                        </p>
+
+                    </div>
+
+                    {{-- COMPANY ADDRESS --}}
+                    <div class="shipping-detail">
+
+                        <span class="shipping-detail-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Company Address
+                        </span>
+
+                        <p class="shipping-detail-content">
+                            {{ $company->company_address ?: 'Company address is not yet available.' }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="shipping-modal-footer">
+
+                    <button
+                        type="button"
+                        onclick="this.closest('dialog').close()"
+                    >
+                        <i class="fas fa-times"></i>
+                        Close
+                    </button>
+
+                </div>
+
+            </dialog>
 
         @empty
 
@@ -233,6 +495,7 @@
 
     </div>
 
+    {{-- PAGINATION --}}
     <div class="shipping-pagination">
         {{ $companies->links() }}
     </div>
