@@ -1,19 +1,40 @@
 <div class="insurance-management-card">
 
+    @php
+        $insurance = $cadet->insurance;
+
+        $expirationDate = $insurance?->expiration_date;
+
+        $daysRemaining = $expirationDate
+            ? (int) now()->startOfDay()->diffInDays(
+                $expirationDate->copy()->startOfDay(),
+                false
+            )
+            : null;
+
+        $insuranceStatus = !$expirationDate
+            ? 'unknown'
+            : ($daysRemaining < 0
+                ? 'expired'
+                : ($daysRemaining <= 30 ? 'expiring' : 'active'));
+    @endphp
+
     <div class="insurance-management-header">
         <div>
             <h3>🛡️ Cadet Insurance Management</h3>
             <p>Upload and manage this cadet's insurance document.</p>
         </div>
 
-        @if($cadet->insurance)
-            <span class="insurance-badge uploaded">
-                ● Uploaded
-            </span>
+        @if(!$insurance)
+            <span class="insurance-badge missing">● Not Uploaded</span>
+        @elseif($insuranceStatus === 'expired')
+            <span class="insurance-badge expired">● Expired</span>
+        @elseif($insuranceStatus === 'expiring')
+            <span class="insurance-badge expiring">● Expiring Soon</span>
+        @elseif($insuranceStatus === 'active')
+            <span class="insurance-badge active">● Active</span>
         @else
-            <span class="insurance-badge missing">
-                ● Not Uploaded
-            </span>
+            <span class="insurance-badge missing">● Date Not Set</span>
         @endif
     </div>
 
@@ -31,45 +52,64 @@
         </div>
     @endif
 
-    @if($cadet->insurance)
+    @if($insurance)
 
         <div class="insurance-file-details">
 
-            <div class="insurance-file-icon">
-                📄
-            </div>
+            <div class="insurance-file-icon">📄</div>
 
             <div class="insurance-file-info">
-                <strong>
-                    {{ $cadet->insurance->original_name }}
-                </strong>
+                <strong>{{ $insurance->original_name }}</strong>
 
                 <small>
                     Uploaded:
-                    {{ $cadet->insurance->created_at?->format('M d, Y h:i A') }}
+                    {{ $insurance->created_at?->format('M d, Y h:i A') }}
                 </small>
 
                 <small>
                     File size:
-                    {{ $cadet->insurance->file_size
-                        ? number_format($cadet->insurance->file_size / 1048576, 2).' MB'
+                    {{ $insurance->file_size
+                        ? number_format($insurance->file_size / 1048576, 2).' MB'
                         : 'Not available' }}
                 </small>
+
+                <small>
+                    Expiration Date:
+                    {{ $expirationDate
+                        ? $expirationDate->format('F d, Y')
+                        : 'Not set' }}
+                </small>
+
+                @if($expirationDate)
+                    <small>
+                        @if($insuranceStatus === 'expired')
+                            <span class="insurance-expired-text">
+                                Expired {{ abs($daysRemaining) }} day(s) ago.
+                            </span>
+                        @elseif($insuranceStatus === 'expiring')
+                            <span class="insurance-expiring-text">
+                                Expires in {{ $daysRemaining }} day(s).
+                            </span>
+                        @else
+                            <span class="insurance-active-text">
+                                Valid for {{ $daysRemaining }} more day(s).
+                            </span>
+                        @endif
+                    </small>
+                @endif
             </div>
 
             <div class="insurance-file-actions">
 
-                <a
-                    href="{{ route('admin.insurance.view', $cadet->id) }}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="insurance-action view">
+                <a href="{{ route('admin.insurance.view', $cadet->id) }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="insurance-action view">
                     👁 View
                 </a>
 
-                <a
-                    href="{{ route('admin.insurance.download', $cadet->id) }}"
-                    class="insurance-action download">
+                <a href="{{ route('admin.insurance.download', $cadet->id) }}"
+                   class="insurance-action download">
                     ⬇ Download
                 </a>
 
@@ -123,14 +163,33 @@
 
         </div>
 
+        <div class="insurance-upload-field insurance-expiration-field">
+
+            <label for="insuranceExpiration">
+                🗓️ Insurance Expiration Date
+            </label>
+
+            <input
+                type="date"
+                name="expiration_date"
+                id="insuranceExpiration"
+                value="{{ old('expiration_date', $expirationDate?->format('Y-m-d')) }}"
+                required>
+
+            <small>
+                Enter the expiration date printed on the insurance document.
+            </small>
+
+        </div>
+
         <button type="submit" class="insurance-upload-button">
             📤
-            {{ $cadet->insurance ? 'Replace Insurance Document' : 'Upload Insurance Document' }}
+            {{ $insurance ? 'Replace Insurance Document' : 'Upload Insurance Document' }}
         </button>
 
     </form>
 
-    @if($cadet->insurance)
+    @if($insurance)
 
         <div class="insurance-delete-area">
 
@@ -155,18 +214,13 @@
 </div>
 
 <style>
-
-/* =========================================================
-   INSURANCE MANAGEMENT - DARK NAVY VERIFICATION THEME
-========================================================= */
-
 .insurance-management-card {
     margin-top: 25px;
     padding: 24px;
     border-radius: 18px;
     background: linear-gradient(145deg, #0d1940, #111f4d);
-    border: 1px solid rgba(96, 165, 250, .22);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, .20);
+    border: 1px solid rgba(96,165,250,.22);
+    box-shadow: 0 12px 30px rgba(0,0,0,.20);
     color: #e2e8f0;
 }
 
@@ -199,28 +253,38 @@
     white-space: nowrap;
 }
 
-.insurance-badge.uploaded {
+.insurance-badge.active {
     color: #86efac;
-    background: rgba(22, 163, 74, .16);
-    border: 1px solid rgba(74, 222, 128, .25);
+    background: rgba(22,163,74,.16);
+    border: 1px solid rgba(74,222,128,.25);
+}
+
+.insurance-badge.expiring {
+    color: #fcd34d;
+    background: rgba(217,119,6,.15);
+    border: 1px solid rgba(251,191,36,.25);
+}
+
+.insurance-badge.expired {
+    color: #fca5a5;
+    background: rgba(220,38,38,.16);
+    border: 1px solid rgba(248,113,113,.25);
 }
 
 .insurance-badge.missing {
     color: #fcd34d;
-    background: rgba(217, 119, 6, .15);
-    border: 1px solid rgba(251, 191, 36, .25);
+    background: rgba(217,119,6,.15);
+    border: 1px solid rgba(251,191,36,.25);
 }
-
-/* FILE DETAILS */
 
 .insurance-file-details {
     display: flex;
     align-items: center;
     gap: 15px;
     padding: 16px;
-    border: 1px solid rgba(96, 165, 250, .20);
+    border: 1px solid rgba(96,165,250,.20);
     border-radius: 13px;
-    background: rgba(7, 21, 47, .75);
+    background: rgba(7,21,47,.75);
 }
 
 .insurance-file-icon {
@@ -230,8 +294,8 @@
     place-items: center;
     flex-shrink: 0;
     border-radius: 12px;
-    background: rgba(37, 99, 235, .20);
-    border: 1px solid rgba(96, 165, 250, .20);
+    background: rgba(37,99,235,.20);
+    border: 1px solid rgba(96,165,250,.20);
     font-size: 21px;
 }
 
@@ -252,9 +316,21 @@
 }
 
 .insurance-file-info small {
-    margin-top: 4px;
+    margin-top: 5px;
     color: #94a3b8;
     font-size: 11px;
+}
+
+.insurance-active-text {
+    color: #86efac;
+}
+
+.insurance-expiring-text {
+    color: #fcd34d;
+}
+
+.insurance-expired-text {
+    color: #fca5a5;
 }
 
 .insurance-file-actions {
@@ -262,8 +338,6 @@
     flex-wrap: wrap;
     gap: 8px;
 }
-
-/* ACTION BUTTONS */
 
 .insurance-action,
 .insurance-upload-button,
@@ -283,9 +357,9 @@
 }
 
 .insurance-action.view {
-    background: rgba(14, 165, 233, .15);
+    background: rgba(14,165,233,.15);
     color: #7dd3fc;
-    border-color: rgba(56, 189, 248, .25);
+    border-color: rgba(56,189,248,.25);
 }
 
 .insurance-action.view:hover {
@@ -294,9 +368,9 @@
 }
 
 .insurance-action.download {
-    background: rgba(37, 99, 235, .20);
+    background: rgba(37,99,235,.20);
     color: #93c5fd;
-    border-color: rgba(96, 165, 250, .25);
+    border-color: rgba(96,165,250,.25);
 }
 
 .insurance-action.download:hover {
@@ -307,10 +381,8 @@
 .insurance-divider {
     height: 1px;
     margin: 22px 0;
-    background: rgba(148, 163, 184, .18);
+    background: rgba(148,163,184,.18);
 }
-
-/* FORM */
 
 .insurance-form-title {
     margin: 0 0 14px;
@@ -326,10 +398,10 @@
     gap: 7px;
     padding: 25px 15px;
     margin-bottom: 20px;
-    border: 1px dashed rgba(96, 165, 250, .35);
+    border: 1px dashed rgba(96,165,250,.35);
     border-radius: 12px;
     text-align: center;
-    background: rgba(7, 21, 47, .55);
+    background: rgba(7,21,47,.55);
 }
 
 .insurance-empty-icon {
@@ -346,6 +418,10 @@
     font-size: 11px;
 }
 
+.insurance-upload-field {
+    margin-bottom: 17px;
+}
+
 .insurance-upload-field label {
     display: block;
     margin-bottom: 8px;
@@ -359,9 +435,13 @@
     padding: 11px;
     border: 1px dashed #475569;
     border-radius: 9px;
-    background: rgba(7, 21, 47, .75);
+    background: rgba(7,21,47,.75);
     color: #e2e8f0;
     box-sizing: border-box;
+}
+
+.insurance-upload-field input[type="date"] {
+    color-scheme: dark;
 }
 
 .insurance-upload-field input::file-selector-button {
@@ -383,37 +463,33 @@
 }
 
 .insurance-upload-button {
-    margin-top: 15px;
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    margin-top: 2px;
+    background: linear-gradient(135deg,#2563eb,#1d4ed8);
     color: #fff;
-    border-color: rgba(147, 197, 253, .2);
+    border-color: rgba(147,197,253,.2);
 }
 
 .insurance-upload-button:hover {
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg,#3b82f6,#2563eb);
     transform: translateY(-1px);
 }
-
-/* DELETE */
 
 .insurance-delete-area {
     margin-top: 15px;
     padding-top: 15px;
-    border-top: 1px solid rgba(148, 163, 184, .15);
+    border-top: 1px solid rgba(148,163,184,.15);
 }
 
 .insurance-delete-button {
-    background: rgba(220, 38, 38, .13);
+    background: rgba(220,38,38,.13);
     color: #fca5a5;
-    border-color: rgba(248, 113, 113, .25);
+    border-color: rgba(248,113,113,.25);
 }
 
 .insurance-delete-button:hover {
     background: #b91c1c;
     color: #fff;
 }
-
-/* MESSAGES */
 
 .insurance-message {
     margin-bottom: 15px;
@@ -424,19 +500,17 @@
 
 .insurance-message.success {
     color: #86efac;
-    background: rgba(22, 163, 74, .13);
-    border: 1px solid rgba(74, 222, 128, .22);
+    background: rgba(22,163,74,.13);
+    border: 1px solid rgba(74,222,128,.22);
 }
 
 .insurance-message.error {
     color: #fca5a5;
-    background: rgba(220, 38, 38, .13);
-    border: 1px solid rgba(248, 113, 113, .22);
+    background: rgba(220,38,38,.13);
+    border: 1px solid rgba(248,113,113,.22);
 }
 
-/* RESPONSIVE */
-
-@media(max-width: 650px) {
+@media(max-width:650px) {
     .insurance-management-header,
     .insurance-file-details {
         align-items: flex-start;
@@ -455,5 +529,4 @@
         padding: 17px;
     }
 }
-
 </style>

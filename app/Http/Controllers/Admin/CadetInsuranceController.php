@@ -15,15 +15,18 @@ class CadetInsuranceController extends Controller
      */
     public function store(Request $request, Cadet $cadet)
     {
-        $request->validate([
+        $validated = $request->validate([
             'file' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'expiration_date' => 'required|date',
         ], [
             'file.required' => 'Please select an insurance document.',
             'file.mimes' => 'Only PDF, JPG, JPEG, and PNG files are accepted.',
             'file.max' => 'The insurance document must not exceed 10 MB.',
+            'expiration_date.required' => 'Please select the insurance expiration date.',
+            'expiration_date.date' => 'Please enter a valid expiration date.',
         ]);
 
-        // Store privately, not in the publicly accessible storage folder.
+        // Store privately.
         $file = $request->file('file');
 
         $path = $file->store('cadet-insurances', 'local');
@@ -38,6 +41,11 @@ class CadetInsuranceController extends Controller
             'original_name' => $file->getClientOriginalName(),
             'mime_type' => $file->getMimeType(),
             'file_size' => $file->getSize(),
+            'expiration_date' => $validated['expiration_date'],
+
+            // Reset notifications when the insurance is replaced.
+            'expiry_warning_sent_at' => null,
+            'expired_notified_at' => null,
         ];
 
         if ($insurance) {
@@ -46,14 +54,14 @@ class CadetInsuranceController extends Controller
             $cadet->insurance()->create($data);
         }
 
-        // Remove the previous file after the new record has been saved.
+        // Delete the previous file after successfully saving the new record.
         if ($oldPath && $oldPath !== $path) {
             Storage::disk('local')->delete($oldPath);
         }
 
         return redirect()
             ->route('admin.verification.show', $cadet->id)
-            ->with('success', 'Insurance document uploaded successfully.');
+            ->with('success', 'Insurance document and expiration date saved successfully.');
     }
 
     /**

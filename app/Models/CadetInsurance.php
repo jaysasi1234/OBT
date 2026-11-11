@@ -14,7 +14,19 @@ class CadetInsurance extends Model
         'original_name',
         'mime_type',
         'file_size',
+        'expiration_date',
+        'expiry_warning_sent_at',
+        'expired_notified_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'expiration_date' => 'date',
+            'expiry_warning_sent_at' => 'datetime',
+            'expired_notified_at' => 'datetime',
+        ];
+    }
 
     public function cadet(): BelongsTo
     {

@@ -28,3 +28,9 @@ Artisan::command('inspire', function () {
 Schedule::command('obt:check-six-year-compliance')
     ->dailyAt('08:00')
     ->withoutOverlapping();
+
+    // Check cadet insurance expiration every day at 8:10 AM Manila time.
+Schedule::command('obt:check-insurance-expiration')
+    ->dailyAt('08:10')
+    ->timezone('Asia/Manila')
+    ->withoutOverlapping();
