@@ -173,14 +173,31 @@ class DownloadableFormController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function cadetIndex()
-    {
-        $forms = DownloadableForm::where('is_published', true)
-            ->latest()
+public function cadetIndex()
+{
+    try {
+        $forms = DownloadableForm::query()
+            ->where('is_published', 1)
+            ->orderByDesc('created_at')
             ->paginate(12);
 
-        return view('cadet.downloadable_forms.index', compact('forms'));
+        return view('cadet.downloadable_forms.index', [
+            'forms' => $forms,
+        ]);
+
+    } catch (\Throwable $e) {
+
+        \Illuminate\Support\Facades\Log::error(
+            'Cadet Downloadable Forms Error: ' . $e->getMessage(),
+            [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]
+        );
+
+        throw $e;
     }
+}
 
     /*
     |--------------------------------------------------------------------------
