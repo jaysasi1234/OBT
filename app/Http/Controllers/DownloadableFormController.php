@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DownloadableForm;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DownloadableFormController extends Controller
@@ -38,7 +40,7 @@ class DownloadableFormController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | ADMIN: SHOW CREATE FORM
+    | ADMIN: CREATE FORM
     |--------------------------------------------------------------------------
     */
 
@@ -49,7 +51,7 @@ class DownloadableFormController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | ADMIN: SAVE NEW FORM
+    | ADMIN: STORE FORM
     |--------------------------------------------------------------------------
     */
 
@@ -71,6 +73,12 @@ class DownloadableFormController extends Controller
 
         $path = $file->store('downloadable-forms', 'local');
 
+        if (!$path) {
+            return back()
+                ->withInput()
+                ->with('error', 'Unable to upload the file. Please try again.');
+        }
+
         DownloadableForm::create([
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
@@ -79,7 +87,7 @@ class DownloadableFormController extends Controller
             'mime_type' => $file->getMimeType(),
             'file_size' => $file->getSize(),
             'is_published' => $request->boolean('is_published'),
-            'uploaded_by' => \Illuminate\Support\Facades\Auth::id(),
+            'uploaded_by' => Auth::id(),
         ]);
 
         return redirect()
@@ -89,7 +97,7 @@ class DownloadableFormController extends Controller
 
     /*
     |--------------------------------------------------------------------------
-    | ADMIN: SHOW EDIT FORM
+    | ADMIN: EDIT FORM
     |--------------------------------------------------------------------------
     */
 
@@ -133,9 +141,18 @@ class DownloadableFormController extends Controller
 
             $newPath = $file->store('downloadable-forms', 'local');
 
-            Storage::disk('local')->delete(
-                $downloadableForm->file_path
-            );
+            if (!$newPath) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Unable to upload the replacement file.');
+            }
+
+            // Delete the previous file only after the new file is stored.
+            if ($downloadableForm->file_path) {
+                Storage::disk('local')->delete(
+                    $downloadableForm->file_path
+                );
+            }
 
             $data['file_path'] = $newPath;
             $data['original_name'] = $file->getClientOriginalName();
@@ -158,7 +175,11 @@ class DownloadableFormController extends Controller
 
     public function destroy(DownloadableForm $downloadableForm)
     {
-        Storage::disk('local')->delete($downloadableForm->file_path);
+        if ($downloadableForm->file_path) {
+            Storage::disk('local')->delete(
+                $downloadableForm->file_path
+            );
+        }
 
         $downloadableForm->delete();
 
@@ -173,31 +194,26 @@ class DownloadableFormController extends Controller
     |--------------------------------------------------------------------------
     */
 
-public function cadetIndex()
-{
-    try {
-        $forms = DownloadableForm::query()
-            ->where('is_published', 1)
-            ->orderByDesc('created_at')
-            ->paginate(12);
+    public function cadetIndex()
+    {
+        try {
+            $forms = DownloadableForm::query()
+                ->where('is_published', true)
+                ->orderByDesc('created_at')
+                ->simplePaginate(12);
 
-        return view('cadet.downloadable_forms.index', [
-            'forms' => $forms,
-        ]);
+            return view('cadet.downloadable_forms.index', compact('forms'));
 
-    } catch (\Throwable $e) {
-
-        \Illuminate\Support\Facades\Log::error(
-            'Cadet Downloadable Forms Error: ' . $e->getMessage(),
-            [
+        } catch (\Throwable $e) {
+            Log::error('Cadet Downloadable Forms Error', [
+                'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-            ]
-        );
+            ]);
 
-        throw $e;
+            throw $e;
+        }
     }
-}
 
     /*
     |--------------------------------------------------------------------------
@@ -209,15 +225,19 @@ public function cadetIndex()
     {
         abort_unless($downloadableForm->is_published, 404);
 
+        $disk = Storage::disk('local');
+
         abort_unless(
-            Storage::disk('local')->exists($downloadableForm->file_path),
+            $downloadableForm->file_path &&
+            $disk->exists($downloadableForm->file_path),
             404,
             'The requested file is no longer available.'
         );
 
-        return Storage::disk('local')->download(
+        return $disk->download(
             $downloadableForm->file_path,
             $downloadableForm->original_name
+                ?: basename($downloadableForm->file_path)
         );
     }
 }

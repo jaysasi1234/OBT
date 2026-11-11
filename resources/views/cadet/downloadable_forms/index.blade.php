@@ -1,3 +1,4 @@
+
 @extends('layouts.cadet')
 
 @section('content')
@@ -40,6 +41,7 @@
         flex-direction: column;
         min-height: 245px;
         transition: .2s ease;
+        min-width: 0;
     }
 
     .cadet-form-card:hover {
@@ -51,6 +53,7 @@
     .cadet-form-icon {
         width: 48px;
         height: 48px;
+        flex-shrink: 0;
         border-radius: 12px;
         display: flex;
         align-items: center;
@@ -66,6 +69,7 @@
         font-size: 17px;
         font-weight: 800;
         margin-bottom: 8px;
+        overflow-wrap: anywhere;
     }
 
     .cadet-form-description {
@@ -75,11 +79,13 @@
         flex: 1;
         margin-bottom: 15px;
         white-space: pre-line;
+        overflow-wrap: anywhere;
     }
 
     .cadet-form-meta {
         color: #8296bd;
         font-size: 11px;
+        line-height: 1.8;
         margin-bottom: 15px;
     }
 
@@ -95,11 +101,13 @@
         color: white;
         text-decoration: none;
         font-weight: 700;
+        transition: .2s ease;
     }
 
     .cadet-download-btn:hover {
         color: white;
         filter: brightness(1.12);
+        transform: translateY(-1px);
     }
 
     .cadet-forms-empty {
@@ -115,6 +123,10 @@
         font-size: 45px;
         display: block;
         margin-bottom: 12px;
+    }
+
+    .cadet-forms-empty h3 {
+        color: #fff;
     }
 
     .cadet-forms-pagination {
@@ -141,6 +153,14 @@
         .cadet-forms-page {
             padding: 15px;
         }
+
+        .cadet-forms-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cadet-forms-header h2 {
+            font-size: 22px;
+        }
     }
 </style>
 
@@ -157,7 +177,7 @@
         </p>
     </div>
 
-    @if($forms->count())
+    @if(isset($forms) && $forms->count() > 0)
 
         <div class="cadet-forms-grid">
 
@@ -165,15 +185,25 @@
 
                 @php
                     $extension = strtolower(
-                        pathinfo($form->original_name, PATHINFO_EXTENSION)
+                        pathinfo($form->original_name ?? '', PATHINFO_EXTENSION)
                     );
 
-                    $icon = match($extension) {
+                    $icons = [
                         'pdf' => 'bi-file-earmark-pdf',
-                        'doc', 'docx' => 'bi-file-earmark-word',
-                        'xls', 'xlsx' => 'bi-file-earmark-excel',
-                        default => 'bi-file-earmark'
-                    };
+                        'doc' => 'bi-file-earmark-word',
+                        'docx' => 'bi-file-earmark-word',
+                        'xls' => 'bi-file-earmark-excel',
+                        'xlsx' => 'bi-file-earmark-excel',
+                        'ppt' => 'bi-file-earmark-ppt',
+                        'pptx' => 'bi-file-earmark-ppt',
+                        'jpg' => 'bi-file-earmark-image',
+                        'jpeg' => 'bi-file-earmark-image',
+                        'png' => 'bi-file-earmark-image',
+                    ];
+
+                    $icon = $icons[$extension] ?? 'bi-file-earmark';
+
+                    $fileSize = (float) ($form->file_size ?? 0);
                 @endphp
 
                 <div class="cadet-form-card">
@@ -189,19 +219,28 @@
                     </div>
 
                     <div class="cadet-form-meta">
+
                         <i class="bi bi-file-earmark"></i>
-                        {{ strtoupper($extension) }}
+
+                        {{ $extension ? strtoupper($extension) : 'FILE' }}
+
                         &nbsp;·&nbsp;
-                        {{ number_format($form->file_size / 1024, 1) }} KB
+
+                        {{ number_format($fileSize / 1024, 1) }} KB
+
                         <br>
+
                         <i class="bi bi-calendar3"></i>
-                        Posted {{ $form->created_at->format('M d, Y') }}
+
+                        Posted {{ optional($form->created_at)->format('M d, Y') }}
+
                     </div>
 
-                    <a href="{{ route('cadet.downloadable-forms.download', $form) }}"
+                    <a href="{{ route('cadet.downloadable-forms.download', $form->id) }}"
                        class="cadet-download-btn">
 
                         <i class="bi bi-download"></i>
+
                         Download Form
 
                     </a>
@@ -212,15 +251,18 @@
 
         </div>
 
-        @if($forms->hasPages())
+        @if(method_exists($forms, 'hasPages') && $forms->hasPages())
+
             <div class="cadet-forms-pagination">
                 {{ $forms->links() }}
             </div>
+
         @endif
 
     @else
 
         <div class="cadet-forms-empty">
+
             <i class="bi bi-folder-x"></i>
 
             <h3>No Forms Available</h3>
@@ -229,6 +271,7 @@
                 There are currently no published forms.
                 Please check again later.
             </p>
+
         </div>
 
     @endif
