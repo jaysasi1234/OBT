@@ -77,56 +77,99 @@ public function index(Request $request)
 // =========================================================
 // CREATE ACCOUNTS FOR ENTIRE BATCH
 // =========================================================
+
 public function createBatchAccounts(Request $request)
 {
-    // ---------------------------------------------------------
-    // Validate selected batch
-    // ---------------------------------------------------------
     $request->validate([
-        'batch_id' => [
-            'required',
-            'exists:batches,id',
-        ],
-    ], [
-        'batch_id.required' => 'Please select a batch.',
-        'batch_id.exists' => 'The selected batch does not exist.',
+        'batch_id' => ['required', 'exists:batches,id'],
     ]);
 
     $batch = Batch::findOrFail($request->batch_id);
 
-    // ---------------------------------------------------------
-    // Get all cadets in the selected batch who do not yet
-    // have a linked user account.
-    // ---------------------------------------------------------
     $cadets = Cadet::where('batch_id', $batch->id)
         ->whereNull('user_id')
         ->orderBy('full_name')
         ->get();
 
-    // ---------------------------------------------------------
-    // Nothing to create
-    // ---------------------------------------------------------
     if ($cadets->isEmpty()) {
         return back()->with(
             'error',
-            'All cadets in this batch already have accounts.'
+            'All cadets in this batch already have linked accounts.'
         );
     }
 
     $created = 0;
+    $linked = 0;
+    $skipped = 0;
     $generatedEmails = 0;
 
     DB::transaction(function () use (
         $cadets,
         &$created,
+        &$linked,
+        &$skipped,
         &$generatedEmails
     ) {
-
         foreach ($cadets as $cadet) {
 
-            // -------------------------------------------------
-            // Generate a clean username base from full name
-            // -------------------------------------------------
+            $email = trim((string) $cadet->email);
+
+            /*
+             * Find an existing account using the cadet's email.
+             */
+            if ($email !== '') {
+
+                $existingUser = User::where('email', $email)
+                    ->first();
+
+                if ($existingUser) {
+
+                    /*
+                     * Never link an administrator or dean
+                     * to a cadet record.
+                     */
+                    if ($existingUser->role !== 'cadet') {
+                        $skipped++;
+                        continue;
+                    }
+
+                    /*
+                     * Never attach an account that already
+                     * belongs to another cadet.
+                     */
+                    if (Cadet::where('user_id', $existingUser->id)
+                        ->exists()) {
+                        $skipped++;
+                        continue;
+                    }
+
+                    /*
+                     * Link the existing unlinked cadet account.
+                     */
+                    $cadet->update([
+                        'user_id' => $existingUser->id,
+                    ]);
+
+                    $linked++;
+
+                    continue;
+                }
+            }
+
+            /*
+             * Generate a system email if no email exists.
+             */
+            if ($email === '') {
+                $email = $this->generateCadetSystemEmail(
+                    $cadet->full_name
+                );
+
+                $generatedEmails++;
+            }
+
+            /*
+             * Generate a unique username.
+             */
             $baseUsername = Str::lower(
                 preg_replace(
                     '/[^A-Za-z0-9]/',
@@ -135,89 +178,37 @@ public function createBatchAccounts(Request $request)
                 )
             );
 
-            $baseUsername = $baseUsername ?: 'cadet';
-
-            // -------------------------------------------------
-            // Generate unique username
-            // -------------------------------------------------
             $username = $this->generateUniqueUsername(
-                $baseUsername
+                $baseUsername ?: 'cadet'
             );
 
-            // -------------------------------------------------
-            // EMAIL HANDLING
-            //
-            // If the cadet already has an email:
-            //     use the real email.
-            //
-            // If the cadet has NO email:
-            //     generate a system email from the name.
-            // -------------------------------------------------
-            $email = trim((string) $cadet->email);
-
-            if ($email === '') {
-
-                $email = $this->generateCadetSystemEmail(
-                    $cadet->full_name
-                );
-
-                $generatedEmails++;
-            } else {
-
-                // -------------------------------------------------
-                // Extra protection:
-                // Make sure an existing email is not already
-                // attached to another user.
-                // -------------------------------------------------
-                if (
-                    User::where('email', $email)->exists()
-                ) {
-                    continue;
-                }
-            }
-
-            // -------------------------------------------------
-            // Generate temporary password
-            // -------------------------------------------------
+            /*
+             * Generate a temporary password.
+             */
             $temporaryPassword = Str::random(12);
 
-            // -------------------------------------------------
-            // Create user account
-            // -------------------------------------------------
+            /*
+             * Create the account.
+             */
             $user = User::create([
                 'name' => $cadet->full_name,
-
                 'email' => $email,
-
                 'username' => $username,
-
-                'password' => Hash::make(
-                    $temporaryPassword
-                ),
-
+                'password' => Hash::make($temporaryPassword),
                 'role' => 'cadet',
-
                 'course' => $cadet->course,
-
                 'contact' => $cadet->contact_number,
-
                 'trb_no' => $cadet->trb_control_number,
-
                 'status' => 'active',
-
                 'is_active' => true,
-
                 'email_verified_at' => now(),
             ]);
 
-            // -------------------------------------------------
-            // Link the new user account to the cadet
-            // -------------------------------------------------
+            /*
+             * Link the newly created account.
+             */
             $cadet->update([
                 'user_id' => $user->id,
-
-                // Store the generated email back into the
-                // cadet record so it is visible later.
                 'email' => $email,
             ]);
 
@@ -225,23 +216,19 @@ public function createBatchAccounts(Request $request)
         }
     });
 
-    // ---------------------------------------------------------
-    // Build result message
-    // ---------------------------------------------------------
-    $message =
-        "{$created} cadet account(s) created successfully.";
+    $message = "{$created} new account(s) created and {$linked} existing account(s) linked to their cadets.";
 
     if ($generatedEmails > 0) {
-        $message .=
-            " {$generatedEmails} cadet(s) had no email address, "
-            . "so the system generated account email addresses for them.";
+        $message .= " {$generatedEmails} system email address(es) generated.";
     }
 
-    return back()->with(
-        'success',
-        $message
-    );
+    if ($skipped > 0) {
+        $message .= " {$skipped} cadet(s) skipped because their email belongs to an account that cannot safely be linked.";
+    }
+
+    return back()->with('success', $message);
 }
+
 
 // =========================================================
 // GENERATE SYSTEM EMAIL FOR CADET WITHOUT EMAIL
