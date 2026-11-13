@@ -210,28 +210,28 @@
         @enderror
     </div>
 
-    {{-- COMPANY ADDRESS --}}
-    <div class="form-group">
-        <label for="company_address">
-            Company Address
-        </label>
+{{-- CONTACT INFORMATION --}}
+<div class="form-group">
+    <label for="company_address">
+        Contact Information
+    </label>
 
-        <textarea
-            id="company_address"
-            name="company_address"
-            rows="3"
-            maxlength="2000"
-            placeholder="Enter the complete company address..."
-        >{{ old('company_address', $company?->company_address) }}</textarea>
+    <textarea
+        id="company_address"
+        name="company_address"
+        rows="3"
+        maxlength="2000"
+        placeholder="Enter the company's contact information (phone number, email address, etc.)..."
+    >{{ old('company_address', $company?->company_address) }}</textarea>
 
-        <span class="help-text">
-            Enter the complete business address of the shipping company.
-        </span>
+    <span class="help-text">
+        Enter the company's contact details, such as phone number, email address, or other contact information.
+    </span>
 
-        @error('company_address')
-            <div class="field-error">{{ $message }}</div>
-        @enderror
-    </div>
+    @error('company_address')
+        <div class="field-error">{{ $message }}</div>
+    @enderror
+</div>
 
     {{-- COMPANY LOGO --}}
     <div class="form-group">

@@ -341,7 +341,7 @@
 
         <p>
             Browse the shipping companies accredited by the academy.
-            Click a company to view its information and address.
+            Click a company to view its information and contact details.
         </p>
     </div>
 
@@ -459,19 +459,19 @@
 
                     </div>
 
-                    {{-- COMPANY ADDRESS --}}
-                    <div class="shipping-detail">
+{{-- CONTACT INFORMATION --}}
+<div class="shipping-detail">
 
-                        <span class="shipping-detail-label">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Company Address
-                        </span>
+    <span class="shipping-detail-label">
+        <i class="fas fa-address-card"></i>
+        Contact Information
+    </span>
 
-                        <p class="shipping-detail-content">
-                            {{ $company->company_address ?: 'Company address is not yet available.' }}
-                        </p>
+    <p class="shipping-detail-content">
+        {{ $company->company_address ?: 'Contact information is not yet available.' }}
+    </p>
 
-                    </div>
+</div>
 
                 </div>
 
