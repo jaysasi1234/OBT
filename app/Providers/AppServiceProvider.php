@@ -85,34 +85,35 @@ class AppServiceProvider extends ServiceProvider
             }
         );
 
-        /*
-        |--------------------------------------------------------------------------
-        | Admin Layout Notifications
-        |--------------------------------------------------------------------------
-        */
+/*
+|--------------------------------------------------------------------------
+| Admin Layout Notifications
+|--------------------------------------------------------------------------
+*/
 
-        View::composer(
-            'layouts.admin',
-            function ($view) {
+View::composer('layouts.admin', function ($view) {
 
-                if (Auth::check()) {
+    $user = Auth::user();
 
-                    $user = Auth::user();
+    $notifications = collect();
+    $unreadCount = 0;
 
-                    $view->with([
-                        'notifications' => $user
-                            ->notifications()
-                            ->latest()
-                            ->take(10)
-                            ->get(),
+    if ($user && in_array($user->role, ['admin', 'dean'])) {
 
-                        'unreadCount' => $user
-                            ->unreadNotifications()
-                            ->count(),
-                    ]);
-                }
-            }
-        );
+        $notifications = $user->notifications()
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $unreadCount = $user->unreadNotifications()->count();
+    }
+
+    $view->with([
+        'notifications' => $notifications,
+        'unreadCount' => $unreadCount,
+    ]);
+
+});
 
         /*
         |--------------------------------------------------------------------------
