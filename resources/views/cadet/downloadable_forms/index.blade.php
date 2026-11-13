@@ -172,9 +172,28 @@
             Downloadable Forms
         </h2>
 
-        <p>
-            Download the forms and documents provided by the OBT administrator.
-        </p>
+<p>
+    Download the forms and documents provided by the OBT administrator.
+</p>
+
+<div style="
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:13px;
+    padding:9px 14px;
+    background:#142448;
+    border:1px solid #344a78;
+    border-radius:9px;
+    color:#dce7ff;
+    font-size:12px;
+    font-weight:700;
+">
+    <i class="bi bi-mortarboard"></i>
+
+    Your Course:
+    {{ $course ?? 'Not Assigned' }}
+</div>
     </div>
 
     @if(isset($forms) && $forms->count() > 0)
@@ -213,6 +232,28 @@
                     </div>
 
                     <h3>{{ $form->title }}</h3>
+
+                    <div style="
+    display:inline-flex;
+    align-self:flex-start;
+    padding:5px 9px;
+    margin-bottom:10px;
+    border-radius:20px;
+    background:rgba(59,130,246,.15);
+    border:1px solid rgba(96,165,250,.25);
+    color:#93c5fd;
+    font-size:10px;
+    font-weight:800;
+">
+    @if($form->course_target === 'BSMT')
+        BSMT ONLY
+    @elseif($form->course_target === 'BSMARE')
+        BSMARE ONLY
+    @else
+        ALL CADETS
+    @endif
+</div>
+
 
                     <div class="cadet-form-description">
                         {{ $form->description ?: 'No description provided.' }}

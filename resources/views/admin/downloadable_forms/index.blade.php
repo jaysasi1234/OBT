@@ -427,6 +427,7 @@
                     <tr>
                         <th>Form Title</th>
                         <th>File Name</th>
+                        <th>Available For</th>
                         <th>File Size</th>
                         <th>Uploaded By</th>
                         <th>Date Uploaded</th>
@@ -452,6 +453,16 @@
 
                             <td>
                                 {{ $form->original_name }}
+                            </td>
+
+                            <td>
+                                @if($form->course_target === 'BSMT')
+                                    <span class="forms-status published">BSMT Only</span>
+                                @elseif($form->course_target === 'BSMARE')
+                                    <span class="forms-status draft">BSMARE Only</span>
+                                @else
+                                    <span class="forms-status published">All Cadets</span>
+                                @endif
                             </td>
 
                             <td>
@@ -509,7 +520,7 @@
                     @empty
 
                         <tr>
-                            <td colspan="7">
+                            <td colspan="8">
                                 <div class="forms-empty">
                                     <i class="bi bi-folder-x"
                                        style="font-size:35px;"></i>

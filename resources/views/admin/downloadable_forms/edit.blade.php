@@ -335,6 +335,54 @@
 
             </div>
 
+
+{{-- COURSE TARGET --}}
+<div class="upload-group">
+
+    <label for="course_target">Available For *</label>
+
+    <select
+        id="course_target"
+        name="course_target"
+        required
+        style="
+            display:block;
+            width:100%;
+            padding:12px;
+            background:#0a1530;
+            border:1px solid #344a78;
+            border-radius:9px;
+            color:#fff;
+            font-size:13px;
+        "
+    >
+        <option value="all"
+            {{ old('course_target', $downloadableForm->course_target ?? 'all') === 'all' ? 'selected' : '' }}>
+            All Cadets (BSMT & BSMARE)
+        </option>
+
+        <option value="BSMT"
+            {{ old('course_target', $downloadableForm->course_target ?? 'all') === 'BSMT' ? 'selected' : '' }}>
+            BSMT Only
+        </option>
+
+        <option value="BSMARE"
+            {{ old('course_target', $downloadableForm->course_target ?? 'all') === 'BSMARE' ? 'selected' : '' }}>
+            BSMARE Only
+        </option>
+    </select>
+
+    <div class="upload-help">
+        Changing this setting immediately changes which cadets can access the form.
+    </div>
+
+    @error('course_target')
+        <div class="upload-error">{{ $message }}</div>
+    @enderror
+
+</div>
+
+
             {{-- CURRENT FILE --}}
             <div class="upload-group">
 

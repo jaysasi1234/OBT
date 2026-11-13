@@ -12,6 +12,7 @@ class DownloadableForm extends Model
     protected $fillable = [
         'title',
         'description',
+        'course_target',
         'file_path',
         'original_name',
         'mime_type',

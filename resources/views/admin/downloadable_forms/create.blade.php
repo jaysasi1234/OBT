@@ -436,6 +436,54 @@ main,
 
             </div>
 
+
+{{-- COURSE TARGET --}}
+<div class="upload-group">
+
+    <label for="course_target">Available For *</label>
+
+    <select
+        id="course_target"
+        name="course_target"
+        required
+        style="
+            display:block;
+            width:100%;
+            padding:13px 15px;
+            background:#0a1935;
+            border:1px solid #294775;
+            border-radius:10px;
+            color:#fff;
+            font-size:14px;
+        "
+    >
+        <option value="all"
+            {{ old('course_target', 'all') === 'all' ? 'selected' : '' }}>
+            All Cadets (BSMT & BSMARE)
+        </option>
+
+        <option value="BSMT"
+            {{ old('course_target') === 'BSMT' ? 'selected' : '' }}>
+            BSMT Only
+        </option>
+
+        <option value="BSMARE"
+            {{ old('course_target') === 'BSMARE' ? 'selected' : '' }}>
+            BSMARE Only
+        </option>
+    </select>
+
+    <div class="upload-help">
+        Select which cadet course can view and download this form.
+    </div>
+
+    @error('course_target')
+        <div class="upload-error">{{ $message }}</div>
+    @enderror
+
+</div>
+
+
             {{-- FILE UPLOAD --}}
             <div class="upload-group">
 
