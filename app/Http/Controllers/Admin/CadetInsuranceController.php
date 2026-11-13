@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Cadet;
+use App\Models\CadetInsurance;
+use App\Models\User;
+use App\Notifications\InsuranceExpirationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class CadetInsuranceController extends Controller
 {
@@ -26,7 +31,6 @@ class CadetInsuranceController extends Controller
             'expiration_date.date' => 'Please enter a valid expiration date.',
         ]);
 
-        // Store privately.
         $file = $request->file('file');
 
         $path = $file->store('cadet-insurances', 'local');
@@ -42,26 +46,123 @@ class CadetInsuranceController extends Controller
             'mime_type' => $file->getMimeType(),
             'file_size' => $file->getSize(),
             'expiration_date' => $validated['expiration_date'],
-
-            // Reset notifications when the insurance is replaced.
             'expiry_warning_sent_at' => null,
             'expired_notified_at' => null,
         ];
 
         if ($insurance) {
             $insurance->update($data);
+            $insurance->refresh();
         } else {
-            $cadet->insurance()->create($data);
+            $insurance = $cadet->insurance()->create($data);
         }
 
-        // Delete the previous file after successfully saving the new record.
         if ($oldPath && $oldPath !== $path) {
             Storage::disk('local')->delete($oldPath);
         }
 
+        // Send an expiration notification immediately when applicable.
+        $this->notifyExpirationIfNeeded($insurance, $cadet);
+
         return redirect()
             ->route('admin.verification.show', $cadet->id)
             ->with('success', 'Insurance document and expiration date saved successfully.');
+    }
+
+    /**
+     * Immediately notify administrators and the affected cadet
+     * when the insurance expires within 30 days or has expired.
+     */
+    private function notifyExpirationIfNeeded(
+        CadetInsurance $insurance,
+        Cadet $cadet
+    ): void {
+        $expirationDate = Carbon::parse($insurance->expiration_date)->startOfDay();
+        $today = today()->startOfDay();
+
+        $admins = User::where('role', 'admin')->get();
+
+        $cadetUser = $cadet->user;
+
+        $cadetName = $cadet->full_name;
+
+        // Already expired.
+        if ($expirationDate->lte($today)) {
+
+            if ($insurance->expired_notified_at) {
+                return;
+            }
+
+            $title = 'Insurance Expired';
+            $message = $cadetName . "'s insurance has expired.";
+
+            $eventKey = 'insurance-expired-' .
+                $insurance->id . '-' .
+                $expirationDate->format('Ymd');
+
+            $icon = 'fa-triangle-exclamation';
+
+            $timestampColumn = 'expired_notified_at';
+
+        } else {
+
+            // Not yet expired, but within the next 30 days.
+            if ($expirationDate->gt($today->copy()->addDays(30))) {
+                return;
+            }
+
+            if ($insurance->expiry_warning_sent_at) {
+                return;
+            }
+
+            $daysRemaining = (int) $today->diffInDays(
+                $expirationDate,
+                false
+            );
+
+            $title = 'Insurance Expiring Soon';
+
+            $message = $cadetName .
+                "'s insurance will expire in {$daysRemaining} day(s).";
+
+            $eventKey = 'insurance-expiring-' .
+                $insurance->id . '-' .
+                $expirationDate->format('Ymd');
+
+            $icon = 'fa-shield-halved';
+
+            $timestampColumn = 'expiry_warning_sent_at';
+        }
+
+        $adminUrl = route('admin.verification.show', $cadet->id);
+        $cadetUrl = route('dashboard');
+
+        $notificationForAdmin = new InsuranceExpirationNotification(
+            $title,
+            $message,
+            $icon,
+            $adminUrl,
+            $eventKey
+        );
+
+        $notificationForCadet = new InsuranceExpirationNotification(
+            $title,
+            $message,
+            $icon,
+            $cadetUrl,
+            $eventKey
+        );
+
+        Notification::send($admins, $notificationForAdmin);
+
+        if ($cadetUser) {
+            $cadetUser->notify($notificationForCadet);
+        }
+
+        // Mark as notified so the scheduled command won't duplicate it.
+        $insurance->update([
+            $timestampColumn => now(),
+        ]);
     }
 
     /**
