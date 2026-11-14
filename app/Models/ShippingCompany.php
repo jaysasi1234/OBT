@@ -10,6 +10,9 @@ class ShippingCompany extends Model
         'company_name',
         'company_information',
         'company_address',
+        'marina_accreditation_number',
+        'valid_from',
+        'valid_until',
         'logo_path',
         'is_accredited',
     ];
@@ -18,6 +21,8 @@ class ShippingCompany extends Model
     {
         return [
             'is_accredited' => 'boolean',
+            'valid_from' => 'date',
+            'valid_until' => 'date',
         ];
     }
 }

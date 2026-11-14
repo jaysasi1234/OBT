@@ -7,6 +7,7 @@ use App\Models\ShippingCompany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class ShippingCompanyController extends Controller
 {
@@ -63,6 +64,23 @@ class ShippingCompanyController extends Controller
                 'string',
                 'max:2000',
             ],
+            'marina_accreditation_number' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'valid_from' => [
+                'nullable',
+                'date',
+                'required_with:valid_until',
+                'before_or_equal:valid_until',
+            ],
+            'valid_until' => [
+                'nullable',
+                'date',
+                'required_with:valid_from',
+                'after_or_equal:valid_from',
+            ],
             'logo' => [
                 'nullable',
                 'image',
@@ -80,12 +98,21 @@ class ShippingCompanyController extends Controller
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')
                 ->store('shipping-company-logos', 'public');
+
+            if (!$logoPath) {
+                throw ValidationException::withMessages([
+                    'logo' => 'The company logo could not be uploaded. Please try again.',
+                ]);
+            }
         }
 
         ShippingCompany::create([
             'company_name' => $validated['company_name'],
             'company_information' => $validated['company_information'] ?? null,
             'company_address' => $validated['company_address'] ?? null,
+            'marina_accreditation_number' => $validated['marina_accreditation_number'] ?? null,
+            'valid_from' => $validated['valid_from'] ?? null,
+            'valid_until' => $validated['valid_until'] ?? null,
             'logo_path' => $logoPath,
             'is_accredited' => $validated['is_accredited'],
         ]);
@@ -128,6 +155,23 @@ class ShippingCompanyController extends Controller
                 'string',
                 'max:2000',
             ],
+            'marina_accreditation_number' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'valid_from' => [
+                'nullable',
+                'date',
+                'required_with:valid_until',
+                'before_or_equal:valid_until',
+            ],
+            'valid_until' => [
+                'nullable',
+                'date',
+                'required_with:valid_from',
+                'after_or_equal:valid_from',
+            ],
             'logo' => [
                 'nullable',
                 'image',
@@ -143,18 +187,29 @@ class ShippingCompanyController extends Controller
         $logoPath = $shippingCompany->logo_path;
 
         if ($request->hasFile('logo')) {
+            $newLogoPath = $request->file('logo')
+                ->store('shipping-company-logos', 'public');
+
+            if (!$newLogoPath) {
+                throw ValidationException::withMessages([
+                    'logo' => 'The replacement logo could not be uploaded. Please try again.',
+                ]);
+            }
+
             if ($logoPath) {
                 Storage::disk('public')->delete($logoPath);
             }
 
-            $logoPath = $request->file('logo')
-                ->store('shipping-company-logos', 'public');
+            $logoPath = $newLogoPath;
         }
 
         $shippingCompany->update([
             'company_name' => $validated['company_name'],
             'company_information' => $validated['company_information'] ?? null,
             'company_address' => $validated['company_address'] ?? null,
+            'marina_accreditation_number' => $validated['marina_accreditation_number'] ?? null,
+            'valid_from' => $validated['valid_from'] ?? null,
+            'valid_until' => $validated['valid_until'] ?? null,
             'logo_path' => $logoPath,
             'is_accredited' => $validated['is_accredited'],
         ]);

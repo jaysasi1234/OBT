@@ -473,6 +473,50 @@
 
 </div>
 
+
+{{-- MARINA ACCREDITATION NUMBER --}}
+<div class="shipping-detail">
+
+    <span class="shipping-detail-label">
+        <i class="fas fa-certificate"></i>
+        MARINA Accreditation Number
+    </span>
+
+    <p class="shipping-detail-content">
+        {{ $company->marina_accreditation_number ?: 'Not provided.' }}
+    </p>
+
+</div>
+
+{{-- VALID FROM --}}
+<div class="shipping-detail">
+
+    <span class="shipping-detail-label">
+        <i class="fas fa-calendar-check"></i>
+        Valid From
+    </span>
+
+    <p class="shipping-detail-content">
+        {{ $company->valid_from?->format('F d, Y') ?? 'Not specified.' }}
+    </p>
+
+</div>
+
+{{-- VALID UNTIL --}}
+<div class="shipping-detail">
+
+    <span class="shipping-detail-label">
+        <i class="fas fa-calendar-times"></i>
+        Valid Until
+    </span>
+
+    <p class="shipping-detail-content">
+        {{ $company->valid_until?->format('F d, Y') ?? 'Not specified.' }}
+    </p>
+
+</div>
+
+
                 </div>
 
                 <div class="shipping-modal-footer">

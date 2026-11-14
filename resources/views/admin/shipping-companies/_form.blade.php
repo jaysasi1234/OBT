@@ -26,6 +26,7 @@
 }
 
 .shipping-form input[type="text"],
+.shipping-form input[type="date"],
 .shipping-form input[type="file"],
 .shipping-form select,
 .shipping-form textarea {
@@ -232,6 +233,67 @@
         <div class="field-error">{{ $message }}</div>
     @enderror
 </div>
+
+
+{{-- MARINA ACCREDITATION NUMBER --}}
+<div class="form-group">
+    <label for="marina_accreditation_number">
+        MARINA Accreditation Number
+    </label>
+
+    <input
+        type="text"
+        id="marina_accreditation_number"
+        name="marina_accreditation_number"
+        value="{{ old('marina_accreditation_number', $company?->marina_accreditation_number) }}"
+        placeholder="Enter MARINA accreditation number"
+        maxlength="100"
+    >
+
+    <span class="help-text">
+        Enter the company's official MARINA accreditation number.
+    </span>
+
+    @error('marina_accreditation_number')
+        <div class="field-error">{{ $message }}</div>
+    @enderror
+</div>
+
+{{-- VALIDITY PERIOD --}}
+<div class="form-group">
+    <label for="valid_from">Valid From</label>
+
+    <input
+        type="date"
+        id="valid_from"
+        name="valid_from"
+        value="{{ old('valid_from', $company?->valid_from?->format('Y-m-d')) }}"
+    >
+
+    @error('valid_from')
+        <div class="field-error">{{ $message }}</div>
+    @enderror
+</div>
+
+<div class="form-group">
+    <label for="valid_until">Valid Until</label>
+
+    <input
+        type="date"
+        id="valid_until"
+        name="valid_until"
+        value="{{ old('valid_until', $company?->valid_until?->format('Y-m-d')) }}"
+    >
+
+    <span class="help-text">
+        Enter the expiration date of the MARINA accreditation.
+    </span>
+
+    @error('valid_until')
+        <div class="field-error">{{ $message }}</div>
+    @enderror
+</div>
+
 
     {{-- COMPANY LOGO --}}
     <div class="form-group">
