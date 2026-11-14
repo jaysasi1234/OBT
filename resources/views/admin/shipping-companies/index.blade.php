@@ -210,7 +210,7 @@
 
 .shipping-admin table {
     width: 100%;
-    min-width: 760px;
+    min-width: 1100px;
     border-collapse: collapse;
     background: transparent;
 }
@@ -698,13 +698,16 @@ body:has(.shipping-admin) {
 
             <table>
                 <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Shipping Company</th>
-                        <th>Accreditation Status</th>
-                        <th>Date Added</th>
-                        <th>Actions</th>
-                    </tr>
+<tr>
+    <th>#</th>
+    <th>Shipping Company</th>
+    <th>MARINA Accreditation No.</th>
+    <th>Valid From</th>
+    <th>Valid Until</th>
+    <th>Accreditation Status</th>
+    <th>Date Added</th>
+    <th>Actions</th>
+</tr>
                 </thead>
 
                 <tbody>
@@ -735,6 +738,22 @@ body:has(.shipping-admin) {
 
                                 </div>
                             </td>
+
+
+                            {{-- MARINA ACCREDITATION NUMBER --}}
+<td>
+    {{ $company->marina_accreditation_number ?: 'N/A' }}
+</td>
+
+{{-- VALID FROM --}}
+<td>
+    {{ $company->valid_from?->format('M d, Y') ?? 'N/A' }}
+</td>
+
+{{-- VALID UNTIL --}}
+<td>
+    {{ $company->valid_until?->format('M d, Y') ?? 'N/A' }}
+</td>
 
                             {{-- ACCREDITATION STATUS --}}
                             <td>
@@ -804,7 +823,7 @@ body:has(.shipping-admin) {
                     @empty
 
                         <tr>
-                            <td colspan="5">
+                            <td colspan="8">
                                 <div class="empty-state">
                                     <i class="fas fa-ship"></i>
                                     <strong>No shipping companies found.</strong>
@@ -867,17 +886,53 @@ body:has(.shipping-admin) {
                         {{ $company->company_name }}
                     </div>
 
-                    {{-- COMPANY INFORMATION --}}
-                    <div class="detail-item">
+{{-- CONTACT INFORMATION --}}
+<div class="detail-item">
 
-                        <strong>
-                            <i class="fas fa-info-circle"></i>
-                            Company Information
-                        </strong>
+    <strong>
+        <i class="fas fa-address-book"></i>
+        Contact Information
+    </strong>
 
-                        <p>{{ $company->company_information ?: 'No company information has been provided.' }}</p>
+    <p>{{ $company->company_address ?: 'No contact information has been provided.' }}</p>
 
-                    </div>
+</div>
+
+{{-- MARINA ACCREDITATION NUMBER --}}
+<div class="detail-item">
+    <strong>
+        <i class="fas fa-certificate"></i>
+        MARINA Accreditation Number
+    </strong>
+
+    <p>
+        {{ $company->marina_accreditation_number ?: 'Not provided.' }}
+    </p>
+</div>
+
+{{-- VALID FROM --}}
+<div class="detail-item">
+    <strong>
+        <i class="fas fa-calendar-check"></i>
+        Valid From
+    </strong>
+
+    <p>
+        {{ $company->valid_from?->format('F d, Y') ?? 'Not specified.' }}
+    </p>
+</div>
+
+{{-- VALID UNTIL --}}
+<div class="detail-item">
+    <strong>
+        <i class="fas fa-calendar-times"></i>
+        Valid Until
+    </strong>
+
+    <p>
+        {{ $company->valid_until?->format('F d, Y') ?? 'Not specified.' }}
+    </p>
+</div>
 
                     {{-- COMPANY ADDRESS --}}
                     <div class="detail-item">
